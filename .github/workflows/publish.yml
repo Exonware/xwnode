@@ -1,9 +1,9 @@
-name: Publish to PyPI (Multiple Packages)
+name: Publish to PyPI
 
 on:
   push:
     tags:
-      - 'v*'  # Triggers on version tags like v0.0.2, v1.0.0, etc.
+      - 'v*'  # Triggers on version tags like v0.0.1, v1.0.0, etc.
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -23,64 +23,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
     
-    # Build and publish exonware-xnode (main package)
-    - name: Build exonware-xnode package
+    - name: Build package
       run: python -m build
     
-    - name: Publish exonware-xnode to PyPI
+    - name: Publish to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
+      run: python -m twine upload dist/*
     
-    # Create and publish exonware.xnode (dot notation)
-    - name: Create exonware.xnode package config
+    - name: Verify publication
       run: |
-        # Create temporary pyproject.toml for dot notation package
-        cp pyproject.toml pyproject.toml.backup
-        sed 's/name = "exonware-xnode"/name = "exonware.xnode"/' pyproject.toml > pyproject_dot.toml
-        cp pyproject_dot.toml pyproject.toml
-        rm -rf dist/  # Clean previous build
-    
-    - name: Build exonware.xnode package
-      run: python -m build
-    
-    - name: Publish exonware.xnode to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
-    
-    # Create and publish xnode (simple name)
-    - name: Create xnode package config
-      run: |
-        # Create temporary pyproject.toml for simple name
-        sed 's/name = "exonware.xnode"/name = "xnode"/' pyproject.toml > pyproject_simple.toml
-        cp pyproject_simple.toml pyproject.toml
-        rm -rf dist/  # Clean previous build
-    
-    - name: Build xnode package
-      run: python -m build
-    
-    - name: Publish xnode to PyPI
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
-    
-    # Restore original pyproject.toml
-    - name: Restore original config
-      run: cp pyproject.toml.backup pyproject.toml
-    
-    # Summary
-    - name: Publication Summary
-      run: |
-        echo "🎉 Successfully published to PyPI:"
-        echo "✅ exonware-xnode"
-        echo "✅ exonware.xnode" 
-        echo "✅ xnode"
-        echo ""
-        echo "Users can now install with any of:"
-        echo "pip install exonware-xnode"
-        echo "pip install exonware.xnode"
-        echo "pip install xnode"
+        echo "🎉 Package published to PyPI!"
+        echo "Users can install with: pip install exonware-xnode"
+        echo "Check at: https://pypi.org/project/exonware-xnode/"
