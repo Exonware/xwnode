@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - 'v*'  # Triggers on version tags like v0.0.1, v1.0.0, etc.
+      - 'v*'  # Triggers on version tags like v0.0.2, v1.0.0, etc.
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -30,10 +30,4 @@ jobs:
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: python -m twine upload dist/*
-    
-    - name: Verify publication
-      run: |
-        echo "🎉 Package published to PyPI!"
-        echo "Users can install with: pip install exonware-xnode"
-        echo "Check at: https://pypi.org/project/exonware-xnode/"
+      run: twine upload dist/*
