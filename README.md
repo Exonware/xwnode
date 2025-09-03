@@ -42,6 +42,22 @@ from exonware.xnode import *
 ✅ **Performance optimized** for large-scale processing  
 ✅ **Easy integration** with existing Python data tools  
 
+## 🚀 **Project Phases**
+
+xNode follows a structured 5-phase development approach designed to deliver enterprise-grade functionality while maintaining rapid iteration and continuous improvement.
+
+### **Current Phase: 🧪 Version 0 - Experimental Stage**
+- **Focus:** Fast applications & usage, refactoring to perfection of software patterns and design
+- **Status:** 🟢 **ACTIVE** - Foundation complete with core node functionality, graph traversal algorithms, and comprehensive testing
+
+### **Development Roadmap:**
+- **Version 1 (Q1 2026):** Production Ready - Enterprise deployment and hardening
+- **Version 2 (Q2 2026):** Mars Standard Draft Implementation - Cross-platform interoperability
+- **Version 3 (Q3 2026):** RUST Core & Facades - High-performance multi-language support
+- **Version 4 (Q4 2026):** Mars Standard Implementation - Full compliance and enterprise deployment
+
+📖 **[View Complete Project Phases Documentation](docs/PROJECT_PHASES.md)**
+
 ## 📚 **Documentation**
 
 - **[API Documentation](docs/)** - Complete reference and examples
