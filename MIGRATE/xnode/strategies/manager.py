@@ -8,7 +8,7 @@ AUTO mode selection, and strategy management in the strategy system.
 import time
 import threading
 from typing import Dict, Optional, Any, Union
-from src.xlib.xsystem import get_logger
+from src.xlib.xwsystem import get_logger
 from .types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from .registry import get_registry
 from .advisor import get_advisor

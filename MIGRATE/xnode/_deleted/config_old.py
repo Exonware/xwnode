@@ -13,10 +13,10 @@ from typing import Optional
 
 # Assuming xlib is in the path. If not, this will gracefully be handled.
 try:
-    from src.xlib.xsystem import get_logger
+    from src.xlib.xwsystem import get_logger
     logger = get_logger('xnode.config')
 except (ImportError, TypeError):
-    # Fallback logger if xsystem is not available
+    # Fallback logger if xwsystem is not available
     import logging
     logger = logging.getLogger('xnode.config')
 

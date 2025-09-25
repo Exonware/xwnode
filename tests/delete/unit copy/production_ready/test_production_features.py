@@ -10,8 +10,8 @@ import time
 import threading
 from unittest.mock import Mock, patch
 
-# Import from xsystem instead of local modules
-from src.xlib.xsystem import (
+# Import from xwsystem instead of local modules
+from src.xlib.xwsystem import (
     # Memory monitoring
     get_memory_monitor, start_memory_monitoring, stop_memory_monitoring,
     force_memory_cleanup, get_memory_stats, register_object_for_monitoring,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Performance test runner for xNode.
+Performance test runner for xwnode.
 Provides convenient test execution and benchmark running.
 """
 
@@ -12,13 +12,13 @@ from pathlib import Path
 
 def setup_environment():
     """Setup the Python environment for running tests."""
-    # Use xsystem utility for path setup
+    # Use xwsystem utility for path setup
     try:
-        from src.xlib.xsystem.utils.paths import setup_python_path
+        from src.xlib.xwsystem.utils.paths import setup_python_path
         project_root, src_path = setup_python_path(__file__, levels_up=6)
         return project_root, src_path
     except ImportError:
-        # Fallback to manual calculation if xsystem not available
+        # Fallback to manual calculation if xwsystem not available
         current_file = Path(__file__).resolve()
         project_root = current_file.parent.parent.parent.parent.parent.parent.parent
         src_path = project_root / "src"
@@ -31,7 +31,7 @@ def setup_environment():
         return project_root, src_path
 
 def run_performance_tests(verbose=True, coverage=False, benchmark=False):
-    """Run xNode performance tests."""
+    """Run xwnode performance tests."""
     
     base_path = Path(__file__).parent
     
@@ -40,7 +40,7 @@ def run_performance_tests(verbose=True, coverage=False, benchmark=False):
         return run_benchmark_only()
     
     # For performance tests, run BOTH pytest tests AND benchmark logging
-    print(f"🧪 Running xNode Performance Tests + Benchmark...")
+    print(f"🧪 Running xwnode Performance Tests + Benchmark...")
     print("=" * 60)
     
     # First run the pytest tests (validation)
@@ -85,7 +85,7 @@ def run_pytest_tests(verbose=True, coverage=False, base_path=None):
         cmd.append("-v")
     
     if coverage:
-        cmd.extend(["--cov=src.xlib.xnode", "--cov-report=term-missing", "--cov-report=html"])
+        cmd.extend(["--cov=src.xlib.xwnode", "--cov-report=term-missing", "--cov-report=html"])
     
     # Add warning suppression for clean output
     cmd.extend(["-W", "ignore::UserWarning", "-W", "ignore::DeprecationWarning"])
@@ -116,7 +116,7 @@ def run_pytest_tests(verbose=True, coverage=False, base_path=None):
 def run_benchmark_only():
     """Run just the benchmark script."""
     base_path = Path(__file__).parent
-    benchmark_script = base_path / "perf_xnode.py"
+    benchmark_script = base_path / "perf_xwnode.py"
     
     if not benchmark_script.exists():
         print(f"❌ Benchmark script not found: {benchmark_script}")
@@ -133,7 +133,7 @@ def run_benchmark_only():
     
     python_path = os.pathsep.join(python_path_parts)
     
-    print(f"🚀 Running xNode Performance Benchmark...")
+    print(f"🚀 Running xwnode Performance Benchmark...")
     print(f"📂 Script: {benchmark_script}")
     print(f"📂 Project root: {project_root}")
     print(f"📂 Source path: {src_path}")
@@ -158,14 +158,14 @@ def run_benchmark_only():
 def show_performance_history():
     """Show performance history from CSV."""
     base_path = Path(__file__).parent
-    csv_path = base_path / "perf_xnode.csv"
-    detailed_csv_path = base_path / "perf_xnode_detailed.csv"
+    csv_path = base_path / "perf_xwnode.csv"
+    detailed_csv_path = base_path / "perf_xwnode_detailed.csv"
     
     if not csv_path.exists() and not detailed_csv_path.exists():
         print("❌ No performance history found. Run benchmark first.")
         return 1
     
-    print("📊 xNode Performance History")
+    print("📊 xwnode Performance History")
     print("=" * 80)
     
     try:
@@ -173,7 +173,7 @@ def show_performance_history():
         
         # Show original format data
         if csv_path.exists():
-            print("📈 Original Performance Metrics (perf_xnode.csv):")
+            print("📈 Original Performance Metrics (perf_xwnode.csv):")
             print("-" * 80)
             
             with open(csv_path, 'r') as f:
@@ -187,7 +187,7 @@ def show_performance_history():
                     
                     for i, row in enumerate(rows[-3:], 1):
                         iterations = row.get('iterations', 'N/A')
-                        print(f"{i}. {row['timestamp']} (v{row['xnode_version']}, {iterations} iterations)")
+                        print(f"{i}. {row['timestamp']} (v{row['xwnode_version']}, {iterations} iterations)")
                         print(f"   📊 Core Performance (avg per iteration):")
                         print(f"      Deep nesting:       {row.get('deep_nesting_avg_ms', 'N/A')} ms")
                         print(f"      Wide structure:     {row.get('wide_structure_avg_ms', 'N/A')} ms")
@@ -198,7 +198,7 @@ def show_performance_history():
         
         # Show detailed format data
         if detailed_csv_path.exists():
-            print("🚀 Detailed Performance Metrics (perf_xnode_detailed.csv):")
+            print("🚀 Detailed Performance Metrics (perf_xwnode_detailed.csv):")
             print("-" * 80)
             
             with open(detailed_csv_path, 'r') as f:
@@ -212,7 +212,7 @@ def show_performance_history():
                     
                     for i, row in enumerate(rows[-3:], 1):
                         iterations = row.get('iterations', 'N/A')
-                        print(f"{i}. {row['timestamp']} (v{row['xnode_version']}, {iterations} iterations)")
+                        print(f"{i}. {row['timestamp']} (v{row['xwnode_version']}, {iterations} iterations)")
                         print(f"   📊 Core Performance (avg per iteration):")
                         print(f"      Deep nesting:       {row.get('deep_nesting_ms', 'N/A')} ms")
                         print(f"      Wide structure:     {row.get('wide_structure_ms', 'N/A')} ms")
@@ -305,7 +305,7 @@ def show_improvement_analysis(rows, is_detailed=False):
 def main():
     """Main runner function."""
     parser = argparse.ArgumentParser(
-        description="xNode Performance Test Runner",
+        description="xwnode Performance Test Runner",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -336,11 +336,11 @@ Examples:
             return show_performance_history()
         
         if args.tests_only:
-            print("🧪 xNode Performance Tests Only")
+            print("🧪 xwnode Performance Tests Only")
             print("=" * 50)
             return run_pytest_tests(args.verbose, args.coverage)
         
-        print("🧪 xNode Performance Test Runner")
+        print("🧪 xwnode Performance Test Runner")
         print("=" * 50)
         
         return run_performance_tests(

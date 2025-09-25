@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-xNode Error Tests Runner
+xwnode Error Tests Runner
 =======================
 
-Simple script to run xNode error tests independently.
+Simple script to run xwnode error tests independently.
 Can be used for development and debugging.
 Following Python/pytest best practices.
 """
@@ -15,13 +15,13 @@ from pathlib import Path
 
 def setup_environment():
     """Setup the Python environment for running tests."""
-    # Use xsystem utility for path setup
+    # Use xwsystem utility for path setup
     try:
-        from src.xlib.xsystem.utils.paths import setup_python_path
+        from src.xlib.xwsystem.utils.paths import setup_python_path
         project_root, src_path = setup_python_path(__file__, levels_up=6)
         return project_root, src_path
     except ImportError:
-        # Fallback to manual calculation if xsystem not available
+        # Fallback to manual calculation if xwsystem not available
         current_file = Path(__file__).resolve()
         project_root = current_file.parent.parent.parent.parent.parent.parent.parent
         src_path = project_root / "src"
@@ -34,7 +34,7 @@ def setup_environment():
         return project_root, src_path
 
 def main():
-    """Run the xNode error tests."""
+    """Run the xwnode error tests."""
     try:
         # Setup environment first
         project_root, src_path = setup_environment()
@@ -42,7 +42,7 @@ def main():
         current_dir = Path(__file__).parent
         test_file = current_dir / "test_errors.py"
         
-        print("🧪 Running xNode Error Tests")
+        print("🧪 Running xwnode Error Tests")
         print("=" * 40)
         print(f"Project root: {project_root}")
         print(f"Source path: {src_path}")

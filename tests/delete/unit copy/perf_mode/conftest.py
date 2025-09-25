@@ -31,9 +31,9 @@ except ImportError:
     BENCHMARK_ADAPTIVE_OPS = 200
     BENCHMARK_LEARNING_OPS = 200
 
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
-from src.xlib.xnode.config import reset_performance_manager, set_performance_mode
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
+from src.xlib.xwnode.config import reset_performance_manager, set_performance_mode
 
 
 @pytest.fixture(autouse=True)

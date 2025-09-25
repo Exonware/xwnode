@@ -1,4 +1,4 @@
-# 🚀 xNode Project Phases
+# 🚀 XWNode Project Phases
 
 **Company:** eXonware.com  
 **Author:** Eng. Muhammad AlShehri  
@@ -10,7 +10,7 @@
 
 ## 📋 **Project Development Roadmap**
 
-xNode follows a structured 5-phase development approach designed to deliver enterprise-grade graph and node-based functionality while maintaining rapid iteration and continuous improvement.
+XWNode follows a structured 5-phase development approach designed to deliver enterprise-grade graph and node-based functionality while maintaining rapid iteration and continuous improvement.
 
 ---
 

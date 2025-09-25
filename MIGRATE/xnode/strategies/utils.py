@@ -12,7 +12,7 @@ import weakref
 import time
 
 # Use xSystem logging
-from src.xlib.xsystem import get_logger
+from src.xlib.xwsystem import get_logger
 
 logger = get_logger('xnode.strategies.utils')
 

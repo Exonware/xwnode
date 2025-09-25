@@ -17,7 +17,7 @@ from ...abc import iNodeStrategy, NodeTrait
 from ...errors import xNodePathError
 
 # Use xSystem logging
-from src.xlib.xsystem import get_logger
+from src.xlib.xwsystem import get_logger
 
 # Import shared utilities
 from ..utils import (

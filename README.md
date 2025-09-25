@@ -1,28 +1,62 @@
-# 🚀 **xnode: Node-Based Data Processing Library**
+# 🚀 **xwnode: Node-Based Data Processing Library**
 
 **Company:** eXonware.com  
 **Author:** Eng. Muhammad AlShehri  
 **Email:** connect@exonware.com  
-**Version:** 0.0.1  
+**Version:** 0.0.1.3
 
-## 🎯 **What is xnode?**
+## 🎯 **What is xwnode?**
 
-xnode is a powerful Python library for node-based data processing and graph computation. It provides a flexible framework for building data processing workflows using interconnected nodes, enabling complex data transformations and computations through an intuitive graph-based approach.
+xwnode is a powerful Python library for node-based data processing and graph computation. It provides a flexible framework for building data processing workflows using interconnected nodes, enabling complex data transformations and computations through an intuitive graph-based approach.
 
 ## ⚡ **Quick Start**
 
 ### **Installation**
+
+xwnode offers three installation modes to match your needs:
+
+#### **Default (Lite) - Minimal Installation**
 ```bash
-pip install exonware-xnode
+pip install exonware-xwnode
+# or
+pip install xwnode
 ```
+- ✅ Core node functionality
+- ✅ Basic graph operations
+- ✅ Essential data processing
+- ✅ Zero external dependencies (beyond xwsystem)
+
+#### **Lazy - Auto-Install on Demand**
+```bash
+pip install exonware-xwnode[lazy]
+# or
+pip install xwnode[lazy]
+```
+- ✅ Everything from default
+- ✅ Automatic dependency installation
+- ✅ Enterprise serialization on-demand
+- ✅ Performance monitoring when needed
+
+#### **Full - Complete Feature Set**
+```bash
+pip install exonware-xwnode[full]
+# or
+pip install xwnode[full]
+```
+- ✅ Everything from lazy
+- ✅ All xwsystem serialization formats (50+)
+- ✅ Advanced security features
+- ✅ Performance monitoring
+- ✅ Enterprise-grade capabilities
 
 ### **Basic Usage**
 ```python
-from exonware.xnode import *
+from exonware.xwnode import XWNode, XWQuery, XWFactory
 # Or use convenience import:
-# import xnode
+# import xwnode
 
 # Your node-based processing code here
+node = XWNode({'data': 'example'})
 ```
 
 ## 🎯 **Perfect For:**
@@ -44,7 +78,7 @@ from exonware.xnode import *
 
 ## 🚀 **Project Phases**
 
-xNode follows a structured 5-phase development approach designed to deliver enterprise-grade functionality while maintaining rapid iteration and continuous improvement.
+xWNode follows a structured 5-phase development approach designed to deliver enterprise-grade functionality while maintaining rapid iteration and continuous improvement.
 
 ### **Current Phase: 🧪 Version 0 - Experimental Stage**
 - **Focus:** Fast applications & usage, refactoring to perfection of software patterns and design

@@ -1,4 +1,4 @@
-# xNode ↔ xSystem Integration Guide
+# XWNode ↔ xSystem Integration Guide
 
 **Company**: eXonware.com  
 **Author**: Eng. Muhammad AlShehri  
@@ -8,14 +8,14 @@
 
 ## 🎯 **Integration Philosophy**
 
-Following the core principle that **xNode is format-agnostic** while **xData handles serialization**, xNode leverages xSystem for:
+Following the core principle that **XWNode is format-agnostic** while **xData handles serialization**, XWNode leverages xSystem for:
 
 - ✅ **Security & Validation**: Resource limits, input validation, path security
 - ✅ **Monitoring & Metrics**: Performance tracking, operation measurement
 - ✅ **Threading & Concurrency**: Thread-safe operations, caching
 - ✅ **Circuit Breakers**: Fault tolerance for strategy operations
 - ✅ **Logging**: Structured logging with proper fallbacks
-- ❌ **Serialization**: Handled by xData library, NOT xNode
+- ❌ **Serialization**: Handled by xData library, NOT XWNode
 
 ## 🏗️ **Architecture Overview**
 
@@ -26,9 +26,9 @@ Following the core principle that **xNode is format-agnostic** while **xData han
 │                           │                                 │
 │                           ▼                                 │
 ├─────────────────────────────────────────────────────────────┤
-│                        xNode Library                        │
+│                        XWNode Library                        │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │    xNode    │  │    xEdge    │  │       xQuery        │  │
+│  │    XWNode   │  │    XWEdge   │  │       XWQuery       │  │
 │  │  (Format-   │  │  (Strategy  │  │  (Multi-language    │  │
 │  │  agnostic   │  │   driven)   │  │   query engine)     │  │
 │  │   nodes)    │  │             │  │                     │  │
@@ -46,8 +46,8 @@ Following the core principle that **xNode is format-agnostic** while **xData han
 ### 1. **Enhanced Security Integration**
 ```python
 # Resource limits from xSystem
-from exonware.xsystem.security import get_resource_limits
-from exonware.xsystem.validation import validate_untrusted_data
+from exonware.xwsystem.security import get_resource_limits
+from exonware.xwsystem.validation import validate_untrusted_data
 
 # Automatic resource limit enforcement
 limits = get_resource_limits('xnode')
@@ -58,7 +58,7 @@ if limits and node_count > limits.get('max_nodes', float('inf')):
 ### 2. **Advanced Monitoring & Metrics**
 ```python
 # Component-specific metrics
-from exonware.xsystem.monitoring import create_component_metrics
+from exonware.xwsystem.monitoring import create_component_metrics
 
 _metrics = create_component_metrics('xnode_facade')
 measure_operation = _metrics['measure_operation']
@@ -72,7 +72,7 @@ def create_node(data):
 ### 3. **Thread-Safe Operations**
 ```python
 # Thread-safe caching and operations
-from exonware.xsystem.threading import create_thread_safe_cache
+from exonware.xwsystem.threading import create_thread_safe_cache
 
 _path_cache = create_thread_safe_cache(max_size=1024)
 ```
@@ -80,7 +80,7 @@ _path_cache = create_thread_safe_cache(max_size=1024)
 ### 4. **Circuit Breaker Pattern**
 ```python
 # Fault tolerance for strategy operations
-from exonware.xsystem.patterns import CircuitBreaker
+from exonware.xwsystem.patterns import CircuitBreaker
 
 _strategy_circuit_breaker = CircuitBreaker(
     failure_threshold=5,
@@ -119,11 +119,11 @@ query_engine.register_parser('custom', my_custom_parser)
 
 ## 🔄 **Strategy Pattern Enhancement**
 
-xNode's strategy system now leverages xSystem capabilities:
+XWNode's strategy system now leverages xSystem capabilities:
 
 ```python
 # 28 Node strategies with xSystem integration
-node = xNode.from_native(data)
+node = XWNode.from_native(data)
 node.set_strategy(NodeMode.HASH_MAP)  # Fast lookups
 node.set_strategy(NodeMode.TRIE)      # String matching
 node.set_strategy(NodeMode.B_TREE)    # Database-like operations
@@ -140,7 +140,7 @@ All xSystem integrations include proper fallbacks:
 
 ```python
 try:
-    from exonware.xsystem import get_logger, create_component_metrics
+    from exonware.xwsystem import get_logger, create_component_metrics
     # Use xSystem capabilities
     _XSYSTEM_AVAILABLE = True
 except (ImportError, TypeError):
@@ -152,7 +152,7 @@ except (ImportError, TypeError):
 
 ## 🎯 **Design Principles Followed**
 
-1. **Format-Agnostic**: xNode handles structure, xData handles formats [[memory:7917377]]
+1. **Format-Agnostic**: XWNode handles structure, xData handles formats [[memory:7917377]]
 2. **Production-Grade Libraries**: Leverage xSystem instead of reinventing [[memory:7823592]]
 3. **Usability First**: Simple API with powerful capabilities [[memory:7917343]]
 4. **Defensive Programming**: Fallbacks for all xSystem dependencies
@@ -162,10 +162,10 @@ except (ImportError, TypeError):
 
 ### Basic Node Operations
 ```python
-from exonware.xnode import xNode
+from exonware.xwnode import XWNode
 
 # Create format-agnostic node
-node = xNode.from_native({'users': [{'name': 'Alice', 'age': 30}]})
+node = XWNode.from_native({'users': [{'name': 'Alice', 'age': 30}]})
 
 # Strategy-driven operations
 node.set_strategy(NodeMode.HASH_MAP)  # Optimize for lookups
@@ -178,10 +178,10 @@ results = node.query("//user[@age > 25]")       # XPath
 
 ### Advanced Graph Operations
 ```python
-from exonware.xnode import xNode, xEdge
+from exonware.xwnode import XWNode, XWEdge
 
 # Create graph structure
-graph = xNode.from_native({})
+graph = XWNode.from_native({})
 graph.set_strategy(NodeMode.TREE_GRAPH_HYBRID)
 
 # Add edges with strategy
@@ -208,4 +208,4 @@ graph.add_edge(edge)
 
 ---
 
-This integration ensures xNode remains **format-agnostic** while leveraging **production-grade xSystem capabilities** for security, monitoring, threading, and fault tolerance.
+This integration ensures XWNode remains **format-agnostic** while leveraging **production-grade xSystem capabilities** for security, monitoring, threading, and fault tolerance.

@@ -22,7 +22,7 @@ import statistics
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', 'src'))
 
 from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode, PerformanceProfiles
+from src.xlib.xwsystem.config import PerformanceMode, PerformanceProfiles
 from src.xlib.xnode.config import set_performance_mode # Added for direct function call
 
 

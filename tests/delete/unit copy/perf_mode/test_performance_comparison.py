@@ -2,16 +2,16 @@
 Performance Mode Comparison Tests
 ================================
 
-Comprehensive tests that compare all xNode performance modes.
+Comprehensive tests that compare all xwnode performance modes.
 """
 
 import pytest
 import time
 import gc
 import statistics
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
-from src.xlib.xnode.config import set_performance_mode, reset_performance_manager
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
+from src.xlib.xwnode.config import set_performance_mode, reset_performance_manager
 from .conftest import timeout_context
 
 
@@ -48,7 +48,7 @@ class TestPerformanceComparison:
                     # Measure creation time with timeout protection
                     with timeout_context(5):  # 5 second timeout for creation
                         start_time = time.time()
-                        node = xNode.from_native(data, mode)
+                        node = xwnode.from_native(data, mode)
                         creation_time = (time.time() - start_time) * 1000
                     
                     # Measure navigation time with timeout protection and reduced iterations
@@ -136,7 +136,7 @@ class TestPerformanceComparison:
                 # Create node with timeout protection
                 with timeout_context(5):
                     start_time = time.time()
-                    node = xNode.from_native(test_data, mode)
+                    node = xwnode.from_native(test_data, mode)
                     creation_time = (time.time() - start_time) * 1000
                 
                 # Perform operations with reduced iterations and timeout
@@ -215,7 +215,7 @@ class TestPerformanceComparison:
                     with timeout_context(3):  # 3 second timeout per data size
                         set_performance_mode(mode)
                         start_time = time.time()
-                        node = xNode.from_native(data, mode)
+                        node = xwnode.from_native(data, mode)
                         creation_time = (time.time() - start_time) * 1000
                         
                         print(f"  {size_name.capitalize()} data creation: {creation_time:.2f}ms")
@@ -254,7 +254,7 @@ class TestPerformanceComparison:
                 # Create node with timeout protection
                 with timeout_context(5):
                     start_time = time.time()
-                    node = xNode.from_native(data, PerformanceMode.AUTO)
+                    node = xwnode.from_native(data, PerformanceMode.AUTO)
                     creation_time = (time.time() - start_time) * 1000
                 
                 # Get performance stats

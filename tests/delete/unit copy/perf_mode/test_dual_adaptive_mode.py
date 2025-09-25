@@ -9,20 +9,20 @@ Tests for the new DUAL_ADAPTIVE mode that provides smart dual-phase optimization
 import pytest
 import time
 import gc
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
-from src.xlib.xnode.config import reset_performance_manager, set_performance_mode
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
+from src.xlib.xwnode.config import reset_performance_manager, set_performance_mode
 
 
 class TestDualAdaptiveMode:
     """Test the dual-phase adaptive mode functionality."""
     
     def test_dual_adaptive_mode_creation(self, test_data):
-        """Test creating xNode with DUAL_ADAPTIVE mode."""
+        """Test creating xwnode with DUAL_ADAPTIVE mode."""
         reset_performance_manager()
         
         # Create with dual adaptive mode
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         
         # Verify mode is set correctly
         assert node.get_performance_mode() == PerformanceMode.DUAL_ADAPTIVE
@@ -35,7 +35,7 @@ class TestDualAdaptiveMode:
         """Test that dual adaptive mode transitions between phases."""
         reset_performance_manager()
         
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         
         # Get initial stats
         stats = node.get_performance_stats()
@@ -60,7 +60,7 @@ class TestDualAdaptiveMode:
         
         # Test dual adaptive performance
         start_time = time.time()
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         creation_time = (time.time() - start_time) * 1000
         
         # Should be fast (similar to FAST mode)
@@ -81,12 +81,12 @@ class TestDualAdaptiveMode:
         
         # Test regular adaptive
         start_time = time.time()
-        adaptive_node = xNode.adaptive(test_data)
+        adaptive_node = xwnode.adaptive(test_data)
         adaptive_creation_time = (time.time() - start_time) * 1000
         
         # Test dual adaptive
         start_time = time.time()
-        dual_adaptive_node = xNode.dual_adaptive(test_data)
+        dual_adaptive_node = xwnode.dual_adaptive(test_data)
         dual_creation_time = (time.time() - start_time) * 1000
         
         # Dual adaptive should be faster (starts in cruise mode)
@@ -110,7 +110,7 @@ class TestDualAdaptiveMode:
         """Test that dual adaptive mode can learn and adapt."""
         reset_performance_manager()
         
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         
         # Perform many operations to trigger learning
         for i in range(200):
@@ -134,7 +134,7 @@ class TestDualAdaptiveMode:
         gc.collect()
         
         # Create dual adaptive node
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         
         # Perform operations
         for i in range(100):
@@ -155,11 +155,11 @@ class TestDualAdaptiveMode:
         reset_performance_manager()
         
         # Test with None data
-        node = xNode.dual_adaptive(None)
+        node = xwnode.dual_adaptive(None)
         assert node.value is None
         
         # Test with empty data
-        node = xNode.dual_adaptive({})
+        node = xwnode.dual_adaptive({})
         assert node.value == {}  # Fixed: empty dict should return empty dict
         
         # Test with complex nested data
@@ -176,14 +176,14 @@ class TestDualAdaptiveMode:
                 }
             }
         }
-        node = xNode.dual_adaptive(complex_data)
+        node = xwnode.dual_adaptive(complex_data)
         assert node.find('deep.nested.structure.with.many.levels').value == 'value'
     
     def test_dual_adaptive_configuration(self, test_data):
         """Test that dual adaptive mode uses correct configuration."""
         reset_performance_manager()
         
-        node = xNode.dual_adaptive(test_data)
+        node = xwnode.dual_adaptive(test_data)
         
         # Get configuration
         stats = node.get_performance_stats()
@@ -199,7 +199,7 @@ class TestDualAdaptiveMode:
         reset_performance_manager()
         
         # Test that dual adaptive provides the best of both worlds
-        dual_node = xNode.dual_adaptive(test_data)
+        dual_node = xwnode.dual_adaptive(test_data)
         
         # Should start fast (cruise mode)
         start_time = time.time()

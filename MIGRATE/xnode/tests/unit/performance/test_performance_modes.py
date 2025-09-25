@@ -18,7 +18,7 @@ from src.xlib.xnode import (
     xNode, PerformanceMode, PerformanceProfile, PerformanceProfiles,
     set_performance_mode, get_performance_mode, get_config, get_pool_stats
 )
-from src.xlib.xsystem.config import PerformanceMode as SystemPerformanceMode
+from src.xlib.xwsystem.config import PerformanceMode as SystemPerformanceMode
 
 
 class TestPerformanceModeBasics:

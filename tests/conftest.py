@@ -28,9 +28,19 @@ if str(XNODE_PATH) not in sys.path:
 
 # Import xNode using the proper module path
 try:
-    from src.xlib.xnode import xNode
-    from src.xlib.xnode.errors import xNodeError, xNodeTypeError, xNodePathError, xNodeValueError
-    print("✅ xNode imports successful")
+    # Add src to path for local development
+    current_dir = Path(__file__).parent
+    src_path = current_dir.parent / "src"
+    xwsystem_src_path = current_dir.parent.parent / "xwsystem" / "src"
+    
+    if str(src_path) not in sys.path:
+        sys.path.insert(0, str(src_path))
+    if str(xwsystem_src_path) not in sys.path and xwsystem_src_path.exists():
+        sys.path.insert(0, str(xwsystem_src_path))
+    
+    from exonware.xwnode import XWNode
+    from exonware.xwnode import XWNodeError, XWNodeTypeError, XWNodePathError, XWNodeValueError
+    print("✅ XWNode imports successful")
 except ImportError as e:
     print(f"❌ Import failed: {e}")
     # Create mock objects for testing
@@ -76,11 +86,11 @@ except ImportError as e:
         def __contains__(self, key):
             return False
     
-    xNode = MockxNode
-    xNodeError = Exception
-    xNodeTypeError = TypeError
-    xNodePathError = KeyError
-    xNodeValueError = ValueError
+    XWNode = MockxNode
+    XWNodeError = Exception
+    XWNodeTypeError = TypeError
+    XWNodePathError = KeyError
+    XWNodeValueError = ValueError
     print("⚠️  Using mock objects for testing")
 
 
@@ -143,50 +153,50 @@ def nested_data():
 
 @pytest.fixture
 def simple_node(simple_dict_data):
-    """xNode instance from simple dictionary."""
-    return xNode.from_native(simple_dict_data)
+    """XWNode instance from simple dictionary."""
+    return XWNode.from_native(simple_dict_data)
 
 
 @pytest.fixture
 def list_node(simple_list_data):
-    """xNode instance from simple list."""
-    return xNode.from_native(simple_list_data)
+    """XWNode instance from simple list."""
+    return XWNode.from_native(simple_list_data)
 
 
 @pytest.fixture
 def nested_node(nested_data):
-    """xNode instance from nested data."""
-    return xNode.from_native(nested_data)
+    """XWNode instance from nested data."""
+    return XWNode.from_native(nested_data)
 
 
 @pytest.fixture
 def leaf_node():
     """Simple leaf node."""
-    return xNode.from_native("simple string value")
+    return XWNode.from_native("simple string value")
 
 
 @pytest.fixture
 def number_node():
     """Simple number leaf node."""
-    return xNode.from_native(42)
+    return XWNode.from_native(42)
 
 
 @pytest.fixture
 def boolean_node():
     """Simple boolean leaf node."""
-    return xNode.from_native(True)
+    return XWNode.from_native(True)
 
 
 @pytest.fixture
 def empty_dict_node():
     """Empty dictionary node."""
-    return xNode.from_native({})
+    return XWNode.from_native({})
 
 
 @pytest.fixture
 def empty_list_node():
     """Empty list node."""
-    return xNode.from_native([])
+    return XWNode.from_native([])
 
 
 @pytest.fixture

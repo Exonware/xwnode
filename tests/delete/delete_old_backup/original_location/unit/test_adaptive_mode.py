@@ -3,7 +3,7 @@
 ADAPTIVE Performance Mode Demo
 ==============================
 
-This script demonstrates the new ADAPTIVE performance mode in xNode,
+This script demonstrates the new ADAPTIVE performance mode in xwnode,
 showing its learning capabilities and performance advantages.
 """
 
@@ -15,8 +15,8 @@ import statistics
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
 
 
 def create_test_data():
@@ -48,7 +48,7 @@ def test_adaptive_mode_creation():
     
     # Test creation time
     start_time = time.time()
-    node = xNode.adaptive(test_data)
+    node = xwnode.adaptive(test_data)
     creation_time = (time.time() - start_time) * 1000
     
     print(f"   ✅ Creation time: {creation_time:.2f}ms")
@@ -123,7 +123,7 @@ def test_adaptive_vs_other_modes():
         
         # Create node
         start_time = time.time()
-        node = xNode.from_native(test_data, mode)
+        node = xwnode.from_native(test_data, mode)
         creation_time = (time.time() - start_time) * 1000
         
         # Perform operations
@@ -165,8 +165,8 @@ def test_adaptive_advantages():
     test_data = create_test_data()
     
     # Test ADAPTIVE vs AUTO
-    auto_node = xNode.from_native(test_data, PerformanceMode.AUTO)
-    adaptive_node = xNode.adaptive(test_data)
+    auto_node = xwnode.from_native(test_data, PerformanceMode.AUTO)
+    adaptive_node = xwnode.adaptive(test_data)
     
     # Perform operations to trigger learning
     for i in range(50):

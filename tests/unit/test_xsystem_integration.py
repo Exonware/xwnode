@@ -10,7 +10,7 @@ import time
 from typing import Dict, Any
 
 from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import (
+from src.xlib.xwsystem.config import (
     PerformanceMode, 
     PerformanceProfile, 
     PerformanceProfiles,
@@ -21,7 +21,7 @@ from src.xlib.xsystem.config import (
 class TestXSystemPerformanceModeIntegration:
     """Test xNode integration with xSystem performance modes."""
     
-    def test_xnode_uses_xsystem_performance_modes(self):
+    def test_xnode_uses_xwsystem_performance_modes(self):
         """Test that xNode uses xSystem performance modes."""
         # Create xNode instance
         node = xNode({'test': 'data'})
@@ -87,7 +87,7 @@ class TestXSystemPerformanceModeIntegration:
         node = xNode({'test': 'data'})
         
         # Verify it's using the xSystem GenericPerformanceManager
-        from src.xlib.xsystem.performance import GenericPerformanceManager
+        from src.xlib.xwsystem.performance import GenericPerformanceManager
         assert isinstance(node._performance_manager, GenericPerformanceManager)
         
         # Verify it has xSystem methods
@@ -304,7 +304,7 @@ class TestXSystemPerformanceModeCompatibility:
     def test_mode_enum_compatibility(self):
         """Test that xNode and xSystem use the same PerformanceMode enum."""
         from src.xlib.xnode import PerformanceMode as xNodePerformanceMode
-        from src.xlib.xsystem.config import PerformanceMode as xSystemPerformanceMode
+        from src.xlib.xwsystem.config import PerformanceMode as xSystemPerformanceMode
         
         # They should be the same
         assert xNodePerformanceMode is xSystemPerformanceMode
@@ -312,14 +312,14 @@ class TestXSystemPerformanceModeCompatibility:
         # Test all modes
         for mode_name in ['FAST', 'OPTIMIZED', 'ADAPTIVE', 'DUAL_ADAPTIVE']:
             xnode_mode = getattr(xNodePerformanceMode, mode_name)
-            xsystem_mode = getattr(xSystemPerformanceMode, mode_name)
-            assert xnode_mode == xsystem_mode
+            xwsystem_mode = getattr(xSystemPerformanceMode, mode_name)
+            assert xnode_mode == xwsystem_mode
         
         print("✅ xNode and xSystem use the same PerformanceMode enum")
     
     def test_profile_compatibility(self):
         """Test that xNode can use xSystem performance profiles."""
-        from src.xlib.xsystem.config import PerformanceProfiles as xSystemProfiles
+        from src.xlib.xwsystem.config import PerformanceProfiles as xSystemProfiles
         
         # Test getting profiles for different modes
         for mode in [PerformanceMode.FAST, PerformanceMode.OPTIMIZED, PerformanceMode.ADAPTIVE]:
@@ -332,7 +332,7 @@ class TestXSystemPerformanceModeCompatibility:
     
     def test_manager_compatibility(self):
         """Test that xNode can use xSystem performance managers."""
-        from src.xlib.xsystem.config import PerformanceModeManager as xSystemManager
+        from src.xlib.xwsystem.config import PerformanceModeManager as xSystemManager
         
         # Create xSystem manager
         manager = xSystemManager()

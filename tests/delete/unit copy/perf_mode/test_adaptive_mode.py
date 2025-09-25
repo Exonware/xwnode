@@ -8,9 +8,9 @@ Tests specifically for the ADAPTIVE performance mode functionality.
 import pytest
 import time
 import statistics
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
-from src.xlib.xnode.config import set_performance_mode
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
+from src.xlib.xwnode.config import set_performance_mode
 
 
 class TestAdaptiveMode:
@@ -19,7 +19,7 @@ class TestAdaptiveMode:
     def test_adaptive_mode_creation(self, test_data):
         """Test ADAPTIVE mode node creation."""
         start_time = time.time()
-        node = xNode.adaptive(test_data)
+        node = xwnode.adaptive(test_data)
         creation_time = (time.time() - start_time) * 1000
         
         assert node is not None
@@ -33,7 +33,7 @@ class TestAdaptiveMode:
     
     def test_adaptive_mode_learning(self, test_data):
         """Test that ADAPTIVE mode learns from operations."""
-        node = xNode.adaptive(test_data)
+        node = xwnode.adaptive(test_data)
         
         # Perform multiple operations to trigger learning
         for i in range(50):
@@ -60,7 +60,7 @@ class TestAdaptiveMode:
     def test_adaptive_mode_adaptation(self, test_data):
         """Test that ADAPTIVE mode adapts to different scenarios."""
         # Create adaptive node
-        node = xNode.adaptive(test_data)
+        node = xwnode.adaptive(test_data)
         
         # Perform operations that would trigger adaptation
         for i in range(100):
@@ -81,11 +81,11 @@ class TestAdaptiveMode:
         """Test ADAPTIVE mode configuration options."""
         
         # Small data should work well
-        small_node = xNode.adaptive(small_data)
+        small_node = xwnode.adaptive(small_data)
         assert small_node.get_performance_mode() == PerformanceMode.ADAPTIVE
         
         # Large data should also work well
-        large_node = xNode.adaptive(large_data)
+        large_node = xwnode.adaptive(large_data)
         assert large_node.get_performance_mode() == PerformanceMode.ADAPTIVE
         
         # Both should have adaptive learning enabled
@@ -99,18 +99,18 @@ class TestAdaptiveMode:
         """Test ADAPTIVE mode error handling."""
         
         # Test with None data (should be allowed)
-        node = xNode.adaptive(None)
+        node = xwnode.adaptive(None)
         assert node is not None
         assert node.get_performance_mode() == PerformanceMode.ADAPTIVE
         
         # Test with empty data structures
         empty_dict = {}
-        node = xNode.adaptive(empty_dict)
+        node = xwnode.adaptive(empty_dict)
         assert node is not None
         assert node.get_performance_mode() == PerformanceMode.ADAPTIVE
         
         empty_list = []
-        node = xNode.adaptive(empty_list)
+        node = xwnode.adaptive(empty_list)
         assert node is not None
         assert node.get_performance_mode() == PerformanceMode.ADAPTIVE
         
@@ -133,7 +133,7 @@ class TestAdaptiveMode:
         }
         
         # Should not crash
-        node = xNode.adaptive(complex_data)
+        node = xwnode.adaptive(complex_data)
         assert node is not None
         assert node.get_performance_mode() == PerformanceMode.ADAPTIVE
     
@@ -151,7 +151,7 @@ class TestAdaptiveMode:
         # Create multiple adaptive nodes
         nodes = []
         for i in range(10):
-            node = xNode.adaptive(test_data)
+            node = xwnode.adaptive(test_data)
             nodes.append(node)
         
         # Force garbage collection
@@ -174,7 +174,7 @@ class TestAdaptiveMode:
         import threading
         import time
         
-        node = xNode.adaptive(test_data)
+        node = xwnode.adaptive(test_data)
         results = []
         errors = []
         
@@ -207,7 +207,7 @@ class TestAdaptiveMode:
     def test_adaptive_mode_learning_curve(self, test_data):
         """Test ADAPTIVE mode learning curve over time."""
         
-        node = xNode.adaptive(test_data)
+        node = xwnode.adaptive(test_data)
         
         # Track performance over multiple operation batches
         performance_history = []
@@ -247,8 +247,8 @@ class TestAdaptiveMode:
         reset_performance_manager()
         
         # Test ADAPTIVE vs AUTO
-        auto_node = xNode.from_native(test_data, PerformanceMode.AUTO)
-        adaptive_node = xNode.adaptive(test_data)
+        auto_node = xwnode.from_native(test_data, PerformanceMode.AUTO)
+        adaptive_node = xwnode.adaptive(test_data)
         
         # Perform operations to trigger learning
         for i in range(50):

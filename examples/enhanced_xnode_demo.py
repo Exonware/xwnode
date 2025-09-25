@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Enhanced xNode Demonstration - xSystem Integration
+Enhanced xWNode Demonstration - xSystem Integration
 
-This demo showcases how xNode now properly leverages xSystem capabilities
+This demo showcases how xWNode now properly leverages xSystem capabilities
 while remaining format-agnostic (serialization is handled by xData).
 
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
 Version: 0.0.1
-Generation Date: September 3, 2025
+Generation Date: 07-Sep-2025
 """
 
 import sys
@@ -20,20 +20,20 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
 
 try:
-    from exonware.xnode import xNode, xNodeFactory, get_metrics
-    from exonware.xnode.strategies.types import NodeMode, EdgeMode
+    from exonware.xwnode import XWNode, XWFactory, get_metrics
+    from exonware.xwnode.strategies.types import NodeMode, EdgeMode
 except ImportError as e:
     print(f"❌ Import error: {e}")
-    print("Make sure you're running from the xnode directory")
+    print("Make sure you're running from the xwnode directory")
     sys.exit(1)
 
 
 def demo_format_agnostic_design():
-    """Demonstrate that xNode is truly format-agnostic."""
+    """Demonstrate that XWNode is truly format-agnostic."""
     print("🎯 DEMO 1: Format-Agnostic Design")
     print("=" * 50)
     
-    # xNode works with any Python data structure
+    # XWNode works with any Python data structure
     # Format conversion is handled by xData library
     
     data_structures = [
@@ -58,7 +58,7 @@ def demo_format_agnostic_design():
     
     for name, data in data_structures:
         print(f"\n📊 {name} Structure:")
-        node = xNode.from_native(data)
+        node = XWNode.from_native(data)
         
         print(f"   Type: {node.type}")
         print(f"   Is Dict: {node.is_dict}")
@@ -72,11 +72,11 @@ def demo_format_agnostic_design():
         elif node.is_list and len(node) > 0:
             print(f"   First item: {node[0].value}")
     
-    print("\n✅ xNode handles any structure without format assumptions")
+    print("\n✅ XWNode handles any structure without format assumptions")
 
 
 def demo_strategy_pattern():
-    """Demonstrate xNode's strategy pattern for different use cases."""
+    """Demonstrate XWNode's strategy pattern for different use cases."""
     print("\n🔄 DEMO 2: Strategy Pattern")
     print("=" * 50)
     
@@ -106,7 +106,7 @@ def demo_strategy_pattern():
         print(f"   Use case: {description}")
         
         try:
-            node = xNode.from_native(data)
+            node = XWNode.from_native(data)
             # Note: set_strategy would be implemented in the strategy manager
             print(f"   ✅ Node created successfully")
             print(f"   📊 Structure: {len(node)} top-level keys")
@@ -142,7 +142,7 @@ def demo_multi_language_queries():
         }
     }
     
-    node = xNode.from_native(data)
+    node = XWNode.from_native(data)
     
     # Different query languages (these would be implemented in the query engine)
     query_examples = [
@@ -171,8 +171,8 @@ def demo_multi_language_queries():
     print("\n✅ xQuery supports multiple query languages with auto-detection")
 
 
-def demo_xsystem_integration():
-    """Demonstrate xSystem integration benefits."""
+def demo_xwsystem_integration():
+    """Demonstrate xwsystem integration benefits."""
     print("\n🔧 DEMO 4: xSystem Integration Benefits")
     print("=" * 50)
     
@@ -183,7 +183,7 @@ def demo_xsystem_integration():
     
     # 1. Performance Monitoring
     print("\n   📊 Performance Monitoring:")
-    node = xNode.from_native(large_data)
+    node = XWNode.from_native(large_data)
     print(f"      ✅ Node created with {len(node)} items")
     print(f"      📈 Metrics: Available via xSystem monitoring")
     
@@ -231,7 +231,7 @@ def demo_edge_and_graph_operations():
         'nodes': {
             'A': {'type': 'user', 'name': 'Alice'},
             'B': {'type': 'user', 'name': 'Bob'},
-            'C': {'type': 'project', 'name': 'xNode'},
+            'C': {'type': 'project', 'name': 'XWNode'},
             'D': {'type': 'project', 'name': 'xSystem'}
         },
         'edges': [
@@ -242,7 +242,7 @@ def demo_edge_and_graph_operations():
         ]
     }
     
-    node = xNode.from_native(graph_data)
+    node = XWNode.from_native(graph_data)
     
     print("🎯 Graph Structure:")
     print(f"   📊 Nodes: {len(node['nodes'])}")
@@ -265,7 +265,7 @@ def demo_edge_and_graph_operations():
 
 def main():
     """Run all demonstrations."""
-    print("🚀 Enhanced xNode Demonstration")
+    print("🚀 Enhanced XWNode Demonstration")
     print("Showcasing xSystem integration while maintaining format-agnostic design")
     print("=" * 80)
     
@@ -273,13 +273,13 @@ def main():
         demo_format_agnostic_design()
         demo_strategy_pattern()
         demo_multi_language_queries()
-        demo_xsystem_integration()
+        demo_xwsystem_integration()
         demo_edge_and_graph_operations()
         
         print("\n" + "=" * 80)
         print("🎉 DEMONSTRATION COMPLETE")
         print("\n🎯 Key Achievements:")
-        print("   ✅ xNode remains format-agnostic (xData handles serialization)")
+        print("   ✅ XWNode remains format-agnostic (xData handles serialization)")
         print("   ✅ Enhanced xSystem integration for enterprise capabilities")
         print("   ✅ Multi-language query engine (7+ query languages)")
         print("   ✅ Strategy pattern with 44 total strategies (28 Node + 16 Edge)")
@@ -288,7 +288,7 @@ def main():
         
         print("\n📚 Next Steps:")
         print("   🔗 xData library will handle format conversion (JSON, YAML, XML, etc.)")
-        print("   🎯 xNode provides the underlying graph/tree engine")
+        print("   🎯 XWNode provides the underlying graph/tree engine")
         print("   🚀 Together they form a powerful, format-agnostic data processing system")
         
     except Exception as e:

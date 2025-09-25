@@ -1,11 +1,11 @@
-# xnode Requirements
+# xwnode Requirements
 # Company: eXonware.com
 # Author: Eng. Muhammad AlShehri
 # Email: connect@exonware.com
-# Version: 0.0.1
+# Version: 0.0.1.3
 # Generation Date: February 2, 2025
 #
-# This file contains all dependencies needed for xnode
+# This file contains all dependencies needed for xwnode
 # Compatible with Python 3.8+ for maximum compatibility
 #
 # Usage:
@@ -74,10 +74,10 @@ mypy>=0.950                          # Static type checking
 # =============================================================================
 #
 # After installing requirements, verify with:
-#   python -c "from exonware.xnode import *; print('✅ xnode loaded!')"
+#   python -c "from exonware.xwnode import *; print('✅ xwnode loaded!')"
 #
 # Or run comprehensive verification:
 #   python tests/verify_installation.py
 #
 # Expected output:
-#   🎉 SUCCESS! exonware.xnode is ready to use!
+#   🎉 SUCCESS! exonware.xwnode is ready to use!

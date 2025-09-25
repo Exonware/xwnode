@@ -10,9 +10,9 @@ import time
 import gc
 import psutil
 import os
-from src.xlib.xnode import xNode
-from src.xlib.xsystem.config import PerformanceMode
-from src.xlib.xnode.config import set_performance_mode, reset_performance_manager
+from src.xlib.xwnode import xwnode
+from src.xlib.xwsystem.config import PerformanceMode
+from src.xlib.xwnode.config import set_performance_mode, reset_performance_manager
 
 # Import test configuration
 try:
@@ -49,7 +49,7 @@ class PerformanceBenchmark:
         memory_before = PerformanceBenchmark.measure_memory()
         start_time = time.perf_counter()
         
-        node = xNode.from_native(data, mode)
+        node = xwnode.from_native(data, mode)
         
         creation_time = (time.perf_counter() - start_time) * 1000
         memory_after_creation = PerformanceBenchmark.measure_memory()

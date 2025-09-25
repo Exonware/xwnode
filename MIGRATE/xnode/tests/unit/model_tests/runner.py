@@ -15,13 +15,13 @@ from pathlib import Path
 
 def setup_environment():
     """Setup the Python environment for running tests."""
-    # Use xsystem utility for path setup
+    # Use xwsystem utility for path setup
     try:
-        from src.xlib.xsystem.utils.paths import setup_python_path
+        from src.xlib.xwsystem.utils.paths import setup_python_path
         project_root, src_path = setup_python_path(__file__, levels_up=6)
         return project_root, src_path
     except ImportError:
-        # Fallback to manual calculation if xsystem not available
+        # Fallback to manual calculation if xwsystem not available
         current_file = Path(__file__).resolve()
         project_root = current_file.parent.parent.parent.parent.parent.parent.parent
         src_path = project_root / "src"

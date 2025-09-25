@@ -7,7 +7,7 @@ discovery, and instantiation in the strategy system.
 
 import threading
 from typing import Dict, Type, List, Optional, Any, Callable
-from src.xlib.xsystem.logging_setup import get_logger
+from src.xlib.xwsystem.logging_setup import get_logger
 from .types import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 from ..errors import xNodeStrategyNotFoundError, xNodeStrategyInitializationError
 
@@ -78,6 +78,8 @@ class StrategyRegistry:
             from .impls.node_radix_trie import xRadixTrieStrategy
             from .impls.node_patricia import xPatriciaStrategy
             from .impls.node_b_plus_tree import xBPlusTreeStrategy
+            from .impls.node_persistent_tree import xPersistentTreeStrategy
+            from .impls.node_cow_tree import xCOWTreeStrategy
             from .impls.node_ordered_map_balanced import xOrderedMapBalancedStrategy
             from .impls.node_bitset_dynamic import xBitsetDynamicStrategy
             from .impls.edge_block_adj_matrix import xBlockAdjMatrixStrategy
@@ -138,6 +140,8 @@ class StrategyRegistry:
             self.register_node_strategy(NodeMode.RADIX_TRIE, xRadixTrieStrategy)
             self.register_node_strategy(NodeMode.PATRICIA, xPatriciaStrategy)
             self.register_node_strategy(NodeMode.B_PLUS_TREE, xBPlusTreeStrategy)
+            self.register_node_strategy(NodeMode.PERSISTENT_TREE, xPersistentTreeStrategy)
+            self.register_node_strategy(NodeMode.COW_TREE, xCOWTreeStrategy)
             self.register_node_strategy(NodeMode.ORDERED_MAP_BALANCED, xOrderedMapBalancedStrategy)
             self.register_node_strategy(NodeMode.BITSET_DYNAMIC, xBitsetDynamicStrategy)
             

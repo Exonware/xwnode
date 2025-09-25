@@ -51,6 +51,8 @@ class NodeMode(Enum):
     B_TREE = _auto()                  # Disk/page indexes
     B_PLUS_TREE = _auto()             # Database-friendly B+ tree
     LSM_TREE = _auto()                # Write-heavy key-value store
+    PERSISTENT_TREE = _auto()         # Immutable functional tree
+    COW_TREE = _auto()                # Copy-on-write tree
     
     # Algorithmic structures
     UNION_FIND = _auto()              # Connectivity/disjoint sets
@@ -195,6 +197,8 @@ ROARING_BITMAP = NodeMode.ROARING_BITMAP
 B_TREE = NodeMode.B_TREE
 B_PLUS_TREE = NodeMode.B_PLUS_TREE
 LSM_TREE = NodeMode.LSM_TREE
+PERSISTENT_TREE = NodeMode.PERSISTENT_TREE
+COW_TREE = NodeMode.COW_TREE
 UNION_FIND = NodeMode.UNION_FIND
 SEGMENT_TREE = NodeMode.SEGMENT_TREE
 FENWICK_TREE = NodeMode.FENWICK_TREE
@@ -333,6 +337,26 @@ NODE_STRATEGY_METADATA: Dict[NodeMode, StrategyMetadata] = {
         "100-1000x faster writes",
         "high",
         {"get": "O(log n)", "set": "O(1)", "delete": "O(1)"}
+    ),
+    
+    NodeMode.PERSISTENT_TREE: StrategyMetadata(
+        NodeMode.PERSISTENT_TREE,
+        NodeTrait.PERSISTENT | NodeTrait.ORDERED | NodeTrait.INDEXED,
+        "Immutable functional tree with structural sharing",
+        ["functional programming", "versioning", "concurrent access", "undo/redo"],
+        "Lock-free concurrency, memory efficient",
+        "medium",
+        {"get": "O(log n)", "set": "O(log n)", "delete": "O(log n)"}
+    ),
+    
+    NodeMode.COW_TREE: StrategyMetadata(
+        NodeMode.COW_TREE,
+        NodeTrait.PERSISTENT | NodeTrait.ORDERED | NodeTrait.INDEXED,
+        "Copy-on-write tree with atomic snapshots",
+        ["snapshots", "versioning", "crash consistency", "backup"],
+        "Instant snapshots, atomic updates",
+        "medium",
+        {"get": "O(log n)", "set": "O(log n)", "snapshot": "O(1)"}
     ),
     
     NodeMode.UNION_FIND: StrategyMetadata(

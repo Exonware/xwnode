@@ -1,5 +1,5 @@
 """
-Tests for xNode performance mode system.
+Tests for xwnode performance mode system.
 
 This module tests the performance mode functionality including:
 - Performance mode creation and switching
@@ -14,11 +14,11 @@ import time
 import sys
 from typing import Dict, Any
 
-from src.xlib.xnode import (
-    xNode, PerformanceMode, PerformanceProfile, PerformanceProfiles,
+from src.xlib.xwnode import (
+    xwnode, PerformanceMode, PerformanceProfile, PerformanceProfiles,
     set_performance_mode, get_performance_mode, get_config, get_pool_stats
 )
-from src.xlib.xsystem.config import PerformanceMode as SystemPerformanceMode
+from src.xlib.xwsystem.config import PerformanceMode as SystemPerformanceMode
 
 
 class TestPerformanceModeBasics:
@@ -167,13 +167,13 @@ class TestDataSizeEstimation:
         assert size > 10  # Should be substantial for nested data
 
 
-class TestXNodePerformanceModes:
-    """Test xNode performance mode integration."""
+class TestXWNodePerformanceModes:
+    """Test xwnode performance mode integration."""
     
     def test_fast_mode_creation(self):
         """Test creating xNode in fast mode."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.fast(data)
+        node = xwnode.fast(data)
         
         # Check that fast mode is active
         config = get_config()
@@ -187,7 +187,7 @@ class TestXNodePerformanceModes:
     def test_optimized_mode_creation(self):
         """Test creating xNode in optimized mode."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.optimized(data)
+        node = xwnode.optimized(data)
         
         # Check that optimized mode is active
         config = get_config()
@@ -201,7 +201,7 @@ class TestXNodePerformanceModes:
     def test_manual_mode_creation(self):
         """Test creating xNode with manual configuration."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.manual(
+        node = xwnode.manual(
             data,
             path_cache_size=4096,
             enable_thread_safety=False,
@@ -226,7 +226,7 @@ class TestXNodePerformanceModes:
     def test_from_native_with_mode(self):
         """Test creating xNode with specific performance mode."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.from_native(data, PerformanceMode.FAST)
+        node = xwnode.from_native(data, PerformanceMode.FAST)
         
         # Check that fast mode is active
         config = get_config()
@@ -241,13 +241,13 @@ class TestXNodePerformanceModes:
         """Test automatic mode detection based on data size."""
         # Small data should use FAST mode
         small_data = {"a": 1}
-        node = xNode.from_native(small_data, PerformanceMode.AUTO)
+        node = xwnode.from_native(small_data, PerformanceMode.AUTO)
         config = get_config()
         assert config.performance_mode == PerformanceMode.AUTO
         
         # Large data should use OPTIMIZED mode
         large_data = {f"key_{i}": f"value_{i}" for i in range(1000)}
-        node = xNode.from_native(large_data, PerformanceMode.AUTO)
+        node = xwnode.from_native(large_data, PerformanceMode.AUTO)
         config = get_config()
         assert config.performance_mode == PerformanceMode.AUTO
 
@@ -270,9 +270,9 @@ class TestPerformanceModeSwitching:
         assert get_performance_mode() == PerformanceMode.OPTIMIZED
     
     def test_node_performance_mode_methods(self):
-        """Test xNode performance mode methods."""
+        """Test xwnode performance mode methods."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.from_native(data)
+        node = xwnode.from_native(data)
         
         # Test getting current mode
         assert node.get_performance_mode() == get_performance_mode()
@@ -298,16 +298,16 @@ class TestObjectPooling:
         data1 = {"a": 1, "b": 2}
         data2 = {"c": 3, "d": 4}
         
-        node1 = xNode.fast(data1)
-        node2 = xNode.optimized(data2)
+        node1 = xwnode.fast(data1)
+        node2 = xwnode.optimized(data2)
         
         # Get pool stats
         pool_stats = get_pool_stats()
         assert isinstance(pool_stats, dict)
         
-        # Check that xnode pool exists
-        if 'xnode' in pool_stats:
-            xnode_stats = pool_stats['xnode']
+        # Check that xwnode pool exists
+        if 'xwnode' in pool_stats:
+            xwnode_stats = pool_stats['xwnode']
             assert 'stats' in xnode_stats
             assert 'pool_sizes' in xnode_stats
             assert 'max_size' in xnode_stats
@@ -316,7 +316,7 @@ class TestObjectPooling:
         """Test that object pooling is properly integrated."""
         # Create nodes in fast mode (should use pooling)
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.fast(data)
+        node = xwnode.fast(data)
         
         # Get performance stats to verify pooling is enabled
         stats = node.get_performance_stats()
@@ -324,7 +324,7 @@ class TestObjectPooling:
         assert config['enable_object_pooling'] is True
         
         # Create nodes in optimized mode (should also use pooling)
-        node2 = xNode.optimized(data)
+        node2 = xwnode.optimized(data)
         stats2 = node2.get_performance_stats()
         config2 = stats2['config']
         assert config2['enable_object_pooling'] is True
@@ -336,7 +336,7 @@ class TestPerformanceMonitoring:
     def test_performance_stats_structure(self):
         """Test that performance stats have the expected structure."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.from_native(data)
+        node = xwnode.from_native(data)
         
         stats = node.get_performance_stats()
         
@@ -364,7 +364,7 @@ class TestPerformanceMonitoring:
     def test_cache_performance(self):
         """Test that caching improves performance."""
         data = {"a": {"b": {"c": {"d": {"e": 42}}}}}
-        node = xNode.from_native(data)
+        node = xwnode.from_native(data)
         
         # First access (cache miss)
         start_time = time.time()
@@ -472,13 +472,13 @@ class TestIntegrationScenarios:
         }
         
         # Test with fast mode
-        fast_node = xNode.fast(large_data)
+        fast_node = xwnode.fast(large_data)
         fast_start = time.time()
         fast_result = fast_node.find("users.500.name")
         fast_time = time.time() - fast_start
         
         # Test with optimized mode
-        optimized_node = xNode.optimized(large_data)
+        optimized_node = xwnode.optimized(large_data)
         optimized_start = time.time()
         optimized_result = optimized_node.find("users.500.name")
         optimized_time = time.time() - optimized_start
@@ -494,7 +494,7 @@ class TestIntegrationScenarios:
     def test_mode_switching_scenario(self):
         """Test switching modes during processing."""
         data = {"a": 1, "b": 2, "c": 3}
-        node = xNode.from_native(data)
+        node = xwnode.from_native(data)
         
         # Start with default mode
         assert node.get_performance_mode() == PerformanceMode.DEFAULT
@@ -528,7 +528,7 @@ class TestIntegrationScenarios:
         results = []
         
         def worker(mode, node_id):
-            node = xNode.from_native(data, mode)
+            node = xwnode.from_native(data, mode)
             result = node.find("a")
             results.append((node_id, result.value))
         
