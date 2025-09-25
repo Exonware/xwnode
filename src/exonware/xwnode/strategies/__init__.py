@@ -15,7 +15,7 @@ This package implements the enhanced strategy system with xwsystem-inspired opti
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.3
+Version: 0.0.1.4
 Generation Date: 07-Sep-2025
 """
 

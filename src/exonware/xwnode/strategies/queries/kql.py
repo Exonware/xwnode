@@ -7,7 +7,7 @@ This module implements the KQL query strategy for Kusto Query Language operation
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.3
+Version: 0.0.1.4
 Generation Date: January 2, 2025
 """
 
