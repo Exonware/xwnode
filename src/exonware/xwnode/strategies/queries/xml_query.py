@@ -7,7 +7,7 @@ This module implements the XML Query strategy for generic XML operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.8
+Version: 0.0.1.11
 Generation Date: January 2, 2025
 """
 

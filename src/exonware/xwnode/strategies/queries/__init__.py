@@ -9,7 +9,7 @@ This package contains all query strategy implementations organized by type:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.8
+Version: 0.0.1.11
 Generation Date: January 2, 2025
 """
 

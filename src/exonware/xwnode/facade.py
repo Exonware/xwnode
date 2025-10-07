@@ -9,7 +9,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.8
+Version: 0.0.1.11
 Generation Date: 07-Sep-2025
 """
 
