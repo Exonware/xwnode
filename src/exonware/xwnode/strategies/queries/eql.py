@@ -7,7 +7,7 @@ This module implements the EQL query strategy for Elasticsearch Query Language o
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.12
+Version: 0.0.1.13
 Generation Date: January 2, 2025
 """
 

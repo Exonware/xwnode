@@ -71,4 +71,3 @@ jobs:
         echo "Install with:"
         echo "   pip install exonware-xwnode"
         echo "   pip install xwnode"
-
