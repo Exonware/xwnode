@@ -10,7 +10,7 @@ selection with sophisticated heuristics.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: 07-Sep-2025
 """
 
@@ -20,12 +20,10 @@ import threading
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 from dataclasses import dataclass
 from enum import Enum
+from exonware.xwsystem import get_logger
 
-try:
-    from exonware.xwsystem import get_logger
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
+
 from ..types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 
 

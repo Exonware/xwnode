@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """
+#exonware/xwnode/src/exonware/xwnode/base.py
+
 Abstract base classes for XWNode.
 
 This module contains the abstract base classes that provide core functionality
@@ -19,61 +21,31 @@ from .errors import (
 from .config import get_config
 from .contracts import iNodeFacade, iNodeStrategy, iEdge, iEdgeStrategy, iQuery, iQueryResult, iQueryEngine
 
-# System-level imports - reuse xwsystem capabilities with fallbacks
-try:
-    from exonware.xwsystem.security import get_resource_limits
-    from exonware.xwsystem.validation import validate_untrusted_data
-    from exonware.xwsystem.monitoring import create_component_metrics
-    from exonware.xwsystem.threading import ThreadSafeFactory, create_thread_safe_cache
-    from exonware.xwsystem.patterns import CircuitBreaker
-    from exonware.xwsystem import get_logger
-    XWSYSTEM_AVAILABLE = True
-except ImportError:
-    # Fallback implementations when xwsystem is not available
-    def get_resource_limits(): return {}
-    def validate_untrusted_data(data): return data
-    def create_component_metrics(name): return {}
-    class ThreadSafeFactory:
-        @staticmethod
-        def create_lock(): return threading.Lock()
-    def create_thread_safe_cache(): return {}
-    class CircuitBreaker:
-        def __init__(self, *args, **kwargs): pass
-    import logging
-    def get_logger(name): return logging.getLogger(name)
-    XWSYSTEM_AVAILABLE = False
+# System-level imports - standard imports (no defensive code!)
+from exonware.xwsystem.security import get_resource_limits
+from exonware.xwsystem.validation import validate_untrusted_data
+from exonware.xwsystem.monitoring import create_component_metrics
+from exonware.xwsystem.threading import ThreadSafeFactory, create_thread_safe_cache
+from exonware.xwsystem.patterns import CircuitBreaker
+from exonware.xwsystem import get_logger
 
 logger = get_logger('xwnode.base')
 
 # Metrics setup
 _metrics = create_component_metrics('xwnode_base')
-if XWSYSTEM_AVAILABLE:
-    measure_operation = _metrics['measure_operation']
-    record_cache_hit = _metrics['record_cache_hit']
-else:
-    # Fallback implementations
-    def measure_operation(name):
-        def decorator(func):
-            return func
-        return decorator
-    def record_cache_hit(name): pass
-if XWSYSTEM_AVAILABLE:
-    record_cache_miss = _metrics['record_cache_miss']
-    # Thread-safe cache for path parsing
-    _path_cache = create_thread_safe_cache(max_size=1024)
-else:
-    def record_cache_miss(name): pass
-    _path_cache = {}
+measure_operation = _metrics['measure_operation']
+record_cache_hit = _metrics['record_cache_hit']
+record_cache_miss = _metrics['record_cache_miss']
+
+# Thread-safe cache for path parsing
+_path_cache = create_thread_safe_cache(max_size=1024)
 
 # Circuit breaker for strategy operations
-if XWSYSTEM_AVAILABLE:
-    _strategy_circuit_breaker = CircuitBreaker(
-        failure_threshold=5,
-        recovery_timeout=30,
-        expected_exception=Exception
-    )
-else:
-    _strategy_circuit_breaker = CircuitBreaker()
+_strategy_circuit_breaker = CircuitBreaker(
+    failure_threshold=5,
+    recovery_timeout=30,
+    expected_exception=Exception
+)
 
 
 class PathParser:

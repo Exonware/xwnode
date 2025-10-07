@@ -1,4 +1,6 @@
 """
+#exonware/xwnode/src/exonware/xwnode/strategies/advisor.py
+
 Strategy Advisor
 
 This module provides the StrategyAdvisor class for intelligent strategy selection,
@@ -10,12 +12,9 @@ import threading
 from typing import Dict, List, Optional, Tuple, Any, NamedTuple
 from dataclasses import dataclass
 from collections import defaultdict, deque
-try:
-    from exonware.xwsystem import get_logger
-    logger = get_logger(__name__)
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+from exonware.xwsystem import get_logger
+
+logger = get_logger(__name__)
 
 from ..types import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 

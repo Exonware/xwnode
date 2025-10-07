@@ -9,7 +9,7 @@ This enables data-driven strategy selection and performance tuning.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: 07-Sep-2025
 """
 
@@ -19,12 +19,10 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
+from exonware.xwsystem import get_logger
 
-try:
-    from exonware.xwsystem import get_logger
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
+
 from ..types import NodeMode, EdgeMode
 
 

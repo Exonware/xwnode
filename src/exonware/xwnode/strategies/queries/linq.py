@@ -7,7 +7,7 @@ This module implements the LINQ query strategy for Language Integrated Query ope
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: January 2, 2025
 """
 

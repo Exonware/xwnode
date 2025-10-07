@@ -1,4 +1,6 @@
 """
+#exonware/xwnode/src/exonware/xwnode/errors.py
+
 A+ Best Practice Error Handling for xwnode Library.
 
 This module implements zero-overhead error handling with rich context,
@@ -8,12 +10,9 @@ actionable suggestions, and performance optimization for critical paths.
 import time
 import difflib
 from typing import Any, Dict, List, Optional, Union
-try:
-    from exonware.xwsystem import get_logger
-    logger = get_logger(__name__)
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+from exonware.xwsystem import get_logger
+
+logger = get_logger(__name__)
 
 
 # ============================================================================

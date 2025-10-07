@@ -8,7 +8,7 @@ and provides conversion between different query formats using actions in tree fo
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: January 2, 2025
 """
 
@@ -253,13 +253,9 @@ class XWQueryScriptStrategy(AQueryStrategy):
     
     def _get_strategy_class(self, format_name: str) -> Optional[Type[AQueryStrategy]]:
         """Get strategy class for format using XWNode's strategy registry."""
-        try:
-            from ..registry import get_strategy_registry
-            registry = get_strategy_registry()
-            return registry.get_query_strategy(format_name.upper())
-        except ImportError:
-            # Fallback to direct imports
-            return self._get_strategy_class_fallback(format_name)
+        from ..registry import get_strategy_registry
+        registry = get_strategy_registry()
+        return registry.get_query_strategy(format_name.upper())
     
     def _get_strategy_class_fallback(self, format_name: str) -> Optional[Type[AQueryStrategy]]:
         """Fallback strategy class lookup."""

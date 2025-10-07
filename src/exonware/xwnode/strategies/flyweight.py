@@ -10,7 +10,7 @@ configuration, which is especially important for high-throughput applications.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: 07-Sep-2025
 """
 
@@ -19,12 +19,10 @@ import hashlib
 import json
 from typing import Any, Dict, Hashable, Optional, Type, TypeVar, Union
 from weakref import WeakValueDictionary
+from exonware.xwsystem import get_logger
 
-try:
-    from exonware.xwsystem import get_logger
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
+
 from ..types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from .nodes.base import ANodeStrategy
 from .edges.base import AEdgeStrategy

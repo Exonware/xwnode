@@ -1,4 +1,6 @@
 """
+#exonware/xwnode/src/exonware/xwnode/strategies/nodes/node_tree_graph_hybrid.py
+
 Tree Graph Hybrid Strategy Implementation
 
 This module provides a unified tree engine strategy that contains all the XWNodeBase functionality
@@ -15,14 +17,9 @@ from collections import OrderedDict
 from ...types import NodeMode, NodeTrait
 from ...abc import iNodeStrategy, NodeTrait
 from ...errors import xNodePathError
+from exonware.xwsystem import get_logger
 
-# Use xSystem logging
-try:
-    from exonware.xwsystem import get_logger
-    logger = get_logger(__name__)
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 # Import shared utilities
 from ..utils import (

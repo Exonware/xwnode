@@ -1,4 +1,6 @@
 """
+#exonware/xwnode/src/exonware/xwnode/__init__.py
+
 xwnode: A lightweight library for representing and navigating hierarchical data.
 
 The xwnode library provides a clean, immutable interface for working with
@@ -8,7 +10,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: 07-Sep-2025
 
 Main Classes:
@@ -44,6 +46,15 @@ Example:
     25
 """
 
+# =============================================================================
+# LAZY INSTALLATION - Simple One-Line Configuration
+# =============================================================================
+from exonware.xwsystem.utils.lazy_discovery import config_package_lazy_install_enabled
+config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
+
+# =============================================================================
+# IMPORTS - Standard Python Imports (No Defensive Code!)
+# =============================================================================
 from .facade import (
     XWNode, XWEdge, XWQuery, XWFactory,
     # A+ Usability Presets
@@ -56,6 +67,10 @@ from .errors import (
     XWNodeSecurityError, XWNodeLimitError, XWNodePathSecurityError
 )
 from .config import XWNodeConfig, get_config, set_config
+
+# xwsystem lazy install functionality
+from exonware.xwsystem.utils.lazy_install import xwimport
+from exonware.xwsystem.monitoring import get_metrics as get_xwsystem_metrics, reset_metrics as reset_xwsystem_metrics
 
 # Version info
 __version__ = '0.0.1'
@@ -86,6 +101,9 @@ __all__ = [
     'get_config',
     'set_config',
     
+    # Lazy Install
+    'xwimport',
+    
     # Exceptions
     'XWNodeError',
     'XWNodeTypeError', 
@@ -96,19 +114,14 @@ __all__ = [
     'XWNodePathSecurityError',
 ]
 
-# Convenience functions for XWNode metrics
+# =============================================================================
+# CONVENIENCE FUNCTIONS
+# =============================================================================
+
 def get_metrics():
     """Get XWNode metrics instance."""
-    try:
-        from exonware.xwsystem.monitoring import get_metrics as get_xwsystem_metrics
-        return get_xwsystem_metrics('xwnode')
-    except ImportError:
-        return {}
+    return get_xwsystem_metrics('xwnode')
 
 def reset_metrics():
     """Reset XWNode metrics."""
-    try:
-        from exonware.xwsystem.monitoring import reset_metrics
-        reset_metrics('xwnode')
-    except ImportError:
-        pass
+    reset_xwsystem_metrics('xwnode')

@@ -1,4 +1,6 @@
 """
+#exonware/xwnode/src/exonware/xwnode/strategies/manager.py
+
 Enhanced Strategy Manager
 
 This module provides the enhanced StrategyManager class that integrates:
@@ -10,18 +12,16 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.4
+Version: 0.0.1.5
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
 from typing import Dict, Optional, Any, Union, List
-try:
-    from exonware.xwsystem import get_logger
-except ImportError:
-    import logging
-    logger = logging.getLogger(__name__)
+from exonware.xwsystem import get_logger
+
+logger = get_logger(__name__)
 from ..types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from .registry import get_registry
 from .advisor import get_advisor
@@ -238,12 +238,9 @@ class StrategyManager:
         # But fall back to HASH_MAP if TREE_GRAPH_HYBRID is not available
         if ((initial_data is not None and not isinstance(initial_data, (dict, list))) or
             (initial_data is None)) and not is_dict and not is_list:
-            # Try TREE_GRAPH_HYBRID first, fall back to HASH_MAP
-            try:
-                from .impls.node_tree_graph_hybrid import TreeGraphHybridStrategy
-                return NodeMode.TREE_GRAPH_HYBRID
-            except ImportError:
-                return NodeMode.HASH_MAP
+            # Use TREE_GRAPH_HYBRID for XWNode compatibility
+            from .impls.node_tree_graph_hybrid import TreeGraphHybridStrategy
+            return NodeMode.TREE_GRAPH_HYBRID
         
         # Fast path for simple data type patterns
         if is_list or has_numeric_indices:
