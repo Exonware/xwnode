@@ -7,7 +7,7 @@ This module implements the XQuery query strategy for XML data queries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.11
+Version: 0.0.1.12
 Generation Date: January 2, 2025
 """
 
