@@ -3,7 +3,7 @@
 **Company:** eXonware.com  
 **Author:** Eng. Muhammad AlShehri  
 **Email:** connect@exonware.com  
-**Version:** 0.0.1.5
+**Version:** 0.0.1.8
 
 ## 🎯 **What is xwnode?**
 

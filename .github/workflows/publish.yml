@@ -1,0 +1,74 @@
+name: Dual PyPI Publish - exonware-xwnode & xwnode
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v0.0.2, v1.0.0, etc.
+  workflow_dispatch:  # Allows manual trigger of the workflow
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+    
+    - name: Build exonware-xwnode package
+      run: |
+        echo "Building exonware-xwnode package..."
+        python -m build
+        
+    - name: Build xwnode package
+      run: |
+        echo "Building xwnode package..."
+        cp pyproject.toml pyproject.backup.toml
+        cp pyproject.xwnode.toml pyproject.toml
+        python -m build
+        mv pyproject.backup.toml pyproject.toml
+    
+    - name: List built packages
+      run: |
+        echo "Built packages:"
+        find dist -name "*.whl" -o -name "*.tar.gz" | sort
+    
+    - name: Publish exonware-xwnode to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        echo "Publishing exonware-xwnode to PyPI..."
+        ls -la dist/
+        twine upload dist/exonware_xwnode-*.whl dist/exonware_xwnode-*.tar.gz
+    
+    - name: Publish xwnode to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        echo "Publishing xwnode to PyPI..."
+        twine upload dist/xwnode-*.whl dist/xwnode-*.tar.gz
+        
+    - name: Success notification
+      run: |
+        echo "Successfully published both packages:"
+        echo "   exonware-xwnode v${{ github.ref_name }}"
+        echo "   xwnode v${{ github.ref_name }}"
+        echo ""
+        echo "PyPI URLs:"
+        echo "   https://pypi.org/project/exonware-xwnode/"
+        echo "   https://pypi.org/project/xwnode/"
+        echo ""
+        echo "Install with:"
+        echo "   pip install exonware-xwnode"
+        echo "   pip install xwnode"
+
