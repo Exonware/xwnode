@@ -10,7 +10,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.16
+Version: 0.0.1.17
 Generation Date: 07-Sep-2025
 
 Main Classes:

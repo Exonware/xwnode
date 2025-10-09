@@ -9,7 +9,7 @@ Implements SELECT operation execution on all node types.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.16
+Version: 0.0.1.17
 Generation Date: 08-Oct-2025
 """
 

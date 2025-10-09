@@ -7,7 +7,7 @@ This module implements the CQL query strategy for Cassandra Query Language opera
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.16
+Version: 0.0.1.17
 Generation Date: January 2, 2025
 """
 
