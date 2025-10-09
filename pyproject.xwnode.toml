@@ -113,4 +113,20 @@ markers = [
 [tool.hatch.version]
 path = "src/exonware/xwnode/version.py"
 
-[tool.hatch.build]
+[tool.hatch.build.targets.wheel]
+only-include = [
+    "README.md",
+    "src/xwnode_wrapper.py",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+    "/examples",
+    "/README.md",
+    "/LICENSE",
+    "/requirements.txt",
+    "/pyproject.toml",
+]

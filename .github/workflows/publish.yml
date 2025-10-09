@@ -1,4 +1,4 @@
-name: PyPI Publish - exonware-xwnode (supports both import paths)
+name: Dual PyPI Publish - exonware-xwnode & xwnode
 
 on:
   push:
@@ -28,6 +28,14 @@ jobs:
         echo "Building exonware-xwnode package..."
         python -m build
         
+    - name: Build xwnode wrapper package
+      run: |
+        echo "Building xwnode wrapper package..."
+        cp pyproject.toml pyproject.backup.toml
+        cp pyproject.xwnode.toml pyproject.toml
+        python -m build --wheel
+        mv pyproject.backup.toml pyproject.toml
+    
     - name: List built packages
       run: |
         echo "Built packages:"
@@ -38,22 +46,31 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        echo "Publishing exonware-xwnode to PyPI (includes both import paths)..."
+        echo "Publishing exonware-xwnode to PyPI..."
         ls -la dist/
         twine upload dist/exonware_xwnode-*.whl dist/exonware_xwnode-*.tar.gz
-        echo "✅ Both 'import xwnode' and 'import exonware.xwnode' now work!"
+    
+    - name: Publish xwnode wrapper to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        echo "Publishing xwnode wrapper to PyPI..."
+        twine upload dist/xwnode-*.whl
         
     - name: Success notification
       run: |
-        echo "✅ Successfully published exonware-xwnode v${{ github.ref_name }}"
+        echo "✅ Successfully published both packages:"
+        echo "   📦 exonware-xwnode v${{ github.ref_name }} (full package)"
+        echo "   📦 xwnode v${{ github.ref_name }} (wrapper)"
         echo ""
-        echo "PyPI URL:"
+        echo "PyPI URLs:"
         echo "   https://pypi.org/project/exonware-xwnode/"
+        echo "   https://pypi.org/project/xwnode/"
         echo ""
         echo "Install with either:"
-        echo "   pip install exonware-xwnode"
-        echo "   pip install exonware-xwnode[lazy]  # Minimal dependencies"
-        echo "   pip install exonware-xwnode[full]  # All features"
+        echo "   pip install xwnode[lazy]  # Recommended (wrapper)"
+        echo "   pip install exonware-xwnode[lazy]  # Direct"
         echo ""
         echo "Both import paths work:"
         echo "   import xwnode"
