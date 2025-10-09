@@ -12,12 +12,12 @@ from typing import Any, List, Dict, Optional
 def print_banner():
     """Print console banner."""
     banner = """
-╔══════════════════════════════════════════════════════════════╗
-║             XWQuery Interactive Console v0.0.1               ║
-║                                                              ║
-║  Type .help for commands | .examples for sample queries     ║
-║  Type .exit or Ctrl+C to quit                               ║
-╚══════════════════════════════════════════════════════════════╝
+================================================================
+            XWQuery Interactive Console v0.0.1
+================================================================
+  Type .help for commands | .examples for sample queries
+  Type .exit or Ctrl+C to quit
+================================================================
 """
     print(banner)
 
@@ -154,26 +154,24 @@ def format_table(items: List[Dict[str, Any]], max_col_width: int = 30) -> str:
     lines = []
     
     # Header
-    header = "│ " + " │ ".join(
+    header = "| " + " | ".join(
         str(key).ljust(col_widths[key]) for key in keys
-    ) + " │"
-    separator = "├─" + "─┼─".join("─" * col_widths[key] for key in keys) + "─┤"
-    top = "┌─" + "─┬─".join("─" * col_widths[key] for key in keys) + "─┐"
-    bottom = "└─" + "─┴─".join("─" * col_widths[key] for key in keys) + "─┘"
+    ) + " |"
+    separator = "+-" + "-+-".join("-" * col_widths[key] for key in keys) + "-+"
     
-    lines.append(top)
+    lines.append(separator)
     lines.append(header)
     lines.append(separator)
     
     # Rows
     for item in items:
-        row = "│ " + " │ ".join(
+        row = "| " + " | ".join(
             truncate_str(str(item.get(key, '')), col_widths[key]).ljust(col_widths[key])
             for key in keys
-        ) + " │"
+        ) + " |"
         lines.append(row)
     
-    lines.append(bottom)
+    lines.append(separator)
     
     return "\n".join(lines)
 
@@ -188,12 +186,12 @@ def truncate_str(s: str, max_len: int) -> str:
 def format_error(error: Exception) -> str:
     """Format error message."""
     error_type = type(error).__name__
-    return f"❌ {error_type}: {str(error)}"
+    return f"[ERROR] {error_type}: {str(error)}"
 
 
 def format_success(message: str) -> str:
     """Format success message."""
-    return f"✅ {message}"
+    return f"[OK] {message}"
 
 
 def format_execution_time(seconds: float) -> str:

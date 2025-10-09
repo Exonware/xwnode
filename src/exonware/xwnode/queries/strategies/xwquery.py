@@ -8,7 +8,7 @@ and provides conversion between different query formats using actions in tree fo
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.14
+Version: 0.0.1.15
 Generation Date: January 2, 2025
 """
 
@@ -21,6 +21,7 @@ from .base import AQueryStrategy
 from ...base import XWNodeBase
 from ...contracts import QueryMode, QueryTrait
 from ...errors import XWNodeTypeError, XWNodeValueError
+from ..parsers.sql_param_extractor import SQLParamExtractor
 
 
 class XWQueryScriptStrategy(AQueryStrategy):
@@ -49,6 +50,9 @@ class XWQueryScriptStrategy(AQueryStrategy):
         super().__init__(**options)
         self._mode = QueryMode.AUTO
         self._traits = QueryTrait.STRUCTURED | QueryTrait.ANALYTICAL | QueryTrait.BATCH
+        
+        # Initialize parameter extractor for structured param extraction
+        self._param_extractor = SQLParamExtractor()
         
         if actions_tree is None:
             self._actions_tree = XWNodeBase.from_native({
@@ -183,11 +187,20 @@ class XWQueryScriptStrategy(AQueryStrategy):
         return statements
     
     def _parse_statement_line(self, line: str, action_type: str, line_num: int) -> Optional[Dict[str, Any]]:
-        """Parse a single statement line."""
+        """
+        Parse a single statement line and extract structured parameters.
+        
+        This now extracts structured params for executors instead of just storing raw text.
+        Follows DEV_GUIDELINES.md: proper parameter extraction for clean execution.
+        """
+        # Extract structured parameters using the param extractor
+        params = self._param_extractor.extract_params(line, action_type)
+        
         return {
             "type": action_type,
             "id": f"action_{line_num}",
-            "content": line,
+            "params": params,  # Now structured!
+            "content": line,  # Keep raw for reference
             "line_number": line_num,
             "timestamp": datetime.now().isoformat(),
             "children": []  # For nested actions
@@ -304,14 +317,33 @@ class XWQueryScriptStrategy(AQueryStrategy):
         return None
     
     def _execute_actions_tree(self, actions_tree: XWNodeBase, **kwargs) -> Any:
-        """Execute actions tree."""
-        # This would execute the parsed actions
-        # For now, return a mock result
-        return {
-            "result": "XWQuery Script executed successfully",
-            "actions_executed": len(actions_tree.get('root', {}).get('statements', [])),
-            "execution_time": "0.001s"
-        }
+        """
+        Execute actions tree - delegates to ExecutionEngine.
+        
+        This method is kept for backward compatibility but should use ExecutionEngine.
+        Real execution happens in queries/executors/engine.py
+        """
+        # Import here to avoid circular dependency
+        from ..executors.engine import ExecutionEngine
+        from ..executors.contracts import ExecutionContext
+        
+        # Get or create node from kwargs
+        node = kwargs.get('node')
+        if node is None:
+            raise XWNodeValueError("Node is required for execution")
+        
+        # Create execution context
+        context = ExecutionContext(
+            node=node,
+            variables=kwargs.get('variables', {}),
+            options=kwargs
+        )
+        
+        # Use real ExecutionEngine
+        engine = ExecutionEngine()
+        result = engine.execute_actions_tree(actions_tree, context)
+        
+        return result.data if result.success else {'error': result.error}
     
     def add_action(self, action_type: str, **action_params) -> 'XWQueryScriptStrategy':
         """Add an action to the actions tree with proper nesting."""

@@ -13,10 +13,9 @@ from typing import Optional, Dict, Any
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from src.exonware.xwnode import XWNode
-from src.exonware.xwnode.queries.executors.engine import ExecutionEngine
-from src.exonware.xwnode.queries.executors.contracts import ExecutionContext
-from src.exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+# Lazy imports - only load XWNode components when needed
+# This follows DEV_GUIDELINES.md: "Lazy Loading pattern - Load data only when needed"
+# Avoids loading xwsystem dependencies (like lxml) until actually required
 
 from . import data, utils, query_examples
 
@@ -50,20 +49,47 @@ class XWQueryConsole:
         # Load test data
         self.collections = data.load_all_collections(self.seed)
         
-        # Create XWNode and load collections
-        self.node = XWNode(mode='HASH_MAP')
-        for name, collection_data in self.collections.items():
-            self.node.set(name, collection_data)
-        
-        # Initialize execution engine
-        self.engine = ExecutionEngine()
-        
-        # Initialize parser
-        self.parser = XWQueryScriptStrategy()
+        # Lazy initialization - only load XWNode when actually needed
+        # Currently using mock execution, so XWNode is not required yet
+        # This follows DEV_GUIDELINES.md lazy loading principle
+        self.node = None
+        self.engine = None
+        self.parser = None
         
         if self.verbose:
             stats = data.get_collection_stats(self.collections)
             print(f"Loaded {sum(stats.values())} total records across {len(stats)} collections")
+    
+    def _ensure_xwnode_loaded(self):
+        """Lazy load XWNode components when needed for real execution."""
+        if self.node is None:
+            # Import only when needed - use relative imports to work without installation
+            import sys
+            from pathlib import Path
+            
+            # Ensure src is in path
+            src_path = Path(__file__).parent.parent.parent / 'src'
+            if str(src_path) not in sys.path:
+                sys.path.insert(0, str(src_path))
+            
+            from exonware.xwnode import XWNode
+            from exonware.xwnode.queries.executors.engine import ExecutionEngine
+            from exonware.xwnode.queries.executors.contracts import ExecutionContext
+            from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+            
+            # Create XWNode and load collections
+            self.node = XWNode(mode='HASH_MAP')
+            for name, collection_data in self.collections.items():
+                self.node.set(name, collection_data)
+            
+            # Initialize execution engine
+            self.engine = ExecutionEngine()
+            
+            # Initialize parser
+            self.parser = XWQueryScriptStrategy()
+            
+            if self.verbose:
+                print("[DEBUG] XWNode components loaded")
     
     def run(self):
         """Run the interactive console."""
@@ -154,7 +180,7 @@ class XWQueryConsole:
     
     def _execute_query(self, query: str):
         """
-        Parse and execute a query.
+        Parse and execute a query using the real XWQuery execution engine.
         
         Args:
             query: XWQuery script to execute
@@ -162,18 +188,20 @@ class XWQueryConsole:
         try:
             start_time = time.time()
             
-            # Parse query
-            if self.verbose:
-                print(f"[DEBUG] Parsing query: {query}")
+            # Lazy load XWNode components for real execution
+            self._ensure_xwnode_loaded()
             
-            # For now, use a simple mock execution
-            # TODO: Integrate with actual XWQuery parser when ready
-            result = self._mock_execute(query)
+            if self.verbose:
+                print(f"[DEBUG] Executing query with real engine: {query}")
+            
+            # Use REAL ExecutionEngine!
+            result = self.engine.execute(query, self.node)
             
             execution_time = time.time() - start_time
             
             # Display results
-            print("\n" + utils.format_results(result))
+            result_data = result.data if hasattr(result, 'data') else result
+            print("\n" + utils.format_results(result_data))
             print("\n" + utils.format_execution_time(execution_time))
             print()
         
@@ -183,76 +211,6 @@ class XWQueryConsole:
                 import traceback
                 traceback.print_exc()
     
-    def _mock_execute(self, query: str) -> Dict[str, Any]:
-        """
-        Mock execution for demonstration.
-        
-        This is a placeholder until the full XWQuery parser integration is complete.
-        
-        Args:
-            query: Query string
-        
-        Returns:
-            Mock result data
-        """
-        query_lower = query.lower()
-        
-        # Handle SELECT queries
-        if query_lower.startswith('select'):
-            # Extract collection name (very simplified)
-            if 'from users' in query_lower:
-                items = self.collections['users']
-            elif 'from products' in query_lower:
-                items = self.collections['products']
-            elif 'from orders' in query_lower:
-                items = self.collections['orders']
-            elif 'from posts' in query_lower:
-                items = self.collections['posts']
-            elif 'from events' in query_lower:
-                items = self.collections['events']
-            else:
-                return {"error": "Collection not found"}
-            
-            # Apply simple filtering
-            if 'where' in query_lower:
-                # Mock: just return first 10 items
-                items = items[:10]
-            
-            return {"items": items[:20]}  # Limit to 20 for display
-        
-        # Handle COUNT queries
-        elif 'count' in query_lower:
-            if 'from users' in query_lower:
-                count = len(self.collections['users'])
-            elif 'from products' in query_lower:
-                count = len(self.collections['products'])
-            elif 'from orders' in query_lower:
-                count = len(self.collections['orders'])
-            elif 'from posts' in query_lower:
-                count = len(self.collections['posts'])
-            elif 'from events' in query_lower:
-                count = len(self.collections['events'])
-            else:
-                count = 0
-            
-            return {"count": count}
-        
-        # Handle GROUP BY (mock)
-        elif 'group by' in query_lower:
-            return {
-                "items": [
-                    {"category": "Electronics", "count": 25, "avg_price": 456.78},
-                    {"category": "Books", "count": 20, "avg_price": 23.45},
-                    {"category": "Clothing", "count": 30, "avg_price": 45.67},
-                ]
-            }
-        
-        # Default mock response
-        else:
-            return {
-                "result": "Query executed successfully (mock)",
-                "note": "Full XWQuery parser integration coming soon"
-            }
 
 
 def main(seed: int = 42, verbose: bool = False):
