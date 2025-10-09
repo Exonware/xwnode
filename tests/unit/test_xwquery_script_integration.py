@@ -21,10 +21,10 @@ from typing import Dict, List, Any
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from exonware.xwnode.strategies.queries.xwquery_strategy import XWQueryScriptStrategy
-from exonware.xwnode.strategies.queries.xwnode_executor import XWNodeQueryActionExecutor
-from exonware.xwnode.strategies.queries.sql import SQLStrategy
-from exonware.xwnode.strategies.registry import get_strategy_registry
+from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+from exonware.xwnode.queries.strategies.xwnode_executor import XWNodeQueryActionExecutor
+from exonware.xwnode.queries.strategies.sql import SQLStrategy
+from exonware.xwnode.common.patterns.registry import get_strategy_registry
 from exonware.xwnode.base import XWNodeBase
 from exonware.xwnode.errors import XWNodeTypeError, XWNodeValueError
 

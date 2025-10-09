@@ -199,7 +199,7 @@ class XWNodeBase(iNodeFacade):
         """Create XWNodeBase from native data."""
         # For now, we'll use a simple hash map strategy
         # In the full implementation, this would use the strategy manager
-        from .strategies.simple import SimpleNodeStrategy
+        from .common.utils.simple import SimpleNodeStrategy
         strategy = SimpleNodeStrategy.create_from_data(data)
         return cls(strategy)
 

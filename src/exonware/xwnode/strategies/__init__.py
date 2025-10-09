@@ -15,7 +15,7 @@ This package implements the enhanced strategy system with xwsystem-inspired opti
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.13
+Version: 0.0.1.14
 Generation Date: 07-Sep-2025
 """
 
@@ -90,15 +90,15 @@ from .queries.logql import LogQLStrategy
 from .queries.xml_query import XMLQueryStrategy
 from .queries.json_query import JSONQueryStrategy
 
-from .registry import StrategyRegistry, get_registry, register_node_strategy, register_edge_strategy
-from .advisor import StrategyAdvisor, get_advisor
-from .manager import StrategyManager
+from ..common.patterns.registry import StrategyRegistry, get_registry, register_node_strategy, register_edge_strategy
+from ..common.patterns.advisor import StrategyAdvisor, get_advisor
+from ..common.management.manager import StrategyManager
 
 # Enhanced components
-from .flyweight import StrategyFlyweight, get_flyweight, get_flyweight_stats, clear_flyweight_cache
-from .pattern_detector import DataPatternDetector, get_detector, analyze_data_patterns, recommend_strategy
-from .performance_monitor import StrategyPerformanceMonitor, get_monitor, record_operation, get_performance_summary
-from .metrics import StrategyMetricsCollector, get_metrics_collector, collect_comprehensive_metrics, get_metrics_summary
+from ..common.patterns.flyweight import StrategyFlyweight, get_flyweight, get_flyweight_stats, clear_flyweight_cache
+from ..common.monitoring.pattern_detector import DataPatternDetector, get_detector, analyze_data_patterns, recommend_strategy
+from ..common.monitoring.performance_monitor import StrategyPerformanceMonitor, get_monitor, record_operation, get_performance_summary
+from ..common.monitoring.metrics import StrategyMetricsCollector, get_metrics_collector, collect_comprehensive_metrics, get_metrics_summary
 
 __all__ = [
     # Types and enums

@@ -30,10 +30,10 @@ src_path = os.path.abspath(src_path)
 if os.path.exists(src_path) and src_path not in sys.path:
     sys.path.insert(0, src_path)
 
-from exonware.xwnode.strategies.queries.xwquery_strategy import XWQueryScriptStrategy
-from exonware.xwnode.strategies.queries.xwnode_executor import XWNodeQueryActionExecutor
-from exonware.xwnode.strategies.queries.sql import SQLStrategy
-from exonware.xwnode.strategies.registry import get_strategy_registry
+from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+from exonware.xwnode.queries.strategies.xwnode_executor import XWNodeQueryActionExecutor
+from exonware.xwnode.queries.strategies.sql import SQLStrategy
+from exonware.xwnode.common.patterns.registry import get_strategy_registry
 from exonware.xwnode.base import XWNodeBase
 from exonware.xwnode.errors import XWNodeTypeError, XWNodeValueError
 

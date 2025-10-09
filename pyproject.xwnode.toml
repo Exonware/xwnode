@@ -35,7 +35,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "exonware-xwsystem>=0.0.1",
+    "xwsystem>=0.0.1",
 ]
 authors = [
     { name = "Eng. Muhammad AlShehri", email = "connect@exonware.com" },
@@ -54,10 +54,10 @@ dev = [
     "mypy>=1.0.0",
 ]
 lazy = [
-    "exonware-xwsystem[lazy]>=0.0.1",
+    "xwsystem[lazy]>=0.0.1",
 ]
 full = [
-    "exonware-xwsystem[full]>=0.0.1",
+    "xwsystem[full]>=0.0.1",
 ]
 
 [project.urls]

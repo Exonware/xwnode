@@ -4,7 +4,7 @@ Centralized version management for xwnode.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Generation Date: October 07, 2025
+Generation Date: October 09, 2025
 
 This module provides centralized version management for the entire xwnode project.
 All version references should import from this module to ensure consistency.
@@ -15,13 +15,13 @@ All version references should import from this module to ensure consistency.
 # =============================================================================
 
 # Main version - update this to change version across entire project
-__version__ = "0.0.1.13"
+__version__ = "0.0.1.14"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 0
 VERSION_PATCH = 1
-VERSION_BUILD = 13# Set to None for releases, or build number for dev builds
+VERSION_BUILD = 14# Set to None for releases, or build number for dev builds
 
 # Version metadata
 VERSION_SUFFIX = ""  # e.g., "dev", "alpha", "beta", "rc1"

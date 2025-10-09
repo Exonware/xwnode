@@ -9,7 +9,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.13
+Version: 0.0.1.14
 Generation Date: 07-Sep-2025
 """
 
@@ -19,7 +19,8 @@ from typing import Any, Dict, List, Optional, Union, Iterator
 from .base import XWNodeBase
 from .config import get_config, set_config
 from .errors import XWNodeError, XWNodeTypeError, XWNodeValueError
-from .strategies import StrategyManager, get_registry
+from .common.management.manager import StrategyManager
+from .common.patterns.registry import get_registry
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ class XWNode(XWNodeBase):
         except Exception as e:
             logger.warning(f"Failed to setup strategy: {e}, using default")
             # Create a simple strategy as fallback
-            from .strategies.simple import SimpleNodeStrategy
+            from .common.utils.simple import SimpleNodeStrategy
             self._strategy = SimpleNodeStrategy.create_from_data(self._data or {})
     
     # ============================================================================
