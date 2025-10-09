@@ -7,7 +7,7 @@ This module implements the jq query strategy for jq JSON processor operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.15
+Version: 0.0.1.16
 Generation Date: January 2, 2025
 """
 
