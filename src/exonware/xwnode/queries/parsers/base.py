@@ -10,7 +10,7 @@ Follows DEV_GUIDELINES.md: base.py extends contracts.py interfaces.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.19
+Version: 0.0.1.20
 Generation Date: 09-Oct-2025
 """
 

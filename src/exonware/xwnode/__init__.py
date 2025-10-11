@@ -10,7 +10,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.19
+Version: 0.0.1.20
 Generation Date: 07-Sep-2025
 
 Main Classes:
@@ -49,8 +49,9 @@ Example:
 # =============================================================================
 # LAZY INSTALLATION - Simple One-Line Configuration
 # =============================================================================
-from exonware.xwsystem.utils.lazy_discovery import config_package_lazy_install_enabled
-config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
+# DISABLED BY DEFAULT - Users can enable manually if needed
+# from exonware.xwsystem.utils.lazy_discovery import config_package_lazy_install_enabled
+# config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
 
 # =============================================================================
 # IMPORTS - Standard Python Imports (No Defensive Code!)

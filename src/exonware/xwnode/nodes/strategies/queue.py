@@ -6,7 +6,7 @@ Implements a FIFO (First In, First Out) data structure using Python's deque.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.19
+Version: 0.0.1.20
 Generation Date: 07-Sep-2025
 """
 

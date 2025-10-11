@@ -7,7 +7,7 @@ This module implements the HiveQL query strategy for Apache Hive SQL operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.19
+Version: 0.0.1.20
 Generation Date: January 2, 2025
 """
 
