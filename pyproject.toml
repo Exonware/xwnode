@@ -23,7 +23,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "exonware-xwsystem>=0.0.1",
+    "exonware-xwsystem",
 ]
 
 [[project.authors]]
@@ -43,13 +43,13 @@ dev = [
     "mypy>=1.0.0",
 ]
 lazy = [
-    "exonware-xwsystem[lazy]>=0.0.1",
+    "exonware-xwsystem[lazy]",
 ]
 full = [
     # xwnode leverages xwsystem's full capabilities
     # All serialization, security, monitoring, and performance features
     # are inherited from xwsystem's full installation
-    "exonware-xwsystem[full]>=0.0.1",
+    "exonware-xwsystem[full]",
 ]
 
 [project.urls]

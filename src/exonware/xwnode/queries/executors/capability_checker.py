@@ -9,7 +9,7 @@ This module provides capability checking for operations on different node types.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.20
+Version: 0.0.1.21
 Generation Date: 08-Oct-2025
 """
 
