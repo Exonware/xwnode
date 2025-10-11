@@ -16,7 +16,7 @@ from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
 
-from ..defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
+from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 
 
 @dataclass

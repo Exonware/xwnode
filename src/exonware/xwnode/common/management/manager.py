@@ -12,7 +12,7 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.21
+Version: 0.0.1.22
 Generation Date: 07-Sep-2025
 """
 
@@ -22,14 +22,14 @@ from typing import Dict, Optional, Any, Union, List
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
-from ..defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
-from .registry import get_registry
-from .advisor import get_advisor
+from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+from ..patterns.registry import get_registry
+from ..patterns.advisor import get_advisor
 from .migration import get_migrator
-from .flyweight import get_flyweight
-from .pattern_detector import get_detector, DataProfile
-from .performance_monitor import get_monitor, OperationType
-from ..errors import (
+from ..patterns.flyweight import get_flyweight
+from ..monitoring.pattern_detector import get_detector, DataProfile
+from ..monitoring.performance_monitor import get_monitor, OperationType
+from ...errors import (
     XWNodeStrategyError, XWNodeError, 
     XWNodeStrategyError, XWNodeUnsupportedCapabilityError
 )

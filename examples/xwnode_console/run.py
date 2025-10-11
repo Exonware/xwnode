@@ -11,14 +11,16 @@ from pathlib import Path
 
 # Add source directories to path for development mode
 # This allows importing from exonware.xwnode and exonware.xwsystem
+# IMPORTANT: xwnode MUST come before xwsystem to avoid namespace conflicts
 xwnode_root = Path(__file__).parent.parent.parent
 xwnode_src = xwnode_root / "src"
 xwsystem_src = xwnode_root.parent / "xwsystem" / "src"
 
-# Add both source directories
+# Add xwnode FIRST to ensure exonware.xwnode resolves correctly
 sys.path.insert(0, str(xwnode_src))
+# Then add xwsystem
 if xwsystem_src.exists():
-    sys.path.insert(0, str(xwsystem_src))
+    sys.path.append(str(xwsystem_src))  # Use append instead of insert to keep xwnode first
 
 # Add examples directory for local imports
 sys.path.insert(0, str(xwnode_root / "examples"))

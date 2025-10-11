@@ -10,7 +10,7 @@ configuration, which is especially important for high-throughput applications.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.21
+Version: 0.0.1.22
 Generation Date: 07-Sep-2025
 """
 
@@ -23,7 +23,7 @@ from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
 
-from ..defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from ...nodes.strategies.base import ANodeStrategy
 from ...edges.strategies.base import AEdgeStrategy
 

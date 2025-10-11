@@ -71,19 +71,33 @@ class XWQueryConsole:
     def _ensure_xwnode_loaded(self):
         """Lazy load XWNode components when needed for real execution."""
         if self.node is None:
-            # Import only when needed - use relative imports to work without installation
+            # Import only when needed - direct import to avoid namespace conflicts
             import sys
             from pathlib import Path
             
-            # Ensure src is in path
+            # Ensure src is in path - place xwnode BEFORE xwsystem to resolve namespace conflicts
             src_path = Path(__file__).parent.parent.parent / 'src'
             if str(src_path) not in sys.path:
                 sys.path.insert(0, str(src_path))
             
-            from exonware.xwnode import XWNode
-            from exonware.xwnode.queries.executors.engine import ExecutionEngine
-            from exonware.xwnode.queries.executors.contracts import ExecutionContext
-            from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+            # Import directly - this works because xwnode/src is in sys.path
+            try:
+                from exonware.xwnode import XWNode
+                from exonware.xwnode.queries.executors.engine import ExecutionEngine
+                from exonware.xwnode.queries.executors.contracts import ExecutionContext
+                from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
+            except ImportError:
+                # Fallback: Remove exonware from sys.modules and retry
+                if 'exonware' in sys.modules:
+                    del sys.modules['exonware']
+                if 'exonware.xwsystem' in sys.modules:
+                    # Keep xwsystem but force reload of exonware
+                    pass
+                
+                from exonware.xwnode import XWNode
+                from exonware.xwnode.queries.executors.engine import ExecutionEngine
+                from exonware.xwnode.queries.executors.contracts import ExecutionContext
+                from exonware.xwnode.queries.strategies.xwquery import XWQueryScriptStrategy
             
             # Create XWNode and load collections
             self.node = XWNode(mode='HASH_MAP')

@@ -9,7 +9,7 @@ memory usage, and optimization recommendations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.21
+Version: 0.0.1.22
 Generation Date: 07-Sep-2025
 """
 
@@ -23,7 +23,7 @@ from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
 
-from ..defs import NodeMode, EdgeMode
+from ...defs import NodeMode, EdgeMode
 from .flyweight import get_flyweight_stats
 from .pattern_detector import get_detector
 from .performance_monitor import get_monitor, get_performance_summary

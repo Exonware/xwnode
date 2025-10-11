@@ -9,9 +9,9 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Type
 from enum import Enum
 import threading
 import time
-from ..defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
-from .registry import get_registry
-from ..errors import XWNodeStrategyError, XWNodeError
+from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+from ..patterns.registry import get_registry
+from ...errors import XWNodeStrategyError, XWNodeError
 import logging
 
 logger = logging.getLogger(__name__)

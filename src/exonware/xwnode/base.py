@@ -24,9 +24,8 @@ from .contracts import iNodeFacade, iNodeStrategy, iEdge, iEdgeStrategy, iQuery,
 # System-level imports - standard imports (no defensive code!)
 from exonware.xwsystem.security import get_resource_limits
 from exonware.xwsystem.validation import validate_untrusted_data
-from exonware.xwsystem.monitoring import create_component_metrics
+from exonware.xwsystem.monitoring import create_component_metrics, CircuitBreaker, CircuitBreakerConfig
 from exonware.xwsystem.threading import ThreadSafeFactory, create_thread_safe_cache
-from exonware.xwsystem.patterns import CircuitBreaker
 from exonware.xwsystem import get_logger
 
 logger = get_logger('xwnode.base')
@@ -42,9 +41,12 @@ _path_cache = create_thread_safe_cache(max_size=1024)
 
 # Circuit breaker for strategy operations
 _strategy_circuit_breaker = CircuitBreaker(
-    failure_threshold=5,
-    recovery_timeout=30,
-    expected_exception=Exception
+    name='xwnode_strategy',
+    config=CircuitBreakerConfig(
+        failure_threshold=5,
+        recovery_timeout=30,
+        expected_exception=Exception
+    )
 )
 
 
