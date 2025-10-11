@@ -8,7 +8,7 @@ representation with fast row-wise operations.
 from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Union
 import bisect
 from ._base_edge import aEdgeStrategy
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class xCSRStrategy(aEdgeStrategy):

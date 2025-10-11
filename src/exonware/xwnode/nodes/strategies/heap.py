@@ -8,7 +8,7 @@ import heapq
 from typing import Any, Iterator, List, Optional, Dict
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class MinHeap:

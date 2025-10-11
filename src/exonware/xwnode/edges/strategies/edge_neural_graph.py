@@ -10,7 +10,7 @@ from collections import defaultdict, deque
 import math
 from enum import Enum
 from ._base_edge import aEdgeStrategy
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class ActivationFunction(Enum):

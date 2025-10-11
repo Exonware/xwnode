@@ -8,10 +8,18 @@ Main console implementation for interactive XWQuery testing.
 import sys
 import os
 import time
+from pathlib import Path
 from typing import Optional, Dict, Any
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+# Ensure source directories are in path for development mode
+xwnode_root = Path(__file__).parent.parent.parent
+xwnode_src = xwnode_root / "src"
+xwsystem_src = xwnode_root.parent / "xwsystem" / "src"
+
+if str(xwnode_src) not in sys.path:
+    sys.path.insert(0, str(xwnode_src))
+if xwsystem_src.exists() and str(xwsystem_src) not in sys.path:
+    sys.path.insert(0, str(xwsystem_src))
 
 # Lazy imports - only load XWNode components when needed
 # This follows DEV_GUIDELINES.md: "Lazy Loading pattern - Load data only when needed"

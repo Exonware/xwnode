@@ -8,7 +8,7 @@ using Python's built-in dictionary.
 from typing import Any, Iterator, Dict, List, Optional, Union
 from .base import ANodeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class HashMapStrategy(ANodeStrategy):

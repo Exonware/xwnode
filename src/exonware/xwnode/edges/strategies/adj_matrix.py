@@ -7,7 +7,7 @@ with O(1) edge operations and efficient matrix-based algorithms.
 
 from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Union
 from .base import AGraphEdgeStrategy
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class AdjMatrixStrategy(AGraphEdgeStrategy):

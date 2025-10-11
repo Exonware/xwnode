@@ -13,7 +13,7 @@ Ultra-lightweight strategy specifically optimized for data interchange patterns:
 import weakref
 from typing import Any, Iterator, Dict, List, Optional
 from ._base_node import aNodeStrategy
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
 
 # Import shared utilities

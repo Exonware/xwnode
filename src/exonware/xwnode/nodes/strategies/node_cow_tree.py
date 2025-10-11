@@ -9,7 +9,7 @@ atomic snapshots and versioning capabilities.
 from typing import Any, Iterator, List, Dict, Optional, Tuple, Set
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class COWTreeNode:

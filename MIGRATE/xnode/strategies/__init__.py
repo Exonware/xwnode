@@ -10,7 +10,7 @@ This package implements the strategy system, providing:
 - 100% backward compatibility with existing xNode
 """
 
-from .types import (
+from .defs import (
     NodeMode, EdgeMode, NodeTrait, EdgeTrait,
     AUTO, LEGACY, HASH_MAP, ORDERED_MAP, ORDERED_MAP_BALANCED,
     ARRAY_LIST, LINKED_LIST, TRIE, RADIX_TRIE, PATRICIA,

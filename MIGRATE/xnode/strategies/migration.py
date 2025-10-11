@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Type
 from enum import Enum
 import threading
 import time
-from .types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from .registry import get_registry
 from ..errors import xNodeIllegalMigrationError, xNodeStrategyError
 import logging

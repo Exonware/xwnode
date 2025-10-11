@@ -8,7 +8,7 @@ operations with automatic resizing and bit manipulation capabilities.
 from typing import Any, Iterator, List, Dict, Optional, Tuple, Union
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class BitsetDynamicStrategy(ANodeMatrixStrategy):

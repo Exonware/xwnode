@@ -7,14 +7,14 @@ SUM Executor
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 09-Oct-2025
 """
 
 from typing import Any, Dict, List
 from ..base import AUniversalOperationExecutor
 from ..contracts import Action, ExecutionContext, ExecutionResult
-from ..types import OperationType
+from ..defs import OperationType
 
 class SumExecutor(AUniversalOperationExecutor):
     """

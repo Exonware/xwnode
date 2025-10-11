@@ -7,7 +7,7 @@ in the strategy system.
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Iterator, Union, Set
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class aEdgeStrategy(ABC):

@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from typing import Any, Iterator, Optional, Dict, List, Union, Callable
 from enum import Enum, Flag
 
-# Import all enums from types.py to avoid circular references
-from .types import (
+# Import all enums from defs.py to avoid circular references
+from .defs import (
     NodeMode, EdgeMode, NodeTrait, EdgeTrait, QueryMode, QueryTrait
 )
 
@@ -476,7 +476,7 @@ class iNodeFacade(ABC):
 # QUERY INTERFACES
 # ============================================================================
 
-# QueryMode and QueryTrait are now imported from types.py
+# QueryMode and QueryTrait are now imported from defs.py
 
 
 class IQueryStrategy(ABC):

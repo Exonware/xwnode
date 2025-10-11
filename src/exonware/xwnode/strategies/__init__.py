@@ -15,11 +15,11 @@ This package implements the enhanced strategy system with xwsystem-inspired opti
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
-from ..types import (
+from ..defs import (
     NodeMode, EdgeMode, QueryMode, NodeTrait, EdgeTrait, QueryTrait,
     AUTO, LEGACY, HASH_MAP, ORDERED_MAP, ORDERED_MAP_BALANCED,
     ARRAY_LIST, LINKED_LIST, TRIE, RADIX_TRIE, PATRICIA,

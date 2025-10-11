@@ -10,7 +10,7 @@ import hashlib
 import math
 from ._base_node import aNodeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class xBloomFilterStrategy(aNodeStrategy):

@@ -10,7 +10,7 @@ This module tests the new advanced data structure operations:
 
 import pytest
 from src.xlib.xnode.strategies.impls.node_tree_graph_hybrid import TreeGraphHybridStrategy
-from src.xlib.xnode.strategies.types import NodeTrait
+from src.xlib.xnode.strategies.defs import NodeTrait
 
 
 class TestAdvancedOperations:

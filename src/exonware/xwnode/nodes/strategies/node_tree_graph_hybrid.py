@@ -14,7 +14,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Union, List, Dict, Optional, Iterator, Tuple, Callable
 from collections import OrderedDict
 
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 from ...abc import iNodeStrategy, NodeTrait
 from ...errors import xNodePathError
 from exonware.xwsystem import get_logger

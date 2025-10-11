@@ -9,7 +9,7 @@ from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
 from collections import defaultdict
 import bisect
 from ._base_edge import aEdgeStrategy
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class xCSCStrategy(aEdgeStrategy):

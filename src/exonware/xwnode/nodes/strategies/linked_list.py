@@ -8,7 +8,7 @@ insertions and deletions with sequential access patterns.
 from typing import Any, Iterator, List, Dict, Optional
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class ListNode:

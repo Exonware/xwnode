@@ -9,7 +9,7 @@ from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
 from collections import deque, defaultdict
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class ACNode:

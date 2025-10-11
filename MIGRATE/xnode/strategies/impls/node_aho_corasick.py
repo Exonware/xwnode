@@ -8,7 +8,7 @@ string matching using the Aho-Corasick automaton algorithm.
 from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
 from collections import deque, defaultdict
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class ACNode:

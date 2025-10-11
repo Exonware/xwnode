@@ -38,7 +38,7 @@ from exonware.xwnode.strategies.queries.xpath import XPathStrategy
 from exonware.xwnode.strategies.queries.xml_query import XMLQueryStrategy
 from exonware.xwnode.strategies.queries.json_query import JSONQueryStrategy
 
-from exonware.xwnode.types import QueryMode, QueryTrait
+from exonware.xwnode.defs import QueryMode, QueryTrait
 
 
 def test_sql_strategy():

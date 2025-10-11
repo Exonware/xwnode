@@ -7,7 +7,7 @@ and updates with O(log n) complexity.
 
 from typing import Any, Iterator, List, Optional, Callable, Dict, Union
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class xSegmentTreeStrategy(aNodeStrategy):

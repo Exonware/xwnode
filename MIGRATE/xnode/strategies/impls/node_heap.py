@@ -7,7 +7,7 @@ This module implements the HEAP strategy for priority queue operations.
 import heapq
 from typing import Any, Iterator, List, Optional, Dict
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 from ..utils import (
     MinHeap,
     safe_to_native_conversion,

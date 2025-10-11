@@ -21,7 +21,7 @@ sys.path.insert(0, str(project_root / "src"))
 
 try:
     from exonware.xwnode import XWNode, XWFactory, get_metrics
-    from exonware.xwnode.strategies.types import NodeMode, EdgeMode
+    from exonware.xwnode.strategies.defs import NodeMode, EdgeMode
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure you're running from the xwnode directory")

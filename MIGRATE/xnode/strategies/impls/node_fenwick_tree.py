@@ -7,7 +7,7 @@ queries and point updates with O(log n) complexity.
 
 from typing import Any, Iterator, List, Dict, Union
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class xFenwickTreeStrategy(aNodeStrategy):

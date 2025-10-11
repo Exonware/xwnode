@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple, Any, NamedTuple
 from dataclasses import dataclass
 from collections import defaultdict, deque
 from src.xlib.xwsystem import get_logger
-from .types import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
+from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 
 logger = get_logger(__name__)
 

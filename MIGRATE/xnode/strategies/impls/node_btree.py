@@ -7,7 +7,7 @@ and sorted key operations with guaranteed O(log n) performance.
 
 from typing import Any, Iterator, List, Optional, Union, Dict
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class BTreeNode:

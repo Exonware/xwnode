@@ -8,7 +8,7 @@ with O(1) average-case membership testing and insertion.
 from typing import Any, Iterator, Set, Dict, Union, List
 import hashlib
 from ._base_node import aNodeStrategy
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class xSetHashStrategy(aNodeStrategy):

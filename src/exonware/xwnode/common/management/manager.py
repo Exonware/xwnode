@@ -12,7 +12,7 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
@@ -22,7 +22,7 @@ from typing import Dict, Optional, Any, Union, List
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
-from ..types import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+from ..defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 from .registry import get_registry
 from .advisor import get_advisor
 from .migration import get_migrator

@@ -9,7 +9,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
@@ -321,7 +321,7 @@ class XWFactory:
 # A+ Usability Presets
 def create_with_preset(data: Any = None, preset: str = 'DEFAULT') -> XWNode:
     """Create XWNode with A+ usability preset."""
-    from .types import get_preset
+    from .defs import get_preset
     
     try:
         preset_config = get_preset(preset)
@@ -334,7 +334,7 @@ def create_with_preset(data: Any = None, preset: str = 'DEFAULT') -> XWNode:
 
 def list_available_presets() -> List[str]:
     """List all available A+ usability presets."""
-    from .types import list_presets
+    from .defs import list_presets
     return list_presets()
 
 # Performance Mode Factory Methods

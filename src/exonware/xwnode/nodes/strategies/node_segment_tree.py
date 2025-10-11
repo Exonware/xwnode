@@ -8,7 +8,7 @@ and updates with O(log n) complexity.
 from typing import Any, Iterator, List, Optional, Callable, Dict, Union
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class SegmentTreeStrategy(ANodeTreeStrategy):

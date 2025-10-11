@@ -9,7 +9,7 @@ from typing import Any, Iterator, List, Dict, Optional, Union
 import array
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class BitmapStrategy(ANodeMatrixStrategy):

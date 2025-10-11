@@ -9,10 +9,21 @@ import argparse
 import sys
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add source directories to path for development mode
+# This allows importing from exonware.xwnode and exonware.xwsystem
+xwnode_root = Path(__file__).parent.parent.parent
+xwnode_src = xwnode_root / "src"
+xwsystem_src = xwnode_root.parent / "xwsystem" / "src"
 
-from examples.xwnode_console.console import main
+# Add both source directories
+sys.path.insert(0, str(xwnode_src))
+if xwsystem_src.exists():
+    sys.path.insert(0, str(xwsystem_src))
+
+# Add examples directory for local imports
+sys.path.insert(0, str(xwnode_root / "examples"))
+
+from xwnode_console.console import main
 
 
 def parse_args():

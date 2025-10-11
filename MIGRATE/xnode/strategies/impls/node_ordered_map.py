@@ -8,7 +8,7 @@ operations with efficient range queries and ordered iteration.
 from typing import Any, Iterator, List, Dict, Optional, Tuple
 import bisect
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class xOrderedMapStrategy(aNodeStrategy):

@@ -17,7 +17,7 @@ from exonware.xwnode import (
     XWNode, create_with_preset, list_available_presets,
     fast, optimized, adaptive, dual_adaptive
 )
-from exonware.xnode.strategies.types import (
+from exonware.xnode.strategies.defs import (
     get_preset, list_presets, NodeMode, EdgeMode, NodeTrait
 )
 

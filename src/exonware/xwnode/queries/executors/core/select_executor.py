@@ -9,14 +9,14 @@ Implements SELECT operation execution on all node types.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 08-Oct-2025
 """
 
 from typing import Any, List, Dict, Optional
 from ..base import AUniversalOperationExecutor
 from ..contracts import Action, ExecutionContext, ExecutionResult
-from ..types import OperationCapability
+from ..defs import OperationCapability
 from ...nodes.strategies.contracts import NodeType
 
 

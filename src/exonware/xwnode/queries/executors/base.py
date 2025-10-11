@@ -9,7 +9,7 @@ This module provides base classes for operation executors with capability checki
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 08-Oct-2025
 """
 
@@ -24,7 +24,7 @@ from .contracts import (
     ExecutionResult,
     NodeType
 )
-from .types import OperationCapability
+from .defs import OperationCapability
 from .errors import UnsupportedOperationError  # Reuse from root via errors.py
 from ...errors import XWNodeValueError
 

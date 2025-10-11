@@ -7,7 +7,7 @@ in the strategy system.
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Iterator, Union
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 from ...errors import xNodeUnsupportedCapabilityError
 
 

@@ -7,7 +7,7 @@ using Python's built-in dictionary.
 
 from typing import Any, Iterator, Dict, List, Optional, Union
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 from ..utils import (
     safe_to_native_conversion,
     is_list_like,

@@ -8,7 +8,7 @@ This package implements the execution layer for 50 XWQuery Script operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 08-Oct-2025
 """
 
@@ -18,7 +18,7 @@ from .contracts import (
     ExecutionContext,
     ExecutionResult
 )
-from .types import OperationCapability, OperationType, ExecutionStatus
+from .defs import OperationCapability, OperationType, ExecutionStatus
 from .errors import ExecutorError, OperationExecutionError, ValidationError, UnsupportedOperationError
 from .base import AOperationExecutor
 from .registry import OperationRegistry, get_operation_registry, register_operation

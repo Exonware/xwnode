@@ -10,7 +10,7 @@ from collections import defaultdict
 import struct
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class Container:

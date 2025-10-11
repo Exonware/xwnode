@@ -8,7 +8,7 @@ dense graph operations using block-based matrix partitioning.
 from typing import Any, Iterator, List, Dict, Optional, Tuple, Set
 import math
 from ._base_edge import aEdgeStrategy
-from ..types import EdgeMode, EdgeTrait
+from ..defs import EdgeMode, EdgeTrait
 
 
 class MatrixBlock:

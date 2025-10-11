@@ -8,7 +8,7 @@ in tree+graph hybrid structures, providing minimal graph capabilities.
 
 from typing import Any, Dict, List, Optional, Set, Tuple, Iterator
 from ._base_edge import aEdgeStrategy
-from ...types import EdgeMode, EdgeTrait
+from ...defs import EdgeMode, EdgeTrait
 
 
 class xTreeGraphBasicStrategy(aEdgeStrategy):

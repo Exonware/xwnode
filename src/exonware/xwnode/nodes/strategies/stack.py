@@ -6,14 +6,14 @@ Implements a LIFO (Last In, First Out) data structure using Python's list.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
 from typing import Any, Iterator, List, Optional, Dict, Union
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class StackStrategy(ANodeLinearStrategy):

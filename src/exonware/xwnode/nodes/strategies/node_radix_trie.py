@@ -8,7 +8,7 @@ matching with path compression for memory efficiency.
 from typing import Any, Iterator, List, Dict, Optional, Tuple
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class RadixTrieNode:

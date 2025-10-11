@@ -11,7 +11,7 @@ import threading
 from collections import defaultdict
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class MemTable:

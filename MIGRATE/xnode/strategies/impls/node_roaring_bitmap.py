@@ -9,7 +9,7 @@ from typing import Any, Iterator, List, Dict, Optional, Set, Tuple
 from collections import defaultdict
 import struct
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class Container:

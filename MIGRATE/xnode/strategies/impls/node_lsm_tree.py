@@ -10,7 +10,7 @@ import time
 import threading
 from collections import defaultdict
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class MemTable:

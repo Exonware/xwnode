@@ -7,7 +7,7 @@ This module implements the UNION_FIND strategy for efficient set operations.
 from typing import Any, Iterator, Dict, List, Set
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 from ..utils import (
     UnionFind,
     safe_to_native_conversion,

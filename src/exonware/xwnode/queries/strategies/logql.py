@@ -7,7 +7,7 @@ This module implements the LogQL query strategy for Grafana Loki Log Query Langu
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: January 2, 2025
 """
 

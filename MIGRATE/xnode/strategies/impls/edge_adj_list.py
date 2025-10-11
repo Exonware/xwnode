@@ -8,7 +8,7 @@ with efficient edge addition and neighbor queries.
 from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
 from collections import defaultdict
 from ._base_edge import aEdgeStrategy
-from ..types import EdgeMode, EdgeTrait
+from ..defs import EdgeMode, EdgeTrait
 
 
 class xAdjListStrategy(aEdgeStrategy):

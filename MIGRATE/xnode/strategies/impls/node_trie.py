@@ -6,7 +6,7 @@ This module implements the TRIE strategy for efficient string prefix operations.
 
 from typing import Any, Iterator, Dict, List, Optional
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 from ..utils import (
     TrieNode,
     safe_to_native_conversion,

@@ -8,7 +8,7 @@ queries and point updates with O(log n) complexity.
 from typing import Any, Iterator, List, Dict, Union
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class FenwickTreeStrategy(ANodeTreeStrategy):

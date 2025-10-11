@@ -9,7 +9,7 @@ search trees with guaranteed O(log n) height and operations.
 from typing import Any, Iterator, List, Dict, Optional, Tuple
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class RedBlackTreeNode:

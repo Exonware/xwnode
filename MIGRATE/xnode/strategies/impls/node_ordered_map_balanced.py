@@ -7,7 +7,7 @@ ordered operations with guaranteed O(log n) performance.
 
 from typing import Any, Iterator, List, Dict, Optional, Tuple
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class AVLNode:

@@ -22,7 +22,7 @@ sys.path.insert(0, str(project_root / "src"))
 try:
     from exonware.xwnode import XWNode
     from exonware.xwnode.strategies.queries.sql import SQLStrategy
-    from exonware.xwnode.types import QueryMode, QueryTrait
+    from exonware.xwnode.defs import QueryMode, QueryTrait
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure you're running from the xwnode directory")

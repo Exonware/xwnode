@@ -328,7 +328,7 @@ class XWNodePresetError(XWNodeStrategyError):
         
         # Import here to avoid circular imports
         try:
-            from .types import list_presets
+            from .defs import list_presets
             available = list_presets()
             suggestions = [f"Available presets: {', '.join(available)}"]
         except ImportError:

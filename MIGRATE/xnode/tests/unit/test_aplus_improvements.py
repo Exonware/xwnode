@@ -14,7 +14,7 @@ import time
 from typing import Dict, Any
 
 from src.xlib.xnode import xNode
-from src.xlib.xnode.strategies.types import (
+from src.xlib.xnode.strategies.defs import (
     get_preset, list_presets, NodeMode, EdgeMode, NodeTrait,
     TREE_GRAPH_HYBRID  # New renamed mode
 )
@@ -237,7 +237,7 @@ class TestBackwardsCompatibility:
     
     def test_legacy_mode_mapping(self):
         """Test that LEGACY mode maps to TREE_GRAPH_HYBRID."""
-        from src.xlib.xnode.strategies.types import LEGACY
+        from src.xlib.xnode.strategies.defs import LEGACY
         
         # LEGACY should map to TREE_GRAPH_HYBRID
         assert LEGACY == TREE_GRAPH_HYBRID

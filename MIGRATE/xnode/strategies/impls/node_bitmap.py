@@ -8,7 +8,7 @@ and boolean operations with compressed storage.
 from typing import Any, Iterator, List, Dict, Optional, Union
 import array
 from ._base_node import aNodeStrategy
-from ..types import NodeMode, NodeTrait
+from ..defs import NodeMode, NodeTrait
 
 
 class xBitmapStrategy(aNodeStrategy):

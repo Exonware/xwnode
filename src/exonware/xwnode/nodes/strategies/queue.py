@@ -6,7 +6,7 @@ Implements a FIFO (First In, First Out) data structure using Python's deque.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
@@ -14,7 +14,7 @@ from typing import Any, Iterator, Optional, Dict, Union
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class QueueStrategy(ANodeLinearStrategy):

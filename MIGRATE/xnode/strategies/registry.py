@@ -8,7 +8,7 @@ discovery, and instantiation in the strategy system.
 import threading
 from typing import Dict, Type, List, Optional, Any, Callable
 from src.xlib.xwsystem.logging_setup import get_logger
-from .types import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
+from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 from ..errors import xNodeStrategyNotFoundError, xNodeStrategyInitializationError
 
 logger = get_logger(__name__)

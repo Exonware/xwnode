@@ -6,7 +6,7 @@ Implements a priority queue using Python's heapq for efficient priority-based op
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.18
+Version: 0.0.1.19
 Generation Date: 07-Sep-2025
 """
 
@@ -14,7 +14,7 @@ from typing import Any, Iterator, Optional, Dict, Union, Tuple
 import heapq
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class PriorityQueueStrategy(ANodeLinearStrategy):

@@ -8,7 +8,7 @@ with fast indexed access.
 from typing import Any, Iterator, List, Union, Dict
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
-from ...types import NodeMode, NodeTrait
+from ...defs import NodeMode, NodeTrait
 
 
 class ArrayListStrategy(ANodeLinearStrategy):

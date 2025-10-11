@@ -10,7 +10,7 @@ from collections import defaultdict
 import time
 import bisect
 from ._base_edge import aEdgeStrategy
-from ..types import EdgeMode, EdgeTrait
+from ..defs import EdgeMode, EdgeTrait
 
 
 class TimeInterval(NamedTuple):
