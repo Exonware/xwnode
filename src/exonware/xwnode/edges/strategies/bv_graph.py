@@ -9,7 +9,7 @@ compression including Elias-Gamma/Delta coding and reference lists.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.24
+Version: 0.0.1.25
 Generation Date: 12-Oct-2025
 """
 

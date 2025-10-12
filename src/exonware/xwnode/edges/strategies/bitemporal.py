@@ -9,7 +9,7 @@ valid-time and transaction-time dimensions for audit and time-travel queries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.24
+Version: 0.0.1.25
 Generation Date: 12-Oct-2025
 """
 
