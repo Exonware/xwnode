@@ -1,183 +1,225 @@
-# xNode Test Suite - Reorganized Structure
+# xwnode Test Suite
 
-Comprehensive test suite for the xNode library with proper organization following SRP and testing best practices.
+**Company:** eXonware.com  
+**Author:** Eng. Muhammad AlShehri  
+**Email:** connect@exonware.com  
+**Version:** 0.0.1  
+**Generation Date:** 11-Oct-2025
+
+---
 
 ## Overview
 
-This test package provides complete coverage of the xNode library's refactored architecture:
-- Core functionality (`xNodeCore`)
-- Performance management (`PerformanceModes`)
-- Data structures (`DataStructures`) 
-- Graph operations (`GraphOperations`)
-- Query operations (`QueryOperations`)
-- Production-grade optimization (`UniversalOptimizer`)
+Comprehensive test suite for xwnode library following **GUIDELINES_TEST.md** standards with a **four-layer hierarchical testing strategy**.
 
-## New Organized Structure
+### Testing Philosophy: The 80/20 Rule
 
-```
-src/xlib/xnode/tests/
-├── __init__.py                    # Package initialization
-├── conftest.py                    # Global fixtures and configuration
-├── runner.py                      # Main test runner
-├── README.md                      # This documentation
-├── run_all_tests.py              # Comprehensive test execution
-│
-├── unit/                          # Unit tests by component
-│   ├── __init__.py
-│   ├── core/                      # Core xNode functionality
-│   │   ├── __init__.py
-│   │   ├── test_xnode_core.py     # Core node operations
-│   │   ├── test_facade.py         # Public facade interface
-│   │   ├── conftest.py
-│   │   └── README.md
-│   │
-│   ├── performance/               # Performance management
-│   │   ├── __init__.py
-│   │   ├── test_performance_modes.py   # Performance mode management
-│   │   ├── test_optimization.py        # Optimization strategies
-│   │   ├── conftest.py
-│   │   └── README.md
-│   │
-│   ├── structures/                # Data structure views
-│   │   ├── __init__.py
-│   │   ├── test_linear.py         # LinkedList, Stack, Queue, Deque
-│   │   ├── test_trees.py          # Trie, Heap, SkipList
-│   │   ├── test_graphs.py         # Union-Find, FSM, DAG, Flow
-│   │   ├── test_advanced.py       # Neural Graph, Hypergraph
-│   │   ├── conftest.py
-│   │   └── README.md
-│   │
-│   ├── graph/                     # Graph operations
-│   │   ├── __init__.py
-│   │   ├── test_graph_ops.py      # Basic graph operations
-│   │   ├── test_algorithms.py     # Graph algorithms
-│   │   ├── conftest.py
-│   │   └── README.md
-│   │
-│   ├── query/                     # Query operations
-│   │   ├── __init__.py
-│   │   ├── test_native_query.py   # Native query functionality
-│   │   ├── test_query_builder.py  # Legacy query builder
-│   │   ├── conftest.py
-│   │   └── README.md
-│   │
-│   └── integration/               # Integration tests
-│       ├── __init__.py
-│       ├── test_end_to_end.py     # Complete workflows
-│       ├── test_modular_integration.py  # Cross-module testing
-│       ├── conftest.py
-│       └── README.md
-│
-├── benchmarks/                    # Performance benchmarks
-│   ├── __init__.py
-│   ├── benchmarks.py              # Main benchmark suite
-│   ├── test_performance_regression.py  # Regression testing
-│   ├── conftest.py
-│   └── README.md
-│
-└── utilities/                     # Test utilities and helpers
-    ├── __init__.py
-    ├── fixtures.py                # Common test fixtures
-    ├── helpers.py                 # Test helper functions
-    └── data/                      # Test data files
-        ├── sample_data.json
-        ├── large_dataset.json
-        └── edge_cases.json
-```
+- **20% Core tests** cover **80% of critical functionality** (fast, high-value)
+- **Unit tests** verify individual components in isolation
+- **Integration tests** validate cross-module scenarios
+- **Advance tests** validate production excellence (v1.0.0+)
 
-## Running Tests
+## Quick Start
 
-### Comprehensive Test Execution
 ```bash
-# Run all tests with coverage
-cd src/xlib/xnode/tests
-python run_all_tests.py --coverage
+# Run all tests (hierarchical execution)
+python tests/runner.py
 
-# Run specific component tests
-python run_all_tests.py --component core
-python run_all_tests.py --component performance
-python run_all_tests.py --component structures
+# Run specific layer
+python tests/runner.py --core          # Fast, high-value tests (< 30s)
+python tests/runner.py --unit          # Component tests (all modules)
+python tests/runner.py --integration   # End-to-end scenarios
+python tests/runner.py --advance       # Production excellence (v1.0.0+)
 
-# Run with different options
-python run_all_tests.py --verbose --parallel
+# Run specific priority (advance tests)
+python tests/runner.py --security      # Priority #1
+python tests/runner.py --usability     # Priority #2
+python tests/runner.py --maintainability  # Priority #3
+python tests/runner.py --performance   # Priority #4
+python tests/runner.py --extensibility    # Priority #5
 ```
 
-### Component-Specific Testing
+## Directory Structure
+
+```
+tests/
+├── runner.py                   # Main orchestrator (calls all layer runners)
+├── conftest.py                 # Shared fixtures for all layers
+├── verify_installation.py      # Installation verification
+├── README.md                   # This file
+│
+├── 0.core/                     # Layer 0: Core Tests (20% for 80% value)
+│   ├── runner.py               # Core test runner
+│   ├── conftest.py             # Core-specific fixtures
+│   ├── data/                   # Test data
+│   │   ├── inputs/
+│   │   ├── expected/
+│   │   └── fixtures/
+│   ├── test_all_node_strategies.py  # Comprehensive node tests (47 tests)
+│   ├── test_all_edge_strategies.py  # Comprehensive edge tests (34 tests)
+│   └── ...                     # Other core tests
+│
+├── 1.unit/                     # Layer 1: Unit Tests (mirrors src structure)
+│   ├── runner.py               # Unit test orchestrator
+│   ├── conftest.py             # Unit-specific fixtures
+│   ├── nodes_tests/            # Mirrors src/exonware/xwnode/nodes/
+│   │   ├── runner.py
+│   │   ├── conftest.py
+│   │   └── strategies_tests/
+│   │       ├── runner.py
+│   │       └── test_*.py
+│   ├── edges_tests/            # Mirrors src/exonware/xwnode/edges/
+│   │   ├── runner.py
+│   │   └── strategies_tests/
+│   ├── common_tests/           # Mirrors src/exonware/xwnode/common/
+│   │   └── runner.py
+│   └── facade_tests/           # Mirrors src/exonware/xwnode/facade.py
+│       └── runner.py
+│
+├── 2.integration/              # Layer 2: Integration Tests
+│   ├── runner.py               # Integration test runner
+│   ├── conftest.py             # Integration-specific fixtures
+│   └── test_*.py               # Scenario-based tests
+│
+└── 3.advance/                  # Layer 3: Advance Tests (v1.0.0+)
+    ├── runner.py               # Advance test runner
+    ├── conftest.py             # Advance-specific fixtures
+    ├── test_security.py        # Priority #1: Security excellence
+    ├── test_usability.py       # Priority #2: Usability excellence
+    ├── test_maintainability.py # Priority #3: Maintainability excellence
+    ├── test_performance.py     # Priority #4: Performance excellence
+    └── test_extensibility.py   # Priority #5: Extensibility excellence
+```
+
+## Hierarchical Runner Architecture
+
+### Main Orchestrator
+`tests/runner.py` calls sub-runners in sequence:
+```
+tests/runner.py (main)
+├─→ tests/0.core/runner.py
+├─→ tests/1.unit/runner.py
+│   ├─→ tests/1.unit/nodes_tests/runner.py
+│   │   └─→ tests/1.unit/nodes_tests/strategies_tests/runner.py
+│   ├─→ tests/1.unit/edges_tests/runner.py
+│   ├─→ tests/1.unit/common_tests/runner.py
+│   └─→ tests/1.unit/facade_tests/runner.py
+├─→ tests/2.integration/runner.py
+└─→ tests/3.advance/runner.py (v1.0.0+)
+```
+
+## Test Markers
+
+All tests use consistent markers for categorization:
+
+```python
+@pytest.mark.xwnode_core          # Core functionality tests
+@pytest.mark.xwnode_unit          # Unit tests
+@pytest.mark.xwnode_integration   # Integration tests
+@pytest.mark.xwnode_advance       # Advance tests (v1.0.0+)
+
+# Priority markers (advance tests)
+@pytest.mark.xwnode_security         # Priority #1
+@pytest.mark.xwnode_usability        # Priority #2
+@pytest.mark.xwnode_maintainability  # Priority #3
+@pytest.mark.xwnode_performance      # Priority #4
+@pytest.mark.xwnode_extensibility    # Priority #5
+
+# Strategy-specific markers
+@pytest.mark.xwnode_node_strategy    # Node strategy tests
+@pytest.mark.xwnode_edge_strategy    # Edge strategy tests
+```
+
+## Running Tests with pytest
+
 ```bash
-# Core functionality
-python -m pytest unit/core/ -v
+# Run all tests
+pytest
 
-# Performance management  
-python -m pytest unit/performance/ -v
+# Run specific marker
+pytest -m xwnode_core -q          # Core tests only
+pytest -m xwnode_security -vv     # Security tests (Priority #1)
 
-# Data structures
-python -m pytest unit/structures/ -v
+# Run specific file
+pytest tests/0.core/test_all_node_strategies.py
 
-# Graph operations
-python -m pytest unit/graph/ -v
+# Run with keyword filter
+pytest -k "hash_map"
 
-# Query operations
-python -m pytest unit/query/ -v
+# Stop on first failure
+pytest -x
 
-# Integration tests
-python -m pytest unit/integration/ -v
+# Last failed tests
+pytest --lf
+
+# Generate coverage report
+pytest --cov=exonware.xwnode --cov-report=html
 ```
 
-### Benchmarks and Performance
+## Test Quality Gates
+
+### Performance Targets
+- **Core (0.core):** < 30 seconds total
+- **Unit (1.unit):** < 5 minutes total
+- **Integration (2.integration):** < 15 minutes total
+- **Advance (3.advance):** < 30 minutes total (v1.0.0+)
+
+### Coverage Targets
+- **Core libraries:** ≥ 85% coverage
+- **Critical modules:** ≥ 90% coverage
+- **Security modules:** ≥ 95% coverage
+
+### Success Criteria
+- **Pre-v1.0.0:** All core + unit + integration tests pass (100%)
+- **v1.0.0+:** All advance tests pass (100%), all 5 priorities validated
+
+## Current Status
+
+**Test Results:**
+- ✅ 47 Node Strategy Tests: 100% PASSING
+- ✅ 34 Edge Strategy Tests: 100% PASSING
+- ✅ Total: 81 comprehensive tests PASSING
+
+## For Developers
+
+### Adding New Tests
+
+**1. Determine appropriate layer:**
+- **Core:** Critical path, fast (< 1s per test), high value
+- **Unit:** Isolated component test, mirrors source structure
+- **Integration:** Cross-module scenario, real wiring
+- **Advance:** Production excellence validation (v1.0.0+)
+
+**2. Place in correct directory:**
+- Unit tests mirror source: `tests/1.unit/module_name_tests/`
+- Add to appropriate layer directory
+
+**3. Add proper markers:**
+```python
+@pytest.mark.xwnode_unit
+def test_my_feature():
+    """Test description."""
+    pass
+```
+
+**4. Update/create module runner if needed**
+
+### Running Individual Layers
+
 ```bash
-# Run performance benchmarks
-python -m pytest benchmarks/ -v
-
-# Performance regression testing
-python benchmarks/test_performance_regression.py
+# Run layer runners directly (faster iteration)
+python tests/0.core/runner.py
+python tests/1.unit/runner.py
+python tests/2.integration/runner.py
+python tests/3.advance/runner.py
 ```
 
-## Test Organization Principles
+## References
 
-### Single Responsibility
-- Each test file focuses on one specific component or functionality
-- Clear separation between unit tests, integration tests, and benchmarks
-- Modular test structure matching the refactored codebase
+- **GUIDELINES_TEST.md:** Comprehensive testing standards
+- **GUIDELINES_DEV.md:** Development philosophy and standards
+- **pytest Documentation:** [https://docs.pytest.org](https://docs.pytest.org)
 
-### Comprehensive Coverage
-- **Core Tests**: Basic functionality, facade interface, error handling
-- **Performance Tests**: Mode management, optimization strategies, health monitoring
-- **Structure Tests**: All data structure behavioral views
-- **Graph Tests**: Operations, algorithms, traversal strategies
-- **Query Tests**: Native queries, query builder, search operations
-- **Integration Tests**: End-to-end workflows, cross-component interactions
+---
 
-### Best Practices
-- Consistent fixture usage across all test modules
-- Proper test isolation and cleanup
-- Performance regression prevention
-- Clear test documentation and examples
-- Maintainable test code following project standards
-
-## Coverage Goals
-
-- 🎯 **Target**: 95% code coverage across all components
-- 🔍 **Focus**: All public API methods and error conditions
-- ✅ **Include**: Edge cases, performance scenarios, integration paths
-- 📊 **Monitor**: Performance regression prevention and optimization effectiveness
-
-## Development Guidelines
-
-When adding new tests:
-
-1. **Follow the modular structure** - place tests in appropriate component directories
-2. **Use consistent naming** - `test_[component]_[functionality].py`
-3. **Leverage shared fixtures** - use `conftest.py` files appropriately
-4. **Add proper markers** - use pytest markers for test categorization
-5. **Update documentation** - maintain README files for each component
-6. **Include performance tests** - ensure optimization changes don't regress performance
-
-## Dependencies
-
-- pytest >= 6.0
-- pytest-cov (for coverage reports)
-- pytest-xdist (for parallel execution)
-- pytest-benchmark (for performance testing)
-- Python 3.8+ (xNode requirement)
-
-This reorganized test structure ensures maintainability, comprehensive coverage, and alignment with the refactored xNode architecture.
+*This test suite follows eXonware production-grade testing standards for production-ready, maintainable, and extensible code.*

@@ -24,9 +24,7 @@ with indexed operations.
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
         """Initialize the array list strategy."""
-        super().__init__(data=None, **options)
-        self._mode = NodeMode.ARRAY_LIST
-        self._traits = traits
+        super().__init__(NodeMode.ARRAY_LIST, traits, **options)
         self._data: List[Any] = []
         self._size = 0
     
@@ -88,6 +86,41 @@ with indexed operations.
         """Convert to native Python list."""
         # Return only non-None values in order
         return [value for value in self._data if value is not None]
+    
+    def __len__(self) -> int:
+        """Get the number of items."""
+        return len(self._data)
+    
+    def has(self, key: Any) -> bool:
+        """Check if value exists in array."""
+        return key in self._data
+    
+    def get(self, key: Any, default: Any = None) -> Any:
+        """Get value by index or search for value."""
+        try:
+            index = int(key)
+            if 0 <= index < len(self._data):
+                return self._data[index]
+        except (ValueError, TypeError):
+            if key in self._data:
+                return key
+        return default
+    
+    def put(self, key: Any, value: Any = None) -> None:
+        """Append value to array."""
+        self.insert(key, value if value is not None else key)
+    
+    def keys(self) -> Iterator[Any]:
+        """Get all indices."""
+        return iter(range(len(self._data)))
+    
+    def values(self) -> Iterator[Any]:
+        """Get all values."""
+        return iter(self._data)
+    
+    def items(self) -> Iterator[tuple[Any, Any]]:
+        """Get all items as (index, value) pairs."""
+        return enumerate(self._data)
     
     # ============================================================================
     # LINEAR STRATEGY METHODS

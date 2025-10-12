@@ -10,7 +10,7 @@ configuration, which is especially important for high-throughput applications.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -326,3 +326,7 @@ def get_flyweight_cache_info() -> Dict[str, Any]:
         Cache information dictionary
     """
     return get_flyweight().get_cache_info()
+
+
+# Usability aliases (Priority #2: Clean, intuitive API)
+Flyweight = StrategyFlyweight

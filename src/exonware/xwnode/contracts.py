@@ -11,8 +11,9 @@ from enum import Enum, Flag
 
 # Import all enums from defs.py to avoid circular references
 from .defs import (
-    NodeMode, EdgeMode, NodeTrait, EdgeTrait, QueryMode, QueryTrait
+    NodeMode, EdgeMode, NodeTrait, EdgeTrait
 )
+# Note: QueryMode and QueryTrait are in xwquery.defs module
 
 
 class iNodeStrategy(ABC):
@@ -475,111 +476,9 @@ class iNodeFacade(ABC):
 # ============================================================================
 # QUERY INTERFACES
 # ============================================================================
+# Note: Query implementation details (QueryMode, QueryTrait) are in xwquery module.
+# These are just generic interfaces for query capabilities.
 
-# QueryMode and QueryTrait are now imported from defs.py
-
-
-class IQueryStrategy(ABC):
-    """
-    Abstract interface for query strategies.
-    
-    All query strategies must implement this interface to ensure
-    compatibility with the XWQuery facade and automatic query detection.
-    """
-    
-    @abstractmethod
-    def execute(self, query_string: str, context: Dict[str, Any] = None) -> 'iQueryResult':
-        """Execute a query and return results."""
-        pass
-    
-    @abstractmethod
-    def validate_query(self, query_string: str) -> bool:
-        """Validate if the query string is valid for this strategy."""
-        pass
-    
-    @abstractmethod
-    def get_query_plan(self, query_string: str) -> Dict[str, Any]:
-        """Get the execution plan for a query."""
-        pass
-    
-    @abstractmethod
-    def get_mode(self) -> QueryMode:
-        """Get the query mode this strategy handles."""
-        pass
-    
-    @abstractmethod
-    def get_traits(self) -> QueryTrait:
-        """Get the traits/capabilities this strategy supports."""
-        pass
-    
-    @abstractmethod
-    def can_handle(self, query_string: str) -> bool:
-        """Check if this strategy can handle the given query string."""
-        pass
-    
-    @abstractmethod
-    def get_supported_operations(self) -> List[str]:
-        """Get list of supported query operations."""
-        pass
-    
-    @abstractmethod
-    def estimate_complexity(self, query_string: str) -> Dict[str, Any]:
-        """Estimate query complexity and resource requirements."""
-        pass
-
-
-# ============================================================================
-# QUERY ERROR CLASSES
-# ============================================================================
-
-class XWQueryError(Exception):
-    """Base exception for all query-related errors."""
-    
-    def __init__(self, message: str, query_string: str = None, cause: Exception = None):
-        super().__init__(message)
-        self.query_string = query_string
-        self.cause = cause
-    
-    def __str__(self):
-        base_msg = super().__str__()
-        if self.query_string:
-            return f"{base_msg} (Query: {self.query_string[:100]}...)"
-        return base_msg
-
-
-class XWQueryValidationError(XWQueryError):
-    """Raised when query validation fails."""
-    pass
-
-
-class XWQueryExecutionError(XWQueryError):
-    """Raised when query execution fails."""
-    pass
-
-
-class XWQueryParseError(XWQueryError):
-    """Raised when query parsing fails."""
-    pass
-
-
-class XWQueryTimeoutError(XWQueryError):
-    """Raised when query execution times out."""
-    pass
-
-
-class XWQueryNotSupportedError(XWQueryError):
-    """Raised when a query operation is not supported."""
-    pass
-
-
-class XWQueryStrategyNotFoundError(XWQueryError):
-    """Raised when no suitable query strategy is found."""
-    pass
-
-
-class XWQueryContextError(XWQueryError):
-    """Raised when query context is invalid or missing."""
-    pass
 
 class iQueryResult(ABC):
     """Interface for query results."""

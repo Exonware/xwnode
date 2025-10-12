@@ -9,7 +9,7 @@ memory usage, and optimization recommendations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -24,7 +24,7 @@ from exonware.xwsystem import get_logger
 logger = get_logger(__name__)
 
 from ...defs import NodeMode, EdgeMode
-from .flyweight import get_flyweight_stats
+from ..patterns.flyweight import get_flyweight_stats
 from .pattern_detector import get_detector
 from .performance_monitor import get_monitor, get_performance_summary
 
@@ -536,3 +536,7 @@ def export_metrics(format: str = 'json') -> Union[Dict[str, Any], str]:
         Exported metrics
     """
     return get_metrics_collector().export_metrics(format)
+
+
+# Usability aliases (Priority #2: Clean, intuitive API)
+Metrics = StrategyMetricsCollector

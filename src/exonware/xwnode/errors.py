@@ -327,12 +327,9 @@ class XWNodePresetError(XWNodeStrategyError):
         }
         
         # Import here to avoid circular imports
-        try:
-            from .defs import list_presets
-            available = list_presets()
-            suggestions = [f"Available presets: {', '.join(available)}"]
-        except ImportError:
-            suggestions = ["Check preset name spelling"]
+        from .defs import list_presets
+        available = list_presets()
+        suggestions = [f"Available presets: {', '.join(available)}"]
         
         super().__init__(message,
                         error_code="PRESET_ERROR",

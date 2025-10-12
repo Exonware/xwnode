@@ -8,7 +8,7 @@ edge attribute storage with efficient analytical queries.
 from typing import Any, Iterator, List, Dict, Set, Optional, Tuple, Union
 from collections import defaultdict
 import statistics
-from ._base_edge import aEdgeStrategy
+from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
 
@@ -143,7 +143,7 @@ class PropertyColumn:
         return len(self.values)
 
 
-class xEdgePropertyStoreStrategy(aEdgeStrategy):
+class EdgePropertyStoreStrategy(AEdgeStrategy):
     """
     Edge Property Store strategy for columnar edge attributes.
     

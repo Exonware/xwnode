@@ -3,7 +3,7 @@ Simple node strategy implementation.
 """
 
 from typing import Any, Iterator, Optional, List, Dict, Union
-from ..contracts import iNodeStrategy, NodeTrait
+from ...contracts import iNodeStrategy, NodeTrait
 
 
 class SimpleNodeStrategy(iNodeStrategy):

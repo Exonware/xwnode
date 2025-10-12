@@ -1,13 +1,13 @@
 """
-GEMINI-2 Strategy Types and Enums
+XWNode Strategy Types and Enums
 
-This module defines all the enums and types for the GEMINI-2 strategy system:
-- NodeMode: 28 different node data structure strategies
-- EdgeMode: 16 different edge storage strategies  
-- QueryMode: 19 different query language strategies
-- NodeTrait: 12 cross-cutting node capabilities
-- EdgeTrait: 12 cross-cutting edge capabilities
-- QueryTrait: 8 cross-cutting query capabilities
+This module defines all the enums and types for the XWNode strategy system:
+- NodeMode: 49 different node data structure strategies (including DATA_INTERCHANGE_OPTIMIZED)
+- EdgeMode: 22 different edge storage strategies
+- NodeTrait: Cross-cutting node capabilities
+- EdgeTrait: Cross-cutting edge capabilities
+
+Note: Query-related enums (QueryMode, QueryTrait) are in xwquery.defs module.
 """
 
 from enum import Enum, Flag, auto as _auto
@@ -15,11 +15,11 @@ from typing import Dict, List, Any, Optional
 
 
 # ============================================================================
-# NODE MODES (28 total)
+# NODE MODES (57 total)
 # ============================================================================
 
 class NodeMode(Enum):
-    """Node data structure strategies for GEMINI-2."""
+    """Node data structure strategies for GEMINI-2 (57 total)."""
     
     # Special modes
     AUTO = _auto()                    # Intelligent automatic selection
@@ -87,14 +87,37 @@ class NodeMode(Enum):
     AVL_TREE = _auto()                # Strictly balanced binary search tree
     TREAP = _auto()                   # Randomized balanced tree
     SPLAY_TREE = _auto()              # Self-adjusting binary search tree
+    
+    # High-performance structures (NEW)
+    ART = _auto()                     # Adaptive Radix Tree
+    BW_TREE = _auto()                 # Lock-Free B-tree (Bw-Tree)
+    HAMT = _auto()                    # Hash Array Mapped Trie
+    MASSTREE = _auto()                # B+ tree + trie hybrid
+    EXTENDIBLE_HASH = _auto()         # Dynamic hash table
+    LINEAR_HASH = _auto()             # Linear dynamic hashing
+    T_TREE = _auto()                  # In-memory T-tree
+    LEARNED_INDEX = _auto()           # ML-based learned indexes (experimental)
+    
+    # Data interchange structures
+    DATA_INTERCHANGE_OPTIMIZED = _auto()  # Ultra-lightweight for data interchange (COW, pooling, hash caching)
+    
+    # Advanced specialized structures
+    VEB_TREE = _auto()                # van Emde Boas tree - O(log log U) integer ops
+    DAWG = _auto()                    # DAWG/DAFSA - minimal automaton for strings
+    HOPSCOTCH_HASH = _auto()          # Hopscotch hashing - bounded neighborhood search
+    INTERVAL_TREE = _auto()           # Interval overlap queries - scheduling, genomics
+    KD_TREE = _auto()                 # k-dimensional spatial tree - point queries
+    ROPE = _auto()                    # Rope structure - efficient text operations
+    CRDT_MAP = _auto()                # Conflict-free replicated map - distributed systems
+    BLOOMIER_FILTER = _auto()         # Probabilistic key→value map - approximate dictionaries
 
 
 # ============================================================================
-# EDGE MODES (16 total)
+# EDGE MODES (28 total)
 # ============================================================================
 
 class EdgeMode(Enum):
-    """Edge storage strategies for GEMINI-2."""
+    """Edge storage strategies for GEMINI-2 (28 total)."""
     
     # Special modes
     AUTO = _auto()                    # Intelligent automatic selection
@@ -128,6 +151,46 @@ class EdgeMode(Enum):
     
     # Weighted graph structures
     WEIGHTED_GRAPH = _auto()          # Graph with numerical edge weights
+    
+    # Graph representation structures (NEW)
+    INCIDENCE_MATRIX = _auto()        # Incidence matrix representation
+    EDGE_LIST = _auto()               # Simple edge list format
+    COMPRESSED_GRAPH = _auto()        # WebGraph/LLP compression
+    
+    # Advanced graph structures
+    K2_TREE = _auto()                 # k²-tree ultra-compact adjacency
+    BV_GRAPH = _auto()                # BVGraph full WebGraph with Elias coding
+    HNSW = _auto()                    # Hierarchical Navigable Small World - ANN search
+    EULER_TOUR = _auto()              # Euler tour trees - dynamic connectivity
+    LINK_CUT = _auto()                # Link-cut trees - dynamic trees with path queries
+    HOP2_LABELS = _auto()             # 2-hop labeling - fast reachability queries
+    GRAPHBLAS = _auto()               # GraphBLAS semiring-based operations
+    ROARING_ADJ = _auto()             # Roaring bitmap adjacency - fast set operations
+    MULTIPLEX = _auto()               # Multiplex/layered edges - multi-layer graphs
+    BITEMPORAL = _auto()              # Bitemporal edges - valid and transaction time
+
+
+# ============================================================================
+# GRAPH OPTIMIZATION (4 levels)
+# ============================================================================
+
+class GraphOptimization(Enum):
+    """
+    Graph optimization levels for XWGraphManager.
+    
+    Controls indexing and caching behavior for performance tuning.
+    """
+    
+    OFF = 0           # No optimization - fallback to O(n) iteration
+    INDEX_ONLY = 1    # Only indexing - O(1) lookups, no caching
+    CACHE_ONLY = 2    # Only caching - benefits from repeated queries
+    FULL = 3          # Both indexing + caching - maximum performance
+    
+    # Aliases for clarity
+    DISABLED = 0
+    MINIMAL = 1
+    MODERATE = 2
+    MAXIMUM = 3
 
 
 # ============================================================================
@@ -200,101 +263,13 @@ class EdgeTrait(Flag):
     SPATIAL = _auto()                 # Spatial operations
     TEMPORAL = _auto()                # Time-aware edges
     HYPER = _auto()                   # Hyperedge support
+    HIERARCHICAL = _auto()            # Hierarchical/tree structure
     
     # Performance capabilities
     DENSE = _auto()                   # Dense graph optimized
     SPARSE = _auto()                  # Sparse graph optimized
     CACHE_FRIENDLY = _auto()          # Cache-optimized
     COLUMNAR = _auto()                # Columnar storage
-
-
-# ============================================================================
-# QUERY MODES (35 total)
-# ============================================================================
-
-class QueryMode(Enum):
-    """Query language strategies for GEMINI-2."""
-    
-    # Special modes
-    AUTO = _auto()                    # Intelligent automatic selection
-    
-    # Structured & Document Query Languages
-    SQL = _auto()                     # Standard SQL
-    HIVEQL = _auto()                  # Apache Hive SQL
-    PIG = _auto()                     # Apache Pig Latin
-    CQL = _auto()                     # Cassandra Query Language
-    N1QL = _auto()                    # Couchbase N1QL
-    KQL = _auto()                     # Kusto Query Language
-    DATALOG = _auto()                 # Datalog
-    MQL = _auto()                     # MongoDB Query Language
-    PARTIQL = _auto()                 # AWS PartiQL (SQL-compatible for nested/semi-structured)
-    
-    # Search Query Languages
-    ELASTIC_DSL = _auto()            # Elasticsearch Query DSL
-    EQL = _auto()                     # Elasticsearch Event Query Language
-    LUCENE = _auto()                  # Lucene query syntax
-    
-    # Time Series & Monitoring
-    FLUX = _auto()                    # InfluxDB Flux
-    PROMQL = _auto()                  # Prometheus Query Language
-    
-    # Data Streaming
-    KSQL = _auto()                    # Kafka Streams (ksqlDB)
-    
-    # Graph Query Languages
-    GRAPHQL = _auto()                 # GraphQL
-    SPARQL = _auto()                  # SPARQL (RDF)
-    GREMLIN = _auto()                 # Apache TinkerPop Gremlin
-    CYPHER = _auto()                  # Neo4j Cypher
-    GQL = _auto()                     # ISO/IEC 39075:2024 Graph Query Language standard
-    
-    # ORM / Integrated Query
-    LINQ = _auto()                    # .NET Language Integrated Query
-    HQL = _auto()                     # Hibernate Query Language / JPQL
-    
-    # Markup & Document Structure
-    JSONIQ = _auto()                  # JSONiq
-    JMESPATH = _auto()                # JMESPath
-    JQ = _auto()                      # jq JSON processor
-    XQUERY = _auto()                  # XQuery
-    XPATH = _auto()                   # XPath
-    
-    # Logs & Analytics
-    LOGQL = _auto()                   # Grafana Loki Log Query Language
-    SPL = _auto()                     # Splunk Search Processing Language
-    
-    # SQL Engines
-    TRINO_SQL = _auto()               # Trino/Presto SQL
-    BIGQUERY_SQL = _auto()            # Google BigQuery SQL
-    SNOWFLAKE_SQL = _auto()           # Snowflake SQL
-    
-    # Generic Query Languages
-    XML_QUERY = _auto()               # Generic XML Query
-    JSON_QUERY = _auto()              # Generic JSON Query
-
-
-# ============================================================================
-# QUERY TRAITS (8 total)
-# ============================================================================
-
-class QueryTrait(Flag):
-    """Cross-cutting query capabilities for GEMINI-2."""
-    
-    NONE = 0
-    
-    # Basic capabilities
-    STRUCTURED = _auto()              # Structured data queries
-    GRAPH = _auto()                   # Graph traversal queries
-    DOCUMENT = _auto()                # Document-based queries
-    
-    # Advanced capabilities
-    TEMPORAL = _auto()                # Time-aware queries
-    SPATIAL = _auto()                 # Spatial queries
-    ANALYTICAL = _auto()              # Analytical queries
-    
-    # Performance capabilities
-    STREAMING = _auto()               # Streaming queries
-    BATCH = _auto()                   # Batch processing queries
 
 
 # ============================================================================
@@ -345,6 +320,23 @@ RED_BLACK_TREE = NodeMode.RED_BLACK_TREE
 AVL_TREE = NodeMode.AVL_TREE
 TREAP = NodeMode.TREAP
 SPLAY_TREE = NodeMode.SPLAY_TREE
+ART = NodeMode.ART
+BW_TREE = NodeMode.BW_TREE
+HAMT = NodeMode.HAMT
+MASSTREE = NodeMode.MASSTREE
+EXTENDIBLE_HASH = NodeMode.EXTENDIBLE_HASH
+LINEAR_HASH = NodeMode.LINEAR_HASH
+T_TREE = NodeMode.T_TREE
+LEARNED_INDEX = NodeMode.LEARNED_INDEX
+DATA_INTERCHANGE_OPTIMIZED = NodeMode.DATA_INTERCHANGE_OPTIMIZED
+VEB_TREE = NodeMode.VEB_TREE
+DAWG = NodeMode.DAWG
+HOPSCOTCH_HASH = NodeMode.HOPSCOTCH_HASH
+INTERVAL_TREE = NodeMode.INTERVAL_TREE
+KD_TREE = NodeMode.KD_TREE
+ROPE = NodeMode.ROPE
+CRDT_MAP = NodeMode.CRDT_MAP
+BLOOMIER_FILTER = NodeMode.BLOOMIER_FILTER
 
 # Edge Mode Constants
 ADJ_LIST = EdgeMode.ADJ_LIST
@@ -363,61 +355,19 @@ QUADTREE = EdgeMode.QUADTREE
 OCTREE = EdgeMode.OCTREE
 TREE_GRAPH_BASIC = EdgeMode.TREE_GRAPH_BASIC
 WEIGHTED_GRAPH = EdgeMode.WEIGHTED_GRAPH
-
-# Query Mode Constants
-# Structured & Document Query Languages
-SQL = QueryMode.SQL
-HIVEQL = QueryMode.HIVEQL
-PIG = QueryMode.PIG
-CQL = QueryMode.CQL
-N1QL = QueryMode.N1QL
-KQL = QueryMode.KQL
-DATALOG = QueryMode.DATALOG
-MQL = QueryMode.MQL
-PARTIQL = QueryMode.PARTIQL
-
-# Search Query Languages
-ELASTIC_DSL = QueryMode.ELASTIC_DSL
-EQL = QueryMode.EQL
-LUCENE = QueryMode.LUCENE
-
-# Time Series & Monitoring
-FLUX = QueryMode.FLUX
-PROMQL = QueryMode.PROMQL
-
-# Data Streaming
-KSQL = QueryMode.KSQL
-
-# Graph Query Languages
-GRAPHQL = QueryMode.GRAPHQL
-SPARQL = QueryMode.SPARQL
-GREMLIN = QueryMode.GREMLIN
-CYPHER = QueryMode.CYPHER
-GQL = QueryMode.GQL
-
-# ORM / Integrated Query
-LINQ = QueryMode.LINQ
-HQL = QueryMode.HQL
-
-# Markup & Document Structure
-JSONIQ = QueryMode.JSONIQ
-JMESPATH = QueryMode.JMESPATH
-JQ = QueryMode.JQ
-XQUERY = QueryMode.XQUERY
-XPATH = QueryMode.XPATH
-
-# Logs & Analytics
-LOGQL = QueryMode.LOGQL
-SPL = QueryMode.SPL
-
-# SQL Engines
-TRINO_SQL = QueryMode.TRINO_SQL
-BIGQUERY_SQL = QueryMode.BIGQUERY_SQL
-SNOWFLAKE_SQL = QueryMode.SNOWFLAKE_SQL
-
-# Generic Query Languages
-XML_QUERY = QueryMode.XML_QUERY
-JSON_QUERY = QueryMode.JSON_QUERY
+INCIDENCE_MATRIX = EdgeMode.INCIDENCE_MATRIX
+EDGE_LIST = EdgeMode.EDGE_LIST
+COMPRESSED_GRAPH = EdgeMode.COMPRESSED_GRAPH
+K2_TREE = EdgeMode.K2_TREE
+BV_GRAPH = EdgeMode.BV_GRAPH
+HNSW = EdgeMode.HNSW
+EULER_TOUR = EdgeMode.EULER_TOUR
+LINK_CUT = EdgeMode.LINK_CUT
+HOP2_LABELS = EdgeMode.HOP2_LABELS
+GRAPHBLAS = EdgeMode.GRAPHBLAS
+ROARING_ADJ = EdgeMode.ROARING_ADJ
+MULTIPLEX = EdgeMode.MULTIPLEX
+BITEMPORAL = EdgeMode.BITEMPORAL
 
 
 # ============================================================================
@@ -428,8 +378,8 @@ class StrategyMetadata:
     """Metadata for strategy modes including capabilities and performance characteristics."""
     
     def __init__(self, 
-                 mode: NodeMode | EdgeMode | QueryMode,
-                 traits: NodeTrait | EdgeTrait | QueryTrait,
+                 mode: NodeMode | EdgeMode,
+                 traits: NodeTrait | EdgeTrait,
                  description: str,
                  best_for: List[str],
                  performance_gain: str,
@@ -634,6 +584,178 @@ NODE_STRATEGY_METADATA: Dict[NodeMode, StrategyMetadata] = {
         "very low",
         {"contains": "O(1)", "add": "O(1)", "remove": "O(1)"}
     ),
+    
+    # NEW High-Performance Strategies
+    NodeMode.ART: StrategyMetadata(
+        NodeMode.ART,
+        NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.PREFIX_TREE,
+        "Adaptive Radix Tree for string keys",
+        ["string keys", "prefix search", "memory efficiency"],
+        "3-10x faster than B-trees for strings",
+        "low",
+        {"get": "O(k)", "set": "O(k)", "delete": "O(k)"}
+    ),
+    
+    NodeMode.BW_TREE: StrategyMetadata(
+        NodeMode.BW_TREE,
+        NodeTrait.ORDERED | NodeTrait.INDEXED,
+        "Lock-free B-tree with delta updates",
+        ["concurrent access", "lock-free", "cache-optimized"],
+        "Lock-free operations, high concurrency",
+        "medium",
+        {"get": "O(log n)", "set": "O(log n)", "delete": "O(log n)"}
+    ),
+    
+    NodeMode.HAMT: StrategyMetadata(
+        NodeMode.HAMT,
+        NodeTrait.INDEXED | NodeTrait.PERSISTENT,
+        "Hash Array Mapped Trie with structural sharing",
+        ["persistent data", "functional programming", "immutable"],
+        "Structural sharing, memory efficient",
+        "medium",
+        {"get": "O(log32 n)", "set": "O(log32 n)", "delete": "O(log32 n)"}
+    ),
+    
+    NodeMode.MASSTREE: StrategyMetadata(
+        NodeMode.MASSTREE,
+        NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.PREFIX_TREE,
+        "B+ tree + trie hybrid for cache locality",
+        ["cache-optimized", "variable keys", "high performance"],
+        "Cache-friendly, fast key comparison",
+        "medium",
+        {"get": "O(log n)", "set": "O(log n)", "delete": "O(log n)"}
+    ),
+    
+    NodeMode.EXTENDIBLE_HASH: StrategyMetadata(
+        NodeMode.EXTENDIBLE_HASH,
+        NodeTrait.INDEXED,
+        "Directory-based dynamic hash table",
+        ["dynamic hashing", "no full rehash", "grows incrementally"],
+        "Split buckets without full rehashing",
+        "medium",
+        {"get": "O(1)", "set": "O(1)", "delete": "O(1)"}
+    ),
+    
+    NodeMode.LINEAR_HASH: StrategyMetadata(
+        NodeMode.LINEAR_HASH,
+        NodeTrait.INDEXED,
+        "Linear dynamic hashing without directory",
+        ["dynamic hashing", "no directory overhead", "gradual growth"],
+        "Linear bucket splitting, no directory",
+        "low",
+        {"get": "O(1)", "set": "O(1)", "delete": "O(1)"}
+    ),
+    
+    NodeMode.T_TREE: StrategyMetadata(
+        NodeMode.T_TREE,
+        NodeTrait.ORDERED | NodeTrait.INDEXED,
+        "Hybrid AVL tree + array nodes for in-memory",
+        ["in-memory", "reduced pointers", "cache-friendly"],
+        "Optimized for in-memory databases",
+        "medium",
+        {"get": "O(log n)", "set": "O(log n)", "delete": "O(log n)"}
+    ),
+    
+    NodeMode.LEARNED_INDEX: StrategyMetadata(
+        NodeMode.LEARNED_INDEX,
+        NodeTrait.ORDERED | NodeTrait.INDEXED,
+        "ML-based learned index (EXPERIMENTAL)",
+        ["machine learning", "adaptive", "research"],
+        "10-100x faster lookups (when fully implemented)",
+        "medium",
+        {"get": "O(1) amortized", "set": "O(log n)", "delete": "O(log n)"}
+    ),
+    
+    NodeMode.DATA_INTERCHANGE_OPTIMIZED: StrategyMetadata(
+        NodeMode.DATA_INTERCHANGE_OPTIMIZED,
+        NodeTrait.INDEXED,
+        "Ultra-lightweight hash map with COW, pooling, and hash caching",
+        ["data interchange", "serialization", "format conversion", "copy-on-write"],
+        "Optimized for data interchange patterns with minimal overhead",
+        "very low",
+        {"get": "O(1)", "set": "O(1)", "delete": "O(1)", "copy": "O(1) lazy"}
+    ),
+    
+    # Advanced specialized structures
+    NodeMode.VEB_TREE: StrategyMetadata(
+        NodeMode.VEB_TREE,
+        NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.FAST_INSERT,
+        "van Emde Boas tree for O(log log U) integer operations",
+        ["routing tables", "IP lookups", "small universe integers", "priority queues"],
+        "Faster than BST for small universes: O(log log U) vs O(log n)",
+        "high",
+        {"get": "O(log log U)", "set": "O(log log U)", "delete": "O(log log U)", "min/max": "O(1)"}
+    ),
+    
+    NodeMode.DAWG: StrategyMetadata(
+        NodeMode.DAWG,
+        NodeTrait.HIERARCHICAL | NodeTrait.INDEXED | NodeTrait.MEMORY_EFFICIENT | NodeTrait.PREFIX_TREE,
+        "DAWG/DAFSA minimal automaton for string sets",
+        ["dictionaries", "lexicons", "spell check", "autocomplete", "genomics"],
+        "10-100x memory savings vs trie through suffix sharing",
+        "very low",
+        {"get": "O(k)", "insert": "O(k)", "prefix_query": "O(k+m)"}
+    ),
+    
+    NodeMode.HOPSCOTCH_HASH: StrategyMetadata(
+        NodeMode.HOPSCOTCH_HASH,
+        NodeTrait.INDEXED | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
+        "Hopscotch hashing with bounded neighborhood search",
+        ["cache-friendly hash", "embedded systems", "high load factors", "predictable performance"],
+        "Better cache behavior than cuckoo, supports >90% load",
+        "medium",
+        {"get": "O(H)", "set": "O(H)", "delete": "O(H)"}  # H=32 typical
+    ),
+    
+    NodeMode.INTERVAL_TREE: StrategyMetadata(
+        NodeMode.INTERVAL_TREE,
+        NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL,
+        "Augmented tree for interval overlap queries",
+        ["scheduling", "genomics", "collision detection", "time windows", "range caching"],
+        "O(log n + k) overlap queries vs O(n) scan",
+        "medium",
+        {"insert": "O(log n)", "delete": "O(log n)", "overlaps": "O(log n + k)"}
+    ),
+    
+    NodeMode.KD_TREE: StrategyMetadata(
+        NodeMode.KD_TREE,
+        NodeTrait.SPATIAL | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL,
+        "k-dimensional tree for multi-dimensional point queries",
+        ["2D/3D points", "k-NN search", "spatial indexing", "graphics", "ML"],
+        "O(log n) nearest neighbor for low dimensions",
+        "medium",
+        {"insert": "O(log n)", "search": "O(log n)", "knn": "O(log n)"}
+    ),
+    
+    NodeMode.ROPE: StrategyMetadata(
+        NodeMode.ROPE,
+        NodeTrait.HIERARCHICAL | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
+        "Binary tree for efficient text/string operations",
+        ["text editors", "large documents", "undo/redo", "collaborative editing"],
+        "O(log n) insert/delete vs O(n) for strings",
+        "medium",
+        {"index": "O(log n)", "concat": "O(log n)", "split": "O(log n)", "insert": "O(log n)"}
+    ),
+    
+    NodeMode.CRDT_MAP: StrategyMetadata(
+        NodeMode.CRDT_MAP,
+        NodeTrait.INDEXED | NodeTrait.PERSISTENT | NodeTrait.STREAMING,
+        "Conflict-free replicated map for distributed systems",
+        ["distributed databases", "offline-first apps", "collaborative editing", "multi-master"],
+        "Conflict-free merging with eventual consistency",
+        "high",
+        {"put": "O(1)", "get": "O(1)", "merge": "O(m)"}
+    ),
+    
+    NodeMode.BLOOMIER_FILTER: StrategyMetadata(
+        NodeMode.BLOOMIER_FILTER,
+        NodeTrait.PROBABILISTIC | NodeTrait.MEMORY_EFFICIENT | NodeTrait.INDEXED,
+        "Probabilistic key→value map with false positives",
+        ["approximate caches", "distributed sketches", "memory-constrained", "spell check"],
+        "10-100x memory savings vs hash map with controlled FP rate",
+        "very low",
+        {"get": "O(k)", "contains": "O(k)"}  # k = hash functions
+    ),
 }
 
 
@@ -726,6 +848,138 @@ EDGE_STRATEGY_METADATA: Dict[EdgeMode, StrategyMetadata] = {
         "2-5x faster hyperedge operations",
         "medium",
         {"add_hyperedge": "O(1)", "remove_hyperedge": "O(1)", "incident_edges": "O(degree)"}
+    ),
+    
+    # NEW Graph Representation Strategies
+    EdgeMode.INCIDENCE_MATRIX: StrategyMetadata(
+        EdgeMode.INCIDENCE_MATRIX,
+        EdgeTrait.SPARSE | EdgeTrait.DIRECTED | EdgeTrait.WEIGHTED,
+        "Incidence matrix for edge-centric queries",
+        ["edge properties", "edge-centric", "graph theory"],
+        "Optimal for edge-focused operations",
+        "medium",
+        {"add_edge": "O(1)", "remove_edge": "O(1)", "edge_properties": "O(1)"}
+    ),
+    
+    EdgeMode.EDGE_LIST: StrategyMetadata(
+        EdgeMode.EDGE_LIST,
+        EdgeTrait.SPARSE | EdgeTrait.DIRECTED,
+        "Simple edge list format",
+        ["minimal storage", "edge list files", "simple graphs"],
+        "Minimal overhead, simple format",
+        "low",
+        {"add_edge": "O(1)", "remove_edge": "O(n)", "neighbors": "O(m)"}
+    ),
+    
+    EdgeMode.COMPRESSED_GRAPH: StrategyMetadata(
+        EdgeMode.COMPRESSED_GRAPH,
+        EdgeTrait.SPARSE | EdgeTrait.COMPRESSED,
+        "WebGraph/LLP compression for power-law graphs",
+        ["web graphs", "social networks", "high compression"],
+        "100x compression for power-law graphs",
+        "very low",
+        {"add_edge": "O(1)", "neighbors": "O(degree)", "compression": "100x"}
+    ),
+    
+    # Advanced graph structures
+    EdgeMode.K2_TREE: StrategyMetadata(
+        EdgeMode.K2_TREE,
+        EdgeTrait.SPARSE | EdgeTrait.COMPRESSED,
+        "k²-tree ultra-compact adjacency with quadtree compression",
+        ["web graphs", "social networks", "billions of edges", "memory-constrained"],
+        "2-10 bits per edge for power-law graphs",
+        "very low",
+        {"add_edge": "O(log n)", "has_edge": "O(log n)", "neighbors": "O(log n + degree)"}
+    ),
+    
+    EdgeMode.BV_GRAPH: StrategyMetadata(
+        EdgeMode.BV_GRAPH,
+        EdgeTrait.SPARSE | EdgeTrait.COMPRESSED,
+        "BVGraph full WebGraph with Elias coding and reference lists",
+        ["web crawls", "social networks", "billion-edge graphs", "graph archives"],
+        "100-1000x compression with fast decompression",
+        "very low",
+        {"add_edge": "O(1) batch", "neighbors": "O(degree)", "compression": "100-1000x"}
+    ),
+    
+    EdgeMode.HNSW: StrategyMetadata(
+        EdgeMode.HNSW,
+        EdgeTrait.SPARSE | EdgeTrait.MULTI,
+        "Hierarchical Navigable Small World for ANN search",
+        ["vector search", "embeddings", "recommendations", "semantic search", "image retrieval"],
+        "O(log n) approximate nearest neighbor search",
+        "high",
+        {"insert": "O(M log n)", "search_knn": "O(ef log n)", "recall": ">95%"}
+    ),
+    
+    EdgeMode.EULER_TOUR: StrategyMetadata(
+        EdgeMode.EULER_TOUR,
+        EdgeTrait.DIRECTED | EdgeTrait.SPARSE,
+        "Euler tour trees for dynamic forest connectivity",
+        ["dynamic networks", "MST with changes", "network reliability", "forest decomposition"],
+        "O(log n) link/cut operations for dynamic connectivity",
+        "medium",
+        {"link": "O(log n)", "cut": "O(log n)", "connected": "O(log n)"}
+    ),
+    
+    EdgeMode.LINK_CUT: StrategyMetadata(
+        EdgeMode.LINK_CUT,
+        EdgeTrait.DIRECTED | EdgeTrait.SPARSE,
+        "Link-cut trees with path queries and aggregates",
+        ["dynamic MST", "network flows", "path aggregates", "dynamic matching"],
+        "O(log n) amortized for link/cut/path operations",
+        "medium",
+        {"link": "O(log n)", "cut": "O(log n)", "path_sum": "O(log n)"}
+    ),
+    
+    EdgeMode.HOP2_LABELS: StrategyMetadata(
+        EdgeMode.HOP2_LABELS,
+        EdgeTrait.SPARSE | EdgeTrait.WEIGHTED,
+        "2-hop labeling for constant-time reachability queries",
+        ["road networks", "social graphs", "navigation", "read-heavy workloads"],
+        "O(1) to O(log n) reachability after O(n²m) preprocessing",
+        "medium",
+        {"reachability": "O(|L(u)| + |L(v)|)", "distance": "O(|L(u)| × |L(v)|)"}
+    ),
+    
+    EdgeMode.GRAPHBLAS: StrategyMetadata(
+        EdgeMode.GRAPHBLAS,
+        EdgeTrait.SPARSE | EdgeTrait.DENSE | EdgeTrait.WEIGHTED,
+        "GraphBLAS semiring-based matrix operations",
+        ["graph analytics", "linear algebra", "GPU acceleration", "algorithm composition"],
+        "Express graph algorithms as matrix ops, enable hardware acceleration",
+        "medium",
+        {"mxm": "O(nnz(A) + nnz(B))", "element_wise": "O(nnz)"}
+    ),
+    
+    EdgeMode.ROARING_ADJ: StrategyMetadata(
+        EdgeMode.ROARING_ADJ,
+        EdgeTrait.SPARSE | EdgeTrait.COMPRESSED,
+        "Roaring bitmap per-vertex adjacency for fast set operations",
+        ["BFS/DFS", "frontier operations", "graph traversals", "label propagation"],
+        "Ultra-fast frontier unions/intersections in microseconds",
+        "low",
+        {"add_edge": "O(1)", "has_edge": "O(1)", "union": "O(min(n1, n2))"}
+    ),
+    
+    EdgeMode.MULTIPLEX: StrategyMetadata(
+        EdgeMode.MULTIPLEX,
+        EdgeTrait.MULTI | EdgeTrait.DIRECTED,
+        "Multi-layer graphs with per-layer semantics",
+        ["social networks", "transportation", "multi-relationship", "communication networks"],
+        "Natural modeling of multiple relationship types",
+        "high",
+        {"add_edge": "O(1)", "neighbors_layer": "O(degree)", "cross_layer": "O(L × degree)"}
+    ),
+    
+    EdgeMode.BITEMPORAL: StrategyMetadata(
+        EdgeMode.BITEMPORAL,
+        EdgeTrait.TEMPORAL | EdgeTrait.DIRECTED,
+        "Bitemporal edges with valid-time and transaction-time",
+        ["financial systems", "compliance", "audit trails", "healthcare", "time-travel queries"],
+        "Complete audit trail with as-of queries and corrections",
+        "very high",
+        {"add_edge": "O(1)", "as_of_query": "O(n)", "temporal_query": "O(log n + k)"}
     ),
 }
 

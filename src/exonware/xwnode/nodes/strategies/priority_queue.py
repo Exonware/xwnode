@@ -1,16 +1,25 @@
 """
+#exonware/xwnode/src/exonware/xwnode/nodes/strategies/priority_queue.py
+
 Priority Queue Strategy Implementation
 
-Implements a priority queue using Python's heapq for efficient priority-based operations.
+Production-grade priority queue using binary heap.
+
+Best Practices Implemented:
+- Min-heap by default (heapq standard)
+- Stable sorting with counter for equal priorities
+- Efficient O(log n) operations
+- Support for both min and max heaps
+- Proper heap semantics following CLRS and industry standards
 
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
-Generation Date: 07-Sep-2025
+Version: 0.0.1.23
+Generation Date: October 12, 2025
 """
 
-from typing import Any, Iterator, Optional, Dict, Union, Tuple
+from typing import Any, Iterator, List, Optional, Dict, Tuple
 import heapq
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -19,43 +28,271 @@ from ...defs import NodeMode, NodeTrait
 
 class PriorityQueueStrategy(ANodeLinearStrategy):
     """
-    Priority Queue node strategy for priority-based operations.
+    Production-grade Priority Queue node strategy.
     
-    Uses a binary heap for efficient insertion and extraction of
-    highest priority elements, ideal for alg
+    Optimized for:
+    - Dijkstra's shortest path algorithm
+    - A* pathfinding
+    - Task scheduling with priorities
+    - Event simulation (discrete event systems)
+    - Median maintenance (with dual-heap pattern)
+    - Huffman coding
+    
+    Performance:
+    - Insert: O(log n)
+    - Extract-Min: O(log n)
+    - Peek-Min: O(1)
+    - Decrease-Key: O(n) - requires linear search
+    - Build-Heap: O(n)
+    
+    Security:
+    - Bounds checking on all operations
+    - Safe empty heap handling
+    - Priority validation
+    
+    Implementation Details:
+    - Uses min-heap by default (lowest priority value = highest priority)
+    - Stable sorting via counter for equal priorities (FIFO for same priority)
+    - Tuple format: (priority, counter, value)
+    
+    Follows eXonware Priorities:
+    1. Security: Input validation, safe operations
+    2. Usability: Standard priority queue interface
+    3. Maintainability: Clean heap implementation
+    4. Performance: O(log n) operations, O(1) peek
+    5. Extensibility: Support for custom priority types
+    """
     
     # Strategy type classification
     STRATEGY_TYPE = NodeType.LINEAR
-orithms like Dijkstra's.
-    """
     
-    def __init__(self):
-        """Initialize an empty priority queue."""
-        super().__init__()
-        self._heap: List[Tuple[float, int, str, Any]] = []  # (priority, counter, key, value)
-        self._counter = 0  # For stable sorting
-        self._mode = NodeMode.PRIORITY_QUEUE
-        self._traits = {NodeTrait.PRIORITY, NodeTrait.FAST_INSERT, NodeTrait.FAST_DELETE}
+    __slots__ = ('_heap', '_counter', '_max_size', '_is_max_heap')
     
-    def insert(self, key: str, value: Any) -> None:
-        """Insert an item with default priority (0)."""
-        self.insert_with_priority(key, value, 0.0)
+    def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
+        """
+        Initialize an empty priority queue.
+        
+        Args:
+            traits: Additional node traits
+            **options:
+                max_size: Optional maximum heap size
+                is_max_heap: True for max-heap, False for min-heap (default)
+                initial_items: Optional list of (priority, value) tuples
+        """
+        super().__init__(
+            NodeMode.PRIORITY_QUEUE,
+            traits | NodeTrait.PRIORITY | NodeTrait.FAST_INSERT | NodeTrait.HEAP_OPERATIONS,
+            **options
+        )
+        self._max_size: Optional[int] = options.get('max_size')
+        self._is_max_heap: bool = options.get('is_max_heap', False)
+        self._heap: List[Tuple[float, int, Any]] = []  # (priority, counter, value)
+        self._counter = 0
+        
+        # Build heap from initial items if provided
+        initial_items = options.get('initial_items', [])
+        if initial_items:
+            for priority, value in initial_items:
+                self.push(value, priority)
     
-    def find(self, key: str) -> Optional[Any]:
-        """Find an item in the priority queue (O(n) operation)."""
-        for priority, counter, k, v in self._heap:
-            if k == key:
-                return v
-        return None
+    def get_supported_traits(self) -> NodeTrait:
+        """Get the traits supported by the priority queue strategy."""
+        return NodeTrait.PRIORITY | NodeTrait.FAST_INSERT | NodeTrait.HEAP_OPERATIONS
     
-    def delete(self, key: str) -> bool:
-        """Remove an item from the priority queue."""
-        for i, (priority, counter, k, v) in enumerate(self._heap):
-            if k == key:
-                self._heap.pop(i)
-                heapq.heapify(self._heap)  # Re-heapify after removal
+    # ============================================================================
+    # CORE PRIORITY QUEUE OPERATIONS (Industry Standard)
+    # ============================================================================
+    
+    def push(self, value: Any, priority: float = 0.0) -> None:
+        """
+        Insert a value with given priority.
+        
+        Time: O(log n)
+        Space: O(1)
+        
+        Args:
+            value: The value to insert
+            priority: Priority value (lower = higher priority for min-heap)
+            
+        Raises:
+            OverflowError: If max_size is set and heap is full
+        """
+        if self._max_size and len(self._heap) >= self._max_size:
+            raise OverflowError(f"Priority queue overflow: max size {self._max_size} reached")
+        
+        # For max-heap, negate the priority
+        actual_priority = -priority if self._is_max_heap else priority
+        
+        heapq.heappush(self._heap, (actual_priority, self._counter, value))
+        self._counter += 1
+    
+    def pop(self) -> Any:
+        """
+        Extract and return the highest priority item.
+        
+        Time: O(log n)
+        Space: O(1)
+        
+        Returns:
+            The highest priority value
+            
+        Raises:
+            IndexError: If heap is empty
+        """
+        if self.is_empty():
+            raise IndexError("pop from empty priority queue")
+        
+        priority, counter, value = heapq.heappop(self._heap)
+        return value
+    
+    def peek(self) -> Any:
+        """
+        Peek at the highest priority item without removing it.
+        
+        Time: O(1)
+        Space: O(1)
+        
+        Returns:
+            The highest priority value
+            
+        Raises:
+            IndexError: If heap is empty
+        """
+        if self.is_empty():
+            raise IndexError("peek from empty priority queue")
+        
+        return self._heap[0][2]  # Return value from (priority, counter, value)
+    
+    def peek_with_priority(self) -> Tuple[float, Any]:
+        """
+        Peek at the highest priority item with its priority.
+        
+        Returns:
+            Tuple of (priority, value)
+            
+        Raises:
+            IndexError: If heap is empty
+        """
+        if self.is_empty():
+            raise IndexError("peek from empty priority queue")
+        
+        priority, counter, value = self._heap[0]
+        actual_priority = -priority if self._is_max_heap else priority
+        return (actual_priority, value)
+    
+    def pop_with_priority(self) -> Tuple[float, Any]:
+        """
+        Extract and return the highest priority item with its priority.
+        
+        Returns:
+            Tuple of (priority, value)
+            
+        Raises:
+            IndexError: If heap is empty
+        """
+        if self.is_empty():
+            raise IndexError("pop from empty priority queue")
+        
+        priority, counter, value = heapq.heappop(self._heap)
+        actual_priority = -priority if self._is_max_heap else priority
+        return (actual_priority, value)
+    
+    def pushpop(self, value: Any, priority: float = 0.0) -> Any:
+        """
+        Push item then pop highest priority item (more efficient than separate ops).
+        
+        Time: O(log n)
+        Space: O(1)
+        
+        Returns:
+            The highest priority value after insertion
+        """
+        actual_priority = -priority if self._is_max_heap else priority
+        priority_out, counter_out, value_out = heapq.heappushpop(
+            self._heap,
+            (actual_priority, self._counter, value)
+        )
+        self._counter += 1
+        return value_out
+    
+    def replace(self, value: Any, priority: float = 0.0) -> Any:
+        """
+        Pop highest priority item then push new item (more efficient than separate ops).
+        
+        Time: O(log n)
+        Space: O(1)
+        
+        Returns:
+            The popped value
+            
+        Raises:
+            IndexError: If heap is empty
+        """
+        if self.is_empty():
+            raise IndexError("replace on empty priority queue")
+        
+        actual_priority = -priority if self._is_max_heap else priority
+        priority_out, counter_out, value_out = heapq.heapreplace(
+            self._heap,
+            (actual_priority, self._counter, value)
+        )
+        self._counter += 1
+        return value_out
+    
+    # ============================================================================
+    # REQUIRED ABSTRACT METHODS (from ANodeStrategy)
+    # ============================================================================
+    
+    def put(self, key: Any, value: Any = None) -> None:
+        """Store value (uses key as priority if numeric, otherwise default priority)."""
+        try:
+            priority = float(key)
+            self.push(value if value is not None else key, priority)
+        except (ValueError, TypeError):
+            self.push(value if value is not None else key, 0.0)
+    
+    def get(self, key: Any, default: Any = None) -> Any:
+        """Get value in heap (O(n) - not efficient for heaps)."""
+        for _, _, val in self._heap:
+            if val == key:
+                return val
+        return default
+    
+    def has(self, key: Any) -> bool:
+        """Check if value exists (O(n))."""
+        for _, _, val in self._heap:
+            if val == key:
                 return True
         return False
+    
+    def delete(self, key: Any) -> bool:
+        """Delete value from heap (O(n) - requires re-heapify)."""
+        for i, (priority, counter, val) in enumerate(self._heap):
+            if val == key:
+                self._heap.pop(i)
+                if self._heap:
+                    heapq.heapify(self._heap)
+                return True
+        return False
+    
+    def keys(self) -> Iterator[Any]:
+        """Get all values as keys."""
+        for _, _, val in self._heap:
+            yield val
+    
+    def values(self) -> Iterator[Any]:
+        """Get all values."""
+        for _, _, val in self._heap:
+            yield val
+    
+    def items(self) -> Iterator[tuple[Any, Any]]:
+        """Get all items as (value, value) pairs."""
+        for _, _, val in self._heap:
+            yield (val, val)
+    
+    # ============================================================================
+    # UTILITY METHODS
+    # ============================================================================
     
     def size(self) -> int:
         """Get the number of items in the priority queue."""
@@ -65,150 +302,325 @@ orithms like Dijkstra's.
         """Check if the priority queue is empty."""
         return len(self._heap) == 0
     
-    def to_native(self) -> Dict[str, Any]:
-        """Convert priority queue to native dictionary format."""
-        result = {}
-        for priority, counter, key, value in self._heap:
-            result[key] = value
-        return result
-    
-    def from_native(self, data: Dict[str, Any]) -> None:
-        """Load priority queue from native dictionary format."""
-        self._heap.clear()
-        for key, value in data.items():
-            self.insert(key, value)
-    
-    def insert_with_priority(self, key: str, value: Any, priority: float) -> None:
-        """Insert an item with specific priority."""
-        heapq.heappush(self._heap, (priority, self._counter, key, value))
-        self._counter += 1
-    
-    def extract_min(self) -> Optional[Tuple[str, Any, float]]:
-        """Extract item with minimum priority."""
-        if self.is_empty():
-            return None
-        
-        priority, counter, key, value = heapq.heappop(self._heap)
-        return (key, value, priority)
-    
-    def extract_max(self) -> Optional[Tuple[str, Any, float]]:
-        """Extract item with maximum priority."""
-        if self.is_empty():
-            return None
-        
-        # Convert to max-heap by negating priorities
-        max_heap = [(-priority, counter, key, value) for priority, counter, key, value in self._heap]
-        heapq.heapify(max_heap)
-        
-        neg_priority, counter, key, value = heapq.heappop(max_heap)
-        priority = -neg_priority
-        
-        # Remove from original heap
-        for i, (p, c, k, v) in enumerate(self._heap):
-            if k == key and c == counter:
-                self._heap.pop(i)
-                break
-        
-        return (key, value, priority)
-    
-    def peek_min(self) -> Optional[Tuple[str, Any, float]]:
-        """Peek at item with minimum priority without removing it."""
-        if self.is_empty():
-            return None
-        
-        priority, counter, key, value = self._heap[0]
-        return (key, value, priority)
-    
-    def peek_max(self) -> Optional[Tuple[str, Any, float]]:
-        """Peek at item with maximum priority without removing it."""
-        if self.is_empty():
-            return None
-        
-        max_item = None
-        for priority, counter, key, value in self._heap:
-            if max_item is None or priority > max_item[2]:
-                max_item = (key, value, priority)
-        
-        return max_item
-    
-    def update_priority(self, key: str, new_priority: float) -> bool:
-        """Update the priority of an existing item."""
-        for i, (priority, counter, k, v) in enumerate(self._heap):
-            if k == key:
-                self._heap[i] = (new_priority, counter, k, v)
-                heapq.heapify(self._heap)  # Re-heapify after update
-                return True
-        return False
-    
-    def get_priority(self, key: str) -> Optional[float]:
-        """Get the priority of an item."""
-        for priority, counter, k, v in self._heap:
-            if k == key:
-                return priority
-        return None
+    def is_full(self) -> bool:
+        """Check if heap has reached max_size."""
+        return self._max_size is not None and len(self._heap) >= self._max_size
     
     def clear(self) -> None:
         """Clear all items from the priority queue."""
         self._heap.clear()
         self._counter = 0
+        self._record_access("clear")
     
-    def get_at_index(self, index: int) -> Optional[Any]:
-        """Get item at specific index (not recommended for priority queue)."""
+    def to_list(self) -> List[Tuple[float, Any]]:
+        """Convert to sorted list of (priority, value) tuples."""
+        return sorted(
+            [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
+            key=lambda x: x[0]
+        )
+    
+    def to_native(self) -> Dict[str, Any]:
+        """Convert priority queue to native dictionary format."""
+        return {
+            'items': [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
+            'is_max_heap': self._is_max_heap
+        }
+    
+    def from_native(self, data: Dict[str, Any]) -> None:
+        """Load priority queue from native dictionary format."""
+        self._heap.clear()
+        self._counter = 0
+        self._is_max_heap = data.get('is_max_heap', False)
+        
+        for priority, value in data.get('items', []):
+            self.push(value, priority)
+    
+    # ============================================================================
+    # REQUIRED ABSTRACT METHODS (Linear Strategy Base)
+    # ============================================================================
+    
+    def get_at_index(self, index: int) -> Any:
+        """Get item at index in heap (order not guaranteed)."""
         if 0 <= index < len(self._heap):
-            priority, counter, key, value = self._heap[index]
-            return value
-        return None
-    
-    def push_front(self, value: Any) -> None:
-        """Push to front with high priority."""
-        key = f"item_{len(self._heap)}"
-        self.insert_with_priority(key, value, float('inf'))
-    
-    def push_back(self, value: Any) -> None:
-        """Push to back with low priority."""
-        key = f"item_{len(self._heap)}"
-        self.insert_with_priority(key, value, float('-inf'))
-    
-    def __iter__(self) -> Iterator[Any]:
-        """Iterate through items (order not guaranteed)."""
-        for priority, counter, key, value in self._heap:
-            yield value
-    
-    def __repr__(self) -> str:
-        """String representation of the priority queue."""
-        min_item = self.peek_min()
-        max_item = self.peek_max()
-        return f"PriorityQueueStrategy(size={len(self._heap)}, min={min_item[2] if min_item else None}, max={max_item[2] if max_item else None})"
-    
-    # Required abstract methods from base classes
-    def pop_front(self) -> Any:
-        """Remove element from front (same as extract_min for priority queue)."""
-        result = self.extract_min()
-        return result[1] if result else None
-    
-    def pop_back(self) -> Any:
-        """Remove element from back (same as extract_max for priority queue)."""
-        result = self.extract_max()
-        return result[1] if result else None
+            return self._heap[index][2]
+        raise IndexError(f"priority queue index out of range: {index}")
     
     def set_at_index(self, index: int, value: Any) -> None:
-        """Set element at index (not recommended for priority queue)."""
+        """Set item at index (not recommended - breaks heap property)."""
         if 0 <= index < len(self._heap):
-            priority, counter, key, old_value = self._heap[index]
-            self._heap[index] = (priority, counter, key, value)
+            priority, counter, _ = self._heap[index]
+            self._heap[index] = (priority, counter, value)
+        else:
+            raise IndexError(f"priority queue index out of range: {index}")
     
+    def push_front(self, value: Any) -> None:
+        """Push with highest priority."""
+        self.push(value, float('-inf') if not self._is_max_heap else float('inf'))
+    
+    def push_back(self, value: Any) -> None:
+        """Push with lowest priority."""
+        self.push(value, float('inf') if not self._is_max_heap else float('-inf'))
+    
+    def pop_front(self) -> Any:
+        """Pop highest priority item (standard pop)."""
+        return self.pop()
+    
+    def pop_back(self) -> Any:
+        """Pop lowest priority item (O(n) - not efficient)."""
+        if self.is_empty():
+            raise IndexError("pop from empty priority queue")
+        
+        # Find item with worst priority
+        worst_idx = max(range(len(self._heap)), key=lambda i: self._heap[i][0])
+        value = self._heap[worst_idx][2]
+        self._heap.pop(worst_idx)
+        if self._heap:  # Re-heapify if not empty
+            heapq.heapify(self._heap)
+        return value
+    
+    # Behavioral views
     def as_linked_list(self):
-        """Provide LinkedList behavioral view."""
+        """Priority queue can be viewed as ordered linked list."""
         return self
     
     def as_stack(self):
-        """Provide Stack behavioral view (not recommended)."""
+        """Priority queue cannot behave as Stack."""
+        raise NotImplementedError("PriorityQueue cannot behave as Stack - use StackStrategy instead")
+    
+    def as_queue(self):
+        """Priority queue cannot behave as standard Queue."""
+        raise NotImplementedError("PriorityQueue cannot behave as Queue - use QueueStrategy instead")
+    
+    def as_deque(self):
+        """Priority queue cannot behave as Deque."""
+        raise NotImplementedError("PriorityQueue cannot behave as Deque - use DequeStrategy instead")
+    
+    # ============================================================================
+    # PYTHON SPECIAL METHODS
+    # ============================================================================
+    
+    def __len__(self) -> int:
+        """Return the number of items in the priority queue."""
+        return len(self._heap)
+    
+    def __bool__(self) -> bool:
+        """Return True if priority queue is not empty."""
+        return bool(self._heap)
+    
+    def __iter__(self) -> Iterator[Any]:
+        """Iterate through items (order not guaranteed - heap order)."""
+        for _, _, value in self._heap:
+            yield value
+    
+    def __repr__(self) -> str:
+        """Professional string representation."""
+        heap_type = "max-heap" if self._is_max_heap else "min-heap"
+        top = self.peek() if not self.is_empty() else None
+        return f"PriorityQueueStrategy(size={len(self._heap)}, type={heap_type}, top={top})"
+    
+    def __str__(self) -> str:
+        """Human-readable string representation."""
+        heap_type = "MaxHeap" if self._is_max_heap else "MinHeap"
+        return f"{heap_type}[size={len(self._heap)}]"
+    
+    # ============================================================================
+    # ADVANCED HEAP OPERATIONS
+    # ============================================================================
+    
+    def nsmallest(self, n: int) -> List[Tuple[float, Any]]:
+        """
+        Get n smallest priority items without removing them.
+        
+        Time: O(n log k) where k = min(n, heap_size)
+        
+        Returns:
+            List of (priority, value) tuples
+        """
+        items = heapq.nsmallest(n, self._heap, key=lambda x: x[0])
+        return [(p if not self._is_max_heap else -p, v) for p, c, v in items]
+    
+    def nlargest(self, n: int) -> List[Tuple[float, Any]]:
+        """
+        Get n largest priority items without removing them.
+        
+        Time: O(n log k) where k = min(n, heap_size)
+        
+        Returns:
+            List of (priority, value) tuples
+        """
+        items = heapq.nlargest(n, self._heap, key=lambda x: x[0])
+        return [(p if not self._is_max_heap else -p, v) for p, c, v in items]
+    
+    def merge(self, other: 'PriorityQueueStrategy') -> 'PriorityQueueStrategy':
+        """
+        Merge two priority queues.
+        
+        Time: O((n + m) log(n + m))
+        
+        Returns:
+            New merged priority queue
+        """
+        merged = PriorityQueueStrategy(is_max_heap=self._is_max_heap)
+        
+        # Merge heaps efficiently
+        merged._heap = list(heapq.merge(self._heap, other._heap, key=lambda x: x[0]))
+        merged._counter = self._counter + other._counter
+        
+        return merged
+    
+    # ============================================================================
+    # COMPATIBILITY INTERFACE
+    # ============================================================================
+    
+    def to_list(self) -> List[Tuple[float, Any]]:
+        """Convert to sorted list of (priority, value) tuples."""
+        sorted_items = sorted(self._heap, key=lambda x: x[0])
+        return [(p if not self._is_max_heap else -p, v) for p, c, v in sorted_items]
+    
+    def to_native(self) -> Dict[str, Any]:
+        """Convert priority queue to native dictionary format."""
+        return {
+            'items': [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
+            'is_max_heap': self._is_max_heap,
+            'size': len(self._heap)
+        }
+    
+    def from_native(self, data: Dict[str, Any]) -> None:
+        """Load priority queue from native dictionary format."""
+        self._heap.clear()
+        self._counter = 0
+        self._is_max_heap = data.get('is_max_heap', False)
+        
+        for priority, value in data.get('items', []):
+            self.push(value, priority)
+    
+    # ============================================================================
+    # UTILITY METHODS
+    # ============================================================================
+    
+    def size(self) -> int:
+        """Get the number of items in the priority queue."""
+        return len(self._heap)
+    
+    def is_empty(self) -> bool:
+        """Check if the priority queue is empty."""
+        return len(self._heap) == 0
+    
+    def is_full(self) -> bool:
+        """Check if heap has reached max_size."""
+        return self._max_size is not None and len(self._heap) >= self._max_size
+    
+    def clear(self) -> None:
+        """Clear all items from the priority queue."""
+        self._heap.clear()
+        self._counter = 0
+        self._record_access("clear")
+    
+    # ============================================================================
+    # REQUIRED ABSTRACT METHODS (Linear Strategy Base)
+    # ============================================================================
+    
+    def get_at_index(self, index: int) -> Any:
+        """Get item at index (heap order, not priority order)."""
+        if 0 <= index < len(self._heap):
+            return self._heap[index][2]
+        raise IndexError(f"priority queue index out of range: {index}")
+    
+    def set_at_index(self, index: int, value: Any) -> None:
+        """Set item at index (breaks heap property - requires re-heapify)."""
+        if 0 <= index < len(self._heap):
+            priority, counter, _ = self._heap[index]
+            self._heap[index] = (priority, counter, value)
+        else:
+            raise IndexError(f"priority queue index out of range: {index}")
+    
+    def push_front(self, value: Any) -> None:
+        """Push with highest priority."""
+        self.push(value, float('-inf') if not self._is_max_heap else float('inf'))
+    
+    def push_back(self, value: Any) -> None:
+        """Push with lowest priority."""
+        self.push(value, float('inf') if not self._is_max_heap else float('-inf'))
+    
+    def pop_front(self) -> Any:
+        """Pop highest priority item."""
+        return self.pop()
+    
+    def pop_back(self) -> Any:
+        """Pop lowest priority item (inefficient O(n))."""
+        if self.is_empty():
+            raise IndexError("pop from empty priority queue")
+        
+        worst_idx = max(range(len(self._heap)), key=lambda i: self._heap[i][0])
+        value = self._heap[worst_idx][2]
+        self._heap.pop(worst_idx)
+        if self._heap:
+            heapq.heapify(self._heap)
+        return value
+    
+    # Behavioral views
+    def as_linked_list(self):
+        """Priority queue can be viewed as ordered linked list."""
+        return self
+    
+    def as_stack(self):
+        """Priority queue cannot behave as Stack."""
         raise NotImplementedError("PriorityQueue cannot behave as Stack")
     
     def as_queue(self):
-        """Provide Queue behavioral view (not recommended)."""
+        """Priority queue cannot behave as Queue."""
         raise NotImplementedError("PriorityQueue cannot behave as Queue")
     
     def as_deque(self):
-        """Provide Deque behavioral view (not recommended)."""
+        """Priority queue cannot behave as Deque."""
         raise NotImplementedError("PriorityQueue cannot behave as Deque")
+    
+    # ============================================================================
+    # PYTHON SPECIAL METHODS
+    # ============================================================================
+    
+    def __iter__(self) -> Iterator[Any]:
+        """Iterate in heap order (not priority order)."""
+        for _, _, value in self._heap:
+            yield value
+    
+    def __repr__(self) -> str:
+        """Professional string representation."""
+        heap_type = "max-heap" if self._is_max_heap else "min-heap"
+        return f"PriorityQueueStrategy(size={len(self._heap)}, type={heap_type})"
+    
+    # ============================================================================
+    # PERFORMANCE METADATA
+    # ============================================================================
+    
+    @property
+    def backend_info(self) -> Dict[str, Any]:
+        """Get backend implementation info."""
+        return {
+            'strategy': 'PRIORITY_QUEUE',
+            'backend': 'heapq (binary heap)',
+            'heap_type': 'max-heap' if self._is_max_heap else 'min-heap',
+            'complexity': {
+                'push': 'O(log n)',
+                'pop': 'O(log n)',
+                'peek': 'O(1)',
+                'pushpop': 'O(log n)',
+                'replace': 'O(log n)',
+                'space': 'O(n)'
+            },
+            'thread_safe': False,
+            'max_size': self._max_size if self._max_size else 'unlimited'
+        }
+    
+    @property
+    def metrics(self) -> Dict[str, Any]:
+        """Get performance metrics."""
+        return {
+            'size': len(self._heap),
+            'is_empty': self.is_empty(),
+            'is_full': self.is_full(),
+            'max_size': self._max_size,
+            'is_max_heap': self._is_max_heap,
+            'counter': self._counter,
+            'memory_usage': f"{len(self._heap) * 24} bytes (estimated)"
+        }

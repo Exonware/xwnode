@@ -1,16 +1,25 @@
 """
+#exonware/xwnode/src/exonware/xwnode/nodes/strategies/queue.py
+
 Queue Strategy Implementation
 
-Implements a FIFO (First In, First Out) data structure using Python's deque.
+Production-grade FIFO (First In, First Out) data structure.
+
+Best Practices Implemented:
+- Pure queue operations using collections.deque
+- O(1) enqueue and dequeue operations
+- Thread-safe for single-producer single-consumer
+- Memory-efficient with minimal overhead
+- Proper FIFO semantics following CLRS and industry standards
 
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
-Generation Date: 07-Sep-2025
+Version: 0.0.1.23
+Generation Date: October 12, 2025
 """
 
-from typing import Any, Iterator, Optional, Dict, Union
+from typing import Any, Iterator, List, Optional, Dict
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -19,44 +28,181 @@ from ...defs import NodeMode, NodeTrait
 
 class QueueStrategy(ANodeLinearStrategy):
     """
-    Queue node strategy for FIFO (First In, First Out) operations.
+    Production-grade Queue (FIFO) node strategy.
     
-    Provides O(1) enqueue and dequeue operations with efficient memory usage
-    for queue-based algorithms a
+    Optimized for:
+    - Task scheduling (job queues, worker pools)
+    - Breadth-first search (BFS algorithms)
+    - Request buffering (rate limiting, throttling)
+    - Message passing (producer-consumer patterns)
+    - Event handling (event loops, message queues)
+    
+    Performance:
+    - Enqueue: O(1)
+    - Dequeue: O(1)
+    - Peek: O(1)
+    - Space: O(n)
+    
+    Security:
+    - Bounds checking on all operations
+    - Safe empty queue handling
+    - Optional max size for memory protection
+    
+    Thread-Safety:
+    - Thread-safe for single-producer single-consumer
+    - Use queue.Queue for multi-threaded scenarios
+    
+    Follows eXonware Priorities:
+    1. Security: Proper bounds checking, memory limits
+    2. Usability: Standard FIFO interface
+    3. Maintainability: Clean, well-documented implementation
+    4. Performance: O(1) operations using deque
+    5. Extensibility: Easy to extend for specific use cases
+    """
     
     # Strategy type classification
     STRATEGY_TYPE = NodeType.LINEAR
-nd breadth-first search.
-    """
     
-    def __init__(self):
-        """Initialize an empty queue."""
-        super().__init__()
-        self._queue: deque = deque()
-        self._mode = NodeMode.QUEUE
-        self._traits = {NodeTrait.FIFO, NodeTrait.FAST_INSERT, NodeTrait.FAST_DELETE}
+    __slots__ = ('_queue', '_max_size')
     
-    def insert(self, key: str, value: Any) -> None:
-        """Enqueue an item into the queue."""
-        self._queue.append((key, value))
-        self._record_access("enqueue")
+    def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
+        """
+        Initialize an empty queue.
+        
+        Args:
+            traits: Additional node traits
+            **options:
+                max_size: Optional maximum queue size (default: unlimited)
+                initial_values: Optional list of initial values
+        """
+        super().__init__(
+            NodeMode.QUEUE,
+            traits | NodeTrait.FIFO | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
+            **options
+        )
+        self._max_size: Optional[int] = options.get('max_size')
+        self._queue: deque = deque(options.get('initial_values', []))
     
-    def find(self, key: str) -> Optional[Any]:
-        """Find an item in the queue (O(n) operation)."""
-        for k, v in self._queue:
-            if k == key:
-                self._record_access("find")
-                return v
-        return None
+    def get_supported_traits(self) -> NodeTrait:
+        """Get the traits supported by the queue strategy."""
+        return NodeTrait.FIFO | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE
     
-    def delete(self, key: str) -> bool:
-        """Remove an item from the queue."""
-        for i, (k, v) in enumerate(self._queue):
-            if k == key:
-                del self._queue[i]
-                self._record_access("delete")
-                return True
-        return False
+    # ============================================================================
+    # CORE QUEUE OPERATIONS (Industry Standard)
+    # ============================================================================
+    
+    def enqueue(self, value: Any) -> None:
+        """
+        Add an item to the back of the queue.
+        
+        Time: O(1)
+        Space: O(1)
+        
+        Raises:
+            OverflowError: If max_size is set and queue is full
+        """
+        if self._max_size and len(self._queue) >= self._max_size:
+            raise OverflowError(f"Queue overflow: max size {self._max_size} reached")
+        
+        self._queue.append(value)
+    
+    def dequeue(self) -> Any:
+        """
+        Remove and return the front item from the queue.
+        
+        Time: O(1)
+        Space: O(1)
+        
+        Returns:
+            The front item
+            
+        Raises:
+            IndexError: If queue is empty
+        """
+        if self.is_empty():
+            raise IndexError("dequeue from empty queue")
+        
+        return self._queue.popleft()
+    
+    def front(self) -> Any:
+        """
+        Peek at the front item without removing it.
+        
+        Time: O(1)
+        Space: O(1)
+        
+        Returns:
+            The front item
+            
+        Raises:
+            IndexError: If queue is empty
+        """
+        if self.is_empty():
+            raise IndexError("peek from empty queue")
+        
+        return self._queue[0]
+    
+    def rear(self) -> Any:
+        """
+        Peek at the back item without removing it.
+        
+        Time: O(1)
+        Space: O(1)
+        
+        Returns:
+            The back item
+            
+        Raises:
+            IndexError: If queue is empty
+        """
+        if self.is_empty():
+            raise IndexError("peek from empty queue")
+        
+        return self._queue[-1]
+    
+    # ============================================================================
+    # REQUIRED ABSTRACT METHODS (from ANodeStrategy)
+    # ============================================================================
+    
+    def put(self, key: Any, value: Any = None) -> None:
+        """Store value (enqueues to queue, ignores key)."""
+        self.enqueue(value if value is not None else key)
+    
+    def get(self, key: Any, default: Any = None) -> Any:
+        """Get value by key (O(n) search - not recommended for queue)."""
+        for val in self._queue:
+            if val == key:
+                return val
+        return default
+    
+    def has(self, key: Any) -> bool:
+        """Check if key exists (O(n) - not recommended for queue)."""
+        return key in self._queue
+    
+    def delete(self, key: Any) -> bool:
+        """Delete specific value (O(n) - not recommended for queue)."""
+        try:
+            self._queue.remove(key)
+            return True
+        except ValueError:
+            return False
+    
+    def keys(self) -> Iterator[Any]:
+        """Get all values as keys (queue doesn't have traditional keys)."""
+        return iter(self._queue)
+    
+    def values(self) -> Iterator[Any]:
+        """Get all values."""
+        return iter(self._queue)
+    
+    def items(self) -> Iterator[tuple[Any, Any]]:
+        """Get all items as (value, value) pairs."""
+        for val in self._queue:
+            yield (val, val)
+    
+    # ============================================================================
+    # UTILITY METHODS
+    # ============================================================================
     
     def size(self) -> int:
         """Get the number of items in the queue."""
@@ -66,101 +212,84 @@ nd breadth-first search.
         """Check if the queue is empty."""
         return len(self._queue) == 0
     
-    def to_native(self) -> Dict[str, Any]:
-        """Convert queue to native dictionary format."""
-        return dict(self._queue)
-    
-    def from_native(self, data: Dict[str, Any]) -> None:
-        """Load queue from native dictionary format."""
-        self._queue = deque(data.items())
-    
-    def enqueue(self, value: Any) -> None:
-        """Enqueue a value into the queue."""
-        key = f"item_{len(self._queue)}"
-        self.insert(key, value)
-    
-    def dequeue(self) -> Optional[Any]:
-        """Dequeue and return the front item from the queue."""
-        if self.is_empty():
-            return None
-        key, value = self._queue.popleft()
-        self._record_access("dequeue")
-        return value
-    
-    def front(self) -> Optional[Any]:
-        """Get the front item without removing it."""
-        if self.is_empty():
-            return None
-        key, value = self._queue[0]
-        self._record_access("front")
-        return value
-    
-    def back(self) -> Optional[Any]:
-        """Get the back item without removing it."""
-        if self.is_empty():
-            return None
-        key, value = self._queue[-1]
-        self._record_access("back")
-        return value
+    def is_full(self) -> bool:
+        """Check if queue has reached max_size."""
+        return self._max_size is not None and len(self._queue) >= self._max_size
     
     def clear(self) -> None:
         """Clear all items from the queue."""
         self._queue.clear()
-        self._record_access("clear")
     
-    def get_at_index(self, index: int) -> Optional[Any]:
-        """Get item at specific index (0 = front of queue)."""
-        if 0 <= index < len(self._queue):
-            key, value = self._queue[index]
-            self._record_access("get_at_index")
-            return value
-        return None
+    def to_list(self) -> List[Any]:
+        """Convert queue to list (front to back)."""
+        return list(self._queue)
     
-    def push_front(self, value: Any) -> None:
-        """Push to front of queue."""
-        self._queue.appendleft((f"item_{len(self._queue)}", value))
-        self._record_access("push_front")
+    def to_native(self) -> Dict[str, Any]:
+        """Convert queue to native dictionary format."""
+        return {str(i): val for i, val in enumerate(self._queue)}
     
-    def push_back(self, value: Any) -> None:
-        """Push to back of queue."""
-        self.enqueue(value)
+    def from_native(self, data: Dict[str, Any]) -> None:
+        """Load queue from native dictionary format."""
+        self._queue.clear()
+        # Sort by keys to maintain order
+        sorted_items = sorted(data.items(), key=lambda x: int(x[0]) if x[0].isdigit() else 0)
+        self._queue.extend(val for _, val in sorted_items)
+    
+    
+    # ============================================================================
+    # PYTHON SPECIAL METHODS
+    # ============================================================================
+    
+    def __len__(self) -> int:
+        """Return the number of items in the queue."""
+        return len(self._queue)
+    
+    def __bool__(self) -> bool:
+        """Return True if queue is not empty."""
+        return bool(self._queue)
     
     def __iter__(self) -> Iterator[Any]:
         """Iterate through queue items (front to back)."""
-        for key, value in self._queue:
-            yield value
+        return iter(self._queue)
     
     def __repr__(self) -> str:
-        """String representation of the queue."""
-        return f"QueueStrategy(size={len(self._queue)}, front={self.front()})"
+        """Professional string representation."""
+        return f"QueueStrategy(size={len(self._queue)}, front={self.front() if not self.is_empty() else None})"
     
-    # Required abstract methods from base classes
-    def pop_front(self) -> Any:
-        """Remove element from front (same as dequeue for queue)."""
-        return self.dequeue()
+    def __str__(self) -> str:
+        """Human-readable string representation."""
+        items = ', '.join(str(item) for item in list(self._queue)[:5])
+        suffix = '...' if len(self._queue) > 5 else ''
+        return f"Queue[{items}{suffix}]"
     
-    def pop_back(self) -> Any:
-        """Remove element from back (not applicable for queue)."""
-        raise NotImplementedError("Queue doesn't support pop_back")
+    # ============================================================================
+    # PERFORMANCE METADATA
+    # ============================================================================
     
-    def set_at_index(self, index: int, value: Any) -> None:
-        """Set element at index (not recommended for queue)."""
-        if 0 <= index < len(self._queue):
-            key, old_value = self._queue[index]
-            self._queue[index] = (key, value)
+    @property
+    def backend_info(self) -> Dict[str, Any]:
+        """Get backend implementation info."""
+        return {
+            'strategy': 'QUEUE',
+            'backend': 'collections.deque (doubly-linked list)',
+            'complexity': {
+                'enqueue': 'O(1)',
+                'dequeue': 'O(1)',
+                'front': 'O(1)',
+                'search': 'O(n)',  # Not recommended
+                'space': 'O(n)'
+            },
+            'thread_safe': 'single-producer single-consumer only',
+            'max_size': self._max_size if self._max_size else 'unlimited'
+        }
     
-    def as_linked_list(self):
-        """Provide LinkedList behavioral view."""
-        return self
-    
-    def as_stack(self):
-        """Provide Stack behavioral view (not recommended)."""
-        raise NotImplementedError("Queue cannot behave as Stack")
-    
-    def as_queue(self):
-        """Provide Queue behavioral view."""
-        return self
-    
-    def as_deque(self):
-        """Provide Deque behavioral view."""
-        return self
+    @property
+    def metrics(self) -> Dict[str, Any]:
+        """Get performance metrics."""
+        return {
+            'size': len(self._queue),
+            'is_empty': self.is_empty(),
+            'is_full': self.is_full(),
+            'max_size': self._max_size,
+            'memory_usage': f"{len(self._queue) * 8} bytes (estimated)"
+        }

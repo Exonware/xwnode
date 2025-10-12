@@ -9,7 +9,7 @@ This enables data-driven strategy selection and performance tuning.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -485,3 +485,7 @@ def get_strategy_recommendations(strategy_id: str) -> List[PerformanceRecommenda
         List of recommendations
     """
     return get_monitor().generate_recommendations(strategy_id)
+
+
+# Usability aliases (Priority #2: Clean, intuitive API)
+PerformanceMonitor = StrategyPerformanceMonitor

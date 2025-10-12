@@ -15,7 +15,7 @@ This package implements the enhanced strategy system with xwsystem-inspired opti
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -44,11 +44,11 @@ from .nodes.stack import StackStrategy
 from .nodes.queue import QueueStrategy
 from .nodes.priority_queue import PriorityQueueStrategy
 from .nodes.deque import DequeStrategy
-from .nodes.trie import xTrieStrategy
-from .nodes.heap import xHeapStrategy
-from .nodes.aho_corasick import xAhoCorasickStrategy
+from .nodes.trie import TrieStrategy
+from .nodes.heap import HeapStrategy
+from .nodes.aho_corasick import AhoCorasickStrategy
 from .nodes.hash_map import HashMapStrategy
-from .nodes.union_find import xUnionFindStrategy
+from .nodes.union_find import UnionFindStrategy
 from .nodes.adjacency_list import AdjacencyListStrategy
 from .nodes.sparse_matrix import SparseMatrixStrategy
 
@@ -56,39 +56,6 @@ from .nodes.sparse_matrix import SparseMatrixStrategy
 from .edges.base import AEdgeStrategy, ALinearEdgeStrategy, ATreeEdgeStrategy, AGraphEdgeStrategy
 from .edges.adj_list import AdjListStrategy
 from .edges.adj_matrix import AdjMatrixStrategy
-
-# Query strategies
-from .queries.base import AQueryStrategy, AStructuredQueryStrategy, AGraphQueryStrategy, ADocumentQueryStrategy
-from .queries.xwquery_strategy import XWQueryScriptStrategy
-from .queries.xwnode_executor import XWNodeQueryActionExecutor
-from .queries.sql import SQLStrategy
-from .queries.hiveql import HiveQLStrategy
-from .queries.pig import PigStrategy
-from .queries.cql import CQLStrategy
-from .queries.n1ql import N1QLStrategy
-from .queries.kql import KQLStrategy
-from .queries.datalog import DatalogStrategy
-from .queries.mql import MQLStrategy
-from .queries.partiql import PartiQLStrategy
-from .queries.elastic_dsl import ElasticDSLStrategy
-from .queries.eql import EQLStrategy
-from .queries.flux import FluxStrategy
-from .queries.promql import PromQLStrategy
-from .queries.graphql import GraphQLStrategy
-from .queries.sparql import SPARQLStrategy
-from .queries.gremlin import GremlinStrategy
-from .queries.cypher import CypherStrategy
-from .queries.gql import GQLStrategy
-from .queries.linq import LINQStrategy
-from .queries.hql import HQLStrategy
-from .queries.jsoniq import JSONiqStrategy
-from .queries.jmespath import JMESPathStrategy
-from .queries.jq import JQStrategy
-from .queries.xquery import XQueryStrategy
-from .queries.xpath import XPathStrategy
-from .queries.logql import LogQLStrategy
-from .queries.xml_query import XMLQueryStrategy
-from .queries.json_query import JSONQueryStrategy
 
 from ..common.patterns.registry import StrategyRegistry, get_registry, register_node_strategy, register_edge_strategy
 from ..common.patterns.advisor import StrategyAdvisor, get_advisor
@@ -131,19 +98,6 @@ __all__ = [
     
     # Edge strategy implementations
     'AdjListStrategy', 'AdjMatrixStrategy',
-    
-    # Query strategy base classes
-    'AQueryStrategy', 'AStructuredQueryStrategy', 'AGraphQueryStrategy', 'ADocumentQueryStrategy',
-    
-    # Query strategy implementations
-    'XWQueryScriptStrategy', 'XWNodeQueryActionExecutor',
-    'SQLStrategy', 'HiveQLStrategy', 'PigStrategy', 'CQLStrategy', 'N1QLStrategy',
-    'KQLStrategy', 'DatalogStrategy', 'MQLStrategy', 'PartiQLStrategy',
-    'ElasticDSLStrategy', 'EQLStrategy', 'FluxStrategy', 'PromQLStrategy',
-    'GraphQLStrategy', 'SPARQLStrategy', 'GremlinStrategy', 'CypherStrategy', 'GQLStrategy',
-    'LINQStrategy', 'HQLStrategy', 'JSONiqStrategy', 'JMESPathStrategy', 'JQStrategy',
-    'XQueryStrategy', 'XPathStrategy', 'LogQLStrategy',
-    'XMLQueryStrategy', 'JSONQueryStrategy',
     
     # Strategy management
     'StrategyRegistry', 'get_registry', 'register_node_strategy', 'register_edge_strategy',

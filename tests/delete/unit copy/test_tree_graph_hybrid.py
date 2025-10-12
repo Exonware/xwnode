@@ -7,7 +7,7 @@ and maintains all the functionality of the original aNode model.
 """
 
 import pytest
-from src.xlib.xnode.strategies.impls.node_tree_graph_hybrid import TreeGraphHybridStrategy
+from src.xlib.xnode.strategies.impls.tree_graph_hybrid import TreeGraphHybridStrategy
 from src.xlib.xnode.strategies.types import NodeMode, NodeTrait
 
 

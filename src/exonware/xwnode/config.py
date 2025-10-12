@@ -11,14 +11,9 @@ import threading
 from dataclasses import dataclass, fields
 from typing import Optional
 
-# Assuming xSystem is in the path. If not, this will gracefully be handled.
-try:
-    from exonware.xwsystem import get_logger
-    logger = get_logger('xwnode.config')
-except (ImportError, TypeError):
-    # Fallback logger if xwsystem is not available
-    import logging
-    logger = logging.getLogger('xwnode.config')
+# Direct import - xwsystem is a required dependency
+from exonware.xwsystem import get_logger
+logger = get_logger('xwnode.config')
 
 from .errors import XWNodeValueError
 

@@ -13,7 +13,8 @@ from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
 
-from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA, QueryMode, QueryTrait
+from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
+# Note: QueryMode and QueryTrait are in xwquery.defs module
 from ...errors import XWNodeStrategyError, XWNodeError
 
 
@@ -37,128 +38,222 @@ class StrategyRegistry:
         
         # Register default strategies
         self._register_default_strategies()
-        self._register_default_query_strategies()
     
     def _register_default_strategies(self):
         """Register default strategy implementations."""
         # Import default strategies
-        from .impls.edge_adj_list import xAdjListStrategy
-        from .impls.edge_adj_matrix import xAdjMatrixStrategy
-        from .impls.edge_csr import xCSRStrategy
-        from .impls.edge_dynamic_adj_list import xDynamicAdjListStrategy
-        from .impls.edge_temporal_edgeset import xTemporalEdgeSetStrategy
-        from .impls.edge_hyperedge_set import xHyperEdgeSetStrategy
-        from .impls.edge_rtree import xRTreeStrategy
-        from .impls.edge_flow_network import xFlowNetworkStrategy
-        from .impls.edge_neural_graph import xNeuralGraphStrategy
-        from .impls.edge_csc import xCSCStrategy
-        from .impls.edge_bidir_wrapper import xBidirWrapperStrategy
-        from .impls.edge_quadtree import xQuadtreeStrategy
-        from .impls.edge_coo import xCOOStrategy
-        from .impls.edge_octree import xOctreeStrategy
-        from .impls.edge_property_store import xEdgePropertyStoreStrategy
-        from .impls.edge_tree_graph_basic import xTreeGraphBasicStrategy
-        from .impls.edge_weighted_graph import xWeightedGraphStrategy
+        from ...edges.strategies.adj_list import AdjListStrategy
+        from ...edges.strategies.adj_matrix import AdjMatrixStrategy
+        from ...edges.strategies.csr import CSRStrategy
+        from ...edges.strategies.dynamic_adj_list import DynamicAdjListStrategy
+        from ...edges.strategies.temporal_edgeset import TemporalEdgeSetStrategy
+        from ...edges.strategies.hyperedge_set import HyperEdgeSetStrategy
+        from ...edges.strategies.rtree import RTreeStrategy
+        from ...edges.strategies.flow_network import FlowNetworkStrategy
+        from ...edges.strategies.neural_graph import NeuralGraphStrategy
+        from ...edges.strategies.csc import CSCStrategy
+        from ...edges.strategies.bidir_wrapper import BidirWrapperStrategy
+        from ...edges.strategies.quadtree import QuadTreeStrategy
+        from ...edges.strategies.coo import COOStrategy
+        from ...edges.strategies.octree import OctreeStrategy
+        from ...edges.strategies.edge_property_store import EdgePropertyStoreStrategy
+        from ...edges.strategies.tree_graph_basic import TreeGraphBasicStrategy
+        from ...edges.strategies.weighted_graph import WeightedGraphStrategy
         
         # Import new strategy implementations
-        from ...nodes.strategies.node_hash_map import xHashMapStrategy
-        from ...nodes.strategies.node_array_list import xArrayListStrategy
-        from ...nodes.strategies.node_trie import xTrieStrategy
-        from ...nodes.strategies.node_heap import xHeapStrategy
-        from ...nodes.strategies.node_btree import xBTreeStrategy
-        from ...nodes.strategies.node_union_find import xUnionFindStrategy
-        from ...nodes.strategies.node_segment_tree import xSegmentTreeStrategy
-        from ...nodes.strategies.node_lsm_tree import xLSMTreeStrategy
-        from ...nodes.strategies.node_fenwick_tree import xFenwickTreeStrategy
-        from ...nodes.strategies.node_set_hash import xSetHashStrategy
-        from ...nodes.strategies.node_bloom_filter import xBloomFilterStrategy
-        from ...nodes.strategies.node_cuckoo_hash import xCuckooHashStrategy
-        from ...nodes.strategies.node_bitmap import xBitmapStrategy
-        from ...nodes.strategies.node_roaring_bitmap import xRoaringBitmapStrategy
-        from ...nodes.strategies.node_suffix_array import xSuffixArrayStrategy
-        from ...nodes.strategies.node_aho_corasick import xAhoCorasickStrategy
-        from ...nodes.strategies.node_count_min_sketch import xCountMinSketchStrategy
-        from ...nodes.strategies.node_hyperloglog import xHyperLogLogStrategy
-        from ...nodes.strategies.node_set_tree import xSetTreeStrategy
-        from ...nodes.strategies.node_linked_list import xLinkedListStrategy
-        from ...nodes.strategies.node_ordered_map import xOrderedMapStrategy
-        from ...nodes.strategies.node_radix_trie import xRadixTrieStrategy
-        from ...nodes.strategies.node_patricia import xPatriciaStrategy
-        from ...nodes.strategies.node_b_plus_tree import xBPlusTreeStrategy
-        from ...nodes.strategies.node_persistent_tree import xPersistentTreeStrategy
-        from ...nodes.strategies.node_cow_tree import xCOWTreeStrategy
-        from ...nodes.strategies.node_skip_list import xSkipListStrategy
-        from ...nodes.strategies.node_red_black_tree import xRedBlackTreeStrategy
-        from ...nodes.strategies.node_avl_tree import xAVLTreeStrategy
-        from ...nodes.strategies.node_treap import xTreapStrategy
-        from ...nodes.strategies.node_splay_tree import xSplayTreeStrategy
-        from ...nodes.strategies.node_ordered_map_balanced import xOrderedMapBalancedStrategy
-        from ...nodes.strategies.node_bitset_dynamic import xBitsetDynamicStrategy
-        from .impls.edge_block_adj_matrix import xBlockAdjMatrixStrategy
+        from ...nodes.strategies.hash_map import HashMapStrategy
+        from ...nodes.strategies.array_list import ArrayListStrategy
+        from ...nodes.strategies.trie import TrieStrategy
+        from ...nodes.strategies.heap import HeapStrategy
+        from ...nodes.strategies.b_tree import BTreeStrategy
+        from ...nodes.strategies.union_find import UnionFindStrategy
+        from ...nodes.strategies.segment_tree import SegmentTreeStrategy
+        from ...nodes.strategies.lsm_tree import LSMTreeStrategy
+        from ...nodes.strategies.fenwick_tree import FenwickTreeStrategy
+        from ...nodes.strategies.set_hash import SetHashStrategy
+        from ...nodes.strategies.bloom_filter import BloomFilterStrategy
+        from ...nodes.strategies.cuckoo_hash import CuckooHashStrategy
+        from ...nodes.strategies.bitmap import BitmapStrategy
+        from ...nodes.strategies.roaring_bitmap import RoaringBitmapStrategy
+        from ...nodes.strategies.suffix_array import SuffixArrayStrategy
+        from ...nodes.strategies.aho_corasick import AhoCorasickStrategy
+        from ...nodes.strategies.count_min_sketch import CountMinSketchStrategy
+        from ...nodes.strategies.hyperloglog import HyperLogLogStrategy
+        from ...nodes.strategies.set_tree import SetTreeStrategy
+        from ...nodes.strategies.linked_list import LinkedListStrategy
+        from ...nodes.strategies.ordered_map import OrderedMapStrategy
+        from ...nodes.strategies.radix_trie import RadixTrieStrategy
+        from ...nodes.strategies.patricia import PatriciaStrategy
+        from ...nodes.strategies.b_plus_tree import BPlusTreeStrategy
+        from ...nodes.strategies.persistent_tree import PersistentTreeStrategy
+        from ...nodes.strategies.cow_tree import COWTreeStrategy
+        from ...nodes.strategies.skip_list import SkipListStrategy
+        from ...nodes.strategies.red_black_tree import RedBlackTreeStrategy
+        from ...nodes.strategies.avl_tree import AVLTreeStrategy
+        from ...nodes.strategies.treap import TreapStrategy
+        from ...nodes.strategies.splay_tree import SplayTreeStrategy
+        from ...nodes.strategies.ordered_map_balanced import OrderedMapBalancedStrategy
+        from ...nodes.strategies.bitset_dynamic import BitsetDynamicStrategy
+        from ...edges.strategies.block_adj_matrix import BlockAdjMatrixStrategy
+        
+        # Import linear data structure strategies
+        from ...nodes.strategies.stack import StackStrategy
+        from ...nodes.strategies.queue import QueueStrategy
+        from ...nodes.strategies.priority_queue import PriorityQueueStrategy
+        from ...nodes.strategies.deque import DequeStrategy
+        
+        # Import matrix and graph strategies
+        from ...nodes.strategies.sparse_matrix import SparseMatrixStrategy
+        from ...nodes.strategies.adjacency_list import AdjacencyListStrategy
+        
+        # Import NEW node strategies
+        from ...nodes.strategies.art import ARTStrategy
+        from ...nodes.strategies.bw_tree import BwTreeStrategy
+        from ...nodes.strategies.hamt import HAMTStrategy
+        from ...nodes.strategies.masstree import MasstreeStrategy
+        from ...nodes.strategies.extendible_hash import ExtendibleHashStrategy
+        from ...nodes.strategies.linear_hash import LinearHashStrategy
+        from ...nodes.strategies.t_tree import TTreeStrategy
+        from ...nodes.strategies.learned_index import LearnedIndexStrategy
+        
+        # Import NEW edge strategies
+        from ...edges.strategies.incidence_matrix import IncidenceMatrixStrategy
+        from ...edges.strategies.edge_list import EdgeListStrategy
+        from ...edges.strategies.compressed_graph import CompressedGraphStrategy
         
         # Import data interchange optimized strategy
-        from ...nodes.strategies.node_xdata_optimized import DataInterchangeOptimizedStrategy
+        from ...nodes.strategies.data_interchange_optimized import DataInterchangeOptimizedStrategy
         
         # Register tree-graph hybrid strategies
-        from ...nodes.strategies.node_tree_graph_hybrid import TreeGraphHybridStrategy
+        from ...nodes.strategies.tree_graph_hybrid import TreeGraphHybridStrategy
         self.register_node_strategy(NodeMode.TREE_GRAPH_HYBRID, TreeGraphHybridStrategy)
         
         # Register edge strategies
-        self.register_edge_strategy(EdgeMode.ADJ_LIST, xAdjListStrategy)
-        self.register_edge_strategy(EdgeMode.ADJ_MATRIX, xAdjMatrixStrategy)
-        self.register_edge_strategy(EdgeMode.CSR, xCSRStrategy)
-        self.register_edge_strategy(EdgeMode.DYNAMIC_ADJ_LIST, xDynamicAdjListStrategy)
-        self.register_edge_strategy(EdgeMode.TEMPORAL_EDGESET, xTemporalEdgeSetStrategy)
-        self.register_edge_strategy(EdgeMode.HYPEREDGE_SET, xHyperEdgeSetStrategy)
-        self.register_edge_strategy(EdgeMode.R_TREE, xRTreeStrategy)
-        self.register_edge_strategy(EdgeMode.FLOW_NETWORK, xFlowNetworkStrategy)
-        self.register_edge_strategy(EdgeMode.NEURAL_GRAPH, xNeuralGraphStrategy)
-        self.register_edge_strategy(EdgeMode.CSC, xCSCStrategy)
-        self.register_edge_strategy(EdgeMode.BIDIR_WRAPPER, xBidirWrapperStrategy)
-        self.register_edge_strategy(EdgeMode.QUADTREE, xQuadtreeStrategy)
-        self.register_edge_strategy(EdgeMode.COO, xCOOStrategy)
-        self.register_edge_strategy(EdgeMode.OCTREE, xOctreeStrategy)
-        self.register_edge_strategy(EdgeMode.EDGE_PROPERTY_STORE, xEdgePropertyStoreStrategy)
-        self.register_edge_strategy(EdgeMode.TREE_GRAPH_BASIC, xTreeGraphBasicStrategy)
-        self.register_edge_strategy(EdgeMode.WEIGHTED_GRAPH, xWeightedGraphStrategy)
+        self.register_edge_strategy(EdgeMode.ADJ_LIST, AdjListStrategy)
+        self.register_edge_strategy(EdgeMode.ADJ_MATRIX, AdjMatrixStrategy)
+        self.register_edge_strategy(EdgeMode.CSR, CSRStrategy)
+        self.register_edge_strategy(EdgeMode.DYNAMIC_ADJ_LIST, DynamicAdjListStrategy)
+        self.register_edge_strategy(EdgeMode.TEMPORAL_EDGESET, TemporalEdgeSetStrategy)
+        self.register_edge_strategy(EdgeMode.HYPEREDGE_SET, HyperEdgeSetStrategy)
+        self.register_edge_strategy(EdgeMode.R_TREE, RTreeStrategy)
+        self.register_edge_strategy(EdgeMode.FLOW_NETWORK, FlowNetworkStrategy)
+        self.register_edge_strategy(EdgeMode.NEURAL_GRAPH, NeuralGraphStrategy)
+        self.register_edge_strategy(EdgeMode.CSC, CSCStrategy)
+        self.register_edge_strategy(EdgeMode.BIDIR_WRAPPER, BidirWrapperStrategy)
+        self.register_edge_strategy(EdgeMode.QUADTREE, QuadTreeStrategy)
+        self.register_edge_strategy(EdgeMode.COO, COOStrategy)
+        self.register_edge_strategy(EdgeMode.OCTREE, OctreeStrategy)
+        self.register_edge_strategy(EdgeMode.EDGE_PROPERTY_STORE, EdgePropertyStoreStrategy)
+        self.register_edge_strategy(EdgeMode.TREE_GRAPH_BASIC, TreeGraphBasicStrategy)
+        self.register_edge_strategy(EdgeMode.WEIGHTED_GRAPH, WeightedGraphStrategy)
+        
+        # Register advanced edge strategies
+        from ...edges.strategies.k2_tree import K2TreeStrategy
+        from ...edges.strategies.bv_graph import BVGraphStrategy
+        from ...edges.strategies.hnsw import HNSWStrategy
+        from ...edges.strategies.euler_tour import EulerTourStrategy
+        from ...edges.strategies.link_cut import LinkCutStrategy
+        from ...edges.strategies.hop2_labels import Hop2LabelsStrategy
+        from ...edges.strategies.graphblas import GraphBLASStrategy
+        from ...edges.strategies.roaring_adj import RoaringAdjStrategy
+        from ...edges.strategies.multiplex import MultiplexStrategy
+        from ...edges.strategies.bitemporal import BitemporalStrategy
+        
+        self.register_edge_strategy(EdgeMode.K2_TREE, K2TreeStrategy)
+        self.register_edge_strategy(EdgeMode.BV_GRAPH, BVGraphStrategy)
+        self.register_edge_strategy(EdgeMode.HNSW, HNSWStrategy)
+        self.register_edge_strategy(EdgeMode.EULER_TOUR, EulerTourStrategy)
+        self.register_edge_strategy(EdgeMode.LINK_CUT, LinkCutStrategy)
+        self.register_edge_strategy(EdgeMode.HOP2_LABELS, Hop2LabelsStrategy)
+        self.register_edge_strategy(EdgeMode.GRAPHBLAS, GraphBLASStrategy)
+        self.register_edge_strategy(EdgeMode.ROARING_ADJ, RoaringAdjStrategy)
+        self.register_edge_strategy(EdgeMode.MULTIPLEX, MultiplexStrategy)
+        self.register_edge_strategy(EdgeMode.BITEMPORAL, BitemporalStrategy)
         
         # Register new node strategies
-        self.register_node_strategy(NodeMode.HASH_MAP, xHashMapStrategy)
-        self.register_node_strategy(NodeMode.ARRAY_LIST, xArrayListStrategy)
-        self.register_node_strategy(NodeMode.TRIE, xTrieStrategy)
-        self.register_node_strategy(NodeMode.HEAP, xHeapStrategy)
-        self.register_node_strategy(NodeMode.B_TREE, xBTreeStrategy)
-        self.register_node_strategy(NodeMode.UNION_FIND, xUnionFindStrategy)
-        self.register_node_strategy(NodeMode.SEGMENT_TREE, xSegmentTreeStrategy)
-        self.register_node_strategy(NodeMode.LSM_TREE, xLSMTreeStrategy)
-        self.register_node_strategy(NodeMode.FENWICK_TREE, xFenwickTreeStrategy)
-        self.register_node_strategy(NodeMode.SET_HASH, xSetHashStrategy)
-        self.register_node_strategy(NodeMode.BLOOM_FILTER, xBloomFilterStrategy)
-        self.register_node_strategy(NodeMode.CUCKOO_HASH, xCuckooHashStrategy)
-        self.register_node_strategy(NodeMode.BITMAP, xBitmapStrategy)
-        self.register_node_strategy(NodeMode.ROARING_BITMAP, xRoaringBitmapStrategy)
-        self.register_node_strategy(NodeMode.SUFFIX_ARRAY, xSuffixArrayStrategy)
-        self.register_node_strategy(NodeMode.AHO_CORASICK, xAhoCorasickStrategy)
-        self.register_node_strategy(NodeMode.COUNT_MIN_SKETCH, xCountMinSketchStrategy)
-        self.register_node_strategy(NodeMode.HYPERLOGLOG, xHyperLogLogStrategy)
-        self.register_node_strategy(NodeMode.SET_TREE, xSetTreeStrategy)
-        self.register_node_strategy(NodeMode.LINKED_LIST, xLinkedListStrategy)
-        self.register_node_strategy(NodeMode.ORDERED_MAP, xOrderedMapStrategy)
-        self.register_node_strategy(NodeMode.RADIX_TRIE, xRadixTrieStrategy)
-        self.register_node_strategy(NodeMode.PATRICIA, xPatriciaStrategy)
-        self.register_node_strategy(NodeMode.B_PLUS_TREE, xBPlusTreeStrategy)
-        self.register_node_strategy(NodeMode.PERSISTENT_TREE, xPersistentTreeStrategy)
-        self.register_node_strategy(NodeMode.COW_TREE, xCOWTreeStrategy)
-        self.register_node_strategy(NodeMode.SKIP_LIST, xSkipListStrategy)
-        self.register_node_strategy(NodeMode.RED_BLACK_TREE, xRedBlackTreeStrategy)
-        self.register_node_strategy(NodeMode.AVL_TREE, xAVLTreeStrategy)
-        self.register_node_strategy(NodeMode.TREAP, xTreapStrategy)
-        self.register_node_strategy(NodeMode.SPLAY_TREE, xSplayTreeStrategy)
-        self.register_node_strategy(NodeMode.ORDERED_MAP_BALANCED, xOrderedMapBalancedStrategy)
-        self.register_node_strategy(NodeMode.BITSET_DYNAMIC, xBitsetDynamicStrategy)
+        self.register_node_strategy(NodeMode.HASH_MAP, HashMapStrategy)
+        self.register_node_strategy(NodeMode.ARRAY_LIST, ArrayListStrategy)
+        self.register_node_strategy(NodeMode.TRIE, TrieStrategy)
+        self.register_node_strategy(NodeMode.HEAP, HeapStrategy)
+        self.register_node_strategy(NodeMode.B_TREE, BTreeStrategy)
+        self.register_node_strategy(NodeMode.UNION_FIND, UnionFindStrategy)
+        self.register_node_strategy(NodeMode.SEGMENT_TREE, SegmentTreeStrategy)
+        self.register_node_strategy(NodeMode.LSM_TREE, LSMTreeStrategy)
+        self.register_node_strategy(NodeMode.FENWICK_TREE, FenwickTreeStrategy)
+        self.register_node_strategy(NodeMode.SET_HASH, SetHashStrategy)
+        self.register_node_strategy(NodeMode.BLOOM_FILTER, BloomFilterStrategy)
+        self.register_node_strategy(NodeMode.CUCKOO_HASH, CuckooHashStrategy)
+        self.register_node_strategy(NodeMode.BITMAP, BitmapStrategy)
+        self.register_node_strategy(NodeMode.ROARING_BITMAP, RoaringBitmapStrategy)
+        self.register_node_strategy(NodeMode.SUFFIX_ARRAY, SuffixArrayStrategy)
+        self.register_node_strategy(NodeMode.AHO_CORASICK, AhoCorasickStrategy)
+        self.register_node_strategy(NodeMode.COUNT_MIN_SKETCH, CountMinSketchStrategy)
+        self.register_node_strategy(NodeMode.HYPERLOGLOG, HyperLogLogStrategy)
+        self.register_node_strategy(NodeMode.SET_TREE, SetTreeStrategy)
+        self.register_node_strategy(NodeMode.LINKED_LIST, LinkedListStrategy)
+        self.register_node_strategy(NodeMode.ORDERED_MAP, OrderedMapStrategy)
+        self.register_node_strategy(NodeMode.RADIX_TRIE, RadixTrieStrategy)
+        self.register_node_strategy(NodeMode.PATRICIA, PatriciaStrategy)
+        self.register_node_strategy(NodeMode.B_PLUS_TREE, BPlusTreeStrategy)
+        self.register_node_strategy(NodeMode.PERSISTENT_TREE, PersistentTreeStrategy)
+        self.register_node_strategy(NodeMode.COW_TREE, COWTreeStrategy)
+        self.register_node_strategy(NodeMode.SKIP_LIST, SkipListStrategy)
+        self.register_node_strategy(NodeMode.RED_BLACK_TREE, RedBlackTreeStrategy)
+        self.register_node_strategy(NodeMode.AVL_TREE, AVLTreeStrategy)
+        self.register_node_strategy(NodeMode.TREAP, TreapStrategy)
+        self.register_node_strategy(NodeMode.SPLAY_TREE, SplayTreeStrategy)
+        self.register_node_strategy(NodeMode.ORDERED_MAP_BALANCED, OrderedMapBalancedStrategy)
+        self.register_node_strategy(NodeMode.BITSET_DYNAMIC, BitsetDynamicStrategy)
+        
+        # Register linear data structure strategies
+        self.register_node_strategy(NodeMode.STACK, StackStrategy)
+        self.register_node_strategy(NodeMode.QUEUE, QueueStrategy)
+        self.register_node_strategy(NodeMode.PRIORITY_QUEUE, PriorityQueueStrategy)
+        self.register_node_strategy(NodeMode.DEQUE, DequeStrategy)
+        
+        # Register matrix and graph strategies
+        self.register_node_strategy(NodeMode.SPARSE_MATRIX, SparseMatrixStrategy)
+        self.register_node_strategy(NodeMode.ADJACENCY_LIST, AdjacencyListStrategy)
+        
+        # Register NEW node strategies
+        self.register_node_strategy(NodeMode.ART, ARTStrategy)
+        self.register_node_strategy(NodeMode.BW_TREE, BwTreeStrategy)
+        self.register_node_strategy(NodeMode.HAMT, HAMTStrategy)
+        self.register_node_strategy(NodeMode.MASSTREE, MasstreeStrategy)
+        self.register_node_strategy(NodeMode.EXTENDIBLE_HASH, ExtendibleHashStrategy)
+        self.register_node_strategy(NodeMode.LINEAR_HASH, LinearHashStrategy)
+        self.register_node_strategy(NodeMode.T_TREE, TTreeStrategy)
+        self.register_node_strategy(NodeMode.LEARNED_INDEX, LearnedIndexStrategy)
+        
+        # Register data interchange optimized strategy
+        self.register_node_strategy(NodeMode.DATA_INTERCHANGE_OPTIMIZED, DataInterchangeOptimizedStrategy)
+        
+        # Register advanced specialized node strategies
+        from ...nodes.strategies.veb_tree import VebTreeStrategy
+        from ...nodes.strategies.dawg import DawgStrategy
+        from ...nodes.strategies.hopscotch_hash import HopscotchHashStrategy
+        from ...nodes.strategies.interval_tree import IntervalTreeStrategy
+        from ...nodes.strategies.kd_tree import KdTreeStrategy
+        from ...nodes.strategies.rope import RopeStrategy
+        from ...nodes.strategies.crdt_map import CRDTMapStrategy
+        from ...nodes.strategies.bloomier_filter import BloomierFilterStrategy
+        
+        self.register_node_strategy(NodeMode.VEB_TREE, VebTreeStrategy)
+        self.register_node_strategy(NodeMode.DAWG, DawgStrategy)
+        self.register_node_strategy(NodeMode.HOPSCOTCH_HASH, HopscotchHashStrategy)
+        self.register_node_strategy(NodeMode.INTERVAL_TREE, IntervalTreeStrategy)
+        self.register_node_strategy(NodeMode.KD_TREE, KdTreeStrategy)
+        self.register_node_strategy(NodeMode.ROPE, RopeStrategy)
+        self.register_node_strategy(NodeMode.CRDT_MAP, CRDTMapStrategy)
+        self.register_node_strategy(NodeMode.BLOOMIER_FILTER, BloomierFilterStrategy)
         
         # Edge strategies
-        self.register_edge_strategy(EdgeMode.BLOCK_ADJ_MATRIX, xBlockAdjMatrixStrategy)
+        self.register_edge_strategy(EdgeMode.BLOCK_ADJ_MATRIX, BlockAdjMatrixStrategy)
+        
+        # Register NEW edge strategies
+        self.register_edge_strategy(EdgeMode.INCIDENCE_MATRIX, IncidenceMatrixStrategy)
+        self.register_edge_strategy(EdgeMode.EDGE_LIST, EdgeListStrategy)
+        self.register_edge_strategy(EdgeMode.COMPRESSED_GRAPH, CompressedGraphStrategy)
         
         # Register data interchange optimized strategy factory
         # Note: This will be used by strategy manager when DATA_INTERCHANGE_OPTIMIZED preset is detected
@@ -166,87 +261,11 @@ class StrategyRegistry:
         
         logger.info("✅ Registered default strategies")
     
-    def _register_default_query_strategies(self):
-        """Register default query strategy implementations."""
-        # Import query strategies
-        from ...queries.strategies.sql import SQLStrategy
-        from ...queries.strategies.graphql import GraphQLStrategy
-        from ...queries.strategies.cypher import CypherStrategy
-        from ...queries.strategies.sparql import SPARQLStrategy
-        from ...queries.strategies.json_query import JSONQueryStrategy
-        from ...queries.strategies.xml_query import XMLQueryStrategy
-        from ...queries.strategies.xpath import XPathStrategy
-        from ...queries.strategies.xquery import XQueryStrategy
-        from ...queries.strategies.jq import JQStrategy
-        from ...queries.strategies.jmespath import JMESPathStrategy
-        from ...queries.strategies.jsoniq import JSONiqStrategy
-        from ...queries.strategies.gremlin import GremlinStrategy
-        from ...queries.strategies.elastic_dsl import ElasticDSLStrategy
-        from ...queries.strategies.eql import EQLStrategy
-        from ...queries.strategies.flux import FluxStrategy
-        from ...queries.strategies.promql import PromQLStrategy
-        from ...queries.strategies.logql import LogQLStrategy
-        # from ...queries.strategies.spl import SPLStrategy  # TODO: Implement SPL strategy
-        from ...queries.strategies.kql import KQLStrategy
-        from ...queries.strategies.cql import CQLStrategy
-        from ...queries.strategies.n1ql import N1QLStrategy
-        from ...queries.strategies.hiveql import HiveQLStrategy
-        from ...queries.strategies.pig import PigStrategy
-        from ...queries.strategies.mql import MQLStrategy
-        from ...queries.strategies.partiql import PartiQLStrategy
-        from ...queries.strategies.linq import LINQStrategy
-        from ...queries.strategies.hql import HQLStrategy
-        from ...queries.strategies.datalog import DatalogStrategy
-        # from ...queries.strategies.ksql import KSQLStrategy  # TODO: Implement KSQL strategy
-        from ...queries.strategies.gql import GQLStrategy
-        # from ...queries.strategies.trino_sql import TrinoSQLStrategy  # TODO: Implement TrinoSQL strategy
-        # from ...queries.strategies.bigquery_sql import BigQuerySQLStrategy  # TODO: Implement BigQuerySQL strategy
-        # from ...queries.strategies.snowflake_sql import SnowflakeSQLStrategy  # TODO: Implement SnowflakeSQL strategy
-        # from ...queries.strategies.lucene import LuceneStrategy  # TODO: Implement Lucene strategy
-        
-        # Register query strategies
-        self.register_query_strategy("SQL", SQLStrategy)
-        self.register_query_strategy("GRAPHQL", GraphQLStrategy)
-        self.register_query_strategy("CYPHER", CypherStrategy)
-        self.register_query_strategy("SPARQL", SPARQLStrategy)
-        self.register_query_strategy("JSON_QUERY", JSONQueryStrategy)
-        self.register_query_strategy("XML_QUERY", XMLQueryStrategy)
-        self.register_query_strategy("XPATH", XPathStrategy)
-        self.register_query_strategy("XQUERY", XQueryStrategy)
-        self.register_query_strategy("JQ", JQStrategy)
-        self.register_query_strategy("JMESPATH", JMESPathStrategy)
-        self.register_query_strategy("JSONIQ", JSONiqStrategy)
-        self.register_query_strategy("GREMLIN", GremlinStrategy)
-        self.register_query_strategy("ELASTIC_DSL", ElasticDSLStrategy)
-        self.register_query_strategy("EQL", EQLStrategy)
-        self.register_query_strategy("FLUX", FluxStrategy)
-        self.register_query_strategy("PROMQL", PromQLStrategy)
-        self.register_query_strategy("LOGQL", LogQLStrategy)
-        # self.register_query_strategy("SPL", SPLStrategy)  # TODO: Implement SPL strategy
-        self.register_query_strategy("KQL", KQLStrategy)
-        self.register_query_strategy("CQL", CQLStrategy)
-        self.register_query_strategy("N1QL", N1QLStrategy)
-        self.register_query_strategy("HIVEQL", HiveQLStrategy)
-        self.register_query_strategy("PIG", PigStrategy)
-        self.register_query_strategy("MQL", MQLStrategy)
-        self.register_query_strategy("PARTIQL", PartiQLStrategy)
-        self.register_query_strategy("LINQ", LINQStrategy)
-        self.register_query_strategy("HQL", HQLStrategy)
-        self.register_query_strategy("DATALOG", DatalogStrategy)
-        # self.register_query_strategy("KSQL", KSQLStrategy)  # TODO: Implement KSQL strategy
-        self.register_query_strategy("GQL", GQLStrategy)
-        # self.register_query_strategy("TRINO_SQL", TrinoSQLStrategy)  # TODO: Implement TrinoSQL strategy
-        # self.register_query_strategy("BIGQUERY_SQL", BigQuerySQLStrategy)  # TODO: Implement BigQuerySQL strategy
-        # self.register_query_strategy("SNOWFLAKE_SQL", SnowflakeSQLStrategy)  # TODO: Implement SnowflakeSQL strategy
-        # self.register_query_strategy("LUCENE", LuceneStrategy)  # TODO: Implement Lucene strategy
-        
-        logger.info("✅ Registered default query strategies")
-    
     def register_data_interchange_optimized_factory(self):
         """Register special factory for DATA_INTERCHANGE_OPTIMIZED preset handling."""
         # We'll store this in a special attribute for the strategy manager to use
         def data_interchange_factory(**options):
-            from ...nodes.strategies.node_xdata_optimized import DataInterchangeOptimizedStrategy
+            from ...nodes.strategies.data_interchange_optimized import DataInterchangeOptimizedStrategy
             return DataInterchangeOptimizedStrategy(NodeTrait.INDEXED, **options)
         
         self._data_interchange_optimized_factory = data_interchange_factory

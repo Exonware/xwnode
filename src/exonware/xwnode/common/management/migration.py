@@ -43,7 +43,7 @@ class MigrationPlan:
         return self.data_loss_risk in ['none', 'low'] and len(self.warnings) <= 2
 
 
-class xStrategyMigrator:
+class StrategyMigrator:
     """
     Handles migration between different node and edge strategies.
     
@@ -422,11 +422,11 @@ _migrator = None
 _migrator_lock = threading.Lock()
 
 
-def get_migrator() -> xStrategyMigrator:
+def get_migrator() -> 'StrategyMigrator':
     """Get the global strategy migrator instance."""
     global _migrator
     if _migrator is None:
         with _migrator_lock:
             if _migrator is None:
-                _migrator = xStrategyMigrator()
+                _migrator = StrategyMigrator()
     return _migrator

@@ -24,14 +24,14 @@ if str(current_dir) not in sys.path:
 try:
     from conftest import xNode, xNodeError, xNodeTypeError, xNodePathError, xNodeValueError
     # Also need to import model classes directly since conftest doesn't expose them
-    from ..strategies.impls.node_tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
+    from ..strategies.impls.tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
 except ImportError:
     try:
         from src.xlib.xnode import xNode, xNodeError, xNodeTypeError, xNodePathError, xNodeValueError
-        from src.xlib.xnode.strategies.impls.node_tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
+        from src.xlib.xnode.strategies.impls.tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
     except ImportError:
         from xlib.xnode import xNode, xNodeError, xNodeTypeError, xNodePathError, xNodeValueError
-        from xlib.xnode.strategies.impls.node_tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
+        from xlib.xnode.strategies.impls.tree_graph_hybrid import aNode, aNodeValue, aNodeList, aNodeDict, aNodeFactory
 
 
 class TestaNodeFactory:

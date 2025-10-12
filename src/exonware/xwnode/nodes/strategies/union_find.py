@@ -77,7 +77,7 @@ class UnionFind:
         return len(self.get_set_members(x))
 
 
-class xUnionFindStrategy(ANodeGraphStrategy):
+class UnionFindStrategy(ANodeGraphStrategy):
     """
     Union-Find node strategy for efficient set operations.
     
@@ -90,15 +90,13 @@ ations on disjoint sets.
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
         """Initialize the union-find strategy."""
-        super().__init__(data=None, **options)
-        self._mode = NodeMode.UNION_FIND
-        self._traits = traits
+        super().__init__(NodeMode.UNION_FIND, traits, **options)
         self._union_find = UnionFind()
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
         """Get the traits supported by the union-find strategy."""
-        return (NodeTrait.SET_OPERATIONS | NodeTrait.HIERARCHICAL)
+        return (NodeTrait.GRAPH | NodeTrait.HIERARCHICAL | NodeTrait.UNION_FIND)
     
     # ============================================================================
     # CORE OPERATIONS
@@ -121,6 +119,11 @@ ations on disjoint sets.
         """Delete a key (not supported in union-find)."""
         # Union-Find doesn't support deletion efficiently
         return False
+    
+    def clear(self) -> None:
+        """Clear all data."""
+        self._union_find = UnionFind()
+        self._size = 0
     
     def size(self) -> int:
         """Get the number of elements."""
@@ -286,3 +289,106 @@ ations on disjoint sets.
             'sets': self._union_find.get_set_count(),
             'memory_usage': f"{self._size * 32} bytes (estimated)"
         }
+    
+    # ============================================================================
+    # REQUIRED INTERFACE METHODS (iNodeStrategy)
+    # ============================================================================
+    
+    def create_from_data(self, data: Any) -> 'UnionFindStrategy':
+        """Create strategy instance from data."""
+        new_strategy = UnionFindStrategy(self._traits)
+        if isinstance(data, dict):
+            for key, value in data.items():
+                new_strategy.insert(key, value)
+        elif isinstance(data, list):
+            for item in data:
+                new_strategy.insert(item, item)
+        return new_strategy
+    
+    def get(self, path: str, default: Any = None) -> Any:
+        """Get value by path."""
+        result = self.find(path)
+        return result if result is not None else default
+    
+    def has(self, key: Any) -> bool:
+        """Check if key exists."""
+        return str(key) in self._parent
+    
+    def put(self, path: str, value: Any) -> 'UnionFindStrategy':
+        """Put value at path."""
+        self.insert(path, value)
+        return self
+    
+    def exists(self, path: str) -> bool:
+        """Check if path exists."""
+        return path in self._union_find.parent
+    
+    # Container protocol
+    def __len__(self) -> int:
+        """Get length."""
+        return self._size
+    
+    def __iter__(self) -> Iterator[Any]:
+        """Iterate over elements."""
+        return self.keys()
+    
+    def __getitem__(self, key: Any) -> Any:
+        """Get item by key."""
+        result = self.find(key)
+        if result is None:
+            raise KeyError(str(key))
+        return result
+    
+    def __setitem__(self, key: Any, value: Any) -> None:
+        """Set item by key."""
+        self.insert(key, value)
+    
+    def __contains__(self, key: Any) -> bool:
+        """Check if key exists."""
+        return str(key) in self._union_find.parent
+    
+    # Type checking properties
+    @property
+    def is_leaf(self) -> bool:
+        """Check if this is a leaf node."""
+        return self._size == 0
+    
+    @property
+    def is_list(self) -> bool:
+        """Check if this is a list node."""
+        return False
+    
+    @property
+    def is_dict(self) -> bool:
+        """Check if this is a dict node."""
+        return True  # Union-find is dict-like (maps elements to sets)
+    
+    @property
+    def is_reference(self) -> bool:
+        """Check if this is a reference node."""
+        return False
+    
+    @property
+    def is_object(self) -> bool:
+        """Check if this is an object node."""
+        return False
+    
+    @property
+    def type(self) -> str:
+        """Get the type of this node."""
+        return "union_find"
+    
+    @property
+    def value(self) -> Any:
+        """Get the value of this node."""
+        return self.to_native()
+    
+    @property
+    def strategy_name(self) -> str:
+        """Get strategy name."""
+        return "UNION_FIND"
+    
+    @property
+    def supported_traits(self) -> NodeTrait:
+        """Get supported traits."""
+        return self.get_supported_traits()

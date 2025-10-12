@@ -10,9 +10,9 @@ from typing import Any, Dict, List, Optional, Iterator, Union, Set
 from ...defs import EdgeMode, EdgeTrait
 
 
-class aEdgeStrategy(ABC):
+class AEdgeStrategy(ABC):
     """
-    Abstract base class for all edge strategies.
+    Abstract base class for all edge strategies (DEV_GUIDELINES.md compliant - uppercase 'A').
     
     This abstract base class defines the contract that all edge strategy
     implementations must follow, ensuring consistency and interoperability.

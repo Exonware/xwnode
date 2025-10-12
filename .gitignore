@@ -278,3 +278,11 @@ credentials.json
 .env.development.local
 .env.test.local
 .env.production.local
+
+# ========================================
+# Test Runner Output Files (auto-generated)
+# ========================================
+**/runner_out.md
+tests/runner_out.md
+tests/*/runner_out.md
+tests/*/*/runner_out.md

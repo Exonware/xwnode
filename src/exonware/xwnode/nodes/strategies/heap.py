@@ -48,7 +48,7 @@ class MinHeap:
         return len(self._heap) == 0
 
 
-class xHeapStrategy(ANodeTreeStrategy):
+class HeapStrategy(ANodeTreeStrategy):
     """
     Heap node strategy for priority queue operations.
     
@@ -61,16 +61,14 @@ urable min/max behavior.
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
         """Initialize the heap strategy."""
-        super().__init__(data=None, **options)
-        self._mode = NodeMode.HEAP
-        self._traits = traits
+        super().__init__(NodeMode.HEAP, traits, **options)
         self._is_max_heap = options.get('max_heap', False)
         self._heap = MinHeap(max_heap=self._is_max_heap)
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
         """Get the traits supported by the heap strategy."""
-        return (NodeTrait.ORDERED | NodeTrait.PRIORITY_QUEUE)
+        return (NodeTrait.ORDERED | NodeTrait.PRIORITY)
     
     # ============================================================================
     # CORE OPERATIONS
@@ -310,3 +308,105 @@ urable min/max behavior.
             'is_max_heap': self._is_max_heap,
             'memory_usage': f"{self._size * 24} bytes (estimated)"
         }
+    
+    # ============================================================================
+    # REQUIRED INTERFACE METHODS (iNodeStrategy)
+    # ============================================================================
+    
+    def create_from_data(self, data: Any) -> 'HeapStrategy':
+        """Create strategy instance from data."""
+        new_strategy = HeapStrategy(self._traits, max_heap=self._is_max_heap)
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, (int, float)):
+                    new_strategy.push(item, priority=item)
+                else:
+                    new_strategy.push(item)
+        return new_strategy
+    
+    def get(self, path: str, default: Any = None) -> Any:
+        """Get value (heaps don't support path-based lookup)."""
+        return default
+    
+    def has(self, key: Any) -> bool:
+        """Check if value exists in heap (O(n) - not efficient)."""
+        for priority, data in self._heap.data:
+            if data == key:
+                return True
+        return False
+    
+    def put(self, path: str, value: Any) -> 'HeapStrategy':
+        """Put value (heaps use push instead)."""
+        self.push(value)
+        return self
+    
+    def exists(self, path: str) -> bool:
+        """Check if path exists (not applicable to heaps)."""
+        return False
+    
+    # Container protocol
+    def __len__(self) -> int:
+        """Get length."""
+        return self._size
+    
+    def __iter__(self) -> Iterator[Any]:
+        """Iterate over values."""
+        return self.values()
+    
+    def __getitem__(self, key: Any) -> Any:
+        """Get item (heaps don't support indexed access)."""
+        raise IndexError("Heaps don't support indexed access")
+    
+    def __setitem__(self, key: Any, value: Any) -> None:
+        """Set item (heaps don't support indexed access)."""
+        raise TypeError("Heaps don't support indexed assignment")
+    
+    def __contains__(self, key: Any) -> bool:
+        """Check if key exists (not efficient for heaps)."""
+        return False
+    
+    # Type checking properties
+    @property
+    def is_leaf(self) -> bool:
+        """Check if this is a leaf node."""
+        return self._size == 0
+    
+    @property
+    def is_list(self) -> bool:
+        """Check if this is a list node."""
+        return False
+    
+    @property
+    def is_dict(self) -> bool:
+        """Check if this is a dict node."""
+        return False
+    
+    @property
+    def is_reference(self) -> bool:
+        """Check if this is a reference node."""
+        return False
+    
+    @property
+    def is_object(self) -> bool:
+        """Check if this is an object node."""
+        return False
+    
+    @property
+    def type(self) -> str:
+        """Get the type of this node."""
+        return "heap"
+    
+    @property
+    def value(self) -> Any:
+        """Get the value of this node."""
+        return self.to_native()
+    
+    @property
+    def strategy_name(self) -> str:
+        """Get strategy name."""
+        return "HEAP"
+    
+    @property
+    def supported_traits(self) -> NodeTrait:
+        """Get supported traits."""
+        return self.get_supported_traits()

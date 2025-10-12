@@ -9,7 +9,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -60,6 +60,25 @@ class XWNode(XWNodeBase):
             # Create a simple strategy as fallback
             from .common.utils.simple import SimpleNodeStrategy
             self._strategy = SimpleNodeStrategy.create_from_data(self._data or {})
+    
+    # ============================================================================
+    # FACTORY METHODS
+    # ============================================================================
+    
+    @classmethod
+    def from_native(cls, data: Any, mode: str = 'AUTO', **options) -> 'XWNode':
+        """
+        Create XWNode from native Python data.
+        
+        Args:
+            data: Native Python data (dict, list, etc.)
+            mode: Strategy mode to use
+            **options: Additional configuration options
+        
+        Returns:
+            XWNode instance containing the data
+        """
+        return cls(data=data, mode=mode, **options)
     
     # ============================================================================
     # CORE OPERATIONS
@@ -275,24 +294,6 @@ class XWNode(XWNodeBase):
             return f"XWNode(mode='{self._mode}', size={self.size()})"
 
 
-class XWQuery:
-    """Query interface for XWNode."""
-    
-    def __init__(self, node: XWNode):
-        """Initialize query interface."""
-        self._node = node
-    
-    def find(self, pattern: str) -> List[Any]:
-        """Find items matching pattern."""
-        # TODO: Implement pattern matching
-        return []
-    
-    def filter(self, predicate) -> List[Any]:
-        """Filter items by predicate."""
-        # TODO: Implement filtering
-        return []
-
-
 class XWFactory:
     """Factory for creating XWNode instances."""
     
@@ -444,7 +445,6 @@ def empty_node() -> XWNode:
 __all__ = [
     'XWNode',
     'XWEdge',
-    'XWQuery', 
     'XWFactory',
     'create_node',
     'from_dict',

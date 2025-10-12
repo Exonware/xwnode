@@ -12,7 +12,7 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 """
 
@@ -239,7 +239,7 @@ class StrategyManager:
         if ((initial_data is not None and not isinstance(initial_data, (dict, list))) or
             (initial_data is None)) and not is_dict and not is_list:
             # Use TREE_GRAPH_HYBRID for XWNode compatibility
-            from .impls.node_tree_graph_hybrid import TreeGraphHybridStrategy
+            from ...nodes.strategies.tree_graph_hybrid import TreeGraphHybridStrategy
             return NodeMode.TREE_GRAPH_HYBRID
         
         # Fast path for simple data type patterns

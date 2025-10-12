@@ -6,21 +6,35 @@ Utils module for xwnode.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 """
 
 # Import and export main components
 from pathlib import Path
 import importlib
 
-# Auto-discover and import all modules
-_current_dir = Path(__file__).parent
-for _file in _current_dir.glob('*.py'):
-    if _file.name != '__init__.py' and not _file.name.startswith('_'):
-        _module_name = _file.stem
-        try:
-            globals()[_module_name] = importlib.import_module(f'.{_module_name}', package=__name__)
-        except ImportError:
-            pass
+# Import all utilities from utils.py
+from .utils import (
+    PathParser, TrieNode, UnionFind, MinHeap,
+    recursive_to_native, is_sequential_numeric_keys, calculate_structural_hash,
+    validate_traits, PerformanceTracker, ObjectPool,
+    create_path_parser, create_performance_tracker, create_object_pool,
+    create_basic_metrics, create_basic_backend_info,
+    is_list_like, safe_to_native_conversion, create_strategy_logger,
+    validate_strategy_options, create_size_tracker, update_size_tracker,
+    create_access_tracker, record_access, get_access_metrics
+)
 
-__all__ = []
+# Import all from simple.py
+from .simple import *
+
+__all__ = [
+    'PathParser', 'TrieNode', 'UnionFind', 'MinHeap',
+    'recursive_to_native', 'is_sequential_numeric_keys', 'calculate_structural_hash',
+    'validate_traits', 'PerformanceTracker', 'ObjectPool',
+    'create_path_parser', 'create_performance_tracker', 'create_object_pool',
+    'create_basic_metrics', 'create_basic_backend_info',
+    'is_list_like', 'safe_to_native_conversion', 'create_strategy_logger',
+    'validate_strategy_options', 'create_size_tracker', 'update_size_tracker',
+    'create_access_tracker', 'record_access', 'get_access_metrics'
+]

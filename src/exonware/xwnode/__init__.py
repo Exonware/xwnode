@@ -10,12 +10,11 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.22
+Version: 0.0.1.23
 Generation Date: 07-Sep-2025
 
 Main Classes:
     XWNode: The primary interface for working with hierarchical data
-    XWQuery: Query interface for searching and filtering nodes
     XWFactory: Factory for creating XWNode instances
     
 Exceptions:
@@ -57,7 +56,7 @@ Example:
 # IMPORTS - Standard Python Imports (No Defensive Code!)
 # =============================================================================
 from .facade import (
-    XWNode, XWEdge, XWQuery, XWFactory,
+    XWNode, XWEdge, XWFactory,
     # A+ Usability Presets
     create_with_preset, list_available_presets,
     # Performance Modes
@@ -68,9 +67,12 @@ from .errors import (
     XWNodeSecurityError, XWNodeLimitError, XWNodePathSecurityError
 )
 from .config import XWNodeConfig, get_config, set_config
+from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, GraphOptimization
+# Note: QueryMode and QueryTrait are in xwquery.defs module
+from .common.graph import XWGraphManager
 
 # xwsystem lazy install functionality
-from exonware.xwsystem.utils.lazy_install import xwimport
+from exonware.xwsystem.utils.lazy_package import xwimport
 from exonware.xwsystem.monitoring import get_metrics as get_xwsystem_metrics, reset_metrics as reset_xwsystem_metrics
 
 # Version info
@@ -84,7 +86,6 @@ __all__ = [
     # Main classes
     'XWNode',
     'XWEdge',
-    'XWQuery',
     'XWFactory',
     
     # A+ Usability Presets
@@ -101,6 +102,18 @@ __all__ = [
     'XWNodeConfig',
     'get_config',
     'set_config',
+    
+    # Enums and Types
+    'NodeMode',
+    'EdgeMode',
+    'QueryMode',
+    'NodeTrait',
+    'EdgeTrait',
+    'QueryTrait',
+    'GraphOptimization',
+    
+    # Graph Optimization
+    'XWGraphManager',
     
     # Lazy Install
     'xwimport',
