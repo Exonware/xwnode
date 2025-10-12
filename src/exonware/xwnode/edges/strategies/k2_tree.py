@@ -9,7 +9,7 @@ matrix representation using quadtree-based compression.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.23
+Version: 0.0.1.24
 Generation Date: 12-Oct-2025
 """
 

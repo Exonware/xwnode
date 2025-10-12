@@ -6,7 +6,7 @@ Common utilities and patterns shared across xwnode.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.23
+Version: 0.0.1.24
 """
 
 # Export common patterns
