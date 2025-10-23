@@ -25,7 +25,12 @@ class SetHashStrategy(ANodeStrategy):
 
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Hash Set strategy."""
+        """
+        Initialize the Hash Set strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.SET_HASH, traits, **options)
         
         self.load_factor = options.get('load_factor', 0.75)
@@ -41,7 +46,11 @@ class SetHashStrategy(ANodeStrategy):
         self.allow_none = options.get('allow_none', True)
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the hash set strategy."""
+        """
+        Get the traits supported by the hash set strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.INDEXED | NodeTrait.STREAMING)
     
     # ============================================================================
@@ -49,7 +58,11 @@ class SetHashStrategy(ANodeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add a value to the set (key becomes the set element)."""
+        """
+        Add a value to the set (key becomes the set element).
+        
+        Time Complexity: O(1) average case
+        """
         if value is None and not self.allow_none:
             return
         
@@ -70,7 +83,11 @@ class SetHashStrategy(ANodeStrategy):
         self._size = len(self._set)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Retrieve a value by key (check if element exists in set)."""
+        """
+        Retrieve a value by key (check if element exists in set).
+        
+        Time Complexity: O(1) average case
+        """
         element = str(key) if not self.case_sensitive else str(key)
         if not self.case_sensitive:
             element = element.lower()
@@ -78,7 +95,11 @@ class SetHashStrategy(ANodeStrategy):
         return self._values.get(element, default)
     
     def has(self, key: Any) -> bool:
-        """Check if key exists in set (O(1) membership test)."""
+        """
+        Check if key exists in set (O(1) membership test).
+        
+        Time Complexity: O(1) average case
+        """
         element = str(key) if not self.case_sensitive else str(key)
         if not self.case_sensitive:
             element = element.lower()
@@ -86,7 +107,11 @@ class SetHashStrategy(ANodeStrategy):
         return element in self._set
     
     def remove(self, key: Any) -> bool:
-        """Remove element from set."""
+        """
+        Remove element from set.
+        
+        Time Complexity: O(1) average case
+        """
         element = str(key) if not self.case_sensitive else str(key)
         if not self.case_sensitive:
             element = element.lower()

@@ -9,7 +9,7 @@ overlap queries using augmented balanced trees.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -34,6 +34,8 @@ class Interval:
         """
         Initialize interval.
         
+        Time Complexity: O(1)
+        
         Args:
             low: Lower bound
             high: Upper bound
@@ -50,11 +52,19 @@ class Interval:
         self.value = value
     
     def overlaps(self, other: 'Interval') -> bool:
-        """Check if this interval overlaps with another."""
+        """
+        Check if this interval overlaps with another.
+        
+        Time Complexity: O(1)
+        """
         return self.low <= other.high and other.low <= self.high
     
     def contains_point(self, point: float) -> bool:
-        """Check if interval contains point."""
+        """
+        Check if interval contains point.
+        
+        Time Complexity: O(1)
+        """
         return self.low <= point <= self.high
     
     def contains_interval(self, other: 'Interval') -> bool:

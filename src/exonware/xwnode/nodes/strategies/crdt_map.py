@@ -9,7 +9,7 @@ data type with Last-Write-Wins semantics for distributed systems.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -35,6 +35,8 @@ class VectorClock:
         """
         Initialize vector clock.
         
+        Time Complexity: O(1)
+        
         Args:
             replica_id: Unique replica identifier
         """
@@ -42,12 +44,18 @@ class VectorClock:
         self.replica_id = replica_id
     
     def increment(self) -> None:
-        """Increment this replica's clock."""
+        """
+        Increment this replica's clock.
+        
+        Time Complexity: O(1)
+        """
         self.clocks[self.replica_id] = self.clocks.get(self.replica_id, 0) + 1
     
     def update(self, other: 'VectorClock') -> None:
         """
         Update with another vector clock.
+        
+        Time Complexity: O(r) where r is number of replicas
         
         Args:
             other: Other vector clock

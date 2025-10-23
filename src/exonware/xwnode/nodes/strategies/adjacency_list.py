@@ -15,7 +15,7 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -75,6 +75,9 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         """
         Initialize an empty adjacency list.
         
+        Time Complexity: O(V + E) where V = initial vertices, E = initial edges
+        Space Complexity: O(V + E)
+        
         Args:
             traits: Additional node traits
             **options:
@@ -105,7 +108,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
                 self.add_edge(edge[0], edge[1], edge[2])
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the adjacency list strategy."""
+        """
+        Get the traits supported by the adjacency list strategy.
+        
+        Time Complexity: O(1)
+        """
         return NodeTrait.GRAPH | NodeTrait.SPARSE | NodeTrait.FAST_NEIGHBORS
     
     # ============================================================================
@@ -291,7 +298,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # ============================================================================
     
     def degree(self, vertex: str) -> int:
-        """Get the degree of a vertex (out-degree for directed graphs)."""
+        """
+        Get the degree of a vertex (out-degree for directed graphs).
+        
+        Time Complexity: O(1)
+        """
         if vertex not in self._adj_list:
             return 0
         return len(self._adj_list[vertex])
@@ -313,7 +324,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         return count
     
     def out_degree(self, vertex: str) -> int:
-        """Get the out-degree of a vertex (same as degree for directed graphs)."""
+        """
+        Get the out-degree of a vertex (same as degree for directed graphs).
+        
+        Time Complexity: O(1)
+        """
         return self.degree(vertex)
     
     # ============================================================================
@@ -574,31 +589,59 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Store vertex with data."""
+        """
+        Store vertex with data.
+        
+        Time Complexity: O(1)
+        """
         self.add_vertex(str(key), value)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get vertex data."""
+        """
+        Get vertex data.
+        
+        Time Complexity: O(1)
+        """
         return self._nodes.get(str(key), default)
     
     def has(self, key: Any) -> bool:
-        """Check if vertex exists."""
+        """
+        Check if vertex exists.
+        
+        Time Complexity: O(1)
+        """
         return str(key) in self._nodes
     
     def delete(self, key: Any) -> bool:
-        """Delete a vertex and all its edges."""
+        """
+        Delete a vertex and all its edges.
+        
+        Time Complexity: O(V + E)
+        """
         return self.remove_vertex(str(key))
     
     def keys(self) -> Iterator[Any]:
-        """Get all vertex IDs."""
+        """
+        Get all vertex IDs.
+        
+        Time Complexity: O(1) to create iterator, O(V) to iterate all
+        """
         return iter(self._nodes.keys())
     
     def values(self) -> Iterator[Any]:
-        """Get all vertex data."""
+        """
+        Get all vertex data.
+        
+        Time Complexity: O(1) to create iterator, O(V) to iterate all
+        """
         return iter(self._nodes.values())
     
     def items(self) -> Iterator[tuple[Any, Any]]:
-        """Get all vertices as (id, data) pairs."""
+        """
+        Get all vertices as (id, data) pairs.
+        
+        Time Complexity: O(1) to create iterator, O(V) to iterate all
+        """
         return iter(self._nodes.items())
     
     # ============================================================================
@@ -606,33 +649,61 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # ============================================================================
     
     def size(self) -> int:
-        """Get the number of vertices."""
+        """
+        Get the number of vertices.
+        
+        Time Complexity: O(1)
+        """
         return len(self._nodes)
     
     def is_empty(self) -> bool:
-        """Check if graph has no vertices."""
+        """
+        Check if graph has no vertices.
+        
+        Time Complexity: O(1)
+        """
         return len(self._nodes) == 0
     
     def clear(self) -> None:
-        """Clear all vertices and edges."""
+        """
+        Clear all vertices and edges.
+        
+        Time Complexity: O(1)
+        """
         self._nodes.clear()
         self._adj_list.clear()
         self._edge_count = 0
     
     def vertex_count(self) -> int:
-        """Get the number of vertices."""
+        """
+        Get the number of vertices.
+        
+        Time Complexity: O(1)
+        """
         return len(self._nodes)
     
     def edge_count(self) -> int:
-        """Get the number of edges."""
+        """
+        Get the number of edges.
+        
+        Time Complexity: O(1)
+        """
         return self._edge_count
     
     def vertices(self) -> List[str]:
-        """Get all vertices."""
+        """
+        Get all vertices.
+        
+        Time Complexity: O(V)
+        """
         return list(self._nodes.keys())
     
     def edges(self) -> List[Tuple[str, str, float]]:
-        """Get all edges as (from, to, weight) tuples."""
+        """
+        Get all edges as (from, to, weight) tuples.
+        
+        Time Complexity: O(E)
+        """
         result = []
         for from_vertex, neighbors in self._adj_list.items():
             for to_vertex, weight in neighbors:
@@ -640,7 +711,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         return result
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert graph to native dictionary format."""
+        """
+        Convert graph to native dictionary format.
+        
+        Time Complexity: O(V + E)
+        """
         return {
             'vertices': self._nodes,
             'edges': {
@@ -654,7 +729,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         }
     
     def from_native(self, data: Dict[str, Any]) -> None:
-        """Load graph from native dictionary format."""
+        """
+        Load graph from native dictionary format.
+        
+        Time Complexity: O(V + E)
+        """
         self._nodes.clear()
         self._adj_list.clear()
         self._edge_count = 0
@@ -675,28 +754,52 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # ============================================================================
     
     def __len__(self) -> int:
-        """Return the number of vertices."""
+        """
+        Return the number of vertices.
+        
+        Time Complexity: O(1)
+        """
         return len(self._nodes)
     
     def __bool__(self) -> bool:
-        """Return True if graph has vertices."""
+        """
+        Return True if graph has vertices.
+        
+        Time Complexity: O(1)
+        """
         return bool(self._nodes)
     
     def __contains__(self, vertex: str) -> bool:
-        """Check if vertex exists in graph."""
+        """
+        Check if vertex exists in graph.
+        
+        Time Complexity: O(1)
+        """
         return vertex in self._nodes
     
     def __iter__(self) -> Iterator[str]:
-        """Iterate through all vertices."""
+        """
+        Iterate through all vertices.
+        
+        Time Complexity: O(1) to create iterator, O(V) to iterate all
+        """
         return iter(self._nodes.keys())
     
     def __repr__(self) -> str:
-        """Professional string representation."""
+        """
+        Professional string representation.
+        
+        Time Complexity: O(1)
+        """
         graph_type = "directed" if self._is_directed else "undirected"
         return f"AdjacencyListStrategy(vertices={self.vertex_count()}, edges={self.edge_count()}, {graph_type})"
     
     def __str__(self) -> str:
-        """Human-readable string representation."""
+        """
+        Human-readable string representation.
+        
+        Time Complexity: O(1)
+        """
         return f"Graph[V={self.vertex_count()}, E={self.edge_count()}]"
     
     # ============================================================================
@@ -705,7 +808,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'ADJACENCY_LIST',
             'backend': 'dict of lists (defaultdict)',
@@ -727,7 +834,11 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(1)
+        """
         avg_degree = self.edge_count() / self.vertex_count() if self.vertex_count() > 0 else 0
         max_edges = self.vertex_count() * (self.vertex_count() - 1)
         if not self._is_directed:

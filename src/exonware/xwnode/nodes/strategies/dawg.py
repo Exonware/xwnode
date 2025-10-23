@@ -9,7 +9,7 @@ of string sets with massive memory savings over standard tries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -32,7 +32,11 @@ class DawgNode:
     """
     
     def __init__(self):
-        """Initialize DAWG node."""
+        """
+        Initialize DAWG node.
+        
+        Time Complexity: O(1)
+        """
         self.edges: Dict[str, 'DawgNode'] = {}
         self.is_final = False
         self.value: Any = None
@@ -42,6 +46,8 @@ class DawgNode:
     def __hash__(self) -> int:
         """
         Hash based on structure for suffix sharing.
+        
+        Time Complexity: O(E) where E is number of edges
         
         WHY structural hashing:
         - Identifies identical subtrees for merging

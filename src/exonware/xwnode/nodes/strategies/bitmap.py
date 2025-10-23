@@ -25,7 +25,12 @@ mpressed representation.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Bitmap strategy."""
+        """
+        Initialize the Bitmap strategy.
+        
+        Time Complexity: O(initial_size)
+        Space Complexity: O(initial_size)
+        """
         super().__init__(NodeMode.BITMAP, traits, **options)
         
         self.initial_size = options.get('initial_size', 1024)
@@ -48,11 +53,19 @@ mpressed representation.
         self._resize_to(self.initial_size)
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the bitmap strategy."""
+        """
+        Get the traits supported by the bitmap strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.COMPRESSED | NodeTrait.INDEXED | NodeTrait.STREAMING)
     
     def _resize_to(self, new_bit_capacity: int) -> None:
-        """Resize bitmap to new bit capacity."""
+        """
+        Resize bitmap to new bit capacity.
+        
+        Time Complexity: O(new_capacity - old_capacity) when expanding
+        """
         new_byte_capacity = (new_bit_capacity + 7) // 8  # Round up to nearest byte
         
         if new_byte_capacity > len(self._bits):
@@ -65,7 +78,11 @@ mpressed representation.
         self._capacity_bits = new_bit_capacity
     
     def _ensure_capacity(self, bit_index: int) -> None:
-        """Ensure bitmap has capacity for the given bit index."""
+        """
+        Ensure bitmap has capacity for the given bit index.
+        
+        Time Complexity: O(1) amortized, O(capacity) when resizing
+        """
         if bit_index >= self._capacity_bits:
             if self.auto_resize:
                 new_capacity = max(bit_index + 1, self._capacity_bits * 2)
@@ -74,7 +91,11 @@ mpressed representation.
                 raise IndexError(f"Bit index {bit_index} exceeds capacity {self._capacity_bits}")
     
     def _get_bit(self, bit_index: int) -> bool:
-        """Get bit value at index."""
+        """
+        Get bit value at index.
+        
+        Time Complexity: O(1)
+        """
         if bit_index >= self._capacity_bits or bit_index < 0:
             return False
         
@@ -87,7 +108,11 @@ mpressed representation.
         return bool(self._bits[byte_index] & (1 << bit_offset))
     
     def _set_bit(self, bit_index: int, value: bool) -> bool:
-        """Set bit value at index. Returns True if bit was changed."""
+        """
+        Set bit value at index. Returns True if bit was changed.
+        
+        Time Complexity: O(1) amortized
+        """
         self._ensure_capacity(bit_index)
         
         byte_index = bit_index // 8
@@ -122,7 +147,11 @@ mpressed representation.
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Set a bit and associate a value."""
+        """
+        Set a bit and associate a value.
+        
+        Time Complexity: O(1) amortized
+        """
         key_str = str(key)
         
         # Get or assign bit index for this key
@@ -153,7 +182,11 @@ mpressed representation.
             self._values.pop(key_str, None)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value associated with key."""
+        """
+        Get value associated with key.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str in self._key_to_index:
@@ -164,7 +197,11 @@ mpressed representation.
         return default
     
     def has(self, key: Any) -> bool:
-        """Check if bit is set for key."""
+        """
+        Check if bit is set for key.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str in self._key_to_index:
@@ -174,7 +211,11 @@ mpressed representation.
         return False
     
     def remove(self, key: Any) -> bool:
-        """Clear bit for key."""
+        """
+        Clear bit for key.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str in self._key_to_index:
@@ -189,11 +230,19 @@ mpressed representation.
         return False
     
     def delete(self, key: Any) -> bool:
-        """Clear bit for key (alias for remove)."""
+        """
+        Clear bit for key (alias for remove).
+        
+        Time Complexity: O(1)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all bits."""
+        """
+        Clear all bits.
+        
+        Time Complexity: O(capacity/8) - clears byte array
+        """
         self._bits = array.array('B', [0] * len(self._bits))
         self._size = 0
         self._max_index = -1
@@ -201,27 +250,47 @@ mpressed representation.
         # Keep key mappings for consistency
     
     def keys(self) -> Iterator[str]:
-        """Get all keys with set bits."""
+        """
+        Get all keys with set bits.
+        
+        Time Complexity: O(m) where m is total keys tracked
+        """
         for key_str, bit_index in self._key_to_index.items():
             if self._get_bit(bit_index):
                 yield key_str
     
     def values(self) -> Iterator[Any]:
-        """Get all values for set bits."""
+        """
+        Get all values for set bits.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._values.values())
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs for set bits."""
+        """
+        Get all key-value pairs for set bits.
+        
+        Time Complexity: O(m) where m is total keys tracked
+        """
         for key_str, bit_index in self._key_to_index.items():
             if self._get_bit(bit_index):
                 yield (key_str, self._values.get(key_str, True))
     
     def __len__(self) -> int:
-        """Get the number of set bits."""
+        """
+        Get the number of set bits.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, bool]:
-        """Convert to native Python dict of boolean values."""
+        """
+        Convert to native Python dict of boolean values.
+        
+        Time Complexity: O(m) where m is total keys
+        """
         result = {}
         for key_str, bit_index in self._key_to_index.items():
             result[key_str] = self._get_bit(bit_index)
@@ -229,12 +298,20 @@ mpressed representation.
     
     @property
     def is_list(self) -> bool:
-        """This can behave like a list for indexed access."""
+        """
+        This can behave like a list for indexed access.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     @property
     def is_dict(self) -> bool:
-        """This can behave like a dict."""
+        """
+        This can behave like a dict.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================
@@ -242,24 +319,40 @@ mpressed representation.
     # ============================================================================
     
     def set_bit(self, index: int, value: bool = True) -> bool:
-        """Set bit at index. Returns previous value."""
+        """
+        Set bit at index. Returns previous value.
+        
+        Time Complexity: O(1) amortized
+        """
         old_value = self._get_bit(index)
         self._set_bit(index, value)
         return old_value
     
     def get_bit(self, index: int) -> bool:
-        """Get bit value at index."""
+        """
+        Get bit value at index.
+        
+        Time Complexity: O(1)
+        """
         return self._get_bit(index)
     
     def flip_bit(self, index: int) -> bool:
-        """Flip bit at index. Returns new value."""
+        """
+        Flip bit at index. Returns new value.
+        
+        Time Complexity: O(1) amortized
+        """
         current_value = self._get_bit(index)
         new_value = not current_value
         self._set_bit(index, new_value)
         return new_value
     
     def count_set_bits(self, start: int = 0, end: Optional[int] = None) -> int:
-        """Count set bits in range [start, end)."""
+        """
+        Count set bits in range [start, end).
+        
+        Time Complexity: O(end - start)
+        """
         if end is None:
             end = self._capacity_bits
         
@@ -271,21 +364,33 @@ mpressed representation.
         return count
     
     def find_first_set(self, start: int = 0) -> Optional[int]:
-        """Find first set bit starting from index."""
+        """
+        Find first set bit starting from index.
+        
+        Time Complexity: O(capacity) worst case
+        """
         for i in range(start, self._capacity_bits):
             if self._get_bit(i):
                 return i
         return None
     
     def find_first_clear(self, start: int = 0) -> Optional[int]:
-        """Find first clear bit starting from index."""
+        """
+        Find first clear bit starting from index.
+        
+        Time Complexity: O(capacity) worst case
+        """
         for i in range(start, self._capacity_bits):
             if not self._get_bit(i):
                 return i
         return None
     
     def bitwise_and(self, other: 'BitmapStrategy') -> 'BitmapStrategy':
-        """Bitwise AND with another bitmap."""
+        """
+        Bitwise AND with another bitmap.
+        
+        Time Complexity: O(min(capacity1, capacity2))
+        """
         result = BitmapStrategy(
             traits=self.traits,
             initial_size=max(self._capacity_bits, other._capacity_bits)
@@ -299,7 +404,11 @@ mpressed representation.
         return result
     
     def bitwise_or(self, other: 'BitmapStrategy') -> 'BitmapStrategy':
-        """Bitwise OR with another bitmap."""
+        """
+        Bitwise OR with another bitmap.
+        
+        Time Complexity: O(max(capacity1, capacity2))
+        """
         result = BitmapStrategy(
             traits=self.traits,
             initial_size=max(self._capacity_bits, other._capacity_bits)
@@ -313,7 +422,11 @@ mpressed representation.
         return result
     
     def bitwise_xor(self, other: 'BitmapStrategy') -> 'BitmapStrategy':
-        """Bitwise XOR with another bitmap."""
+        """
+        Bitwise XOR with another bitmap.
+        
+        Time Complexity: O(max(capacity1, capacity2))
+        """
         result = BitmapStrategy(
             traits=self.traits,
             initial_size=max(self._capacity_bits, other._capacity_bits)
@@ -327,7 +440,11 @@ mpressed representation.
         return result
     
     def bitwise_not(self) -> 'BitmapStrategy':
-        """Bitwise NOT (invert all bits)."""
+        """
+        Bitwise NOT (invert all bits).
+        
+        Time Complexity: O(capacity)
+        """
         result = BitmapStrategy(
             traits=self.traits,
             initial_size=self._capacity_bits

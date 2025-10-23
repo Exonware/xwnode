@@ -25,7 +25,12 @@ icient query operations.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Suffix Array strategy."""
+        """
+        Initialize the Suffix Array strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.SUFFIX_ARRAY, traits, **options)
         
         self.enable_lcp = options.get('enable_lcp', True)  # Longest Common Prefix array

@@ -2,7 +2,7 @@
 # Company: eXonware.com
 # Author: Eng. Muhammad AlShehri
 # Email: connect@exonware.com
-# Version: 0.0.1.25
+# Version: 0.0.1.26
 # Generation Date: February 2, 2025
 #
 # This file contains all dependencies needed for xwnode
@@ -22,6 +22,9 @@
 # Example:
 # requests>=2.25.0                    # HTTP requests library
 # pydantic>=1.8.0                     # Data validation and settings management
+
+# Excel support for benchmarks
+openpyxl>=3.0.0                     # Excel file generation and reading
 
 # =============================================================================
 # DEVELOPMENT AND TESTING DEPENDENCIES

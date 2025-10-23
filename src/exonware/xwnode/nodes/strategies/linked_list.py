@@ -15,6 +15,7 @@ class ListNode:
     """Node in the doubly linked list."""
     
     def __init__(self, key: str, value: Any):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.prev: Optional['ListNode'] = None
@@ -34,7 +35,12 @@ class LinkedListStrategy(ANodeLinearStrategy):
 
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Linked List strategy."""
+        """
+        Initialize the Linked List strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.LINKED_LIST, traits, **options)
         
         self.doubly_linked = options.get('doubly_linked', True)
@@ -50,11 +56,19 @@ class LinkedListStrategy(ANodeLinearStrategy):
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the linked list strategy."""
+        """
+        Get the traits supported by the linked list strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED)
     
     def _insert_after(self, prev_node: ListNode, key: str, value: Any) -> ListNode:
-        """Insert new node after given node."""
+        """
+        Insert new node after given node.
+        
+        Time Complexity: O(1)
+        """
         new_node = ListNode(key, value)
         next_node = prev_node.next
         
@@ -67,7 +81,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return new_node
     
     def _remove_node(self, node: ListNode) -> None:
-        """Remove node from list."""
+        """
+        Remove node from list.
+        
+        Time Complexity: O(1)
+        """
         prev_node = node.prev
         next_node = node.next
         
@@ -79,7 +97,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         node.next = None
     
     def _get_node_at_index(self, index: int) -> Optional[ListNode]:
-        """Get node at given index."""
+        """
+        Get node at given index.
+        
+        Time Complexity: O(n) - O(min(index, n-index)) with bidirectional search
+        """
         if index < 0 or index >= self._size:
             return None
         
@@ -102,7 +124,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add/update key-value pair."""
+        """
+        Add/update key-value pair.
+        
+        Time Complexity: O(1) amortized
+        """
         key_str = str(key)
         
         if key_str in self._key_to_node:
@@ -115,7 +141,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
             self._size += 1
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value by key."""
+        """
+        Get value by key.
+        
+        Time Complexity: O(1) for key lookup, O(n) for index lookup
+        """
         key_str = str(key)
         
         if key_str == "list_info":
@@ -135,7 +165,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return node.value if node else default
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str == "list_info":
@@ -147,7 +181,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return key_str in self._key_to_node
     
     def remove(self, key: Any) -> bool:
-        """Remove key from list."""
+        """
+        Remove key from list.
+        
+        Time Complexity: O(1) for key removal, O(n) for index removal
+        """
         key_str = str(key)
         
         if key_str.isdigit():
@@ -171,53 +209,89 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove key from list (alias for remove)."""
+        """
+        Remove key from list (alias for remove).
+        
+        Time Complexity: O(1) for key removal, O(n) for index removal
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(1)
+        """
         self._head.next = self._tail
         self._tail.prev = self._head
         self._key_to_node.clear()
         self._size = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all keys in insertion order."""
+        """
+        Get all keys in insertion order.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         current = self._head.next
         while current != self._tail:
             yield current.key
             current = current.next
     
     def values(self) -> Iterator[Any]:
-        """Get all values in insertion order."""
+        """
+        Get all values in insertion order.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         current = self._head.next
         while current != self._tail:
             yield current.value
             current = current.next
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs in insertion order."""
+        """
+        Get all key-value pairs in insertion order.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         current = self._head.next
         while current != self._tail:
             yield (current.key, current.value)
             current = current.next
     
     def __len__(self) -> int:
-        """Get number of elements."""
+        """
+        Get number of elements.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> List[Any]:
-        """Convert to native Python list."""
+        """
+        Convert to native Python list.
+        
+        Time Complexity: O(n)
+        """
         return list(self.values())
     
     @property
     def is_list(self) -> bool:
-        """This is a list strategy."""
+        """
+        This is a list strategy.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     @property
     def is_dict(self) -> bool:
-        """This also behaves like a dict."""
+        """
+        This also behaves like a dict.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================
@@ -225,13 +299,21 @@ class LinkedListStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     def append(self, value: Any) -> str:
-        """Append value to end of list."""
+        """
+        Append value to end of list.
+        
+        Time Complexity: O(1)
+        """
         key = str(self._size)
         self.put(key, value)
         return key
     
     def prepend(self, value: Any) -> str:
-        """Prepend value to beginning of list."""
+        """
+        Prepend value to beginning of list.
+        
+        Time Complexity: O(1)
+        """
         key = f"prepend_{self._size}"
         new_node = self._insert_after(self._head, key, value)
         self._key_to_node[key] = new_node
@@ -239,7 +321,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return key
     
     def insert_at(self, index: int, value: Any) -> str:
-        """Insert value at specific index."""
+        """
+        Insert value at specific index.
+        
+        Time Complexity: O(n)
+        """
         if index < 0 or index > self._size:
             raise IndexError(f"Index {index} out of range")
         
@@ -260,27 +346,51 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return key
     
     def insert(self, index: int, value: Any) -> None:
-        """Insert value at index."""
+        """
+        Insert value at index.
+        
+        Time Complexity: O(n)
+        """
         self.insert_at(index, value)
     
     def push_back(self, value: Any) -> None:
-        """Add element to back."""
+        """
+        Add element to back.
+        
+        Time Complexity: O(1)
+        """
         self.append(value)
     
     def push_front(self, value: Any) -> None:
-        """Add element to front."""
+        """
+        Add element to front.
+        
+        Time Complexity: O(1)
+        """
         self.prepend(value)
     
     def pop_back(self) -> Any:
-        """Remove and return element from back."""
+        """
+        Remove and return element from back.
+        
+        Time Complexity: O(1)
+        """
         return self.pop()
     
     def pop_front(self) -> Any:
-        """Remove and return element from front."""
+        """
+        Remove and return element from front.
+        
+        Time Complexity: O(1)
+        """
         return self.popleft()
     
     def pop(self) -> Any:
-        """Remove and return last element."""
+        """
+        Remove and return last element.
+        
+        Time Complexity: O(1)
+        """
         if self._size == 0:
             raise IndexError("pop from empty list")
         
@@ -292,7 +402,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         return value
     
     def popleft(self) -> Any:
-        """Remove and return first element."""
+        """
+        Remove and return first element.
+        
+        Time Complexity: O(1)
+        """
         if self._size == 0:
             raise IndexError("popleft from empty list")
         

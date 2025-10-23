@@ -78,7 +78,12 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Segment Tree strategy."""
+        """
+        Initialize the Segment Tree strategy.
+        
+        Time Complexity: O(n) where n is initial_size
+        Space Complexity: O(n)
+        """
         super().__init__(NodeMode.SEGMENT_TREE, traits, **options)
         
         self._max_size = options.get('initial_size', 1000)
@@ -91,7 +96,11 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         self._values: Dict[str, Any] = {}  # Key-value storage for compatibility
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the segment tree strategy."""
+        """
+        Get the traits supported by the segment tree strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.INDEXED | NodeTrait.HIERARCHICAL | NodeTrait.STREAMING)
     
     def _get_identity(self, operation: str) -> Any:

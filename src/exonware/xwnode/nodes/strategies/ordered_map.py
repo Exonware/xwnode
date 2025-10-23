@@ -25,7 +25,12 @@ thmic search operations.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Ordered Map strategy."""
+        """
+        Initialize the Ordered Map strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.ORDERED_MAP, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -37,7 +42,11 @@ thmic search operations.
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the ordered map strategy."""
+        """
+        Get the traits supported by the ordered map strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL)
     
     def _normalize_key(self, key: str) -> str:

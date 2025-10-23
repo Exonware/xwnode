@@ -14,19 +14,28 @@ class UnionFind:
     """Union-Find data structure."""
     
     def __init__(self):
+        """Time Complexity: O(1)"""
         self.parent: Dict[str, str] = {}
         self.rank: Dict[str, int] = {}
         self.values: Dict[str, Any] = {}
     
     def make_set(self, x: str, value: Any = None) -> None:
-        """Make a new set containing x."""
+        """
+        Make a new set containing x.
+        
+        Time Complexity: O(1)
+        """
         if x not in self.parent:
             self.parent[x] = x
             self.rank[x] = 0
             self.values[x] = value
     
     def find(self, x: str) -> str:
-        """Find the root of the set containing x."""
+        """
+        Find the root of the set containing x.
+        
+        Time Complexity: O(α(n)) amortized with path compression
+        """
         if x not in self.parent:
             return x
         
@@ -35,7 +44,11 @@ class UnionFind:
         return self.parent[x]
     
     def union(self, x: str, y: str) -> bool:
-        """Union the sets containing x and y."""
+        """
+        Union the sets containing x and y.
+        
+        Time Complexity: O(α(n)) amortized
+        """
         root_x = self.find(x)
         root_y = self.find(y)
         
@@ -54,26 +67,46 @@ class UnionFind:
         return True
     
     def connected(self, x: str, y: str) -> bool:
-        """Check if x and y are in the same set."""
+        """
+        Check if x and y are in the same set.
+        
+        Time Complexity: O(α(n)) amortized
+        """
         return self.find(x) == self.find(y)
     
     def get_set_members(self, x: str) -> Set[str]:
-        """Get all members of the set containing x."""
+        """
+        Get all members of the set containing x.
+        
+        Time Complexity: O(n * α(n))
+        """
         root = self.find(x)
         return {member for member in self.parent.keys() if self.find(member) == root}
     
     def get_all_sets(self) -> List[Set[str]]:
-        """Get all disjoint sets."""
+        """
+        Get all disjoint sets.
+        
+        Time Complexity: O(n * α(n))
+        """
         roots = set(self.find(x) for x in self.parent.keys())
         return [self.get_set_members(root) for root in roots]
     
     def get_set_count(self) -> int:
-        """Get the number of disjoint sets."""
+        """
+        Get the number of disjoint sets.
+        
+        Time Complexity: O(n * α(n))
+        """
         roots = set(self.find(x) for x in self.parent.keys())
         return len(roots)
     
     def get_set_size(self, x: str) -> int:
-        """Get the size of the set containing x."""
+        """
+        Get the size of the set containing x.
+        
+        Time Complexity: O(n * α(n))
+        """
         return len(self.get_set_members(x))
 
 
@@ -89,13 +122,22 @@ ations on disjoint sets.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the union-find strategy."""
+        """
+        Initialize the union-find strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.UNION_FIND, traits, **options)
         self._union_find = UnionFind()
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the union-find strategy."""
+        """
+        Get the traits supported by the union-find strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.GRAPH | NodeTrait.HIERARCHICAL | NodeTrait.UNION_FIND)
     
     # ============================================================================
@@ -103,38 +145,66 @@ ations on disjoint sets.
     # ============================================================================
     
     def insert(self, key: Any, value: Any) -> None:
-        """Store a key-value pair (creates a new set)."""
+        """
+        Store a key-value pair (creates a new set).
+        
+        Time Complexity: O(1)
+        """
         str_key = str(key)
         if str_key not in self._union_find.parent:
             self._size += 1
         self._union_find.make_set(str_key, value)
     
     def find(self, key: Any) -> Any:
-        """Find the root of the set containing key."""
+        """
+        Find the root of the set containing key.
+        
+        Time Complexity: O(α(n)) amortized
+        """
         str_key = str(key)
         root = self._union_find.find(str_key)
         return self._union_find.values.get(root)
     
     def delete(self, key: Any) -> bool:
-        """Delete a key (not supported in union-find)."""
+        """
+        Delete a key (not supported in union-find).
+        
+        Time Complexity: O(1)
+        """
         # Union-Find doesn't support deletion efficiently
         return False
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(1)
+        """
         self._union_find = UnionFind()
         self._size = 0
     
     def size(self) -> int:
-        """Get the number of elements."""
+        """
+        Get the number of elements.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def is_empty(self) -> bool:
-        """Check if the structure is empty."""
+        """
+        Check if the structure is empty.
+        
+        Time Complexity: O(1)
+        """
         return self._size == 0
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dictionary."""
+        """
+        Convert to native Python dictionary.
+        
+        Time Complexity: O(n)
+        """
         return self._union_find.values.copy()
     
     # ============================================================================
@@ -142,7 +212,11 @@ ations on disjoint sets.
     # ============================================================================
     
     def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
-        """Add edge between nodes (union operation)."""
+        """
+        Add edge between nodes (union operation).
+        
+        Time Complexity: O(α(n)) amortized
+        """
         str_from = str(from_node)
         str_to = str(to_node)
         
@@ -158,12 +232,20 @@ ations on disjoint sets.
         self._union_find.union(str_from, str_to)
     
     def remove_edge(self, from_node: Any, to_node: Any) -> bool:
-        """Remove edge between nodes (not supported in union-find)."""
+        """
+        Remove edge between nodes (not supported in union-find).
+        
+        Time Complexity: O(1)
+        """
         # Union-Find doesn't support edge removal efficiently
         return False
     
     def has_edge(self, from_node: Any, to_node: Any) -> bool:
-        """Check if edge exists (connected operation)."""
+        """
+        Check if edge exists (connected operation).
+        
+        Time Complexity: O(α(n)) amortized
+        """
         str_from = str(from_node)
         str_to = str(to_node)
         
@@ -173,13 +255,21 @@ ations on disjoint sets.
         return self._union_find.connected(str_from, str_to)
     
     def find_path(self, start: Any, end: Any) -> List[Any]:
-        """Find path between nodes."""
+        """
+        Find path between nodes.
+        
+        Time Complexity: O(α(n)) amortized
+        """
         if self.has_edge(start, end):
             return [start, end]
         return []
     
     def get_neighbors(self, node: Any) -> List[Any]:
-        """Get neighboring nodes (all nodes in same set)."""
+        """
+        Get neighboring nodes (all nodes in same set).
+        
+        Time Complexity: O(n * α(n))
+        """
         str_node = str(node)
         if str_node not in self._union_find.parent:
             return []
@@ -188,7 +278,11 @@ ations on disjoint sets.
         return [member for member in members if member != str_node]
     
     def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
-        """Get edge weight (always 1.0 for union-find)."""
+        """
+        Get edge weight (always 1.0 for union-find).
+        
+        Time Complexity: O(α(n)) amortized
+        """
         return 1.0 if self.has_edge(from_node, to_node) else 0.0
     
     # ============================================================================

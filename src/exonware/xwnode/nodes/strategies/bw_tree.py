@@ -14,7 +14,7 @@ with delta updates and atomic operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -45,6 +45,7 @@ class BwTreeDelta:
     """
     
     def __init__(self, delta_type: str, key: Any = None, value: Any = None):
+        """Time Complexity: O(1)"""
         self.delta_type = delta_type  # 'insert', 'update', 'delete', 'split', 'merge'
         self.key = key
         self.value = value

@@ -26,7 +26,12 @@ class CountMinSketchStrategy(ANodeStrategy):
 
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Count-Min Sketch strategy."""
+        """
+        Initialize the Count-Min Sketch strategy.
+        
+        Time Complexity: O(width * depth)
+        Space Complexity: O(width * depth)
+        """
         super().__init__(NodeMode.COUNT_MIN_SKETCH, traits, **options)
         
         # Sketch parameters
@@ -55,22 +60,38 @@ class CountMinSketchStrategy(ANodeStrategy):
         self._heavy_hitters: Dict[str, int] = {}
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the count-min sketch strategy."""
+        """
+        Get the traits supported by the count-min sketch strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.PROBABILISTIC | NodeTrait.COMPRESSED | NodeTrait.STREAMING)
     
     def _calculate_width(self) -> int:
-        """Calculate sketch width based on error bound."""
+        """
+        Calculate sketch width based on error bound.
+        
+        Time Complexity: O(1)
+        """
         # width = ceil(e / epsilon)
         e = math.e
         return max(1, int(math.ceil(e / self.epsilon)))
     
     def _calculate_depth(self) -> int:
-        """Calculate sketch depth based on confidence."""
+        """
+        Calculate sketch depth based on confidence.
+        
+        Time Complexity: O(1)
+        """
         # depth = ceil(ln(1/delta))
         return max(1, int(math.ceil(math.log(1.0 / self.delta))))
     
     def _generate_hash_seeds(self) -> List[int]:
-        """Generate seeds for hash functions."""
+        """
+        Generate seeds for hash functions.
+        
+        Time Complexity: O(depth)
+        """
         seeds = []
         for i in range(self.depth):
             # Use different primes as seeds
@@ -80,7 +101,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         return seeds
     
     def _hash_item(self, item: str, seed: int) -> int:
-        """Hash item to bucket using given seed."""
+        """
+        Hash item to bucket using given seed.
+        
+        Time Complexity: O(|item|)
+        """
         hash_obj = hashlib.md5(f"{item}{seed}".encode())
         hash_value = int(hash_obj.hexdigest(), 16)
         return hash_value % self.width
@@ -103,7 +128,11 @@ class CountMinSketchStrategy(ANodeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add item to count-min sketch."""
+        """
+        Add item to count-min sketch.
+        
+        Time Complexity: O(depth * |item|)
+        """
         item = str(key)
         count = 1
         
@@ -131,7 +160,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         self._update_heavy_hitters(item, estimated_count)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get estimated count or stored value."""
+        """
+        Get estimated count or stored value.
+        
+        Time Complexity: O(depth * |item|) for estimation
+        """
         item = str(key)
         
         if key == "total_count":
@@ -158,7 +191,11 @@ class CountMinSketchStrategy(ANodeStrategy):
             return self.estimate_count(item)
     
     def has(self, key: Any) -> bool:
-        """Check if item might exist (probabilistic)."""
+        """
+        Check if item might exist (probabilistic).
+        
+        Time Complexity: O(depth * |item|)
+        """
         item = str(key)
         
         if key in ["total_count", "unique_items", "heavy_hitters", "sketch_info", "estimated_count"]:
@@ -168,7 +205,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         return self.estimate_count(item) > 0
     
     def remove(self, key: Any) -> bool:
-        """Remove item (limited support - decrements count)."""
+        """
+        Remove item (limited support - decrements count).
+        
+        Time Complexity: O(depth * |item|)
+        """
         item = str(key)
         
         if item in self._values:
@@ -192,11 +233,19 @@ class CountMinSketchStrategy(ANodeStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove item (alias for remove)."""
+        """
+        Remove item (alias for remove).
+        
+        Time Complexity: O(depth * |item|)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(width * depth)
+        """
         self._sketch = [[0 for _ in range(self.width)] for _ in range(self.depth)]
         self._values.clear()
         self._unique_items.clear()
@@ -205,7 +254,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         self._size = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all tracked items."""
+        """
+        Get all tracked items.
+        
+        Time Complexity: O(n) to iterate all
+        """
         for item in self._unique_items:
             yield item
         yield "total_count"
@@ -215,7 +268,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         yield "estimated_count"
     
     def values(self) -> Iterator[Any]:
-        """Get all values."""
+        """
+        Get all values.
+        
+        Time Complexity: O(n * depth) to iterate all
+        """
         for item in self._unique_items:
             yield self.estimate_count(item)
         yield self._total_count
@@ -225,7 +282,11 @@ class CountMinSketchStrategy(ANodeStrategy):
         yield self.get("estimated_count")
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all item-count pairs."""
+        """
+        Get all item-count pairs.
+        
+        Time Complexity: O(n * depth) to iterate all
+        """
         for item in self._unique_items:
             yield (item, self.estimate_count(item))
         yield ("total_count", self._total_count)
@@ -235,11 +296,19 @@ class CountMinSketchStrategy(ANodeStrategy):
         yield ("estimated_count", self.get("estimated_count"))
     
     def __len__(self) -> int:
-        """Get number of unique items tracked."""
+        """
+        Get number of unique items tracked.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict."""
+        """
+        Convert to native Python dict.
+        
+        Time Complexity: O(n * depth)
+        """
         result = {}
         for item in self._unique_items:
             result[item] = self.estimate_count(item)
@@ -255,12 +324,20 @@ class CountMinSketchStrategy(ANodeStrategy):
     
     @property
     def is_list(self) -> bool:
-        """This is not a list strategy."""
+        """
+        This is not a list strategy.
+        
+        Time Complexity: O(1)
+        """
         return False
     
     @property
     def is_dict(self) -> bool:
-        """This behaves like a dict with probabilistic semantics."""
+        """
+        This behaves like a dict with probabilistic semantics.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================

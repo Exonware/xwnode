@@ -24,7 +24,12 @@ boolean data processing.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Dynamic Bitset strategy."""
+        """
+        Initialize the Dynamic Bitset strategy.
+        
+        Time Complexity: O(initial_capacity/64)
+        Space Complexity: O(initial_capacity/64)
+        """
         super().__init__(NodeMode.BITSET_DYNAMIC, traits, **options)
         
         self.initial_capacity = options.get('initial_capacity', 64)
@@ -44,11 +49,19 @@ boolean data processing.
         self._bit_flips = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the dynamic bitset strategy."""
+        """
+        Get the traits supported by the dynamic bitset strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.INDEXED | NodeTrait.COMPRESSED)
     
     def _ensure_capacity(self, bit_index: int) -> None:
-        """Ensure bitset can accommodate the given bit index."""
+        """
+        Ensure bitset can accommodate the given bit index.
+        
+        Time Complexity: O(1) amortized, O(new_capacity) when resizing
+        """
         required_capacity = bit_index + 1
         
         if required_capacity > self._capacity:
@@ -155,7 +168,11 @@ boolean data processing.
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Set bit at key index."""
+        """
+        Set bit at key index.
+        
+        Time Complexity: O(1) amortized
+        """
         self._total_operations += 1
         
         if isinstance(key, str) and key.isdigit():
@@ -179,7 +196,11 @@ boolean data processing.
         self._trim_if_needed()
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get bit value at key index."""
+        """
+        Get bit value at key index.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str == "bitset_info":
@@ -209,7 +230,11 @@ boolean data processing.
             return self._get_bit(abs(bit_index))
     
     def has(self, key: Any) -> bool:
-        """Check if bit at key index is set."""
+        """
+        Check if bit at key index is set.
+        
+        Time Complexity: O(1)
+        """
         key_str = str(key)
         
         if key_str in ["bitset_info", "bit_count", "all_set_bits", "bit_pattern"]:
@@ -225,7 +250,11 @@ boolean data processing.
             return self._get_bit(abs(bit_index))
     
     def remove(self, key: Any) -> bool:
-        """Clear bit at key index."""
+        """
+        Clear bit at key index.
+        
+        Time Complexity: O(1)
+        """
         if isinstance(key, str) and key.isdigit():
             bit_index = int(key)
         elif isinstance(key, int):
@@ -236,11 +265,19 @@ boolean data processing.
         return self._set_bit(abs(bit_index), False)
     
     def delete(self, key: Any) -> bool:
-        """Clear bit at key index (alias for remove)."""
+        """
+        Clear bit at key index (alias for remove).
+        
+        Time Complexity: O(1)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all bits."""
+        """
+        Clear all bits.
+        
+        Time Complexity: O(initial_capacity/64)
+        """
         self._bits = [0] * ((self.initial_capacity + 63) // 64)
         self._capacity = len(self._bits) * 64
         self._size = 0
@@ -251,39 +288,67 @@ boolean data processing.
         self._bit_flips = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all set bit indices as strings."""
+        """
+        Get all set bit indices as strings.
+        
+        Time Complexity: O(highest_bit)
+        """
         for i in range(self._highest_bit + 1):
             if self._get_bit(i):
                 yield str(i)
     
     def values(self) -> Iterator[Any]:
-        """Get all set bit values (always True)."""
+        """
+        Get all set bit values (always True).
+        
+        Time Complexity: O(highest_bit)
+        """
         for i in range(self._highest_bit + 1):
             if self._get_bit(i):
                 yield True
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all set bit indices and values."""
+        """
+        Get all set bit indices and values.
+        
+        Time Complexity: O(highest_bit)
+        """
         for i in range(self._highest_bit + 1):
             if self._get_bit(i):
                 yield (str(i), True)
     
     def __len__(self) -> int:
-        """Get number of set bits."""
+        """
+        Get number of set bits.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, bool]:
-        """Convert to native Python dict of set bits."""
+        """
+        Convert to native Python dict of set bits.
+        
+        Time Complexity: O(highest_bit)
+        """
         return {str(i): True for i in range(self._highest_bit + 1) if self._get_bit(i)}
     
     @property
     def is_list(self) -> bool:
-        """This can behave like a list for indexed access."""
+        """
+        This can behave like a list for indexed access.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     @property
     def is_dict(self) -> bool:
-        """This behaves like a dict."""
+        """
+        This behaves like a dict.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================

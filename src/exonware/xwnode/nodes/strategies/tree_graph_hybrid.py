@@ -15,14 +15,14 @@ from typing import Any, Union, List, Dict, Optional, Iterator, Tuple, Callable
 from collections import OrderedDict
 
 from ...defs import NodeMode, NodeTrait
-from ...contracts import iNodeStrategy
+from .contracts import INodeStrategy
 from ...errors import XWNodePathError
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
 
 # Import contracts
-from .contracts import NodeType
+from .contracts import NodeType, INodeStrategy
 
 # Import shared utilities
 from ...common.utils import (
@@ -41,13 +41,18 @@ class TreeGraphNode(ABC):
     __slots__ = ('_parent', '_cached_native', '_hash')
     
     def __init__(self, parent: Optional['TreeGraphNode'] = None):
+        """Time Complexity: O(1)"""
         self._parent: Optional['TreeGraphNode'] = parent
         self._cached_native: Optional[Any] = None
         self._hash: Optional[int] = None
     
     @property
     def parent(self) -> Optional['TreeGraphNode']:
-        """Get the parent node."""
+        """
+        Get the parent node.
+        
+        Time Complexity: O(1)
+        """
         return self._parent
     
     @parent.setter
@@ -520,7 +525,7 @@ class PathParser:
 # TREE GRAPH HYBRID STRATEGY
 # ============================================================================
 
-class TreeGraphHybridStrategy(iNodeStrategy):
+class TreeGraphHybridStrategy(INodeStrategy):
     """
     Unified TreeGraphHybrid strategy combining aNode model with advanced data structures.
     

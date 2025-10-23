@@ -17,6 +17,7 @@ class TreapNode:
     """Node in the treap."""
     
     def __init__(self, key: str, value: Any = None, priority: int = None):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.priority = priority if priority is not None else random.randint(1, 1000000)
@@ -25,13 +26,21 @@ class TreapNode:
         self._hash = None
     
     def __hash__(self) -> int:
-        """Cache hash for performance."""
+        """
+        Cache hash for performance.
+        
+        Time Complexity: O(1) amortized
+        """
         if self._hash is None:
             self._hash = hash((self.key, self.value, self.priority))
         return self._hash
     
     def __eq__(self, other) -> bool:
-        """Structural equality."""
+        """
+        Structural equality.
+        
+        Time Complexity: O(1)
+        """
         if not isinstance(other, TreapNode):
             return False
         return (self.key == other.key and 

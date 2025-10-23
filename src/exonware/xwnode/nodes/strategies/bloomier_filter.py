@@ -9,7 +9,7 @@ approximate key→value mapping with controlled false positive rates.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -97,6 +97,9 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
                  false_positive_rate: float = 0.01, **options):
         """
         Initialize Bloomier filter strategy.
+        
+        Time Complexity: O(m) where m is table size
+        Space Complexity: O(m)
         
         Args:
             mode: Node mode

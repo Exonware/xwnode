@@ -15,6 +15,7 @@ class TreeNode:
     """Node in the balanced binary search tree."""
     
     def __init__(self, key: str, value: Any = None):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.left: Optional['TreeNode'] = None
@@ -36,7 +37,12 @@ ions, and range queries.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Tree Set strategy."""
+        """
+        Initialize the Tree Set strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.SET_TREE, traits, **options)
         
         self.allow_duplicates = options.get('allow_duplicates', False)
@@ -50,7 +56,11 @@ ions, and range queries.
         self._values: Dict[str, Any] = {}
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the tree set strategy."""
+        """
+        Get the traits supported by the tree set strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL)
     
     def _normalize_key(self, key: str) -> str:

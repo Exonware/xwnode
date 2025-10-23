@@ -14,6 +14,7 @@ class TrieNode:
     """Node in the trie structure."""
     
     def __init__(self):
+        """Time Complexity: O(1)"""
         self.children: Dict[str, 'TrieNode'] = {}
         self.is_end_of_word = False
         self.value: Any = None
@@ -74,13 +75,22 @@ class TrieStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the trie strategy."""
+        """
+        Initialize the trie strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.TRIE, traits, **options)
         self._root = TrieNode()
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the trie strategy."""
+        """
+        Get the traits supported by the trie strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.HIERARCHICAL | NodeTrait.INDEXED)
     
     # ============================================================================
@@ -88,7 +98,12 @@ class TrieStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     def insert(self, key: Any, value: Any) -> None:
-        """Store a key-value pair (key should be string-like)."""
+        """
+        Store a key-value pair (key should be string-like).
+        
+        Time Complexity: O(k) where k is key length
+        Space Complexity: O(k) in worst case for new branches
+        """
         word = str(key)
         node = self._root
         
@@ -105,7 +120,11 @@ class TrieStrategy(ANodeTreeStrategy):
         node.value = value
     
     def find(self, key: Any) -> Any:
-        """Retrieve a value by key."""
+        """
+        Retrieve a value by key.
+        
+        Time Complexity: O(k) where k is key length
+        """
         word = str(key)
         node = self._root
         
@@ -118,12 +137,20 @@ class TrieStrategy(ANodeTreeStrategy):
         return node.value if node.is_end_of_word else None
     
     def delete(self, key: Any) -> bool:
-        """Remove a key-value pair."""
+        """
+        Remove a key-value pair.
+        
+        Time Complexity: O(k) where k is key length
+        """
         word = str(key)
         return self._delete_helper(self._root, word, 0)
     
     def _delete_helper(self, node: TrieNode, word: str, index: int) -> bool:
-        """Helper method for deletion."""
+        """
+        Helper method for deletion.
+        
+        Time Complexity: O(k) where k is key length
+        """
         if index == len(word):
             if node.is_end_of_word:
                 node.is_end_of_word = False
@@ -145,15 +172,27 @@ class TrieStrategy(ANodeTreeStrategy):
         return deleted
     
     def size(self) -> int:
-        """Get the number of items."""
+        """
+        Get the number of items.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def is_empty(self) -> bool:
-        """Check if the structure is empty."""
+        """
+        Check if the structure is empty.
+        
+        Time Complexity: O(1)
+        """
         return self._size == 0
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dictionary."""
+        """
+        Convert to native Python dictionary.
+        
+        Time Complexity: O(n * k) where n is words, k is average key length
+        """
         result = {}
         self._collect_words(self._root, "", result)
         return result

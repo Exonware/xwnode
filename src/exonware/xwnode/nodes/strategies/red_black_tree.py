@@ -16,6 +16,7 @@ class RedBlackTreeNode:
     """Node in the red-black tree."""
     
     def __init__(self, key: str, value: Any = None, color: str = 'RED'):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.color = color  # 'RED' or 'BLACK'
@@ -25,13 +26,21 @@ class RedBlackTreeNode:
         self._hash = None
     
     def __hash__(self) -> int:
-        """Cache hash for performance."""
+        """
+        Cache hash for performance.
+        
+        Time Complexity: O(1) amortized
+        """
         if self._hash is None:
             self._hash = hash((self.key, self.value, self.color))
         return self._hash
     
     def __eq__(self, other) -> bool:
-        """Structural equality."""
+        """
+        Structural equality.
+        
+        Time Complexity: O(1)
+        """
         if not isinstance(other, RedBlackTreeNode):
             return False
         return (self.key == other.key and 
@@ -39,19 +48,35 @@ class RedBlackTreeNode:
                 self.color == other.color)
     
     def is_red(self) -> bool:
-        """Check if node is red."""
+        """
+        Check if node is red.
+        
+        Time Complexity: O(1)
+        """
         return self.color == 'RED'
     
     def is_black(self) -> bool:
-        """Check if node is black."""
+        """
+        Check if node is black.
+        
+        Time Complexity: O(1)
+        """
         return self.color == 'BLACK'
     
     def set_red(self) -> None:
-        """Set node color to red."""
+        """
+        Set node color to red.
+        
+        Time Complexity: O(1)
+        """
         self.color = 'RED'
     
     def set_black(self) -> None:
-        """Set node color to black."""
+        """
+        Set node color to black.
+        
+        Time Complexity: O(1)
+        """
         self.color = 'BLACK'
 
 
@@ -133,7 +158,12 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the red-black tree strategy."""
+        """
+        Initialize the red-black tree strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.RED_BLACK_TREE, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -149,15 +179,27 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         self._max_height = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the red-black tree strategy."""
+        """
+        Get the traits supported by the red-black tree strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED)
     
     def _normalize_key(self, key: str) -> str:
-        """Normalize key based on case sensitivity."""
+        """
+        Normalize key based on case sensitivity.
+        
+        Time Complexity: O(|key|)
+        """
         return key if self.case_sensitive else key.lower()
     
     def _get_height(self, node: Optional[RedBlackTreeNode]) -> int:
-        """Get height of node."""
+        """
+        Get height of node.
+        
+        Time Complexity: O(n) - visits all nodes in subtree
+        """
         if not node:
             return 0
         
@@ -166,7 +208,11 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         return 1 + max(left_height, right_height)
     
     def _rotate_left(self, node: RedBlackTreeNode) -> None:
-        """Left rotation around node."""
+        """
+        Left rotation around node.
+        
+        Time Complexity: O(1)
+        """
         right_child = node.right
         if not right_child:
             return

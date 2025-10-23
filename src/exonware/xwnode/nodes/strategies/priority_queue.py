@@ -15,7 +15,7 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -72,6 +72,9 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """
         Initialize an empty priority queue.
         
+        Time Complexity: O(n log n) if initial_items provided, O(1) otherwise
+        Space Complexity: O(n) where n is number of initial items
+        
         Args:
             traits: Additional node traits
             **options:
@@ -96,7 +99,11 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
                 self.push(value, priority)
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the priority queue strategy."""
+        """
+        Get the traits supported by the priority queue strategy.
+        
+        Time Complexity: O(1)
+        """
         return NodeTrait.PRIORITY | NodeTrait.FAST_INSERT | NodeTrait.HEAP_OPERATIONS
     
     # ============================================================================
@@ -167,6 +174,8 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """
         Peek at the highest priority item with its priority.
         
+        Time Complexity: O(1)
+        
         Returns:
             Tuple of (priority, value)
             
@@ -183,6 +192,8 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
     def pop_with_priority(self) -> Tuple[float, Any]:
         """
         Extract and return the highest priority item with its priority.
+        
+        Time Complexity: O(log n)
         
         Returns:
             Tuple of (priority, value)

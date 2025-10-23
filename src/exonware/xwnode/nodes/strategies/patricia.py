@@ -15,6 +15,7 @@ class PatriciaNode:
     """Node in the PATRICIA trie (compressed binary trie)."""
     
     def __init__(self, bit_position: int = -1, key: str = "", value: Any = None):
+        """Time Complexity: O(1)"""
         self.bit_position = bit_position  # Which bit to test (-1 for leaves)
         self.key = key  # Full key (for leaves)
         self.value = value  # Value (for leaves)
@@ -23,7 +24,11 @@ class PatriciaNode:
         self.is_leaf = bit_position == -1
     
     def is_internal(self) -> bool:
-        """Check if this is an internal node."""
+        """
+        Check if this is an internal node.
+        
+        Time Complexity: O(1)
+        """
         return not self.is_leaf
 
 
@@ -40,7 +45,12 @@ d binary trie structure.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the PATRICIA strategy."""
+        """
+        Initialize the PATRICIA strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.PATRICIA, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -56,7 +66,11 @@ d binary trie structure.
         self._total_bits_saved = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the PATRICIA strategy."""
+        """
+        Get the traits supported by the PATRICIA strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.COMPRESSED | NodeTrait.HIERARCHICAL)
     
     def _normalize_key(self, key: str) -> str:

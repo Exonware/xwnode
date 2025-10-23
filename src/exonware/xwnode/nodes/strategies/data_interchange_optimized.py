@@ -19,7 +19,7 @@ Ultra-lightweight strategy specifically optimized for data interchange patterns:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -62,7 +62,12 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     )
     
     def __init__(self, traits: NodeTrait = NodeTrait.INDEXED, **options):
-        """Initialize the xData-optimized strategy."""
+        """
+        Initialize the xData-optimized strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         # Initialize parent without calling super() to avoid dict overhead
         self.mode = NodeMode.DATA_INTERCHANGE_OPTIMIZED  # Dedicated mode for data interchange
         self.traits = traits
@@ -87,7 +92,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         self._validate_traits()
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the xData-optimized strategy."""
+        """
+        Get the traits supported by the xData-optimized strategy.
+        
+        Time Complexity: O(1)
+        """
         return NodeTrait.INDEXED  # Only essential traits for maximum performance
     
     # ============================================================================
@@ -95,7 +104,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Store a key-value pair with COW optimization."""
+        """
+        Store a key-value pair with COW optimization.
+        
+        Time Complexity: O(1) amortized
+        """
         self._ensure_mutable()
         
         str_key = str(key)
@@ -107,16 +120,28 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         self._performance_tracker.record_access()
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Retrieve a value by key (zero-overhead success path)."""
+        """
+        Retrieve a value by key (zero-overhead success path).
+        
+        Time Complexity: O(1)
+        """
         self._performance_tracker.record_access()
         return self._data.get(str(key), default)
     
     def has(self, key: Any) -> bool:
-        """Check if key exists (optimized)."""
+        """
+        Check if key exists (optimized).
+        
+        Time Complexity: O(1)
+        """
         return str(key) in self._data
     
     def delete(self, key: Any) -> bool:
-        """Remove a key-value pair with COW."""
+        """
+        Remove a key-value pair with COW.
+        
+        Time Complexity: O(1) amortized
+        """
         self._ensure_mutable()
         
         str_key = str(key)
@@ -128,34 +153,62 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         return False
     
     def remove(self, key: Any) -> bool:
-        """Remove a key-value pair (alias for delete)."""
+        """
+        Remove a key-value pair (alias for delete).
+        
+        Time Complexity: O(1) amortized
+        """
         return self.delete(key)
     
     def clear(self) -> None:
-        """Clear all data with COW."""
+        """
+        Clear all data with COW.
+        
+        Time Complexity: O(1) amortized
+        """
         self._ensure_mutable()
         self._data.clear()
         self._size = 0
         self._invalidate_cache()
     
     def keys(self) -> Iterator[str]:
-        """Get all keys (zero-copy iterator)."""
+        """
+        Get all keys (zero-copy iterator).
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.keys())
     
     def values(self) -> Iterator[Any]:
-        """Get all values (zero-copy iterator)."""
+        """
+        Get all values (zero-copy iterator).
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.values())
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs (zero-copy iterator)."""
+        """
+        Get all key-value pairs (zero-copy iterator).
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.items())
     
     def __len__(self) -> int:
-        """Get the number of items (zero overhead)."""
+        """
+        Get the number of items (zero overhead).
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dictionary (optimized for xData)."""
+        """
+        Convert to native Python dictionary (optimized for xData).
+        
+        Time Complexity: O(n)
+        """
         # Return a copy with all nested XWNode objects converted to native types
         return {k: recursive_to_native(v) for k, v in self._data.items()}
     
@@ -164,7 +217,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     # ============================================================================
     
     def _ensure_mutable(self) -> None:
-        """Ensure this instance is mutable (COW implementation)."""
+        """
+        Ensure this instance is mutable (COW implementation).
+        
+        Time Complexity: O(n) when copying, O(1) otherwise
+        """
         if not self._cow_enabled:
             return
             
@@ -175,12 +232,20 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             self._invalidate_cache()
     
     def freeze(self) -> None:
-        """Freeze this instance for COW (called after first copy)."""
+        """
+        Freeze this instance for COW (called after first copy).
+        
+        Time Complexity: O(1)
+        """
         if self._cow_enabled:
             self._frozen = True
     
     def copy(self) -> 'DataInterchangeOptimizedStrategy':
-        """Create a COW copy of this strategy."""
+        """
+        Create a COW copy of this strategy.
+        
+        Time Complexity: O(1) - shallow copy until mutation
+        """
         if self._cow_enabled:
             self.freeze()
         
@@ -198,11 +263,19 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     # ============================================================================
     
     def _invalidate_cache(self) -> None:
-        """Invalidate cached hash (minimal overhead)."""
+        """
+        Invalidate cached hash (minimal overhead).
+        
+        Time Complexity: O(1)
+        """
         self._hash_cache = None
     
     def structural_hash(self) -> int:
-        """Get structural hash with caching (xData equality optimization)."""
+        """
+        Get structural hash with caching (xData equality optimization).
+        
+        Time Complexity: O(n) first call, O(1) with cache
+        """
         if self._hash_cache is None:
             # Compute hash based on structure, not values
             # This is optimized for xData's equality checking
@@ -211,7 +284,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         return self._hash_cache
     
     def fast_equals(self, other: 'DataInterchangeOptimizedStrategy') -> bool:
-        """Fast equality check using structural hashes."""
+        """
+        Fast equality check using structural hashes.
+        
+        Time Complexity: O(n) without cache, O(1) with cache
+        """
         if not isinstance(other, DataInterchangeOptimizedStrategy):
             return False
         
@@ -272,7 +349,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'DATA_INTERCHANGE_OPTIMIZED',
             'backend': 'Optimized Python dict with COW',
@@ -292,7 +373,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(1)
+        """
         metrics = self._performance_tracker.get_metrics()
         metrics.update({
             'size': self._size,

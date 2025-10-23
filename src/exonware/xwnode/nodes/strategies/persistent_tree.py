@@ -13,7 +13,7 @@ trees with structural sharing and lock-free concurrency.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -29,6 +29,7 @@ class PersistentTreeNode:
     
     def __init__(self, key: str, value: Any = None, left: Optional['PersistentTreeNode'] = None, 
                  right: Optional['PersistentTreeNode'] = None, height: int = 1):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.left = left
@@ -37,13 +38,21 @@ class PersistentTreeNode:
         self._hash = None
     
     def __hash__(self) -> int:
-        """Cache hash for performance."""
+        """
+        Cache hash for performance.
+        
+        Time Complexity: O(1) amortized
+        """
         if self._hash is None:
             self._hash = hash((self.key, self.value, id(self.left), id(self.right)))
         return self._hash
     
     def __eq__(self, other) -> bool:
-        """Structural equality."""
+        """
+        Structural equality.
+        
+        Time Complexity: O(1)
+        """
         if not isinstance(other, PersistentTreeNode):
             return False
         return (self.key == other.key and 

@@ -26,7 +26,12 @@ class HyperLogLogStrategy(ANodeStrategy):
 
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the HyperLogLog strategy."""
+        """
+        Initialize the HyperLogLog strategy.
+        
+        Time Complexity: O(m) where m is num_buckets (2^precision)
+        Space Complexity: O(m)
+        """
         super().__init__(NodeMode.HYPERLOGLOG, traits, **options)
         
         # HyperLogLog parameters
@@ -49,7 +54,11 @@ class HyperLogLogStrategy(ANodeStrategy):
         self._total_additions = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the HyperLogLog strategy."""
+        """
+        Get the traits supported by the HyperLogLog strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.PROBABILISTIC | NodeTrait.COMPRESSED | NodeTrait.STREAMING)
     
     def _calculate_alpha(self) -> float:

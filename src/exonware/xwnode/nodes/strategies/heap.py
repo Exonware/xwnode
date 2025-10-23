@@ -15,36 +15,57 @@ class MinHeap:
     """Min heap implementation."""
     
     def __init__(self, max_heap: bool = False):
+        """Time Complexity: O(1)"""
         self._heap = []
         self._max_heap = max_heap
         self._counter = 0  # For stable sorting
     
     def push(self, priority: float, value: Any) -> None:
-        """Push item with priority."""
+        """
+        Push item with priority.
+        
+        Time Complexity: O(log n)
+        """
         if self._max_heap:
             priority = -priority
         heapq.heappush(self._heap, (priority, self._counter, value))
         self._counter += 1
     
     def pop(self) -> Any:
-        """Pop item with highest priority."""
+        """
+        Pop item with highest priority.
+        
+        Time Complexity: O(log n)
+        """
         if not self._heap:
             raise IndexError("pop from empty heap")
         priority, _, value = heapq.heappop(self._heap)
         return value
     
     def peek(self) -> Any:
-        """Peek at highest priority item."""
+        """
+        Peek at highest priority item.
+        
+        Time Complexity: O(1)
+        """
         if not self._heap:
             raise IndexError("peek from empty heap")
         return self._heap[0][2]
     
     def size(self) -> int:
-        """Get heap size."""
+        """
+        Get heap size.
+        
+        Time Complexity: O(1)
+        """
         return len(self._heap)
     
     def is_empty(self) -> bool:
-        """Check if heap is empty."""
+        """
+        Check if heap is empty.
+        
+        Time Complexity: O(1)
+        """
         return len(self._heap) == 0
 
 
@@ -60,14 +81,23 @@ urable min/max behavior.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the heap strategy."""
+        """
+        Initialize the heap strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.HEAP, traits, **options)
         self._is_max_heap = options.get('max_heap', False)
         self._heap = MinHeap(max_heap=self._is_max_heap)
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the heap strategy."""
+        """
+        Get the traits supported by the heap strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.PRIORITY)
     
     # ============================================================================
@@ -75,34 +105,58 @@ urable min/max behavior.
     # ============================================================================
     
     def insert(self, key: Any, value: Any) -> None:
-        """Store a key-value pair (key is priority, value is data)."""
+        """
+        Store a key-value pair (key is priority, value is data).
+        
+        Time Complexity: O(log n)
+        """
         priority = float(key) if key is not None else 0.0
         data = value if value is not None else key
         self._heap.push(priority, data)
         self._size += 1
     
     def find(self, key: Any) -> Any:
-        """Find value by priority (not efficient for heaps)."""
+        """
+        Find value by priority (not efficient for heaps).
+        
+        Time Complexity: O(1) - not supported
+        """
         # Heaps don't support efficient lookup by priority
         # This is a limitation of the heap data structure
         return None
     
     def delete(self, key: Any) -> bool:
-        """Delete by priority (not efficient for heaps)."""
+        """
+        Delete by priority (not efficient for heaps).
+        
+        Time Complexity: O(1) - not supported
+        """
         # Heaps don't support efficient deletion by priority
         # This is a limitation of the heap data structure
         return False
     
     def size(self) -> int:
-        """Get the number of items."""
+        """
+        Get the number of items.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def is_empty(self) -> bool:
-        """Check if the structure is empty."""
+        """
+        Check if the structure is empty.
+        
+        Time Complexity: O(1)
+        """
         return self._size == 0
     
     def to_native(self) -> List[Any]:
-        """Convert to native Python list."""
+        """
+        Convert to native Python list.
+        
+        Time Complexity: O(n log n)
+        """
         # Return all values in priority order
         result = []
         temp_heap = MinHeap(max_heap=self._is_max_heap)

@@ -16,6 +16,11 @@ class ACNode:
     """Node in the Aho-Corasick trie."""
     
     def __init__(self):
+        """
+        Initialize AC node.
+        
+        Time Complexity: O(1)
+        """
         self.children: Dict[str, 'ACNode'] = {}
         self.failure: Optional['ACNode'] = None
         self.output: Set[str] = set()  # Patterns that end at this node
@@ -23,7 +28,11 @@ class ACNode:
         self.depth = 0
     
     def is_leaf(self) -> bool:
-        """Check if this is a leaf node."""
+        """
+        Check if this is a leaf node.
+        
+        Time Complexity: O(1)
+        """
         return len(self.children) == 0
 
 
@@ -32,15 +41,19 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
     Aho-Corasick node strategy for multi-pattern string matching.
     
     Efficiently searches for multiple patterns simultaneously in a text
-    using a finite automaton with failure links f
+    using a finite automaton with failure links for linear-time matching.
     
     # Strategy type classification
     STRATEGY_TYPE = NodeType.TREE
-or linear-time matching.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Aho-Corasick strategy."""
+        """
+        Initialize the Aho-Corasick strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.AHO_CORASICK, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -63,23 +76,40 @@ or linear-time matching.
         self._search_cache: Dict[str, List[Tuple[str, int]]] = {}
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the Aho-Corasick strategy."""
+        """
+        Get the traits supported by the Aho-Corasick strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.STREAMING)
     
     def _preprocess_pattern(self, pattern: str) -> str:
-        """Preprocess pattern based on settings."""
+        """
+        Preprocess pattern based on settings.
+        
+        Time Complexity: O(|pattern|) - for case conversion if needed
+        """
         if not self.case_sensitive:
             pattern = pattern.lower()
         return pattern
     
     def _preprocess_text(self, text: str) -> str:
-        """Preprocess text based on settings."""
+        """
+        Preprocess text based on settings.
+        
+        Time Complexity: O(|text|) - for case conversion if needed
+        """
         if not self.case_sensitive:
             text = text.lower()
         return text
     
     def _add_pattern_to_trie(self, pattern: str, pattern_index: int) -> None:
-        """Add pattern to the trie structure."""
+        """
+        Add pattern to the trie structure.
+        
+        Time Complexity: O(|pattern|) - iterate through each character
+        Space Complexity: O(|pattern|) - create at most |pattern| new nodes
+        """
         current = self._root
         depth = 0
         
@@ -98,7 +128,12 @@ or linear-time matching.
         self._max_depth = max(self._max_depth, depth)
     
     def _build_failure_links(self) -> None:
-        """Build failure links using BFS."""
+        """
+        Build failure links using BFS.
+        
+        Time Complexity: O(N * Σ) where N is total nodes, Σ is alphabet size
+        Space Complexity: O(N) for the queue
+        """
         queue = deque()
         
         # Initialize failure links for root's children
@@ -130,7 +165,11 @@ or linear-time matching.
                     child.pattern_indices.update(child.failure.pattern_indices)
     
     def _build_automaton(self) -> None:
-        """Build the complete Aho-Corasick automaton."""
+        """
+        Build the complete Aho-Corasick automaton.
+        
+        Time Complexity: O(N * Σ) where N is total nodes
+        """
         if self._automaton_built:
             return
         
@@ -140,7 +179,12 @@ or linear-time matching.
         self._search_cache.clear()
     
     def _rebuild_automaton(self) -> None:
-        """Rebuild the automaton from scratch."""
+        """
+        Rebuild the automaton from scratch.
+        
+        Time Complexity: O(Σ|patterns| + N*Σ) - sum of pattern lengths + failure link construction
+        Space Complexity: O(Σ|patterns|) - total nodes
+        """
         # Reset automaton
         self._root = ACNode()
         self._total_nodes = 1
@@ -160,7 +204,12 @@ or linear-time matching.
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add pattern to automaton."""
+        """
+        Add pattern to automaton.
+        
+        Time Complexity: O(|pattern|) - amortized, may trigger rebuild
+        Space Complexity: O(|pattern|)
+        """
         pattern = str(key)
         processed_pattern = self._preprocess_pattern(pattern)
         
@@ -182,7 +231,11 @@ or linear-time matching.
         self._values[pattern] = value if value is not None else pattern
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value by key."""
+        """
+        Get value by key.
+        
+        Time Complexity: O(1) - dictionary lookup
+        """
         key_str = str(key)
         
         if key_str == "patterns":
@@ -200,13 +253,22 @@ or linear-time matching.
         return default
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(|pattern|) - preprocessing + O(1) lookup
+        """
         key_str = str(key)
         pattern = self._preprocess_pattern(key_str)
         return pattern in self._pattern_to_index or key_str in self._values
     
     def remove(self, key: Any) -> bool:
-        """Remove pattern (requires automaton rebuild)."""
+        """
+        Remove pattern (requires automaton rebuild).
+        
+        Time Complexity: O(Σ|patterns|) - requires full rebuild
+        Space Complexity: O(Σ|patterns|)
+        """
         pattern = str(key)
         processed_pattern = self._preprocess_pattern(pattern)
         
@@ -231,11 +293,20 @@ or linear-time matching.
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove pattern (alias for remove)."""
+        """
+        Remove pattern (alias for remove).
+        
+        Time Complexity: O(Σ|patterns|) - requires full rebuild
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all patterns."""
+        """
+        Clear all patterns.
+        
+        Time Complexity: O(1) - just reset references
+        Space Complexity: O(1)
+        """
         self._root = ACNode()
         self._patterns.clear()
         self._pattern_to_index.clear()
@@ -248,32 +319,53 @@ or linear-time matching.
         self._size = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all pattern keys."""
+        """
+        Get all pattern keys.
+        
+        Time Complexity: O(n) where n is number of patterns
+        """
         for pattern in self._patterns:
             yield pattern
         yield "patterns"
         yield "automaton_info"
     
     def values(self) -> Iterator[Any]:
-        """Get all values."""
+        """
+        Get all values.
+        
+        Time Complexity: O(n) where n is number of patterns
+        """
         for value in self._values.values():
             yield value
         yield self._patterns.copy()
         yield self.get("automaton_info")
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs."""
+        """
+        Get all key-value pairs.
+        
+        Time Complexity: O(n) where n is number of patterns
+        """
         for key, value in self._values.items():
             yield (key, value)
         yield ("patterns", self._patterns.copy())
         yield ("automaton_info", self.get("automaton_info"))
     
     def __len__(self) -> int:
-        """Get number of patterns."""
+        """
+        Get number of patterns.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict."""
+        """
+        Convert to native Python dict.
+        
+        Time Complexity: O(n) where n is number of patterns
+        Space Complexity: O(n)
+        """
         result = dict(self._values)
         result["patterns"] = self._patterns.copy()
         result["automaton_info"] = self.get("automaton_info")
@@ -281,12 +373,20 @@ or linear-time matching.
     
     @property
     def is_list(self) -> bool:
-        """This can behave like a list for pattern access."""
+        """
+        This can behave like a list for pattern access.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     @property
     def is_dict(self) -> bool:
-        """This behaves like a dict."""
+        """
+        This behaves like a dict.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================
@@ -294,11 +394,20 @@ or linear-time matching.
     # ============================================================================
     
     def add_pattern(self, pattern: str, metadata: Any = None) -> None:
-        """Add pattern with optional metadata."""
+        """
+        Add pattern with optional metadata.
+        
+        Time Complexity: O(|pattern|)
+        """
         self.put(pattern, metadata)
     
     def search_text(self, text: str) -> List[Tuple[str, int, Any]]:
-        """Search for all pattern matches in text."""
+        """
+        Search for all pattern matches in text.
+        
+        Time Complexity: O(|text| + |matches|) - linear in text length plus output
+        Space Complexity: O(|matches|) - for storing results
+        """
         if not text or not self._patterns:
             return []
         
@@ -337,7 +446,12 @@ or linear-time matching.
         return matches
     
     def find_all_matches(self, text: str) -> Dict[str, List[int]]:
-        """Find all positions where each pattern matches."""
+        """
+        Find all positions where each pattern matches.
+        
+        Time Complexity: O(|text| + |matches|)
+        Space Complexity: O(|matches|)
+        """
         matches = self.search_text(text)
         result = defaultdict(list)
         
@@ -348,12 +462,20 @@ or linear-time matching.
         return dict(result)
     
     def count_matches(self, text: str) -> Dict[str, int]:
-        """Count occurrences of each pattern."""
+        """
+        Count occurrences of each pattern.
+        
+        Time Complexity: O(|text| + |matches|)
+        """
         matches = self.find_all_matches(text)
         return {pattern: len(positions) for pattern, positions in matches.items()}
     
     def has_any_match(self, text: str) -> bool:
-        """Check if text contains any of the patterns."""
+        """
+        Check if text contains any of the patterns.
+        
+        Time Complexity: O(|text|) - can terminate early on first match
+        """
         if not text or not self._patterns:
             return False
         
@@ -378,7 +500,11 @@ or linear-time matching.
         return False
     
     def find_longest_match(self, text: str) -> Optional[Tuple[str, int, int]]:
-        """Find the longest pattern match in text."""
+        """
+        Find the longest pattern match in text.
+        
+        Time Complexity: O(|text| + |matches|)
+        """
         matches = self.search_text(text)
         
         if not matches:
@@ -389,7 +515,12 @@ or linear-time matching.
         return pattern, start_pos, len(pattern)
     
     def replace_patterns(self, text: str, replacement_func: callable = None) -> str:
-        """Replace all pattern matches in text."""
+        """
+        Replace all pattern matches in text.
+        
+        Time Complexity: O(|text| + |matches| * |text|) - worst case due to string manipulation
+        Space Complexity: O(|text|)
+        """
         if not replacement_func:
             replacement_func = lambda pattern, metadata: f"[{pattern}]"
         
@@ -410,7 +541,11 @@ or linear-time matching.
         return result
     
     def get_pattern_statistics(self) -> Dict[str, Any]:
-        """Get statistics about patterns and automaton."""
+        """
+        Get statistics about patterns and automaton.
+        
+        Time Complexity: O(Σ|patterns|) - sum of pattern lengths
+        """
         if not self._patterns:
             return {'pattern_count': 0, 'total_nodes': 1, 'avg_pattern_length': 0}
         
@@ -433,7 +568,12 @@ or linear-time matching.
         }
     
     def validate_automaton(self) -> bool:
-        """Validate the automaton structure."""
+        """
+        Validate the automaton structure.
+        
+        Time Complexity: O(N) where N is total nodes
+        Space Complexity: O(N) for visited set
+        """
         self._build_automaton()
         
         def _validate_node(node: ACNode, visited: Set[ACNode]) -> bool:
@@ -456,7 +596,12 @@ or linear-time matching.
         return _validate_node(self._root, set())
     
     def export_automaton(self) -> Dict[str, Any]:
-        """Export automaton structure for analysis."""
+        """
+        Export automaton structure for analysis.
+        
+        Time Complexity: O(N) where N is total nodes
+        Space Complexity: O(N)
+        """
         self._build_automaton()
         
         def _export_node(node: ACNode, node_id: int) -> Dict[str, Any]:
@@ -492,7 +637,11 @@ or linear-time matching.
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'AHO_CORASICK',
             'backend': 'Finite automaton with failure links',
@@ -510,7 +659,11 @@ or linear-time matching.
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(Σ|patterns|)
+        """
         stats = self.get_pattern_statistics()
         
         return {

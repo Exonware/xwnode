@@ -16,6 +16,7 @@ class SplayTreeNode:
     """Node in the splay tree."""
     
     def __init__(self, key: str, value: Any = None):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.left: Optional['SplayTreeNode'] = None
@@ -24,13 +25,21 @@ class SplayTreeNode:
         self._hash = None
     
     def __hash__(self) -> int:
-        """Cache hash for performance."""
+        """
+        Cache hash for performance.
+        
+        Time Complexity: O(1) amortized
+        """
         if self._hash is None:
             self._hash = hash((self.key, self.value))
         return self._hash
     
     def __eq__(self, other) -> bool:
-        """Structural equality."""
+        """
+        Structural equality.
+        
+        Time Complexity: O(1)
+        """
         if not isinstance(other, SplayTreeNode):
             return False
         return self.key == other.key and self.value == other.value

@@ -9,7 +9,7 @@ for cache-friendly variable-length key operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 11-Oct-2025
 """
 
@@ -53,7 +53,7 @@ class MasstreeStrategy(ANodeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize Masstree strategy."""
+        """Time Complexity: O(1)"""
         super().__init__(NodeMode.MASSTREE, traits, **options)
         # Simplified: Use OrderedDict for cache-friendly ordered storage
         self._data: OrderedDict = OrderedDict()
@@ -61,16 +61,16 @@ class MasstreeStrategy(ANodeStrategy):
         self._access_tracker = create_access_tracker()
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get supported traits."""
+        """Time Complexity: O(1)"""
         return NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.PREFIX_TREE
     
     def get(self, path: str, default: Any = None) -> Any:
-        """Retrieve value by path."""
+        """Time Complexity: O(1)"""
         record_access(self._access_tracker, 'get_count')
         return self._data.get(path, default)
     
     def put(self, path: str, value: Any = None) -> 'MasstreeStrategy':
-        """Set value at path."""
+        """Time Complexity: O(1)"""
         record_access(self._access_tracker, 'put_count')
         if path not in self._data:
             update_size_tracker(self._size_tracker, 1)
@@ -78,7 +78,7 @@ class MasstreeStrategy(ANodeStrategy):
         return self
     
     def delete(self, key: Any) -> bool:
-        """Remove key-value pair."""
+        """Time Complexity: O(1)"""
         key_str = str(key)
         if key_str in self._data:
             del self._data[key_str]
@@ -88,39 +88,39 @@ class MasstreeStrategy(ANodeStrategy):
         return False
     
     def remove(self, key: Any) -> bool:
-        """Alias for delete."""
+        """Time Complexity: O(1)"""
         return self.delete(key)
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """Time Complexity: O(1)"""
         return str(key) in self._data
     
     def exists(self, path: str) -> bool:
-        """Check if path exists."""
+        """Time Complexity: O(1)"""
         return path in self._data
     
     def keys(self) -> Iterator[Any]:
-        """Iterator over keys."""
+        """Time Complexity: O(1) to create, O(n) to iterate"""
         return iter(self._data.keys())
     
     def values(self) -> Iterator[Any]:
-        """Iterator over values."""
+        """Time Complexity: O(1) to create, O(n) to iterate"""
         return iter(self._data.values())
     
     def items(self) -> Iterator[tuple[Any, Any]]:
-        """Iterator over items."""
+        """Time Complexity: O(1) to create, O(n) to iterate"""
         return iter(self._data.items())
     
     def __len__(self) -> int:
-        """Get size."""
+        """Time Complexity: O(1)"""
         return len(self._data)
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native dict."""
+        """Time Complexity: O(n)"""
         return dict(self._data)
     
     def get_backend_info(self) -> Dict[str, Any]:
-        """Get backend info."""
+        """Time Complexity: O(1)"""
         return {
             **create_basic_backend_info('Masstree', 'B+ tree + trie hybrid'),
             'total_keys': len(self._data),

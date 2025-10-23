@@ -14,7 +14,7 @@ probabilistic membership testing with no false negatives.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -40,7 +40,12 @@ class BloomFilterStrategy(ANodeStrategy):
     STRATEGY_TYPE = NodeType.MATRIX
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Bloom Filter strategy."""
+        """
+        Initialize the Bloom Filter strategy.
+        
+        Time Complexity: O(m + k) where m=bit_array_size, k=num_hash_functions
+        Space Complexity: O(m)
+        """
         super().__init__(NodeMode.BLOOM_FILTER, traits, **options)
         
         # Bloom filter parameters
@@ -61,11 +66,19 @@ class BloomFilterStrategy(ANodeStrategy):
         self._hash_seeds = self._generate_hash_seeds()
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the bloom filter strategy."""
+        """
+        Get the traits supported by the bloom filter strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.PROBABILISTIC | NodeTrait.COMPRESSED | NodeTrait.STREAMING)
     
     def _calculate_bit_array_size(self) -> int:
-        """Calculate optimal bit array size."""
+        """
+        Calculate optimal bit array size.
+        
+        Time Complexity: O(1)
+        """
         # m = -(n * ln(p)) / (ln(2)^2)
         # where n = expected elements, p = false positive rate
         n = self.expected_elements
@@ -78,7 +91,11 @@ class BloomFilterStrategy(ANodeStrategy):
         return max(1, int(math.ceil(m)))
     
     def _calculate_num_hash_functions(self) -> int:
-        """Calculate optimal number of hash functions."""
+        """
+        Calculate optimal number of hash functions.
+        
+        Time Complexity: O(1)
+        """
         # k = (m / n) * ln(2)
         # where m = bit array size, n = expected elements
         m = self.bit_array_size
@@ -88,7 +105,11 @@ class BloomFilterStrategy(ANodeStrategy):
         return max(1, int(round(k)))
     
     def _generate_hash_seeds(self) -> List[int]:
-        """Generate seeds for multiple hash functions."""
+        """
+        Generate seeds for multiple hash functions.
+        
+        Time Complexity: O(k) where k is num_hash_functions
+        """
         seeds = []
         for i in range(self.num_hash_functions):
             # Use different primes as seeds
@@ -97,13 +118,21 @@ class BloomFilterStrategy(ANodeStrategy):
         return seeds
     
     def _hash_element(self, element: str, seed: int) -> int:
-        """Hash an element with a given seed."""
+        """
+        Hash an element with a given seed.
+        
+        Time Complexity: O(|element|)
+        """
         hash_obj = hashlib.md5(f"{element}{seed}".encode())
         hash_int = int(hash_obj.hexdigest(), 16)
         return hash_int % self.bit_array_size
     
     def _get_bit_positions(self, element: str) -> List[int]:
-        """Get all bit positions for an element."""
+        """
+        Get all bit positions for an element.
+        
+        Time Complexity: O(k * |element|) where k is num_hash_functions
+        """
         positions = []
         for seed in self._hash_seeds:
             pos = self._hash_element(element, seed)
@@ -115,7 +144,11 @@ class BloomFilterStrategy(ANodeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add an element to the bloom filter."""
+        """
+        Add an element to the bloom filter.
+        
+        Time Complexity: O(k * |element|) where k is num_hash_functions
+        """
         element = str(key)
         
         # Set bits for this element
@@ -133,7 +166,11 @@ class BloomFilterStrategy(ANodeStrategy):
         self._insertions += 1
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value if definitely present (may have false positives)."""
+        """
+        Get value if definitely present (may have false positives).
+        
+        Time Complexity: O(k * |element|)
+        """
         element = str(key)
         
         # Check if element might be present
@@ -144,7 +181,11 @@ class BloomFilterStrategy(ANodeStrategy):
             return default
     
     def has(self, key: Any) -> bool:
-        """Check if element might be present (probabilistic)."""
+        """
+        Check if element might be present (probabilistic).
+        
+        Time Complexity: O(k * |element|)
+        """
         element = str(key)
         
         # Check all bit positions
@@ -158,7 +199,11 @@ class BloomFilterStrategy(ANodeStrategy):
         return True
     
     def remove(self, key: Any) -> bool:
-        """Remove from stored values (cannot remove from bloom filter)."""
+        """
+        Remove from stored values (cannot remove from bloom filter).
+        
+        Time Complexity: O(1)
+        """
         element = str(key)
         
         if element in self._values:
@@ -169,44 +214,80 @@ class BloomFilterStrategy(ANodeStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove from stored values (alias for remove)."""
+        """
+        Remove from stored values (alias for remove).
+        
+        Time Complexity: O(1)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(m) where m is bit_array_size
+        """
         self._bit_array = [0] * self.bit_array_size
         self._values.clear()
         self._size = 0
         self._insertions = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all stored keys (not all elements in filter)."""
+        """
+        Get all stored keys (not all elements in filter).
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._values.keys())
     
     def values(self) -> Iterator[Any]:
-        """Get all stored values."""
+        """
+        Get all stored values.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._values.values())
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all stored key-value pairs."""
+        """
+        Get all stored key-value pairs.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._values.items())
     
     def __len__(self) -> int:
-        """Get the number of stored elements."""
+        """
+        Get the number of stored elements.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict of stored values."""
+        """
+        Convert to native Python dict of stored values.
+        
+        Time Complexity: O(n)
+        """
         return dict(self._values)
     
     @property
     def is_list(self) -> bool:
-        """This is not a list strategy."""
+        """
+        This is not a list strategy.
+        
+        Time Complexity: O(1)
+        """
         return False
     
     @property
     def is_dict(self) -> bool:
-        """This behaves like a dict but with probabilistic semantics."""
+        """
+        This behaves like a dict but with probabilistic semantics.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================

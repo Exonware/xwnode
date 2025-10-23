@@ -9,7 +9,7 @@ open addressing with bounded neighborhood search.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -24,13 +24,21 @@ class HopscotchEntry:
     """Entry in hopscotch hash table."""
     
     def __init__(self, key: Any = None, value: Any = None):
-        """Initialize entry."""
+        """
+        Initialize entry.
+        
+        Time Complexity: O(1)
+        """
         self.key = key
         self.value = value
         self.hop_info = 0  # Bitmap for neighborhood (32 bits)
     
     def is_empty(self) -> bool:
-        """Check if entry is empty."""
+        """
+        Check if entry is empty.
+        
+        Time Complexity: O(1)
+        """
         return self.key is None
 
 

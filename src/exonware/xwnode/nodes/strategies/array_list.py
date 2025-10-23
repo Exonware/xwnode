@@ -15,21 +15,29 @@ class ArrayListStrategy(ANodeLinearStrategy):
     """
     Array List node strategy for sequential data with O(1) indexed access.
     
-    Uses Python's built-in list for optimal performance 
+    Uses Python's built-in list for optimal performance with indexed operations.
     
     # Strategy type classification
     STRATEGY_TYPE = NodeType.LINEAR
-with indexed operations.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the array list strategy."""
+        """
+        Initialize the array list strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.ARRAY_LIST, traits, **options)
         self._data: List[Any] = []
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the array list strategy."""
+        """
+        Get the traits supported by the array list strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED)
     
     # ============================================================================
@@ -37,7 +45,12 @@ with indexed operations.
     # ============================================================================
     
     def insert(self, key: Any, value: Any) -> None:
-        """Store a value at index (key must be numeric)."""
+        """
+        Store a value at index (key must be numeric).
+        
+        Time Complexity: O(1) if within capacity, O(n) if needs extension
+        Space Complexity: O(n) if extending array
+        """
         try:
             index = int(key)
         except (ValueError, TypeError):
@@ -52,7 +65,11 @@ with indexed operations.
         self._data[index] = value
     
     def find(self, key: Any) -> Any:
-        """Retrieve a value by index."""
+        """
+        Retrieve a value by index.
+        
+        Time Complexity: O(1)
+        """
         try:
             index = int(key)
             if 0 <= index < len(self._data):
@@ -63,7 +80,11 @@ with indexed operations.
             return None
     
     def delete(self, key: Any) -> bool:
-        """Remove value at index."""
+        """
+        Remove value at index.
+        
+        Time Complexity: O(1)
+        """
         try:
             index = int(key)
             if 0 <= index < len(self._data) and self._data[index] is not None:
@@ -75,28 +96,53 @@ with indexed operations.
             return False
     
     def size(self) -> int:
-        """Get the number of non-None items."""
+        """
+        Get the number of non-None items.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def is_empty(self) -> bool:
-        """Check if structure is empty."""
+        """
+        Check if structure is empty.
+        
+        Time Complexity: O(1)
+        """
         return self._size == 0
     
     def to_native(self) -> List[Any]:
-        """Convert to native Python list."""
+        """
+        Convert to native Python list.
+        
+        Time Complexity: O(n)
+        Space Complexity: O(n)
+        """
         # Return only non-None values in order
         return [value for value in self._data if value is not None]
     
     def __len__(self) -> int:
-        """Get the number of items."""
+        """
+        Get the number of items.
+        
+        Time Complexity: O(1)
+        """
         return len(self._data)
     
     def has(self, key: Any) -> bool:
-        """Check if value exists in array."""
+        """
+        Check if value exists in array.
+        
+        Time Complexity: O(n) - linear search
+        """
         return key in self._data
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value by index or search for value."""
+        """
+        Get value by index or search for value.
+        
+        Time Complexity: O(1) for index, O(n) for value search
+        """
         try:
             index = int(key)
             if 0 <= index < len(self._data):
@@ -107,19 +153,35 @@ with indexed operations.
         return default
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Append value to array."""
+        """
+        Append value to array.
+        
+        Time Complexity: O(1) amortized, O(n) if needs extension
+        """
         self.insert(key, value if value is not None else key)
     
     def keys(self) -> Iterator[Any]:
-        """Get all indices."""
+        """
+        Get all indices.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         return iter(range(len(self._data)))
     
     def values(self) -> Iterator[Any]:
-        """Get all values."""
+        """
+        Get all values.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         return iter(self._data)
     
     def items(self) -> Iterator[tuple[Any, Any]]:
-        """Get all items as (index, value) pairs."""
+        """
+        Get all items as (index, value) pairs.
+        
+        Time Complexity: O(1) to create iterator, O(n) to iterate all
+        """
         return enumerate(self._data)
     
     # ============================================================================
@@ -127,17 +189,29 @@ with indexed operations.
     # ============================================================================
     
     def push_front(self, value: Any) -> None:
-        """Add element to front."""
+        """
+        Add element to front.
+        
+        Time Complexity: O(n) - shifts all elements
+        """
         self._data.insert(0, value)
         self._size += 1
     
     def push_back(self, value: Any) -> None:
-        """Add element to back."""
+        """
+        Add element to back.
+        
+        Time Complexity: O(1) amortized
+        """
         self._data.append(value)
         self._size += 1
     
     def pop_front(self) -> Any:
-        """Remove element from front."""
+        """
+        Remove element from front.
+        
+        Time Complexity: O(n) - shifts all elements
+        """
         if not self._data:
             raise IndexError("pop from empty list")
         value = self._data.pop(0)
@@ -145,7 +219,11 @@ with indexed operations.
         return value
     
     def pop_back(self) -> Any:
-        """Remove element from back."""
+        """
+        Remove element from back.
+        
+        Time Complexity: O(1)
+        """
         if not self._data:
             raise IndexError("pop from empty list")
         value = self._data.pop()
@@ -153,13 +231,21 @@ with indexed operations.
         return value
     
     def get_at_index(self, index: int) -> Any:
-        """Get element at index."""
+        """
+        Get element at index.
+        
+        Time Complexity: O(1)
+        """
         if 0 <= index < len(self._data):
             return self._data[index]
         raise IndexError("list index out of range")
     
     def set_at_index(self, index: int, value: Any) -> None:
-        """Set element at index."""
+        """
+        Set element at index.
+        
+        Time Complexity: O(1)
+        """
         if 0 <= index < len(self._data):
             self._data[index] = value
         else:
@@ -170,22 +256,38 @@ with indexed operations.
     # ============================================================================
     
     def as_linked_list(self):
-        """Provide LinkedList behavioral view."""
+        """
+        Provide LinkedList behavioral view.
+        
+        Time Complexity: O(1)
+        """
         # TODO: Implement LinkedList view
         return self
     
     def as_stack(self):
-        """Provide Stack behavioral view."""
+        """
+        Provide Stack behavioral view.
+        
+        Time Complexity: O(1)
+        """
         # TODO: Implement Stack view
         return self
     
     def as_queue(self):
-        """Provide Queue behavioral view."""
+        """
+        Provide Queue behavioral view.
+        
+        Time Complexity: O(1)
+        """
         # TODO: Implement Queue view
         return self
     
     def as_deque(self):
-        """Provide Deque behavioral view."""
+        """
+        Provide Deque behavioral view.
+        
+        Time Complexity: O(1)
+        """
         # TODO: Implement Deque view
         return self
     
@@ -194,17 +296,29 @@ with indexed operations.
     # ============================================================================
     
     def append(self, value: Any) -> None:
-        """Append a value to the end."""
+        """
+        Append a value to the end.
+        
+        Time Complexity: O(1) amortized
+        """
         self._data.append(value)
         self._size += 1
     
     def insert_at(self, index: int, value: Any) -> None:
-        """Insert a value at the specified index."""
+        """
+        Insert a value at the specified index.
+        
+        Time Complexity: O(n) - shifts elements after index
+        """
         self._data.insert(index, value)
         self._size += 1
     
     def pop_at(self, index: int = -1) -> Any:
-        """Remove and return value at index."""
+        """
+        Remove and return value at index.
+        
+        Time Complexity: O(1) for end, O(n) for middle/start
+        """
         if not self._data:
             raise IndexError("pop from empty list")
         value = self._data.pop(index)
@@ -213,7 +327,11 @@ with indexed operations.
         return value
     
     def extend(self, values: List[Any]) -> None:
-        """Extend with multiple values."""
+        """
+        Extend with multiple values.
+        
+        Time Complexity: O(k) where k is len(values)
+        """
         self._data.extend(values)
         self._size += len(values)
     
@@ -223,7 +341,11 @@ with indexed operations.
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'ARRAY_LIST',
             'backend': 'Python list',
@@ -238,7 +360,11 @@ with indexed operations.
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(1)
+        """
         return {
             'size': self._size,
             'capacity': len(self._data),

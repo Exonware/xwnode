@@ -21,7 +21,12 @@ class CuckooHashStrategy(ANodeStrategy):
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Cuckoo Hash strategy."""
+        """
+        Initialize the Cuckoo Hash strategy.
+        
+        Time Complexity: O(capacity)
+        Space Complexity: O(capacity)
+        """
         super().__init__(NodeMode.CUCKOO_HASH, traits, **options)
         
         # Cuckoo hash parameters
@@ -45,16 +50,28 @@ class CuckooHashStrategy(ANodeStrategy):
         self._resize_threshold = int(self.capacity * self.load_factor)
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the cuckoo hash strategy."""
+        """
+        Get the traits supported by the cuckoo hash strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.INDEXED | NodeTrait.HIERARCHICAL)
     
     def _hash1(self, key: str) -> int:
-        """First hash function."""
+        """
+        First hash function.
+        
+        Time Complexity: O(|key|)
+        """
         key_hash = hash(key)
         return ((self._hash1_a * key_hash + self._hash1_b) % self._prime) % self.capacity
     
     def _hash2(self, key: str) -> int:
-        """Second hash function."""
+        """
+        Second hash function.
+        
+        Time Complexity: O(|key|)
+        """
         key_hash = hash(key)
         return ((self._hash2_a * key_hash + self._hash2_b) % self._prime) % self.capacity
     
@@ -140,7 +157,11 @@ class CuckooHashStrategy(ANodeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Store a key-value pair."""
+        """
+        Store a key-value pair.
+        
+        Time Complexity: O(1) amortized, O(n) when resizing
+        """
         key_str = str(key)
         
         # Check if key already exists
@@ -166,7 +187,11 @@ class CuckooHashStrategy(ANodeStrategy):
             self._resize()
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Retrieve a value by key (guaranteed O(1))."""
+        """
+        Retrieve a value by key (guaranteed O(1)).
+        
+        Time Complexity: O(1) worst-case
+        """
         key_str = str(key)
         
         # Check table 1
@@ -182,7 +207,11 @@ class CuckooHashStrategy(ANodeStrategy):
         return default
     
     def has(self, key: Any) -> bool:
-        """Check if key exists (guaranteed O(1))."""
+        """
+        Check if key exists (guaranteed O(1)).
+        
+        Time Complexity: O(1) worst-case
+        """
         key_str = str(key)
         
         # Check table 1
@@ -198,7 +227,11 @@ class CuckooHashStrategy(ANodeStrategy):
         return False
     
     def remove(self, key: Any) -> bool:
-        """Remove a key-value pair."""
+        """
+        Remove a key-value pair.
+        
+        Time Complexity: O(1) worst-case
+        """
         key_str = str(key)
         
         # Check table 1
@@ -218,52 +251,88 @@ class CuckooHashStrategy(ANodeStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove a key-value pair (alias for remove)."""
+        """
+        Remove a key-value pair (alias for remove).
+        
+        Time Complexity: O(1) worst-case
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(capacity)
+        """
         self._table1 = [None] * self.capacity
         self._table2 = [None] * self.capacity
         self._size = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all keys."""
+        """
+        Get all keys.
+        
+        Time Complexity: O(capacity) to iterate
+        """
         for table in [self._table1, self._table2]:
             for entry in table:
                 if entry is not None:
                     yield entry[0]
     
     def values(self) -> Iterator[Any]:
-        """Get all values."""
+        """
+        Get all values.
+        
+        Time Complexity: O(capacity) to iterate
+        """
         for table in [self._table1, self._table2]:
             for entry in table:
                 if entry is not None:
                     yield entry[1]
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs."""
+        """
+        Get all key-value pairs.
+        
+        Time Complexity: O(capacity) to iterate
+        """
         for table in [self._table1, self._table2]:
             for entry in table:
                 if entry is not None:
                     yield entry
     
     def __len__(self) -> int:
-        """Get the number of key-value pairs."""
+        """
+        Get the number of key-value pairs.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict."""
+        """
+        Convert to native Python dict.
+        
+        Time Complexity: O(n)
+        """
         return dict(self.items())
     
     @property
     def is_list(self) -> bool:
-        """This is not a list strategy."""
+        """
+        This is not a list strategy.
+        
+        Time Complexity: O(1)
+        """
         return False
     
     @property
     def is_dict(self) -> bool:
-        """This is a dict-like strategy."""
+        """
+        This is a dict-like strategy.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================

@@ -15,6 +15,7 @@ class RadixTrieNode:
     """Node in the radix trie (compressed trie)."""
     
     def __init__(self, edge_label: str = ""):
+        """Time Complexity: O(1)"""
         self.edge_label = edge_label  # Compressed edge label
         self.children: Dict[str, 'RadixTrieNode'] = {}
         self.is_terminal = False
@@ -22,7 +23,11 @@ class RadixTrieNode:
         self.key = None  # Full key that ends at this node
     
     def is_leaf(self) -> bool:
-        """Check if this is a leaf node."""
+        """
+        Check if this is a leaf node.
+        
+        Time Complexity: O(1)
+        """
         return len(self.children) == 0
 
 
@@ -39,7 +44,12 @@ prefix-based operations.
     """
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the Radix Trie strategy."""
+        """
+        Initialize the Radix Trie strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.RADIX_TRIE, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -55,7 +65,11 @@ prefix-based operations.
         self._total_compression = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the radix trie strategy."""
+        """
+        Get the traits supported by the radix trie strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.COMPRESSED | NodeTrait.HIERARCHICAL)
     
     def _normalize_key(self, key: str) -> str:

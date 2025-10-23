@@ -14,20 +14,21 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
-Generation Date: October 12, 2025
+Version: 0.0.1.26
+Generation Date: 22-Oct-2025
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, List, Dict, Iterator, Union
+from typing import Any, Optional, List, Dict, Iterator, Union, AsyncIterator
+import asyncio
 
 from ...contracts import iNodeStrategy
 from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
-from .contracts import NodeType
+from .contracts import NodeType, INodeStrategy
 
 
-class ANodeStrategy(iNodeStrategy):
+class ANodeStrategy(INodeStrategy):
     """
     Production-grade base strategy for ALL node implementations.
     
@@ -56,6 +57,9 @@ class ANodeStrategy(iNodeStrategy):
         """
         Initialize the node strategy.
         
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        
         Args:
             mode: The NodeMode for this strategy
             traits: NodeTrait flags for this strategy
@@ -71,7 +75,11 @@ class ANodeStrategy(iNodeStrategy):
         self._validate_traits()
     
     def _validate_traits(self) -> None:
-        """Validate that the requested traits are compatible with this strategy."""
+        """
+        Validate that the requested traits are compatible with this strategy.
+        
+        Time Complexity: O(t) where t is number of trait flags
+        """
         supported_traits = self.get_supported_traits()
         unsupported = self.traits & ~supported_traits
         if unsupported != NodeTrait.NONE:
@@ -79,15 +87,27 @@ class ANodeStrategy(iNodeStrategy):
             raise ValueError(f"Strategy {self.mode.name} does not support traits: {unsupported_names}")
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by this strategy implementation (override in subclasses)."""
+        """
+        Get the traits supported by this strategy implementation (override in subclasses).
+        
+        Time Complexity: O(1)
+        """
         return NodeTrait.NONE
     
     def has_trait(self, trait: NodeTrait) -> bool:
-        """Check if this strategy has a specific trait."""
+        """
+        Check if this strategy has a specific trait.
+        
+        Time Complexity: O(1)
+        """
         return bool(self.traits & trait)
     
     def require_trait(self, trait: NodeTrait, operation: str = "operation") -> None:
-        """Require a specific trait for an operation."""
+        """
+        Require a specific trait for an operation.
+        
+        Time Complexity: O(1)
+        """
         if not self.has_trait(trait):
             raise XWNodeUnsupportedCapabilityError(
                 operation,
@@ -180,13 +200,19 @@ class ANodeStrategy(iNodeStrategy):
     # ============================================================================
     
     def exists(self, path: str) -> bool:
-        """Check if path exists (default implementation)."""
+        """
+        Check if path exists (default implementation).
+        
+        Time Complexity: Depends on get() implementation
+        """
         return self.get(path) is not None
     
     @classmethod
     def create_from_data(cls, data: Any) -> 'ANodeStrategy':
         """
         Create a new strategy instance from data.
+        
+        Time Complexity: O(n) where n is size of data
         
         Args:
             data: The data to create the strategy from
@@ -207,37 +233,69 @@ class ANodeStrategy(iNodeStrategy):
         return instance
     
     def clear(self) -> None:
-        """Clear all data (default implementation)."""
+        """
+        Clear all data (default implementation).
+        
+        Time Complexity: O(1)
+        """
         self._data.clear()
         self._size = 0
     
     def __contains__(self, key: Any) -> bool:
-        """Check if key exists (default implementation)."""
+        """
+        Check if key exists (default implementation).
+        
+        Time Complexity: Depends on has() implementation
+        """
         return self.has(key)
     
     def __getitem__(self, key: Any) -> Any:
-        """Get value by key (default implementation)."""
+        """
+        Get value by key (default implementation).
+        
+        Time Complexity: Depends on get() implementation
+        """
         return self.get(key)
     
     def __setitem__(self, key: Any, value: Any) -> None:
-        """Set value by key (default implementation)."""
+        """
+        Set value by key (default implementation).
+        
+        Time Complexity: Depends on put() implementation
+        """
         self.put(key, value)
     
     def __delitem__(self, key: Any) -> None:
-        """Delete key (default implementation)."""
+        """
+        Delete key (default implementation).
+        
+        Time Complexity: Depends on delete() implementation
+        """
         if not self.delete(key):
             raise KeyError(key)
     
     def __iter__(self) -> Iterator[Any]:
-        """Iterate over keys (default implementation)."""
+        """
+        Iterate over keys (default implementation).
+        
+        Time Complexity: Depends on keys() implementation
+        """
         return self.keys()
     
     def __str__(self) -> str:
-        """String representation (default implementation)."""
+        """
+        String representation (default implementation).
+        
+        Time Complexity: O(1)
+        """
         return f"{self.__class__.__name__}(mode={self.mode.name}, size={len(self)})"
     
     def __repr__(self) -> str:
-        """Detailed string representation (default implementation)."""
+        """
+        Detailed string representation (default implementation).
+        
+        Time Complexity: O(1)
+        """
         return f"{self.__class__.__name__}(mode={self.mode.name}, traits={self.traits}, size={len(self)})"
     
     # ============================================================================

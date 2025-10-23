@@ -325,4 +325,76 @@ class BaseDatabase(ABC):
             stats['graph_manager'] = self.graph_manager.get_stats()
         
         return stats
+    
+    # ============================================================================
+    # DATA EXPORT/IMPORT
+    # ============================================================================
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Export the entire database as a dictionary for serialization.
+        This includes all actual data, not just statistics.
+        
+        Returns:
+            Dictionary containing:
+            - metadata: Database configuration and info
+            - data: All users, posts, comments, relationships
+            - indexes: Secondary indexes for fast restoration
+        """
+        return {
+            'metadata': {
+                'name': self.name,
+                'node_mode': self.node_mode.name if hasattr(self.node_mode, 'name') else str(self.node_mode),
+                'edge_mode': self.edge_mode.name if self.edge_mode and hasattr(self.edge_mode, 'name') else str(self.edge_mode),
+                'graph_optimization': self.graph_optimization.name if hasattr(self.graph_optimization, 'name') else str(self.graph_optimization),
+                'total_users': len(self.users),
+                'total_posts': len(self.posts),
+                'total_comments': len(self.comments),
+                'total_relationships': len(self.relationships)
+            },
+            'data': {
+                'users': self.users,
+                'posts': self.posts,
+                'comments': self.comments,
+                'relationships': self.relationships
+            },
+            'indexes': {
+                'users_by_username': self.users_by_username,
+                'posts_by_user': self.posts_by_user,
+                'comments_by_post': self.comments_by_post
+            }
+        }
+    
+    def from_dict(self, data: Dict[str, Any]) -> None:
+        """
+        Import database from a dictionary (restore from serialization).
+        
+        Args:
+            data: Dictionary containing database data (from to_dict())
+        """
+        # Restore data
+        if 'data' in data:
+            self.users = data['data'].get('users', {})
+            self.posts = data['data'].get('posts', {})
+            self.comments = data['data'].get('comments', {})
+            self.relationships = data['data'].get('relationships', {})
+        
+        # Restore indexes
+        if 'indexes' in data:
+            self.users_by_username = data['indexes'].get('users_by_username', {})
+            self.posts_by_user = data['indexes'].get('posts_by_user', {})
+            self.comments_by_post = data['indexes'].get('comments_by_post', {})
+        
+        # Rebuild graph manager if enabled
+        if self.graph_manager and self.relationships:
+            for rel_id, rel_dict in self.relationships.items():
+                properties = {k: v for k, v in rel_dict.items() 
+                            if k not in ('source_user_id', 'target_user_id', 'relationship_type')}
+                
+                self.graph_manager.add_relationship(
+                    source=rel_dict['source_user_id'],
+                    target=rel_dict['target_user_id'],
+                    relationship_type=rel_dict['relationship_type'],
+                    **properties
+                )
 

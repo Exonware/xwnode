@@ -9,7 +9,7 @@ on fixed-universe integer keys.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 12-Oct-2025
 """
 
@@ -34,6 +34,9 @@ class VebNode:
     def __init__(self, universe_size: int):
         """
         Initialize vEB node.
+        
+        Time Complexity: O(U) where U is universe size - creates recursive structure
+        Space Complexity: O(U log log U)
         
         Args:
             universe_size: Size of universe (must be power of 2)

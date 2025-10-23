@@ -6,7 +6,7 @@ Graph-specific error classes.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 11-Oct-2025
 """
 

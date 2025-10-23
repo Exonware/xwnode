@@ -15,6 +15,11 @@ class BTreeNode:
     """A node in the B-tree."""
     
     def __init__(self, degree: int, is_leaf: bool = False):
+        """
+        Initialize B-tree node.
+        
+        Time Complexity: O(1)
+        """
         self.degree = degree
         self.keys: List[str] = []
         self.values: List[Any] = []
@@ -22,11 +27,19 @@ class BTreeNode:
         self.is_leaf = is_leaf
     
     def is_full(self) -> bool:
-        """Check if node is full."""
+        """
+        Check if node is full.
+        
+        Time Complexity: O(1)
+        """
         return len(self.keys) == 2 * self.degree - 1
     
     def search(self, key: str) -> Optional[Any]:
-        """Search for a key in this subtree."""
+        """
+        Search for a key in this subtree.
+        
+        Time Complexity: O(log n)
+        """
         i = 0
         while i < len(self.keys) and key > self.keys[i]:
             i += 1
@@ -40,7 +53,11 @@ class BTreeNode:
         return self.children[i].search(key)
     
     def insert_non_full(self, key: str, value: Any):
-        """Insert key-value pair into non-full node."""
+        """
+        Insert key-value pair into non-full node.
+        
+        Time Complexity: O(t * log n) where t is degree
+        """
         i = len(self.keys) - 1
         
         if self.is_leaf:
@@ -67,7 +84,11 @@ class BTreeNode:
             self.children[i].insert_non_full(key, value)
     
     def split_child(self, i: int):
-        """Split the full child at index i."""
+        """
+        Split the full child at index i.
+        
+        Time Complexity: O(t) where t is degree
+        """
         full_child = self.children[i]
         new_child = BTreeNode(full_child.degree, full_child.is_leaf)
         
@@ -166,14 +187,23 @@ class BTreeStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the B-tree strategy."""
+        """
+        Initialize the B-tree strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.B_TREE, traits, **options)
         self.degree = options.get('degree', 3)  # Minimum degree
         self.root: Optional[BTreeNode] = BTreeNode(self.degree, is_leaf=True)
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the B-tree strategy."""
+        """
+        Get the traits supported by the B-tree strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL)
     
     # ============================================================================
@@ -181,7 +211,11 @@ class BTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Store a value with the given key."""
+        """
+        Store a value with the given key.
+        
+        Time Complexity: O(log n)
+        """
         key_str = str(key)
         
         # Check if key already exists (update case)
@@ -200,7 +234,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         self._size += 1
     
     def _update_existing(self, key: str, value: Any) -> None:
-        """Update existing key with new value."""
+        """
+        Update existing key with new value.
+        
+        Time Complexity: O(log n)
+        """
         def update_in_node(node: BTreeNode) -> bool:
             i = 0
             while i < len(node.keys) and key > node.keys[i]:
@@ -218,7 +256,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         update_in_node(self.root)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Retrieve a value by key."""
+        """
+        Retrieve a value by key.
+        
+        Time Complexity: O(log n)
+        """
         if not self.root:
             return default
         
@@ -226,11 +268,19 @@ class BTreeStrategy(ANodeTreeStrategy):
         return result if result is not None else default
     
     def has(self, key: Any) -> bool:
-        """Check if key exists in B-tree."""
+        """
+        Check if key exists in B-tree.
+        
+        Time Complexity: O(log n)
+        """
         return self.get(key, None) is not None
     
     def remove(self, key: Any) -> bool:
-        """Remove value by key (simplified implementation)."""
+        """
+        Remove value by key (simplified implementation).
+        
+        Time Complexity: O(n log n) - rebuilds tree
+        """
         # Note: Full B-tree deletion is complex. This is a simplified version.
         key_str = str(key)
         if not self.has(key_str):
@@ -248,16 +298,28 @@ class BTreeStrategy(ANodeTreeStrategy):
         return True
     
     def delete(self, key: Any) -> bool:
-        """Remove value by key (alias for remove)."""
+        """
+        Remove value by key (alias for remove).
+        
+        Time Complexity: O(n log n)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(1)
+        """
         self.root = BTreeNode(self.degree, is_leaf=True)
         self._size = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all keys in sorted order."""
+        """
+        Get all keys in sorted order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         def inorder_keys(node: BTreeNode) -> Iterator[str]:
             if node.is_leaf:
                 yield from node.keys
@@ -272,7 +334,11 @@ class BTreeStrategy(ANodeTreeStrategy):
             yield from inorder_keys(self.root)
     
     def values(self) -> Iterator[Any]:
-        """Get all values in key-sorted order."""
+        """
+        Get all values in key-sorted order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         def inorder_values(node: BTreeNode) -> Iterator[Any]:
             if node.is_leaf:
                 yield from node.values
@@ -287,7 +353,11 @@ class BTreeStrategy(ANodeTreeStrategy):
             yield from inorder_values(self.root)
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs in sorted order."""
+        """
+        Get all key-value pairs in sorted order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         def inorder_items(node: BTreeNode) -> Iterator[tuple[str, Any]]:
             if node.is_leaf:
                 yield from zip(node.keys, node.values)
@@ -302,26 +372,46 @@ class BTreeStrategy(ANodeTreeStrategy):
             yield from inorder_items(self.root)
     
     def __len__(self) -> int:
-        """Get the number of items."""
+        """
+        Get the number of items.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     @property
     def is_empty(self) -> bool:
-        """Check if B-Tree is empty."""
+        """
+        Check if B-Tree is empty.
+        
+        Time Complexity: O(1)
+        """
         return self._size == 0
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict."""
+        """
+        Convert to native Python dict.
+        
+        Time Complexity: O(n)
+        """
         return dict(self.items())
     
     @property
     def is_list(self) -> bool:
-        """This is not a list strategy."""
+        """
+        This is not a list strategy.
+        
+        Time Complexity: O(1)
+        """
         return False
     
     @property
     def is_dict(self) -> bool:
-        """This is a dict-like strategy."""
+        """
+        This is a dict-like strategy.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================
@@ -329,7 +419,11 @@ class BTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     def range_query(self, start_key: str, end_key: str) -> List[tuple[str, Any]]:
-        """Get all key-value pairs in the specified range [start_key, end_key]."""
+        """
+        Get all key-value pairs in the specified range [start_key, end_key].
+        
+        Time Complexity: O(log n + k) where k is result size
+        """
         result = []
         for key, value in self.items():
             if start_key <= key <= end_key:
@@ -339,7 +433,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         return result
     
     def prefix_search(self, prefix: str) -> List[tuple[str, Any]]:
-        """Find all keys that start with the given prefix."""
+        """
+        Find all keys that start with the given prefix.
+        
+        Time Complexity: O(n) - may scan all keys
+        """
         result = []
         for key, value in self.items():
             if key.startswith(prefix):
@@ -351,7 +449,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         return result
     
     def min_key(self) -> Optional[str]:
-        """Get the minimum key."""
+        """
+        Get the minimum key.
+        
+        Time Complexity: O(log n)
+        """
         if not self.root or self._size == 0:
             return None
         
@@ -362,7 +464,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         return node.keys[0] if node.keys else None
     
     def max_key(self) -> Optional[str]:
-        """Get the maximum key."""
+        """
+        Get the maximum key.
+        
+        Time Complexity: O(log n)
+        """
         if not self.root or self._size == 0:
             return None
         
@@ -373,7 +479,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         return node.keys[-1] if node.keys else None
     
     def successor(self, key: str) -> Optional[str]:
-        """Find the successor of the given key."""
+        """
+        Find the successor of the given key.
+        
+        Time Complexity: O(n) - must scan keys
+        """
         found = False
         for k in self.keys():
             if found and k > key:
@@ -383,7 +493,11 @@ class BTreeStrategy(ANodeTreeStrategy):
         return None
     
     def predecessor(self, key: str) -> Optional[str]:
-        """Find the predecessor of the given key."""
+        """
+        Find the predecessor of the given key.
+        
+        Time Complexity: O(n) - must scan keys
+        """
         prev_key = None
         for k in self.keys():
             if k == key:
@@ -397,7 +511,11 @@ class BTreeStrategy(ANodeTreeStrategy):
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'B_TREE',
             'backend': 'Custom B-tree implementation',
@@ -413,7 +531,11 @@ class BTreeStrategy(ANodeTreeStrategy):
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(log n) - calculates tree height
+        """
         # Calculate tree height
         height = 0
         if self.root:

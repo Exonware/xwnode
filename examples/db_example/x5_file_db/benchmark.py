@@ -1,37 +1,25 @@
 #!/usr/bin/env python3
 """
-#exonware/xwnode/examples/db_example/db_files/benchmark.py
+#exonware/xwnode/examples/db_example/x5_file_db/benchmark.py
 
-File Serialization Benchmark - Top Performers Across Formats
+File-Backed Database Benchmark - CRUD Operations on File Storage
 
-Tests the TOP 5 performers from 100k entity test across ALL serialization formats.
-Measures file size, read/write performance, search, and delete operations.
+Tests database operations that work directly with file storage across
+different serialization formats. All operations (insert, read, update, delete)
+actually read from and write to persistent files.
 
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1
-Generation Date: October 12, 2025
+Version: 0.0.2
+Generation Date: October 17, 2025
 """
 
 import sys
-import json
-import csv
 import random
-import time
-from datetime import datetime
+import shutil
 from pathlib import Path
-from typing import Dict, Any, List, Tuple
-import traceback
-
-# Configure UTF-8 encoding for Windows console
-if sys.platform == "win32":
-    try:
-        import codecs
-        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
-        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
-    except Exception:
-        pass
+from typing import Dict, Any
 
 # Add common module to path
 parent_dir = Path(__file__).parent.parent
@@ -45,611 +33,265 @@ sys.path.insert(0, str(project_root / "src"))
 xwsystem_root = project_root.parent / "xwsystem" / "src"
 sys.path.insert(0, str(xwsystem_root))
 
-from exonware.xwnode.defs import NodeMode, EdgeMode, GraphOptimization
-from exonware.xwsystem.serialization import (
-    JsonSerializer, YamlSerializer, MsgPackSerializer, 
-    PickleSerializer, CborSerializer, BsonSerializer,
-    ParquetSerializer, CsvSerializer, TomlSerializer,
-    XmlSerializer
+from exonware.xwnode.defs import NodeMode, EdgeMode
+from x0_common import (
+    BenchmarkMetrics, BaseBenchmarkRunner,
+    generate_user, generate_post, generate_comment, generate_relationship,
+    SimpleFileStorage, FileBackedDatabase
 )
 
-from x0_common import (
-    BenchmarkMetrics, BaseDatabase,
-    generate_user, generate_post, generate_comment, generate_relationship
-)
+# Import xwsystem serialization
+try:
+    from exonware.xwsystem.serialization import (
+        JsonSerializer, YamlSerializer, MsgPackSerializer, PickleSerializer,
+        CborSerializer, BsonSerializer, TomlSerializer, XmlSerializer
+    )
+    SERIALIZATION_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: xwsystem serialization not available: {e}")
+    SERIALIZATION_AVAILABLE = False
 
 # ==============================================================================
 # BENCHMARK CONFIGURATION
 # ==============================================================================
 
-# Test size configuration
-TEST_CONFIG_SIZE = [1000, 10000, 100000]
-
-# Top 5 models from 100k entity test (Graph Manager ON/OFF benchmark)
-# These are the fastest performers from the exhaustive benchmark
-TEST_CONFIG_MODELS = [
-    {
-        'name': 'SPARSE_MATRIX+EDGE_PROPERTY_STORE+GraphOFF',
-        'description': 'Sparse Matrix + Edge Property Store (Graph: OFF)',
-        'node_mode': NodeMode.SPARSE_MATRIX,
-        'edge_mode': EdgeMode.EDGE_PROPERTY_STORE,
-        'graph_manager': False
-    },
-    {
-        'name': 'ART+HYPEREDGE_SET+GraphOFF',
-        'description': 'ART + Hyperedge Set (Graph: OFF)',
-        'node_mode': NodeMode.ART,
-        'edge_mode': EdgeMode.HYPEREDGE_SET,
-        'graph_manager': False
-    },
-    {
-        'name': 'ADJACENCY_LIST+DYNAMIC_ADJ_LIST+GraphOFF',
-        'description': 'Adjacency List + Dynamic Adj List (Graph: OFF)',
-        'node_mode': NodeMode.ADJACENCY_LIST,
-        'edge_mode': EdgeMode.DYNAMIC_ADJ_LIST,
-        'graph_manager': False
-    },
-    {
-        'name': 'SPARSE_MATRIX+FLOW_NETWORK+GraphOFF',
-        'description': 'Sparse Matrix + Flow Network (Graph: OFF)',
-        'node_mode': NodeMode.SPARSE_MATRIX,
-        'edge_mode': EdgeMode.FLOW_NETWORK,
-        'graph_manager': False
-    },
-    {
-        'name': 'ADJACENCY_LIST+EDGE_LIST+GraphOFF',
-        'description': 'Adjacency List + Edge List (Graph: OFF)',
-        'node_mode': NodeMode.ADJACENCY_LIST,
-        'edge_mode': EdgeMode.EDGE_LIST,
-        'graph_manager': False
-    }
+# Serialization formats to test
+# All formats now support full database structures (including UUID keys)
+# Root cause fix applied: XML now handles UUID keys and preserves types
+FORMATS = [
+    ('json', JsonSerializer, '.json'),
+    ('yaml', YamlSerializer, '.yaml'),
+    ('msgpack', MsgPackSerializer, '.msgpack'),
+    ('pickle', PickleSerializer, '.pkl'),
+    ('cbor', CborSerializer, '.cbor'),
+    ('bson', BsonSerializer, '.bson'),
+    ('toml', TomlSerializer, '.toml'),
+    ('xml', XmlSerializer, '.xml'),  # Now supported with UUID key handling!
 ]
 
-# Serialization formats to test (using xwsystem)
-TEST_CONFIG_FORMATS = [
-    {'name': 'json', 'serializer': JsonSerializer(), 'extension': '.json'},
-    {'name': 'yaml', 'serializer': YamlSerializer(), 'extension': '.yaml'},
-    {'name': 'msgpack', 'serializer': MsgPackSerializer(), 'extension': '.msgpack'},
-    {'name': 'pickle', 'serializer': PickleSerializer(), 'extension': '.pickle'},
-    {'name': 'cbor', 'serializer': CborSerializer(), 'extension': '.cbor'},
-    {'name': 'bson', 'serializer': BsonSerializer(), 'extension': '.bson'},
-    {'name': 'csv', 'serializer': CsvSerializer(), 'extension': '.csv'},
-    {'name': 'toml', 'serializer': TomlSerializer(), 'extension': '.toml'},
-    {'name': 'xml', 'serializer': XmlSerializer(), 'extension': '.xml'},
-]
 
-# File operations to test
-TEST_CONFIG_OPERATIONS = [
-    'file_size',        # Measure serialized file size
-    'write',            # Write entire dataset
-    'read_all',         # Read entire dataset
-    'read_scattered',   # Read scattered IDs from middle
-    'search',           # Search for specific records
-    'soft_delete',      # Mark records as deleted
-    'hard_delete',      # Actually remove records
-]
-
-# ==============================================================================
-# DATABASE IMPLEMENTATION
-# ==============================================================================
-
-class DynamicDatabase(BaseDatabase):
-    """Dynamically configured database from MODELS configuration"""
+class FileBenchmark(BaseBenchmarkRunner):
+    """Benchmark runner for file-backed database operations"""
     
-    def __init__(self, model_config: dict):
-        """
-        Initialize database from model configuration.
-        
-        Args:
-            model_config: Dictionary with name, node_mode, edge_mode, graph_manager
-        """
-        graph_opt = GraphOptimization.FULL if model_config.get('graph_manager') else GraphOptimization.OFF
-        
+    def __init__(self):
         super().__init__(
-            name=model_config['name'],
-            node_mode=model_config['node_mode'],
-            edge_mode=model_config.get('edge_mode'),
-            graph_optimization=graph_opt
+            benchmark_name="x5 File-Backed Database Benchmark",
+            default_test_sizes=[100, 1000, 10000]
         )
-        self.description = model_config.get('description', '')
-        self.graph_enabled = model_config.get('graph_manager', False)
+        # Setup data directory
+        self.data_dir = Path(__file__).parent / "data"
+        self.data_dir.mkdir(parents=True, exist_ok=True)
     
-    def get_description(self) -> str:
-        """Get database description"""
-        return self.description
-    
-    def export_data(self) -> Dict[str, Any]:
-        """Export all database data for serialization"""
-        return {
-            'users': {uid: self.get_user(uid) for uid in self.users.keys()},
-            'posts': {pid: self.get_post(pid) for pid in self.posts.keys()},
-            'comments': {cid: self.get_comment(cid) for cid in self.comments.keys()},
-            'relationships': list(self.relationships),
-            'metadata': {
-                'name': self.name,
-                'description': self.description,
-                'total_users': len(self.users),
-                'total_posts': len(self.posts),
-                'total_comments': len(self.comments),
-                'total_relationships': len(self.relationships)
-            }
-        }
-    
-    def import_data(self, data: Dict[str, Any]):
-        """Import data back into database"""
-        # Clear existing data
-        self.users.clear()
-        self.posts.clear()
-        self.comments.clear()
-        self.relationships.clear()
+    def run_single_benchmark(self, total_entities: int) -> Dict[str, Any]:
+        """Run benchmark for a single test size"""
+        print(f"\n{'='*80}")
+        print(f"x5 FILE-BACKED DATABASE BENCHMARK - {total_entities:,} ENTITIES")
+        print(f"{'='*80}")
         
-        # Import users
-        for uid, user_data in data.get('users', {}).items():
-            self.insert_user(user_data)
+        if not SERIALIZATION_AVAILABLE:
+            print("\n⚠️  ERROR: xwsystem serialization not available")
+            print("Please ensure xwsystem is installed and in the path")
+            return {}
         
-        # Import posts
-        for pid, post_data in data.get('posts', {}).items():
-            self.insert_post(post_data)
-        
-        # Import comments
-        for cid, comment_data in data.get('comments', {}).items():
-            self.insert_comment(comment_data)
-        
-        # Import relationships
-        for rel in data.get('relationships', []):
-            self.add_relationship(rel)
-
-
-# ==============================================================================
-# FILE SERIALIZATION BENCHMARK
-# ==============================================================================
-
-class FileSerializationBenchmark:
-    """Benchmark runner for file serialization operations"""
-    
-    def __init__(self, total_entities: int = 1000):
-        """
-        Initialize benchmark.
-        
-        Args:
-            total_entities: Total number of entities (users + posts + comments)
-        """
-        self.total_entities = total_entities
-        self.output_dir = Path(__file__).parent / "output"
-        self.output_dir.mkdir(exist_ok=True)
-        
-        # Calculate scale factor
-        self.scale_factor = total_entities // 1000
-        
-        # Entity distribution (10% of total for faster testing)
+        # Entity distribution (10% of full scale for file testing)
         base_scale = total_entities // 10
-        self.num_users = int(base_scale * 0.5)
-        self.num_posts = int(base_scale * 0.3)
-        self.num_comments = int(base_scale * 0.2)
-        self.num_relationships = self.num_users * 2
+        num_users = int(base_scale * 0.5)
+        num_posts = int(base_scale * 0.3)
+        num_comments = int(base_scale * 0.2)
+        num_relationships = num_users * 2
         
-        # Sample IDs for scattered reads (10% of users)
-        self.num_scattered_reads = max(10, int(self.num_users * 0.1))
-        
-        self.results = {}
-    
-    def populate_database(self, db: DynamicDatabase) -> Tuple[List[str], List[str], List[str]]:
-        """Populate database with test data"""
-        user_ids = []
-        post_ids = []
-        comment_ids = []
-        
-        # Insert users
-        for i in range(self.num_users):
-            user_ids.append(db.insert_user(generate_user(i)))
-        
-        # Insert posts
-        for i in range(self.num_posts):
-            post_ids.append(db.insert_post(generate_post(i, random.choice(user_ids))))
-        
-        # Insert comments
-        for i in range(self.num_comments):
-            comment_ids.append(db.insert_comment(generate_comment(i, random.choice(post_ids), random.choice(user_ids))))
-        
-        # Insert relationships
-        for i in range(self.num_relationships):
-            source, target = random.choice(user_ids), random.choice(user_ids)
-            if source != target:
-                db.add_relationship(generate_relationship(source, target))
-        
-        return user_ids, post_ids, comment_ids
-    
-    def benchmark_format(self, model_config: dict, format_config: dict) -> Dict[str, Any]:
-        """Benchmark a single model+format combination"""
-        db = DynamicDatabase(model_config)
-        serializer = format_config['serializer']
-        extension = format_config['extension']
-        format_name = format_config['name']
-        
-        result = {
-            'model': model_config['name'],
-            'format': format_name,
-            'success': True,
-            'operations': {}
-        }
-        
-        try:
-            # Populate database
-            user_ids, post_ids, comment_ids = self.populate_database(db)
-            
-            # Export data
-            data = db.export_data()
-            
-            # Generate scattered IDs for reads
-            scattered_ids = random.sample(user_ids, min(self.num_scattered_reads, len(user_ids)))
-            
-            # Test each operation
-            for operation in TEST_CONFIG_OPERATIONS:
-                op_result = {'success': True}
-                
-                try:
-                    if operation == 'file_size':
-                        # Serialize and measure file size
-                        start = time.perf_counter()
-                        serialized = serializer.dumps(data)
-                        elapsed = (time.perf_counter() - start) * 1000
-                        
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        with open(file_path, 'wb') as f:
-                            f.write(serialized if isinstance(serialized, bytes) else serialized.encode())
-                        
-                        file_size = file_path.stat().st_size
-                        op_result.update({
-                            'time_ms': elapsed,
-                            'file_size_bytes': file_size,
-                            'file_size_mb': file_size / (1024 * 1024)
-                        })
-                    
-                    elif operation == 'write':
-                        # Write entire dataset
-                        start = time.perf_counter()
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        serializer.save_file(str(file_path), data)
-                        elapsed = (time.perf_counter() - start) * 1000
-                        op_result['time_ms'] = elapsed
-                    
-                    elif operation == 'read_all':
-                        # Read entire dataset
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        if file_path.exists():
-                            start = time.perf_counter()
-                            loaded_data = serializer.load_file(str(file_path))
-                            elapsed = (time.perf_counter() - start) * 1000
-                            op_result['time_ms'] = elapsed
-                        else:
-                            op_result['success'] = False
-                            op_result['error'] = 'File not found'
-                    
-                    elif operation == 'read_scattered':
-                        # Read scattered IDs (simulate random access)
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        if file_path.exists():
-                            start = time.perf_counter()
-                            loaded_data = serializer.load_file(str(file_path))
-                            users = loaded_data.get('users', {})
-                            fetched = [users.get(uid) for uid in scattered_ids if uid in users]
-                            elapsed = (time.perf_counter() - start) * 1000
-                            op_result.update({
-                                'time_ms': elapsed,
-                                'ids_requested': len(scattered_ids),
-                                'ids_found': len(fetched)
-                            })
-                        else:
-                            op_result['success'] = False
-                            op_result['error'] = 'File not found'
-                    
-                    elif operation == 'search':
-                        # Search for records matching criteria
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        if file_path.exists():
-                            start = time.perf_counter()
-                            loaded_data = serializer.load_file(str(file_path))
-                            users = loaded_data.get('users', {})
-                            # Search for users with specific criteria (e.g., username starts with 'user_1')
-                            matches = [u for u in users.values() if u.get('username', '').startswith('user_1')]
-                            elapsed = (time.perf_counter() - start) * 1000
-                            op_result.update({
-                                'time_ms': elapsed,
-                                'matches_found': len(matches)
-                            })
-                        else:
-                            op_result['success'] = False
-                            op_result['error'] = 'File not found'
-                    
-                    elif operation == 'soft_delete':
-                        # Mark records as deleted
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        if file_path.exists():
-                            start = time.perf_counter()
-                            loaded_data = serializer.load_file(str(file_path))
-                            users = loaded_data.get('users', {})
-                            # Mark first 10% as deleted
-                            delete_count = max(1, len(users) // 10)
-                            for i, uid in enumerate(list(users.keys())[:delete_count]):
-                                users[uid]['deleted'] = True
-                            serializer.save_file(str(file_path), loaded_data)
-                            elapsed = (time.perf_counter() - start) * 1000
-                            op_result.update({
-                                'time_ms': elapsed,
-                                'records_marked': delete_count
-                            })
-                        else:
-                            op_result['success'] = False
-                            op_result['error'] = 'File not found'
-                    
-                    elif operation == 'hard_delete':
-                        # Actually remove records
-                        file_path = self.output_dir / f"{model_config['name']}_{format_name}{extension}"
-                        if file_path.exists():
-                            start = time.perf_counter()
-                            loaded_data = serializer.load_file(str(file_path))
-                            users = loaded_data.get('users', {})
-                            # Delete marked records
-                            original_count = len(users)
-                            users = {uid: u for uid, u in users.items() if not u.get('deleted', False)}
-                            loaded_data['users'] = users
-                            serializer.save_file(str(file_path), loaded_data)
-                            elapsed = (time.perf_counter() - start) * 1000
-                            op_result.update({
-                                'time_ms': elapsed,
-                                'records_deleted': original_count - len(users),
-                                'records_remaining': len(users)
-                            })
-                        else:
-                            op_result['success'] = False
-                            op_result['error'] = 'File not found'
-                
-                except Exception as e:
-                    op_result['success'] = False
-                    op_result['error'] = str(e)
-                
-                result['operations'][operation] = op_result
-        
-        except Exception as e:
-            result['success'] = False
-            result['error'] = str(e)
-            result['traceback'] = traceback.format_exc()
-        
-        return result
-    
-    def run_all(self):
-        """Run benchmarks on all model+format combinations"""
-        print(f"\n{'='*80}")
-        print(f"FILE SERIALIZATION BENCHMARK - {self.total_entities:,} ENTITIES")
-        print(f"{'='*80}")
         print(f"\nConfiguration:")
-        print(f"  Total Entities (actual): {self.num_users + self.num_posts + self.num_comments:,}")
-        print(f"  Distribution: {self.num_users:,} users, {self.num_posts:,} posts, {self.num_comments:,} comments")
-        print(f"  Relationships: {self.num_relationships:,}")
-        print(f"  Models to test: {len(TEST_CONFIG_MODELS)}")
-        print(f"  Formats to test: {len(TEST_CONFIG_FORMATS)}")
-        print(f"  Operations per format: {len(TEST_CONFIG_OPERATIONS)}")
-        print(f"  Total benchmarks: {len(TEST_CONFIG_MODELS)} × {len(TEST_CONFIG_FORMATS)} = {len(TEST_CONFIG_MODELS) * len(TEST_CONFIG_FORMATS)}")
-        print(f"\nOutput directory: {self.output_dir}")
-        print()
+        print(f"  Total Entities (actual): {num_users + num_posts + num_comments:,}")
+        print(f"  Distribution: {num_users:,} users, {num_posts:,} posts, {num_comments:,} comments")
+        print(f"  Relationships: {num_relationships:,}")
+        print(f"  Formats to test: {len(FORMATS)}")
+        print(f"  Random execution: {'ENABLED' if self.random_enabled else 'DISABLED'}")
+        print(f"  Data directory: {self.data_dir}")
+        print("\nOperations tested (all on file storage):")
+        print(f"  - INSERT: {num_users + num_posts + num_comments + num_relationships:,} operations")
+        print(f"  - READ: {num_users * 2:,} operations (2x users)")
+        print(f"  - UPDATE: {num_posts:,} operations (all posts)")
+        print(f"  - DELETE: {num_comments // 2:,} operations (50% of comments)\n")
         
-        total_benchmarks = len(TEST_CONFIG_MODELS) * len(TEST_CONFIG_FORMATS)
-        completed = 0
-        successful = 0
-        failed = 0
+        # Clean data directory
+        if self.data_dir.exists():
+            try:
+                shutil.rmtree(self.data_dir)
+            except PermissionError as e:
+                # Root cause: Another process (Excel, file explorer) has files open
+                # Solution: Inform user to close files, tests will overwrite existing files
+                # Priority: Usability #2 - Clear, cross-platform error messages
+                print(f"  [WARNING] Data directory in use (close any open files in: {self.data_dir})")
+                print(f"  [INFO] Tests will overwrite existing files")
+            except OSError as e:
+                # Root cause: File system issue (disk full, readonly, etc.)
+                # Solution: Provide specific error and guidance
+                print(f"  [WARNING] Cannot clean data directory: {e}")
+                print(f"  [INFO] Tests will attempt to overwrite existing files")
+        self.data_dir.mkdir(parents=True, exist_ok=True)
         
-        for model_config in TEST_CONFIG_MODELS:
-            model_name = model_config['name']
+        # Shuffle formats if random execution is enabled
+        formats_to_test = self.shuffle_if_enabled(FORMATS)
+        
+        results = {}
+        
+        for format_name, serializer_class, ext in formats_to_test:
+            result_key = f"SPARSE_MATRIX+EDGE_PROPERTY_STORE+{format_name.upper()}"
             
-            for format_config in TEST_CONFIG_FORMATS:
-                format_name = format_config['name']
-                completed += 1
+            print(f"Testing: {result_key}")
+            
+            try:
+                # Create file-backed database
+                file_path = self.data_dir / f"db_{total_entities}_{format_name}{ext}"
                 
-                print(f"[{completed}/{total_benchmarks}] {model_name} × {format_name}...", end=' ', flush=True)
+                # Root cause: Pickle has security warnings for untrusted data
+                # Solution: In benchmark context with self-generated trusted data,
+                #           acknowledge security risk by setting allow_unsafe=True
+                # Priority: Security #1 - Documented security decision
+                serializer_kwargs = {'validate_paths': False}
+                if format_name == 'pickle':
+                    # Benchmark uses only self-generated trusted data
+                    serializer_kwargs['allow_unsafe'] = True
                 
-                try:
-                    result = self.benchmark_format(model_config, format_config)
-                    key = f"{model_name}+{format_name}"
-                    self.results[key] = result
+                serializer = serializer_class(**serializer_kwargs)
+                storage = SimpleFileStorage(file_path, serializer)
+                db = FileBackedDatabase(
+                    name="SPARSE_MATRIX+EDGE_PROPERTY_STORE",
+                    storage=storage,
+                    node_mode=NodeMode.SPARSE_MATRIX,
+                    edge_mode=EdgeMode.EDGE_PROPERTY_STORE
+                )
+                
+                metrics = BenchmarkMetrics()
+                user_ids = []
+                post_ids = []
+                comment_ids = []
+                
+                # Phase 1: INSERT operations (writes to file)
+                with metrics.measure("insert"):
+                    # Insert users
+                    for i in range(num_users):
+                        user_ids.append(db.insert_user(generate_user(i)))
                     
-                    if result.get('success', True):
-                        successful += 1
-                        print("✓")
-                    else:
-                        failed += 1
-                        print(f"✗ ({result.get('error', 'Unknown error')})")
+                    # Insert posts
+                    for i in range(num_posts):
+                        post_ids.append(db.insert_post(generate_post(i, random.choice(user_ids))))
+                    
+                    # Insert comments
+                    for i in range(num_comments):
+                        comment_ids.append(db.insert_comment(generate_comment(i, random.choice(post_ids), random.choice(user_ids))))
+                    
+                    # Insert relationships
+                    for i in range(num_relationships):
+                        source, target = random.choice(user_ids), random.choice(user_ids)
+                        if source != target:
+                            db.add_relationship(generate_relationship(source, target))
                 
-                except Exception as e:
-                    failed += 1
-                    print(f"✗ (Exception: {e})")
-                    self.results[f"{model_name}+{format_name}"] = {
-                        'model': model_name,
-                        'format': format_name,
-                        'success': False,
-                        'error': str(e),
-                        'traceback': traceback.format_exc()
-                    }
-        
-        print(f"\n{'='*80}")
-        print(f"BENCHMARK COMPLETE")
-        print(f"{'='*80}")
-        print(f"Successful: {successful}/{total_benchmarks}")
-        print(f"Failed: {failed}/{total_benchmarks}")
-        
-        # Show summary by format
-        self.show_summary()
-    
-    def show_summary(self):
-        """Show summary of results by format"""
-        print(f"\n{'='*80}")
-        print(f"SUMMARY BY FORMAT")
-        print(f"{'='*80}\n")
-        
-        successful_results = {k: v for k, v in self.results.items() if v.get('success', True)}
-        
-        if not successful_results:
-            print("No successful results to display.")
-            return
-        
-        # Group by format
-        by_format = {}
-        for key, result in successful_results.items():
-            format_name = result['format']
-            if format_name not in by_format:
-                by_format[format_name] = []
-            by_format[format_name].append(result)
-        
-        # Display summary for each format
-        for format_name in sorted(by_format.keys()):
-            results = by_format[format_name]
-            print(f"Format: {format_name.upper()}")
-            print(f"  Tests: {len(results)}")
-            
-            # Average file size
-            file_sizes = [r['operations']['file_size']['file_size_mb'] 
-                         for r in results 
-                         if 'file_size' in r['operations'] 
-                         and r['operations']['file_size'].get('success', True)]
-            if file_sizes:
-                avg_size = sum(file_sizes) / len(file_sizes)
-                print(f"  Avg File Size: {avg_size:.2f} MB")
-            
-            # Average write time
-            write_times = [r['operations']['write']['time_ms'] 
-                          for r in results 
-                          if 'write' in r['operations'] 
-                          and r['operations']['write'].get('success', True)]
-            if write_times:
-                avg_write = sum(write_times) / len(write_times)
-                print(f"  Avg Write Time: {avg_write:.2f} ms")
-            
-            # Average read time
-            read_times = [r['operations']['read_all']['time_ms'] 
-                         for r in results 
-                         if 'read_all' in r['operations'] 
-                         and r['operations']['read_all'].get('success', True)]
-            if read_times:
-                avg_read = sum(read_times) / len(read_times)
-                print(f"  Avg Read Time: {avg_read:.2f} ms")
-            
-            print()
-
-
-def run_all_tests():
-    """Run all tests defined in TEST_CONFIG_SIZE array"""
-    print(f"\n{'='*80}")
-    print(f"FILE SERIALIZATION BENCHMARK - AUTO RUN")
-    print(f"{'='*80}")
-    print(f"\nTests to run: {', '.join([f'{t:,}' for t in TEST_CONFIG_SIZE])} entities")
-    print(f"Models per test: {len(TEST_CONFIG_MODELS)}")
-    print(f"Formats per model: {len(TEST_CONFIG_FORMATS)}")
-    print(f"Total benchmarks per test: {len(TEST_CONFIG_MODELS)} × {len(TEST_CONFIG_FORMATS)} = {len(TEST_CONFIG_MODELS) * len(TEST_CONFIG_FORMATS)}")
-    print(f"Total benchmarks overall: {len(TEST_CONFIG_SIZE)} × {len(TEST_CONFIG_MODELS) * len(TEST_CONFIG_FORMATS)} = {len(TEST_CONFIG_SIZE) * len(TEST_CONFIG_MODELS) * len(TEST_CONFIG_FORMATS)}")
-    print(f"{'='*80}\n")
-    
-    all_results = {}
-    output_dir = Path(__file__).parent
-    
-    # Run each test
-    for i, entities in enumerate(TEST_CONFIG_SIZE, 1):
-        print(f"\n{'*'*80}")
-        print(f"TEST {i}/{len(TEST_CONFIG_SIZE)}: {entities:,} entities")
-        print(f"{'*'*80}")
-        
-        benchmark = FileSerializationBenchmark(total_entities=entities)
-        benchmark.run_all()
-        
-        all_results[str(entities)] = benchmark.results
-    
-    # Generate output files
-    print(f"\n{'='*80}")
-    print(f"GENERATING OUTPUT FILES")
-    print(f"{'='*80}")
-    
-    # Generate timestamp for output files
-    timestamp = datetime.now().strftime("_%y%m%d%H%M%S")
-    
-    # JSON output
-    json_file = output_dir / f"results{timestamp}.json"
-    try:
-        with open(json_file, 'w', encoding='utf-8') as f:
-            json.dump(all_results, f, indent=2, ensure_ascii=False)
-        print(f"✓ {json_file.name}")
-    except PermissionError:
-        print(f"⚠️  WARNING: Could not write {json_file.name} - file is open")
-    
-    # CSV output
-    csv_file = output_dir / f"results{timestamp}.csv"
-    try:
-        with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            
-            writer.writerow(['# File Serialization Benchmark Results - Combined'])
-            writer.writerow([f'# Tests: {", ".join([f"{k} entities" for k in all_results.keys()])}'])
-            writer.writerow([f'# Models: {len(TEST_CONFIG_MODELS)}, Formats: {len(TEST_CONFIG_FORMATS)}'])
-            writer.writerow([])
-            
-            for entities_str, results in all_results.items():
-                successful = {k: v for k, v in results.items() if v.get('success', True)}
+                # Phase 2: READ operations (reads from file)
+                with metrics.measure("read"):
+                    # Read all users twice
+                    for _ in range(2):
+                        for user_id in user_ids:
+                            user = db.get_user(user_id)
+                            if not user:
+                                print(f"    Warning: User {user_id} not found")
                 
-                writer.writerow([f'=== {entities_str} Entities ==='])
-                writer.writerow([f'# Successful: {len(successful)}/{len(results)}'])
-                writer.writerow([])
+                # Phase 3: UPDATE operations (reads and writes file)
+                with metrics.measure("update"):
+                    # Update all posts
+                    for post_id in post_ids:
+                        db.update_post(post_id, {'likes_count': random.randint(0, 100)})
                 
-                # Header
-                writer.writerow([
-                    'Model', 'Format', 
-                    'File Size (MB)', 'Write (ms)', 'Read All (ms)', 
-                    'Read Scattered (ms)', 'Search (ms)', 
-                    'Soft Delete (ms)', 'Hard Delete (ms)'
-                ])
+                # Phase 4: DELETE operations (removes from file)
+                with metrics.measure("delete"):
+                    # Delete half of comments
+                    comments_to_delete = comment_ids[:len(comment_ids)//2]
+                    for comment_id in comments_to_delete:
+                        db.delete_comment(comment_id)
                 
-                # Data rows
-                for key, result in sorted(successful.items()):
-                    ops = result.get('operations', {})
-                    writer.writerow([
-                        result['model'],
-                        result['format'],
-                        f"{ops.get('file_size', {}).get('file_size_mb', 0):.2f}",
-                        f"{ops.get('write', {}).get('time_ms', 0):.2f}",
-                        f"{ops.get('read_all', {}).get('time_ms', 0):.2f}",
-                        f"{ops.get('read_scattered', {}).get('time_ms', 0):.2f}",
-                        f"{ops.get('search', {}).get('time_ms', 0):.2f}",
-                        f"{ops.get('soft_delete', {}).get('time_ms', 0):.2f}",
-                        f"{ops.get('hard_delete', {}).get('time_ms', 0):.2f}"
-                    ])
+                # Measure file size
+                file_size_kb = 0
+                if file_path.exists():
+                    if file_path.is_file():
+                        file_size_kb = file_path.stat().st_size / 1024
+                    elif file_path.is_dir():
+                        file_size_kb = sum(f.stat().st_size for f in file_path.rglob('*') if f.is_file()) / 1024
                 
-                writer.writerow([])
+                # Verify final state
+                stats = db.get_stats()
+                success = (
+                    stats['total_users'] == num_users and
+                    stats['total_posts'] == num_posts and
+                    stats['total_comments'] == len(comment_ids) - len(comments_to_delete)
+                )
+                
+                # Add x5_ prefix for unique naming across all benchmarks
+                unique_name = f"x5_{result_key}"
+                
+                results[unique_name] = {
+                    'database': unique_name,
+                    'node_mode': NodeMode.SPARSE_MATRIX.name,
+                    'edge_mode': EdgeMode.EDGE_PROPERTY_STORE.name,
+                    'graph_manager': 'OFF',
+                    'storage_format': format_name.upper(),
+                    'storage_smart_format': 'ON',
+                    'group': f'File-{format_name}',
+                    'total_entities': total_entities,
+                    'total_time_ms': metrics.get_total_time(),
+                    'peak_memory_mb': metrics.get_peak_memory(),
+                    'file_size_kb': file_size_kb,
+                    'metrics': metrics.get_metrics(),
+                    'stats': stats,
+                    'success': success,
+                    'file_path': str(file_path)
+                }
+                
+                print(f"  [OK] {format_name}: {metrics.get_total_time():.2f}ms, {file_size_kb:.1f}KB, {stats['total_users']}U/{stats['total_posts']}P/{stats['total_comments']}C")
+                
+            except Exception as e:
+                print(f"  [FAIL] {format_name}: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                unique_name = f"x5_{result_key}"
+                results[unique_name] = {
+                    'database': unique_name,
+                    'node_mode': NodeMode.SPARSE_MATRIX.name,
+                    'edge_mode': EdgeMode.EDGE_PROPERTY_STORE.name,
+                    'storage_format': format_name.upper(),
+                    'success': False,
+                    'error': str(e)
+                }
         
-        print(f"✓ {csv_file.name}")
-    except PermissionError:
-        print(f"⚠️  WARNING: Could not write {csv_file.name} - file is open")
-    
-    print(f"\n{'='*80}")
-    print(f"ALL BENCHMARKS COMPLETE")
-    print(f"{'='*80}")
+        # Show rankings
+        successful = {k: v for k, v in results.items() if v.get('success')}
+        if successful:
+            print(f"\n{'='*80}")
+            print(f"TOP FORMATS BY SPEED - {total_entities:,} ENTITIES")
+            print(f"{'='*80}")
+            sorted_by_speed = sorted(successful.items(), key=lambda x: x[1]['total_time_ms'])
+            for rank, (name, data) in enumerate(sorted_by_speed[:5], 1):
+                insert_time = data['metrics']['insert']['total_time_ms']
+                read_time = data['metrics']['read']['total_time_ms']
+                update_time = data['metrics']['update']['total_time_ms']
+                delete_time = data['metrics']['delete']['total_time_ms']
+                print(f"  {rank}. {data['storage_format']}: {data['total_time_ms']:.2f}ms total")
+                print(f"     INSERT:{insert_time:.1f}ms READ:{read_time:.1f}ms UPDATE:{update_time:.1f}ms DELETE:{delete_time:.1f}ms")
+            
+            print(f"\n{'='*80}")
+            print(f"TOP FORMATS BY SIZE - {total_entities:,} ENTITIES")
+            print(f"{'='*80}")
+            sorted_by_size = sorted(successful.items(), key=lambda x: x[1]['file_size_kb'])
+            for rank, (name, data) in enumerate(sorted_by_size[:5], 1):
+                print(f"  {rank}. {data['storage_format']}: {data['file_size_kb']:.1f}KB, {data['total_time_ms']:.2f}ms")
+        
+        return results
 
 
 def main():
     """Main entry point"""
-    import argparse
-    
-    parser = argparse.ArgumentParser(description='File Serialization Benchmark')
-    parser.add_argument('entities', type=int, nargs='?', default=None,
-                        help='Total number of entities. If omitted, runs all tests from TEST_CONFIG_SIZE.')
-    args = parser.parse_args()
-    
-    if args.entities is None:
-        run_all_tests()
-    else:
-        if args.entities < 100:
-            print(f"Error: Minimum 100 entities required (got {args.entities})")
-            return 1
-        
-        benchmark = FileSerializationBenchmark(total_entities=args.entities)
-        benchmark.run_all()
+    benchmark = FileBenchmark()
+    benchmark.main()
 
 
 if __name__ == "__main__":
     main()
-

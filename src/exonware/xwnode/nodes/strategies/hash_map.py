@@ -14,7 +14,7 @@ using Python's built-in dictionary.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -89,14 +89,23 @@ class HashMapStrategy(ANodeStrategy):
 
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the hash map strategy."""
+        """
+        Initialize the hash map strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.HASH_MAP, traits, **options)
         self._data: Dict[str, Any] = {}
         self._size_tracker = create_size_tracker()
         self._access_tracker = create_access_tracker()
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the hash map strategy."""
+        """
+        Get the traits supported by the hash map strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.INDEXED | NodeTrait.HIERARCHICAL)
     
     # ============================================================================
@@ -104,7 +113,11 @@ class HashMapStrategy(ANodeStrategy):
     # ============================================================================
     
     def get(self, path: str, default: Any = None) -> Any:
-        """Retrieve a value by path."""
+        """
+        Retrieve a value by path.
+        
+        Time Complexity: O(1) for simple keys, O(depth) for nested paths
+        """
         record_access(self._access_tracker, 'get_count')
         
         # Handle simple key lookup
@@ -124,15 +137,27 @@ class HashMapStrategy(ANodeStrategy):
         return current
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(1)
+        """
         return str(key) in self._data
     
     def exists(self, path: str) -> bool:
-        """Check if path exists."""
+        """
+        Check if path exists.
+        
+        Time Complexity: O(depth) for nested paths
+        """
         return self.get(path) is not None
     
     def remove(self, key: Any) -> bool:
-        """Remove a key-value pair."""
+        """
+        Remove a key-value pair.
+        
+        Time Complexity: O(1)
+        """
         str_key = str(key)
         if str_key in self._data:
             del self._data[str_key]
@@ -142,11 +167,19 @@ class HashMapStrategy(ANodeStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove a key-value pair (alias for remove)."""
+        """
+        Remove a key-value pair (alias for remove).
+        
+        Time Complexity: O(1)
+        """
         return self.remove(key)
     
     def put(self, path: str, value: Any) -> 'HashMapStrategy':
-        """Set a value at path."""
+        """
+        Set a value at path.
+        
+        Time Complexity: O(1) for simple keys, O(depth) for nested paths
+        """
         # Handle simple key setting (non-string or string without dots)
         if not isinstance(path, str) or '.' not in path:
             str_key = str(path)
@@ -178,12 +211,11 @@ class HashMapStrategy(ANodeStrategy):
         """
         Insert key-value pair (legacy API).
         
+        Time Complexity: O(1)
+        
         Args:
             key: Key to insert (converted to string)
             value: Value to store
-            
-        Complexity:
-            O(1) average case
         """
         str_key = str(key)
         if str_key not in self._data:
@@ -195,14 +227,13 @@ class HashMapStrategy(ANodeStrategy):
         """
         Find value by key (legacy API).
         
+        Time Complexity: O(1)
+        
         Args:
             key: Key to find (converted to string)
             
         Returns:
             Value if found, None otherwise
-            
-        Complexity:
-            O(1) average case
         """
         str_key = str(key)
         return self._data.get(str_key)
@@ -211,11 +242,10 @@ class HashMapStrategy(ANodeStrategy):
         """
         Get number of items in the hash map.
         
+        Time Complexity: O(1)
+        
         Returns:
             Count of key-value pairs
-            
-        Complexity:
-            O(1)
         """
         return self._size_tracker['size']
     
@@ -223,11 +253,10 @@ class HashMapStrategy(ANodeStrategy):
         """
         Check if hash map is empty.
         
+        Time Complexity: O(1)
+        
         Returns:
             True if no items, False otherwise
-            
-        Complexity:
-            O(1)
         """
         return self._size_tracker['size'] == 0
     
@@ -235,17 +264,29 @@ class HashMapStrategy(ANodeStrategy):
         """
         Get the node mode for this strategy.
         
+        Time Complexity: O(1)
+        
         Returns:
             NodeMode.HASH_MAP
-            
-        Complexity:
-            O(1)
         """
         return self.mode
+    
+    def get_traits(self):
+        """
+        Get the traits for this strategy.
+        
+        Time Complexity: O(1)
+        
+        Returns:
+            NodeTrait flags
+        """
+        return self.traits
     
     def setdefault(self, key: Any, default: Any = None) -> Any:
         """
         Get value for key, or set and return default if not exists.
+        
+        Time Complexity: O(1)
         
         Args:
             key: Key to look up (converted to string)
@@ -253,9 +294,6 @@ class HashMapStrategy(ANodeStrategy):
             
         Returns:
             Existing value or default value
-            
-        Complexity:
-            O(1) average case
         """
         str_key = str(key)
         if str_key not in self._data:
@@ -267,50 +305,85 @@ class HashMapStrategy(ANodeStrategy):
         """
         Update hash map with key-value pairs from dict.
         
+        Time Complexity: O(k) where k is len(other)
+        
         Args:
             other: Dictionary to merge into this hash map
-            
-        Complexity:
-            O(n) where n is len(other)
         """
         for key, value in other.items():
             self.insert(key, value)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(1)
+        """
         self._data.clear()
         self._size_tracker['size'] = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all keys."""
+        """
+        Get all keys.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.keys())
     
     def values(self) -> Iterator[Any]:
-        """Get all values."""
+        """
+        Get all values.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.values())
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs."""
+        """
+        Get all key-value pairs.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return iter(self._data.items())
     
     def __len__(self) -> int:
-        """Get the number of items."""
+        """
+        Get the number of items.
+        
+        Time Complexity: O(1)
+        """
         return self._size_tracker['size']
     
     def __getitem__(self, key: Union[str, int]) -> Any:
-        """Get item by key or index."""
+        """
+        Get item by key or index.
+        
+        Time Complexity: O(1)
+        """
         return self.get(str(key))
     
     def __setitem__(self, key: Union[str, int], value: Any) -> None:
-        """Set item by key or index."""
+        """
+        Set item by key or index.
+        
+        Time Complexity: O(1)
+        """
         self.put(str(key), value)
     
     def __contains__(self, key: Union[str, int]) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(1)
+        """
         return self.has(str(key))
     
     def __iter__(self) -> Iterator[Any]:
-        """Iterate over values."""
+        """
+        Iterate over values.
+        
+        Time Complexity: O(1) to create, O(n) to iterate
+        """
         return self.values()
     
     @classmethod

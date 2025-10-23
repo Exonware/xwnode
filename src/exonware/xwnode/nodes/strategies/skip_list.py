@@ -17,6 +17,7 @@ class SkipListNode:
     """Node in the skip list."""
     
     def __init__(self, key: str, value: Any = None, level: int = 0):
+        """Time Complexity: O(level)"""
         self.key = key
         self.value = value
         self.level = level
@@ -24,13 +25,21 @@ class SkipListNode:
         self._hash = None
     
     def __hash__(self) -> int:
-        """Cache hash for performance."""
+        """
+        Cache hash for performance.
+        
+        Time Complexity: O(1) amortized
+        """
         if self._hash is None:
             self._hash = hash((self.key, self.value))
         return self._hash
     
     def __eq__(self, other) -> bool:
-        """Structural equality."""
+        """
+        Structural equality.
+        
+        Time Complexity: O(1)
+        """
         if not isinstance(other, SkipListNode):
             return False
         return self.key == other.key and self.value == other.value
@@ -109,7 +118,12 @@ class SkipListStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the skip list strategy."""
+        """
+        Initialize the skip list strategy.
+        
+        Time Complexity: O(max_level)
+        Space Complexity: O(max_level)
+        """
         super().__init__(NodeMode.SKIP_LIST, traits, **options)
         
         self.case_sensitive = options.get('case_sensitive', True)
@@ -128,15 +142,27 @@ class SkipListStrategy(ANodeTreeStrategy):
         self._max_level_reached = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the skip list strategy."""
+        """
+        Get the traits supported by the skip list strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED)
     
     def _normalize_key(self, key: str) -> str:
-        """Normalize key based on case sensitivity."""
+        """
+        Normalize key based on case sensitivity.
+        
+        Time Complexity: O(|key|)
+        """
         return key if self.case_sensitive else key.lower()
     
     def _random_level(self) -> int:
-        """Generate random level for new node."""
+        """
+        Generate random level for new node.
+        
+        Time Complexity: O(log n) expected
+        """
         level = 0
         while random.random() < self.probability and level < self.max_level:
             level += 1

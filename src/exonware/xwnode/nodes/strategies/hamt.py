@@ -9,7 +9,7 @@ with structural sharing and efficient immutable operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 11-Oct-2025
 """
 
@@ -38,21 +38,34 @@ class HAMTNode:
     """
     
     def __init__(self):
+        """Time Complexity: O(1)"""
         self.bitmap: int = 0  # 32-bit bitmap for tracking occupied slots
         self.children: List[Any] = []  # Compact array of children/values
     
     def index_for_bit(self, bit_pos: int) -> int:
-        """Calculate array index for given bit position using popcount."""
+        """
+        Calculate array index for given bit position using popcount.
+        
+        Time Complexity: O(1)
+        """
         # Count number of 1s before bit_pos
         mask = (1 << bit_pos) - 1
         return bin(self.bitmap & mask).count('1')
     
     def has_child(self, bit_pos: int) -> bool:
-        """Check if child exists at bit position."""
+        """
+        Check if child exists at bit position.
+        
+        Time Complexity: O(1)
+        """
         return (self.bitmap & (1 << bit_pos)) != 0
     
     def get_child(self, bit_pos: int) -> Optional[Any]:
-        """Get child at bit position."""
+        """
+        Get child at bit position.
+        
+        Time Complexity: O(1)
+        """
         if not self.has_child(bit_pos):
             return None
         idx = self.index_for_bit(bit_pos)

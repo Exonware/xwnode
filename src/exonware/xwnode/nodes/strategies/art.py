@@ -9,7 +9,7 @@ with O(k) complexity where k = key length.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: 11-Oct-2025
 """
 
@@ -33,11 +33,20 @@ class ARTNode:
     """Base ART node with common functionality."""
     
     def __init__(self):
+        """
+        Initialize ART node.
+        
+        Time Complexity: O(1)
+        """
         self.prefix: bytes = b''  # Path compression
         self.prefix_len: int = 0
     
     def matches_prefix(self, key: bytes, depth: int) -> int:
-        """Check how many bytes of prefix match the key."""
+        """
+        Check how many bytes of prefix match the key.
+        
+        Time Complexity: O(min(prefix_len, key_len))
+        """
         matches = 0
         for i in range(min(self.prefix_len, len(key) - depth)):
             if self.prefix[i] == key[depth + i]:
@@ -51,12 +60,21 @@ class ARTNode4(ARTNode):
     """Node with up to 4 children - smallest node size."""
     
     def __init__(self):
+        """
+        Initialize ARTNode4.
+        
+        Time Complexity: O(1)
+        """
         super().__init__()
         self.keys: List[int] = []  # Byte values (0-255)
         self.children: List[Any] = []  # Child nodes or leaf values
         
     def find_child(self, byte: int) -> Optional[Any]:
-        """Find child by byte value."""
+        """
+        Find child by byte value.
+        
+        Time Complexity: O(1) - at most 4 elements
+        """
         try:
             idx = self.keys.index(byte)
             return self.children[idx]
@@ -64,7 +82,11 @@ class ARTNode4(ARTNode):
             return None
     
     def add_child(self, byte: int, child: Any) -> bool:
-        """Add child if space available."""
+        """
+        Add child if space available.
+        
+        Time Complexity: O(1)
+        """
         if len(self.keys) >= 4:
             return False
         self.keys.append(byte)
@@ -72,7 +94,11 @@ class ARTNode4(ARTNode):
         return True
     
     def remove_child(self, byte: int) -> bool:
-        """Remove child by byte value."""
+        """
+        Remove child by byte value.
+        
+        Time Complexity: O(1) - at most 4 elements
+        """
         try:
             idx = self.keys.index(byte)
             self.keys.pop(idx)
@@ -86,12 +112,21 @@ class ARTNode16(ARTNode):
     """Node with up to 16 children."""
     
     def __init__(self):
+        """
+        Initialize ARTNode16.
+        
+        Time Complexity: O(1)
+        """
         super().__init__()
         self.keys: List[int] = []
         self.children: List[Any] = []
     
     def find_child(self, byte: int) -> Optional[Any]:
-        """Find child by byte value."""
+        """
+        Find child by byte value.
+        
+        Time Complexity: O(1) - at most 16 elements
+        """
         try:
             idx = self.keys.index(byte)
             return self.children[idx]
@@ -99,7 +134,11 @@ class ARTNode16(ARTNode):
             return None
     
     def add_child(self, byte: int, child: Any) -> bool:
-        """Add child if space available."""
+        """
+        Add child if space available.
+        
+        Time Complexity: O(1)
+        """
         if len(self.keys) >= 16:
             return False
         self.keys.append(byte)
@@ -111,20 +150,34 @@ class ARTNode48(ARTNode):
     """Node with up to 48 children using index array."""
     
     def __init__(self):
+        """
+        Initialize ARTNode48.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1) - fixed 256-byte index array
+        """
         super().__init__()
         # Index array: 256 bytes mapping byte->child_index
         self.index: List[int] = [255] * 256  # 255 = empty
         self.children: List[Any] = []
     
     def find_child(self, byte: int) -> Optional[Any]:
-        """Find child by byte value."""
+        """
+        Find child by byte value.
+        
+        Time Complexity: O(1) - direct array access
+        """
         idx = self.index[byte]
         if idx == 255:
             return None
         return self.children[idx]
     
     def add_child(self, byte: int, child: Any) -> bool:
-        """Add child if space available."""
+        """
+        Add child if space available.
+        
+        Time Complexity: O(1)
+        """
         if len(self.children) >= 48:
             return False
         self.index[byte] = len(self.children)
@@ -136,15 +189,29 @@ class ARTNode256(ARTNode):
     """Node with up to 256 children - direct array."""
     
     def __init__(self):
+        """
+        Initialize ARTNode256.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1) - fixed 256-element array
+        """
         super().__init__()
         self.children: List[Optional[Any]] = [None] * 256
     
     def find_child(self, byte: int) -> Optional[Any]:
-        """Find child by byte value."""
+        """
+        Find child by byte value.
+        
+        Time Complexity: O(1) - direct array access
+        """
         return self.children[byte]
     
     def add_child(self, byte: int, child: Any) -> bool:
-        """Add child (always succeeds for Node256)."""
+        """
+        Add child (always succeeds for Node256).
+        
+        Time Complexity: O(1)
+        """
         self.children[byte] = child
         return True
 
@@ -173,7 +240,12 @@ class ARTStrategy(ANodeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the ART strategy."""
+        """
+        Initialize the ART strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.ART, traits, **options)
         self._root: Optional[ARTNode] = None
         self._size = 0
@@ -181,7 +253,11 @@ class ARTStrategy(ANodeStrategy):
         self._access_tracker = create_access_tracker()
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by ART strategy."""
+        """
+        Get the traits supported by ART strategy.
+        
+        Time Complexity: O(1)
+        """
         return NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.PREFIX_TREE
     
     # ============================================================================
@@ -189,7 +265,11 @@ class ARTStrategy(ANodeStrategy):
     # ============================================================================
     
     def _key_to_bytes(self, key: Any) -> bytes:
-        """Convert key to bytes for radix tree processing."""
+        """
+        Convert key to bytes for radix tree processing.
+        
+        Time Complexity: O(|key|)
+        """
         if isinstance(key, bytes):
             return key
         elif isinstance(key, str):
@@ -198,7 +278,11 @@ class ARTStrategy(ANodeStrategy):
             return str(key).encode('utf-8')
     
     def _search(self, node: Optional[ARTNode], key: bytes, depth: int) -> Optional[Any]:
-        """Recursively search for key in tree."""
+        """
+        Recursively search for key in tree.
+        
+        Time Complexity: O(k) where k is key length
+        """
         if node is None:
             return None
         
@@ -235,7 +319,11 @@ class ARTStrategy(ANodeStrategy):
         return self._search(child, key, depth + 1)
     
     def get(self, path: str, default: Any = None) -> Any:
-        """Retrieve a value by path (key)."""
+        """
+        Retrieve a value by path (key).
+        
+        Time Complexity: O(k) where k is key length
+        """
         record_access(self._access_tracker, 'get_count')
         
         if '.' in path:
@@ -254,7 +342,12 @@ class ARTStrategy(ANodeStrategy):
         return result if result is not None else default
     
     def _insert(self, node: Optional[ARTNode], key: bytes, value: Any, depth: int) -> ARTNode:
-        """Recursively insert key-value pair into tree."""
+        """
+        Recursively insert key-value pair into tree.
+        
+        Time Complexity: O(k) where k is key length
+        Space Complexity: O(k) for new nodes
+        """
         if node is None:
             # Create new node and continue inserting
             if depth >= len(key):
@@ -355,7 +448,12 @@ class ARTStrategy(ANodeStrategy):
         return node
     
     def _grow_node(self, node: ARTNode) -> ARTNode:
-        """Grow node to next size class."""
+        """
+        Grow node to next size class.
+        
+        Time Complexity: O(n) where n is number of children
+        Space Complexity: O(n)
+        """
         if isinstance(node, ARTNode4):
             # Grow to Node16
             new_node = ARTNode16()
@@ -393,7 +491,12 @@ class ARTStrategy(ANodeStrategy):
             return node  # Already at max size
     
     def put(self, path: str, value: Any = None) -> 'ARTStrategy':
-        """Set a value at path."""
+        """
+        Set a value at path.
+        
+        Time Complexity: O(k) where k is key length
+        Space Complexity: O(k) for new nodes
+        """
         record_access(self._access_tracker, 'put_count')
         
         if '.' in path:
@@ -432,15 +535,27 @@ class ARTStrategy(ANodeStrategy):
         return self
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(k) where k is key length
+        """
         return self.get(str(key)) is not None
     
     def exists(self, path: str) -> bool:
-        """Check if path exists."""
+        """
+        Check if path exists.
+        
+        Time Complexity: O(k) where k is key length
+        """
         return self.get(path) is not None
     
     def delete(self, key: Any) -> bool:
-        """Remove a key-value pair."""
+        """
+        Remove a key-value pair.
+        
+        Time Complexity: O(k) where k is key length
+        """
         # Simplified deletion - mark as deleted
         key_str = str(key)
         if self.exists(key_str):
@@ -454,7 +569,11 @@ class ARTStrategy(ANodeStrategy):
         return False
     
     def remove(self, key: Any) -> bool:
-        """Remove a key-value pair (alias for delete)."""
+        """
+        Remove a key-value pair (alias for delete).
+        
+        Time Complexity: O(k) where k is key length
+        """
         return self.delete(key)
     
     # ============================================================================
@@ -462,7 +581,12 @@ class ARTStrategy(ANodeStrategy):
     # ============================================================================
     
     def _collect_all(self, node: Optional[ARTNode], prefix: bytes) -> List[tuple[bytes, Any]]:
-        """Collect all key-value pairs from tree."""
+        """
+        Collect all key-value pairs from tree.
+        
+        Time Complexity: O(n) where n is number of nodes
+        Space Complexity: O(n)
+        """
         if node is None:
             return []
         
@@ -512,7 +636,11 @@ class ARTStrategy(ANodeStrategy):
         return results
     
     def keys(self) -> Iterator[Any]:
-        """Get an iterator over all keys."""
+        """
+        Get an iterator over all keys.
+        
+        Time Complexity: O(n) to iterate all
+        """
         all_items = self._collect_all(self._root, b'')
         for key_bytes, _ in all_items:
             try:
@@ -521,13 +649,21 @@ class ARTStrategy(ANodeStrategy):
                 yield key_bytes
     
     def values(self) -> Iterator[Any]:
-        """Get an iterator over all values."""
+        """
+        Get an iterator over all values.
+        
+        Time Complexity: O(n) to iterate all
+        """
         all_items = self._collect_all(self._root, b'')
         for _, value in all_items:
             yield value
     
     def items(self) -> Iterator[tuple[Any, Any]]:
-        """Get an iterator over all key-value pairs."""
+        """
+        Get an iterator over all key-value pairs.
+        
+        Time Complexity: O(n) to iterate all
+        """
         all_items = self._collect_all(self._root, b'')
         for key_bytes, value in all_items:
             try:
@@ -537,7 +673,11 @@ class ARTStrategy(ANodeStrategy):
             yield (key, value)
     
     def __len__(self) -> int:
-        """Get the number of key-value pairs."""
+        """
+        Get the number of key-value pairs.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     # ============================================================================
@@ -549,6 +689,9 @@ class ARTStrategy(ANodeStrategy):
         Search for all keys with given prefix.
         
         This is a key advantage of ART - efficient prefix searches.
+        
+        Time Complexity: O(p + m) where p is prefix length, m is matching keys
+        Space Complexity: O(m)
         """
         prefix_bytes = self._key_to_bytes(prefix)
         # Simplified: collect all and filter
@@ -564,14 +707,23 @@ class ARTStrategy(ANodeStrategy):
         return results
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dictionary."""
+        """
+        Convert to native Python dictionary.
+        
+        Time Complexity: O(n)
+        Space Complexity: O(n)
+        """
         result = {}
         for key, value in self.items():
             result[str(key)] = safe_to_native_conversion(value)
         return result
     
     def get_backend_info(self) -> Dict[str, Any]:
-        """Get backend information."""
+        """
+        Get backend information.
+        
+        Time Complexity: O(1)
+        """
         return {
             **create_basic_backend_info('ART', 'Adaptive Radix Tree'),
             'total_keys': self._size,

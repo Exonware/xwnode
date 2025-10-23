@@ -15,6 +15,7 @@ class AVLNode:
     """Node in the AVL tree."""
     
     def __init__(self, key: str, value: Any):
+        """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.left: Optional['AVLNode'] = None
@@ -23,7 +24,11 @@ class AVLNode:
         self.size = 1  # Size of subtree
     
     def update_stats(self) -> None:
-        """Update height and size based on children."""
+        """
+        Update height and size based on children.
+        
+        Time Complexity: O(1)
+        """
         left_height = self.left.height if self.left else 0
         right_height = self.right.height if self.right else 0
         self.height = max(left_height, right_height) + 1
@@ -33,7 +38,11 @@ class AVLNode:
         self.size = left_size + right_size + 1
     
     def balance_factor(self) -> int:
-        """Calculate balance factor."""
+        """
+        Calculate balance factor.
+        
+        Time Complexity: O(1)
+        """
         left_height = self.left.height if self.left else 0
         right_height = self.right.height if self.right else 0
         return left_height - right_height

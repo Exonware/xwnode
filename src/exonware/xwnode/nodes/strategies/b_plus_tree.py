@@ -15,6 +15,11 @@ class BPlusTreeNode:
     """Node in the B+ tree."""
     
     def __init__(self, is_leaf: bool = False, max_keys: int = 4):
+        """
+        Initialize B+ tree node.
+        
+        Time Complexity: O(1)
+        """
         self.is_leaf = is_leaf
         self.keys: List[str] = []
         self.values: List[Any] = [] if is_leaf else []  # Only leaves store values
@@ -24,16 +29,28 @@ class BPlusTreeNode:
         self.max_keys = max_keys
     
     def is_full(self) -> bool:
-        """Check if node is full."""
+        """
+        Check if node is full.
+        
+        Time Complexity: O(1)
+        """
         return len(self.keys) >= self.max_keys
     
     def is_underflow(self) -> bool:
-        """Check if node has too few keys."""
+        """
+        Check if node has too few keys.
+        
+        Time Complexity: O(1)
+        """
         min_keys = self.max_keys // 2
         return len(self.keys) < min_keys
     
     def find_child_index(self, key: str) -> int:
-        """Find child index for given key."""
+        """
+        Find child index for given key.
+        
+        Time Complexity: O(m) where m is number of keys in node
+        """
         for i, k in enumerate(self.keys):
             if key <= k:
                 return i
@@ -108,7 +125,12 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     STRATEGY_TYPE = NodeType.TREE
     
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
-        """Initialize the B+ Tree strategy."""
+        """
+        Initialize the B+ Tree strategy.
+        
+        Time Complexity: O(1)
+        Space Complexity: O(1)
+        """
         super().__init__(NodeMode.B_PLUS_TREE, traits, **options)
         
         self.order = options.get('order', 4)  # Maximum number of keys per node
@@ -126,27 +148,47 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self._total_merges = 0
     
     def get_supported_traits(self) -> NodeTrait:
-        """Get the traits supported by the B+ tree strategy."""
+        """
+        Get the traits supported by the B+ tree strategy.
+        
+        Time Complexity: O(1)
+        """
         return (NodeTrait.ORDERED | NodeTrait.INDEXED | NodeTrait.HIERARCHICAL | NodeTrait.PERSISTENT)
     
     def _normalize_key(self, key: str) -> str:
-        """Normalize key based on case sensitivity."""
+        """
+        Normalize key based on case sensitivity.
+        
+        Time Complexity: O(|key|)
+        """
         return key if self.case_sensitive else key.lower()
     
     def _create_leaf_node(self) -> BPlusTreeNode:
-        """Create new leaf node."""
+        """
+        Create new leaf node.
+        
+        Time Complexity: O(1)
+        """
         node = BPlusTreeNode(is_leaf=True, max_keys=self.order)
         self._total_nodes += 1
         return node
     
     def _create_internal_node(self) -> BPlusTreeNode:
-        """Create new internal node."""
+        """
+        Create new internal node.
+        
+        Time Complexity: O(1)
+        """
         node = BPlusTreeNode(is_leaf=False, max_keys=self.order)
         self._total_nodes += 1
         return node
     
     def _find_leaf(self, key: str) -> Optional[BPlusTreeNode]:
-        """Find leaf node that should contain the key."""
+        """
+        Find leaf node that should contain the key.
+        
+        Time Complexity: O(log n)
+        """
         if not self._root:
             return None
         
@@ -168,7 +210,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return current
     
     def _insert_into_leaf(self, leaf: BPlusTreeNode, key: str, value: Any) -> None:
-        """Insert key-value pair into leaf node."""
+        """
+        Insert key-value pair into leaf node.
+        
+        Time Complexity: O(m) where m is order/max_keys
+        """
         # Find insertion position
         pos = 0
         while pos < len(leaf.keys) and leaf.keys[pos] < key:
@@ -185,7 +231,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self._size += 1
     
     def _split_leaf(self, leaf: BPlusTreeNode) -> Tuple[BPlusTreeNode, str]:
-        """Split full leaf node."""
+        """
+        Split full leaf node.
+        
+        Time Complexity: O(m) where m is order
+        """
         mid = len(leaf.keys) // 2
         new_leaf = self._create_leaf_node()
         
@@ -208,7 +258,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return new_leaf, new_leaf.keys[0]  # Return new node and separator key
     
     def _split_internal(self, node: BPlusTreeNode) -> Tuple[BPlusTreeNode, str]:
-        """Split full internal node."""
+        """
+        Split full internal node.
+        
+        Time Complexity: O(m) where m is order
+        """
         mid = len(node.keys) // 2
         new_node = self._create_internal_node()
         
@@ -230,7 +284,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return new_node, separator_key
     
     def _insert_into_parent(self, left: BPlusTreeNode, key: str, right: BPlusTreeNode) -> None:
-        """Insert separator key into parent after split."""
+        """
+        Insert separator key into parent after split.
+        
+        Time Complexity: O(m * log n) where m is order
+        """
         if left.parent is None:
             # Create new root
             new_root = self._create_internal_node()
@@ -260,7 +318,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             self._insert_into_parent(parent, separator, new_parent)
     
     def _insert_key(self, key: str, value: Any) -> None:
-        """Insert key-value pair into B+ tree."""
+        """
+        Insert key-value pair into B+ tree.
+        
+        Time Complexity: O(log n)
+        """
         if not self._root:
             # Create first leaf node
             self._root = self._create_leaf_node()
@@ -279,7 +341,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             self._insert_into_parent(leaf, separator, new_leaf)
     
     def _search_key(self, key: str) -> Optional[Any]:
-        """Search for key in B+ tree."""
+        """
+        Search for key in B+ tree.
+        
+        Time Complexity: O(log n)
+        """
         leaf = self._find_leaf(key)
         if not leaf:
             return None
@@ -296,28 +362,48 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     def find(self, key: Any) -> Optional[Any]:
-        """Find value by key (implements base class abstract method)."""
+        """
+        Find value by key (implements base class abstract method).
+        
+        Time Complexity: O(log n)
+        """
         key_str = str(key)
         return self._search_key(key_str)
     
     def put(self, key: Any, value: Any = None) -> None:
-        """Add key-value pair to B+ tree."""
+        """
+        Add key-value pair to B+ tree.
+        
+        Time Complexity: O(log n)
+        """
         key_str = str(key)
         # Store original key, not normalized (for case-sensitive mode)
         self._insert_key(key_str, value)
     
     def get(self, key: Any, default: Any = None) -> Any:
-        """Get value by key."""
+        """
+        Get value by key.
+        
+        Time Complexity: O(log n)
+        """
         key_str = str(key)
         result = self.find(key_str)
         return result if result is not None else default
     
     def has(self, key: Any) -> bool:
-        """Check if key exists."""
+        """
+        Check if key exists.
+        
+        Time Complexity: O(log n)
+        """
         return self.find(str(key)) is not None
     
     def remove(self, key: Any) -> bool:
-        """Remove key from tree (simplified implementation)."""
+        """
+        Remove key from tree (simplified implementation).
+        
+        Time Complexity: O(log n)
+        """
         key_str = str(key)
         normalized_key = self._normalize_key(key_str)
         
@@ -336,11 +422,19 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return False
     
     def delete(self, key: Any) -> bool:
-        """Remove key from tree (alias for remove)."""
+        """
+        Remove key from tree (alias for remove).
+        
+        Time Complexity: O(log n)
+        """
         return self.remove(key)
     
     def clear(self) -> None:
-        """Clear all data."""
+        """
+        Clear all data.
+        
+        Time Complexity: O(1)
+        """
         self._root = None
         self._first_leaf = None
         self._size = 0
@@ -350,7 +444,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self._total_merges = 0
     
     def keys(self) -> Iterator[str]:
-        """Get all keys in sorted order."""
+        """
+        Get all keys in sorted order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         current = self._first_leaf
         while current:
             for key in current.keys:
@@ -358,7 +456,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             current = current.next_leaf
     
     def values(self) -> Iterator[Any]:
-        """Get all values in key order."""
+        """
+        Get all values in key order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         current = self._first_leaf
         while current:
             for value in current.values:
@@ -366,7 +468,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             current = current.next_leaf
     
     def items(self) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs in sorted order."""
+        """
+        Get all key-value pairs in sorted order.
+        
+        Time Complexity: O(n) to iterate all
+        """
         current = self._first_leaf
         while current:
             for key, value in zip(current.keys, current.values):
@@ -374,21 +480,37 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             current = current.next_leaf
     
     def __len__(self) -> int:
-        """Get number of key-value pairs."""
+        """
+        Get number of key-value pairs.
+        
+        Time Complexity: O(1)
+        """
         return self._size
     
     def to_native(self) -> Dict[str, Any]:
-        """Convert to native Python dict."""
+        """
+        Convert to native Python dict.
+        
+        Time Complexity: O(n)
+        """
         return dict(self.items())
     
     @property
     def is_list(self) -> bool:
-        """This can behave like a list for indexed access."""
+        """
+        This can behave like a list for indexed access.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     @property
     def is_dict(self) -> bool:
-        """This is a dict-like structure."""
+        """
+        This is a dict-like structure.
+        
+        Time Complexity: O(1)
+        """
         return True
     
     # ============================================================================
@@ -396,13 +518,21 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     def first_key(self) -> Optional[str]:
-        """Get first (smallest) key."""
+        """
+        Get first (smallest) key.
+        
+        Time Complexity: O(1)
+        """
         if self._first_leaf and self._first_leaf.keys:
             return self._first_leaf.keys[0]
         return None
     
     def last_key(self) -> Optional[str]:
-        """Get last (largest) key."""
+        """
+        Get last (largest) key.
+        
+        Time Complexity: O(h) where h is height - traverse to last leaf
+        """
         current = self._first_leaf
         last_leaf = None
         
@@ -415,7 +545,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return None
     
     def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[Tuple[str, Any]]:
-        """Get key-value pairs in range."""
+        """
+        Get key-value pairs in range.
+        
+        Time Complexity: O(log n + k) where k is result size
+        """
         start_norm = self._normalize_key(start_key)
         end_norm = self._normalize_key(end_key)
         
@@ -439,7 +573,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return result
     
     def get_at_index(self, index: int) -> Optional[Any]:
-        """Get value at specific index."""
+        """
+        Get value at specific index.
+        
+        Time Complexity: O(n) - must traverse linked leaves
+        """
         if index < 0 or index >= self._size:
             return None
         
@@ -457,7 +595,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return None
     
     def index_of(self, key: str) -> int:
-        """Get index of key (-1 if not found)."""
+        """
+        Get index of key (-1 if not found).
+        
+        Time Complexity: O(n) - must traverse linked leaves
+        """
         normalized_key = self._normalize_key(key)
         current_index = 0
         current = self._first_leaf
@@ -473,7 +615,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return -1
     
     def find_prefix_keys(self, prefix: str) -> List[str]:
-        """Find all keys starting with given prefix."""
+        """
+        Find all keys starting with given prefix.
+        
+        Time Complexity: O(n) - may need to scan all keys
+        """
         normalized_prefix = self._normalize_key(prefix)
         result = []
         
@@ -489,7 +635,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         return result
     
     def bulk_load(self, items: List[Tuple[str, Any]]) -> None:
-        """Bulk load sorted key-value pairs (more efficient than individual inserts)."""
+        """
+        Bulk load sorted key-value pairs (more efficient than individual inserts).
+        
+        Time Complexity: O(n log n) for sorting + O(n log n) for insertion
+        """
         self.clear()
         
         # Sort items
@@ -499,7 +649,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             self.put(key, value)
     
     def get_tree_statistics(self) -> Dict[str, Any]:
-        """Get detailed tree statistics."""
+        """
+        Get detailed tree statistics.
+        
+        Time Complexity: O(n) - traverses tree structure
+        """
         if not self._root:
             return {'size': 0, 'height': 0, 'nodes': 0}
         
@@ -554,7 +708,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     
     @property
     def backend_info(self) -> Dict[str, Any]:
-        """Get backend implementation info."""
+        """
+        Get backend implementation info.
+        
+        Time Complexity: O(1)
+        """
         return {
             'strategy': 'B_PLUS_TREE',
             'backend': 'Database-optimized B+ tree with leaf linking',
@@ -573,7 +731,11 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     
     @property
     def metrics(self) -> Dict[str, Any]:
-        """Get performance metrics."""
+        """
+        Get performance metrics.
+        
+        Time Complexity: O(n) - calls get_tree_statistics
+        """
         stats = self.get_tree_statistics()
         
         return {

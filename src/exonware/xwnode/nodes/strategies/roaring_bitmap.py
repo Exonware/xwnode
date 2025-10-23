@@ -14,7 +14,7 @@ bitmap operations with excellent performance for sparse data.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.25
+Version: 0.0.1.26
 Generation Date: October 12, 2025
 """
 
@@ -30,14 +30,23 @@ class Container:
     """Base class for Roaring Bitmap containers."""
     
     def __init__(self):
+        """Time Complexity: O(1)"""
         self.cardinality = 0
     
     def contains(self, x: int) -> bool:
-        """Check if value is in container."""
+        """
+        Check if value is in container.
+        
+        Time Complexity: Varies by container type
+        """
         raise NotImplementedError
     
     def add(self, x: int) -> bool:
-        """Add value to container. Returns True if value was new."""
+        """
+        Add value to container. Returns True if value was new.
+        
+        Time Complexity: Varies by container type
+        """
         raise NotImplementedError
     
     def remove(self, x: int) -> bool:

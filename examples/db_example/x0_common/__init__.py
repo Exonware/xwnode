@@ -33,6 +33,20 @@ from .metrics import BenchmarkMetrics
 # Base database
 from .base import BaseDatabase
 
+# File-backed storage and databases
+from .file_backed_storage import (
+    FileBackedStorage,
+    SimpleFileStorage,
+    TransactionalFileStorage
+)
+from .file_backed_db import (
+    FileBackedDatabase,
+    TransactionalFileBackedDatabase
+)
+
+# Common benchmark runner
+from .db_common_benchmark import BaseBenchmarkRunner
+
 # Predefined configurations
 from .db_configs import (
     ReadOptimizedDatabase,
@@ -68,6 +82,14 @@ __all__ = [
     
     # Base
     'BaseDatabase',
+    'BaseBenchmarkRunner',
+    
+    # File-backed storage
+    'FileBackedStorage',
+    'SimpleFileStorage',
+    'TransactionalFileStorage',
+    'FileBackedDatabase',
+    'TransactionalFileBackedDatabase',
     
     # Configs
     'ReadOptimizedDatabase',
