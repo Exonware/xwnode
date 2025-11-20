@@ -277,8 +277,10 @@ class BaseBenchmarkRunner(ABC):
             ]
             
             # Load existing workbook if file exists, or create new one
-            existing_rows = []
             wb = None
+            ws = None
+            existing_row_count = 0
+            is_new_file = False
             
             if excel_file.exists():
                 try:
@@ -292,42 +294,28 @@ class BaseBenchmarkRunner(ABC):
                     # Priority: Usability #2 - Save data to correct sheet
                     if "Benchmark Results" in wb.sheetnames:
                         ws = wb["Benchmark Results"]
+                        # Count existing rows (excluding header)
+                        existing_row_count = ws.max_row - 1 if ws.max_row > 1 else 0
+                        print(f"  Found {existing_row_count} existing records in 'Benchmark Results' sheet")
+                        print(f"  Preserving {len(wb.sheetnames)} existing sheet(s): {', '.join(wb.sheetnames)}")
                     else:
                         # Create "Benchmark Results" sheet if it doesn't exist
                         ws = wb.create_sheet("Benchmark Results", 0)
-                    
-                    # Read existing data from "Benchmark Results" sheet (skip header row)
-                    for row in ws.iter_rows(min_row=2, values_only=True):
-                        if row[0]:  # If first column has data
-                            row_data = list(row)
-                            # Pad with None if row is shorter than expected
-                            while len(row_data) < len(headers):
-                                row_data.append(None)
-                            existing_rows.append(row_data[:3] + row_data[4:])  # Skip rank column
-                    
-                    print(f"  Found {len(existing_rows)} existing records in 'Benchmark Results' sheet")
-                    print(f"  Preserving {len(wb.sheetnames)} existing sheet(s): {', '.join(wb.sheetnames)}")
-                    
-                    # Clear the "Benchmark Results" sheet content (we'll rewrite everything)
-                    ws.delete_rows(1, ws.max_row)
+                        ws.append(headers)  # Add headers to new sheet
+                        is_new_file = True
                     
                 except Exception as e:
                     print(f"  Warning: Could not load existing file ({e}), will create new file")
-                    existing_rows = []
                     wb = None
+                    ws = None
             
             # Create new workbook if loading failed or file doesn't exist
             if wb is None:
                 wb = Workbook()
                 ws = wb.active
                 ws.title = "Benchmark Results"
-            
-            # Write headers
-            ws.append(headers)
-            
-            # Write existing rows first
-            for row_data in existing_rows:
-                ws.append(row_data[:3] + [''] + row_data[3:])
+                ws.append(headers)  # Add headers
+                is_new_file = True
             
             # Collect new data rows
             all_rows = []
@@ -338,7 +326,9 @@ class BaseBenchmarkRunner(ABC):
                     row_data = self.format_result_row(entities_str, name, data)
                     all_rows.append(row_data)
             
-            # Write new data rows
+            # APPEND new data rows (don't delete existing ones!)
+            # This prevents Excel file corruption
+            first_new_row = ws.max_row + 1
             for row_data in all_rows:
                 ws.append([
                     row_data['test_type'],
@@ -366,28 +356,22 @@ class BaseBenchmarkRunner(ABC):
                     row_data['delete_memory']
                 ])
             
-            # Calculate total rows
-            total_rows = len(existing_rows) + len(all_rows)
-            
-            # Add ranking formulas for ALL rows
-            for row_idx in range(2, total_rows + 2):
+            # Add ranking formulas ONLY for new rows
+            last_row = ws.max_row
+            for row_idx in range(first_new_row, last_row + 1):
                 formula = f'=COUNTIFS($A:$A,$A{row_idx},$B:$B,$B{row_idx},$C:$C,$C{row_idx},$L:$L,"<"&$L{row_idx})+1'
                 ws[f'D{row_idx}'] = formula
             
-            # Create Excel Table (remove existing table if present)
-            # Remove existing table if it exists
-            # Remove existing tables to prevent duplicate error
-            # Root cause: Table reference persists even after deletion
-            # Solution: Clear tables dict completely and use unique timestamp-based name
+            # Update Excel Table (expand to include new rows)
+            # Remove existing table and create new one with expanded range
             if ws.tables:
-                # Clear all existing tables
                 ws.tables.clear()
             
             # Use unique table name to prevent conflicts
-            # Priority: Maintainability #3 - Robust table management
             import time
             table_name = f"BenchmarkResults_{int(time.time())}"
-            table_ref = f"A1:{get_column_letter(len(headers))}{total_rows + 1}"
+            total_rows = ws.max_row - 1  # Exclude header
+            table_ref = f"A1:{get_column_letter(len(headers))}{ws.max_row}"
             
             try:
                 table = Table(displayName=table_name, ref=table_ref)
@@ -427,9 +411,9 @@ class BaseBenchmarkRunner(ABC):
             wb.save(excel_file)
             
             # Print summary
-            if len(existing_rows) > 0:
-                print(f"[OK] Excel File: {excel_file.name} (UPDATED)")
-                print(f"  - Existing records: {len(existing_rows)}")
+            if not is_new_file:
+                print(f"[OK] Excel File: {excel_file.name} (APPENDED)")
+                print(f"  - Existing records: {existing_row_count}")
                 print(f"  - New records added: {len(all_rows)}")
                 print(f"  - Total records: {total_rows}")
                 print(f"  - Total sheets preserved: {len(wb.sheetnames)}")
@@ -438,7 +422,7 @@ class BaseBenchmarkRunner(ABC):
                 print(f"  - New records: {len(all_rows)}")
             print(f"  - Excel Table 'BenchmarkResults' with filtering enabled")
             print(f"  - Rank calculated by formula (grouped by Test Type, Operations Size, Date & Time)")
-            print(f"\n  All existing sheets have been preserved!")
+            print(f"\n  All existing data and sheets have been preserved!")
         
         except PermissionError:
             print(f"[WARNING] Could not write {excel_file.name} - file is open in another program")

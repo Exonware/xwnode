@@ -102,7 +102,9 @@ def run_sub_runner(runner_path: Path, description: str, output: DualOutput) -> i
         [sys.executable, str(runner_path)],
         cwd=runner_path.parent,
         capture_output=True,
-        text=True
+        text=True,
+        encoding='utf-8',
+        errors='replace'  # Replace invalid chars instead of crashing
     )
     
     # Print sub-runner output
@@ -122,6 +124,18 @@ def run_sub_runner(runner_path: Path, description: str, output: DualOutput) -> i
 
 def main():
     """Main test runner function following GUIDELINES_TEST.md."""
+    # Configure UTF-8 encoding for Windows console
+    import os
+    if os.name == 'nt':  # Windows
+        try:
+            # Enable UTF-8 mode for console
+            if hasattr(sys.stdout, 'reconfigure'):
+                sys.stdout.reconfigure(encoding='utf-8')
+            if hasattr(sys.stderr, 'reconfigure'):
+                sys.stderr.reconfigure(encoding='utf-8')
+        except Exception:
+            pass  # Fallback to default if reconfigure fails
+    
     # Setup output logger
     test_dir = Path(__file__).parent
     output_file = test_dir / "runner_out.md"
@@ -179,7 +193,11 @@ def main():
     elif "--security" in args or "--performance" in args or "--usability" in args or "--maintainability" in args or "--extensibility" in args:
         # Forward to advance runner if exists
         if advance_runner.exists():
-            result = subprocess.run([sys.executable, str(advance_runner)] + args)
+            result = subprocess.run(
+                [sys.executable, str(advance_runner)] + args,
+                encoding='utf-8',
+                errors='replace'
+            )
             exit_codes.append(result.returncode)
         else:
             msg = "Advance tests not available (requires v1.0.0)"

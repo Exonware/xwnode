@@ -11,18 +11,18 @@ This module defines the abstract base classes for all edge strategy implementati
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: January 2, 2025
 """
 
 from abc import ABC, abstractmethod
 from typing import Any, Optional, List, Dict, Tuple
 
-from ...contracts import iEdgeStrategy
+from .contracts import IEdgeStrategy
 from ...errors import XWNodeTypeError, XWNodeValueError
 
 
-class AEdgeStrategy(iEdgeStrategy):
+class AEdgeStrategy(IEdgeStrategy):
     """Base strategy for all edge implementations - extends iEdgeStrategy interface."""
     
     def __init__(self, **options):

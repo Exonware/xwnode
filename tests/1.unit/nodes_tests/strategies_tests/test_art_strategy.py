@@ -101,7 +101,7 @@ class TestARTStrategyUnit:
     def test_backend_info(self):
         """Test backend info retrieval."""
         strategy = ARTStrategy()
-        info = strategy.get_backend_info()
+        info = strategy.backend_info()
         assert isinstance(info, dict)
         assert 'strategy' in info or 'total_keys' in info or len(info) > 0
 

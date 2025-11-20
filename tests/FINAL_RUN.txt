@@ -1,0 +1,1331 @@
+================================================================================
+xwnode Test Runner - Production Excellence Edition
+================================================================================
+ℹ 📂 Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests
+ℹ 📝 Output File: D:\OneDrive\DEV\exonware\xwnode\tests\runner_out.md
+ℹ 🔧 Source Path: D:\OneDrive\DEV\exonware\xwnode\src
+
+Running All Test Layers
+ℹ 🚀 Execution Order: 0.core → 1.unit → 2.integration → 3.advance
+📂 ================================================================================
+ℹ ▶️ Starting: Layer 0: Core Tests
+ℹ 📍 Runner Path: D:\OneDrive\DEV\exonware\xwnode\tests\0.core\runner.py
+================================================================================
+================================================================================
+xwnode - Core Tests - Fast, High-Value Checks (20% tests for 80% value)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\0.core
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\0.core\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 77 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\0.core -m xwnode_core
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 839 items / 188 deselected / 651 selected
+
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_initialization PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_add_edge PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_has_edge_o1_lookup PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_get_neighbors PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_remove_edge PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_remove_edge_nonexistent PASSED [  0%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_clear_operation PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_supported_traits PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_degree_calculation PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixCore::test_undirected_graph PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_matrix_resize PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_dense_graph_operations PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_get_edge_data_with_properties PASSED [  1%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_edges_iteration PASSED [  2%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_vertices_iteration PASSED [  2%]
+0.core\test_adj_matrix_edge_strategy.py::TestAdjMatrixSpecificFeatures::test_self_loops PASSED [  2%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_initialization PASSED [  2%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_add_edge PASSED [  2%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_has_edge PASSED [  2%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_remove_edge PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_neighbors PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_neighbors_empty PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_degree PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_clear_operation PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_edges_iteration PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyCore::test_vertices_iteration PASSED [  3%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyAdvanced::test_undirected_graph PASSED [  4%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyAdvanced::test_weighted_edges PASSED [  4%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyAdvanced::test_multiple_properties PASSED [  4%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategyAdvanced::test_supported_traits PASSED [  4%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategySecurity::test_input_validation PASSED [  4%]
+0.core\test_adjacency_list_edge_strategy.py::TestAdjacencyListStrategySecurity::test_remove_nonexistent_edge PASSED [  4%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_initialization PASSED [  5%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_basic_operations PASSED [  5%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_single_pattern_match PASSED [  5%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_multiple_patterns PASSED [  5%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_overlapping_matches PASSED [  5%]
+0.core\test_aho_corasick_strategy.py::TestAhoCorasickCore::test_supported_traits PASSED [  5%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_add_edge_operation[EdgeMode.ADJ_LIST] PASSED [  5%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_add_edge_operation[EdgeMode.ADJ_MATRIX] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_add_edge_operation[EdgeMode.WEIGHTED_GRAPH] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_remove_edge_operation[EdgeMode.ADJ_LIST] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_remove_edge_operation[EdgeMode.ADJ_MATRIX] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_has_edge_operation[EdgeMode.ADJ_LIST] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_has_edge_operation[EdgeMode.ADJ_MATRIX] PASSED [  6%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_get_neighbors_operation[EdgeMode.ADJ_LIST] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyInterfaceCompliance::test_get_neighbors_operation[EdgeMode.WEIGHTED_GRAPH] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_shortest_path[EdgeMode.ADJ_LIST] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_shortest_path[EdgeMode.WEIGHTED_GRAPH] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_graph_traversal[EdgeMode.ADJ_LIST] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_graph_traversal[EdgeMode.ADJ_MATRIX] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_cycle_detection[EdgeMode.ADJ_LIST] PASSED [  7%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyGraphAlgorithms::test_cycle_detection[EdgeMode.ADJ_MATRIX] PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestAdjacencyListStrategy::test_sparse_graph_efficiency PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestAdjacencyListStrategy::test_neighbor_queries PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestAdjacencyMatrixStrategy::test_dense_graph_efficiency PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestAdjacencyMatrixStrategy::test_matrix_operations PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestWeightedGraphStrategy::test_weighted_edges PASSED [  8%]
+0.core\test_all_edge_strategies.py::TestWeightedGraphStrategy::test_shortest_path_with_weights PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestTemporalEdgeSetStrategy::test_time_aware_edges PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestTemporalEdgeSetStrategy::test_temporal_queries PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestSpatialStrategies::test_spatial_indexing[EdgeMode.R_TREE] PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestSpatialStrategies::test_spatial_indexing[EdgeMode.QUADTREE] PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestSpatialStrategies::test_spatial_indexing[EdgeMode.OCTREE] PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestSpatialStrategies::test_spatial_queries[EdgeMode.R_TREE] PASSED [  9%]
+0.core\test_all_edge_strategies.py::TestSpatialStrategies::test_spatial_queries[EdgeMode.QUADTREE] PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategySecurity::test_input_validation[EdgeMode.ADJ_LIST] PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategySecurity::test_input_validation[EdgeMode.ADJ_MATRIX] PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategySecurity::test_resource_limits[EdgeMode.ADJ_LIST] PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategySecurity::test_resource_limits[EdgeMode.WEIGHTED_GRAPH] PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyProductionReadiness::test_all_edge_modes_defined PASSED [ 10%]
+0.core\test_all_edge_strategies.py::TestEdgeStrategyProductionReadiness::test_edge_strategies_loadable PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_create_from_data[NodeMode.HASH_MAP] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_create_from_data[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_create_from_data[NodeMode.ARRAY_LIST] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_to_native_conversion[NodeMode.HASH_MAP] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_to_native_conversion[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_to_native_conversion[NodeMode.ARRAY_LIST] PASSED [ 11%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_get_operation[NodeMode.HASH_MAP] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_get_operation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_put_operation[NodeMode.HASH_MAP] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_put_operation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_delete_operation[NodeMode.HASH_MAP] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_delete_operation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 12%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_exists_operation[NodeMode.HASH_MAP] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_exists_operation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_keys_operation[NodeMode.HASH_MAP] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_keys_operation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_container_protocol[NodeMode.HASH_MAP] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_container_protocol[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_type_checking_properties[NodeMode.HASH_MAP] PASSED [ 13%]
+0.core\test_all_node_strategies.py::TestNodeStrategyInterfaceCompliance::test_type_checking_properties[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestHashMapStrategy::test_hash_map_fast_lookups PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestHashMapStrategy::test_hash_map_nested_paths PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestArrayListStrategy::test_array_list_indexed_access PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestTreeGraphHybridStrategy::test_tree_navigation PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_path_traversal_prevention[NodeMode.HASH_MAP] PASSED [ 14%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_path_traversal_prevention[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_input_validation[NodeMode.HASH_MAP] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_input_validation[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_resource_limits[NodeMode.HASH_MAP] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategySecurity::test_resource_limits[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_invalid_key_handling[NodeMode.HASH_MAP] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_invalid_key_handling[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 15%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_invalid_path_handling[NodeMode.HASH_MAP] PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_invalid_path_handling[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_type_error_handling[NodeMode.HASH_MAP] PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestNodeStrategyErrorHandling::test_type_error_handling[NodeMode.TREE_GRAPH_HYBRID] PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestNodeStrategyIntegration::test_facade_wraps_strategies_correctly PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestNodeStrategyIntegration::test_multiple_strategy_modes_work PASSED [ 16%]
+0.core\test_all_node_strategies.py::TestProductionReadiness::test_all_strategies_loadable PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestProductionReadiness::test_error_messages_helpful PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestProductionReadiness::test_documentation_exists PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestNodeStrategyEdgeCases::test_empty_data PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestNodeStrategyEdgeCases::test_none_value PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestNodeStrategyEdgeCases::test_circular_reference_handling PASSED [ 17%]
+0.core\test_all_node_strategies.py::TestNodeStrategyEdgeCases::test_deep_nesting PASSED [ 17%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_initialization PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_insert_and_get PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_push_operations PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_pop_operations PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_iteration PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListCore::test_clear PASSED [ 18%]
+0.core\test_array_list_strategy.py::TestArrayListEdgeCases::test_empty PASSED [ 19%]
+0.core\test_array_list_strategy.py::TestArrayListEdgeCases::test_single_element PASSED [ 19%]
+0.core\test_art_strategy.py::TestARTStrategyCore::test_create_from_dict PASSED [ 19%]
+0.core\test_art_strategy.py::TestARTStrategyCore::test_string_key_operations PASSED [ 19%]
+0.core\test_art_strategy.py::TestARTStrategyCore::test_ok_complexity PASSED [ 19%]
+0.core\test_art_strategy.py::TestARTStrategyCore::test_prefix_optimization PASSED [ 19%]
+0.core\test_art_strategy.py::TestARTStrategyPerformance::test_fast_string_lookup PASSED [ 19%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_initialization PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_basic_insert_and_get PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_update_existing_key PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_delete_operation PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_has_operation PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_iteration PASSED [ 20%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_clear_operation PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_to_native PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_edge_case_empty PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_edge_case_single_element PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeCore::test_supported_traits PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_avl_balance_after_insert PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_avl_balance_after_delete PASSED [ 21%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_get_min_max PASSED [ 22%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_height_tracking PASSED [ 22%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_rotation_tracking PASSED [ 22%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_balance_factor PASSED [ 22%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_large_dataset PASSED [ 22%]
+0.core\test_avl_tree_strategy.py::TestAVLTreeSpecificFeatures::test_case_insensitive_mode PASSED [ 22%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_initialization_default PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_insert_and_retrieve PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_insert_multiple_sorted PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_leaf_linked_list PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_update_existing_key PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_delete_key PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_iteration PASSED [ 23%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_clear PASSED [ 24%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeCore::test_to_native PASSED [ 24%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeEdgeCases::test_empty_operations PASSED [ 24%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeEdgeCases::test_single_element PASSED [ 24%]
+0.core\test_b_plus_tree_strategy.py::TestBPlusTreeEdgeCases::test_large_dataset PASSED [ 24%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_initialization_default PASSED [ 24%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_initialization_custom_degree PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_insert_single_key PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_insert_multiple_sorted PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_insert_multiple_reverse_order PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_insert_random_order PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_update_existing_key PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_delete_leaf_key PASSED [ 25%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_delete_nonexistent_key PASSED [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_iteration_keys PASSED [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_iteration_items PASSED [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_clear PASSED         [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeCore::test_to_native PASSED     [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeEdgeCases::test_empty_operations PASSED [ 26%]
+0.core\test_b_tree_strategy.py::TestBTreeEdgeCases::test_single_element PASSED [ 27%]
+0.core\test_b_tree_strategy.py::TestBTreeEdgeCases::test_large_dataset PASSED [ 27%]
+0.core\test_b_tree_strategy.py::TestBTreeEdgeCases::test_duplicate_key_update PASSED [ 27%]
+0.core\test_b_tree_strategy.py::TestBTreeEdgeCases::test_unicode_keys PASSED [ 27%]
+0.core\test_bidir_wrapper_edge_strategy.py::TestBidirWrapperCore::test_initialization PASSED [ 27%]
+0.core\test_bidir_wrapper_edge_strategy.py::TestBidirWrapperCore::test_add_edge_creates_both_directions PASSED [ 27%]
+0.core\test_bidir_wrapper_edge_strategy.py::TestBidirWrapperCore::test_symmetry PASSED [ 27%]
+0.core\test_bidir_wrapper_edge_strategy.py::TestBidirWrapperCore::test_remove_edge_removes_both PASSED [ 28%]
+0.core\test_bidir_wrapper_edge_strategy.py::TestBidirWrapperCore::test_supported_traits PASSED [ 28%]
+0.core\test_bitmap_strategy.py::TestBitmap::test_init PASSED             [ 28%]
+0.core\test_bitmap_strategy.py::TestBitmap::test_operations PASSED       [ 28%]
+0.core\test_bitset_dynamic_strategy.py::TestBitsetDynamic::test_init PASSED [ 28%]
+0.core\test_bitset_dynamic_strategy.py::TestBitsetDynamic::test_operations PASSED [ 28%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_initialization PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_initialization_with_block_size PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_add_edge PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_has_edge PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_get_neighbors PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_remove_edge PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_clear_operation PASSED [ 29%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixCore::test_supported_traits PASSED [ 30%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixSpecificFeatures::test_block_partitioning PASSED [ 30%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixSpecificFeatures::test_cache_friendly_access PASSED [ 30%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixSpecificFeatures::test_dense_block_detection PASSED [ 30%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixSpecificFeatures::test_get_edge_weight PASSED [ 30%]
+0.core\test_block_adj_matrix_edge_strategy.py::TestBlockAdjMatrixSpecificFeatures::test_edges_iteration PASSED [ 30%]
+0.core\test_bw_tree_strategy.py::TestBwTreeStrategyCore::test_create_from_dict PASSED [ 31%]
+0.core\test_bw_tree_strategy.py::TestBwTreeStrategyCore::test_delta_based_updates PASSED [ 31%]
+0.core\test_bw_tree_strategy.py::TestBwTreeStrategyCore::test_lock_free_operations PASSED [ 31%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_initialization PASSED [ 31%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_add_edge PASSED [ 31%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_has_edge PASSED [ 31%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_supported_traits PASSED [ 31%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_compression PASSED [ 32%]
+0.core\test_compressed_graph_edge_strategy.py::TestCompressedGraphCore::test_memory_efficiency PASSED [ 32%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_initialization PASSED [ 32%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_add_edge PASSED      [ 32%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_has_edge PASSED      [ 32%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_get_neighbors PASSED [ 32%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_remove_edge PASSED   [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_clear_operation PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOCore::test_supported_traits PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOSpecificFeatures::test_coordinate_storage PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOSpecificFeatures::test_duplicate_edges_allowed PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOSpecificFeatures::test_get_coordinates PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOSpecificFeatures::test_edges_iteration PASSED [ 33%]
+0.core\test_coo_edge_strategy.py::TestCOOSpecificFeatures::test_get_edge_data PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_basic_relationship_operations PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_multiple_relationship_types PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_o1_performance_characteristic PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_cache_functionality PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_bidirectional_queries PASSED [ 34%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_has_relationship PASSED [ 35%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_remove_relationship PASSED [ 35%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_empty_graph PASSED [ 35%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_get_degree PASSED [ 35%]
+0.core\test_core_graph_manager.py::TestGraphManagerCore::test_common_neighbors PASSED [ 35%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_initialization PASSED [ 35%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_basic_increment PASSED [ 35%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_multiple_items PASSED [ 36%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_zero_count PASSED [ 36%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_clear_operation PASSED [ 36%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchCore::test_supported_traits PASSED [ 36%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchSpecificFeatures::test_error_bounds PASSED [ 36%]
+0.core\test_count_min_sketch_strategy.py::TestCountMinSketchSpecificFeatures::test_heavy_hitters PASSED [ 36%]
+0.core\test_cow_tree_strategy.py::TestCOWTree::test_init PASSED          [ 37%]
+0.core\test_cow_tree_strategy.py::TestCOWTree::test_operations PASSED    [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_initialization PASSED [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_add_edge PASSED      [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_has_edge PASSED      [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_get_neighbors PASSED [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_remove_edge PASSED   [ 37%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_clear_operation PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCCore::test_supported_traits PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCSpecificFeatures::test_column_wise_storage PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCSpecificFeatures::test_get_edge_data PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCSpecificFeatures::test_sparse_column_operations PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCSpecificFeatures::test_edges_iteration PASSED [ 38%]
+0.core\test_csc_edge_strategy.py::TestCSCSpecificFeatures::test_vertices_iteration PASSED [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_initialization PASSED [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_add_edge PASSED      [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_has_edge PASSED      [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_get_neighbors_out PASSED [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_get_neighbors_empty PASSED [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_remove_edge PASSED   [ 39%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_remove_edge_nonexistent PASSED [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_clear_operation PASSED [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_supported_traits PASSED [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRCore::test_degree_out PASSED    [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRSpecificFeatures::test_csr_rebuild PASSED [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRSpecificFeatures::test_sparse_vector_multiply PASSED [ 40%]
+0.core\test_csr_edge_strategy.py::TestCSRSpecificFeatures::test_compression_ratio PASSED [ 41%]
+0.core\test_csr_edge_strategy.py::TestCSRSpecificFeatures::test_get_edge_data PASSED [ 41%]
+0.core\test_csr_edge_strategy.py::TestCSRSpecificFeatures::test_from_csr_arrays PASSED [ 41%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_initialization PASSED [ 41%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_basic_operations PASSED [ 41%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_update_existing_key PASSED [ 41%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_delete_operation PASSED [ 41%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_has_operation PASSED [ 42%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_clear_operation PASSED [ 42%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashCore::test_supported_traits PASSED [ 42%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashSpecificFeatures::test_collision_handling PASSED [ 42%]
+0.core\test_cuckoo_hash_strategy.py::TestCuckooHashSpecificFeatures::test_rehashing PASSED [ 42%]
+0.core\test_data_interchange_optimized_strategy.py::TestDataInterchange::test_init PASSED [ 42%]
+0.core\test_data_interchange_optimized_strategy.py::TestDataInterchange::test_operations PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_initialization PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_add_edge PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_has_edge PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_get_neighbors PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_remove_edge PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_clear_operation PASSED [ 43%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListCore::test_supported_traits PASSED [ 44%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListDynamicFeatures::test_edge_property_updates PASSED [ 44%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListDynamicFeatures::test_version_history_tracking PASSED [ 44%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListDynamicFeatures::test_high_churn_efficiency PASSED [ 44%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListDynamicFeatures::test_batch_operations PASSED [ 44%]
+0.core\test_dynamic_adj_list_edge_strategy.py::TestDynamicAdjListDynamicFeatures::test_change_tracking PASSED [ 44%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_initialization PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_add_edge PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_has_edge PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_remove_edge PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_clear_operation PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_supported_traits PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_simple_format PASSED [ 45%]
+0.core\test_edge_list_edge_strategy.py::TestEdgeListCore::test_edges_iteration PASSED [ 46%]
+0.core\test_edge_property_store_edge_strategy.py::TestEdgePropertyStoreCore::test_initialization PASSED [ 46%]
+0.core\test_edge_property_store_edge_strategy.py::TestEdgePropertyStoreCore::test_columnar_storage PASSED [ 46%]
+0.core\test_edge_property_store_edge_strategy.py::TestEdgePropertyStoreCore::test_property_queries PASSED [ 46%]
+0.core\test_edge_property_store_edge_strategy.py::TestEdgePropertyStoreCore::test_supported_traits PASSED [ 46%]
+0.core\test_extendible_hash_strategy.py::TestExtendibleHash::test_init PASSED [ 46%]
+0.core\test_extendible_hash_strategy.py::TestExtendibleHash::test_operations PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_initialization PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_basic_operations PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_prefix_sum PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_range_sum PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_update_operation PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_single_element PASSED [ 47%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_clear_operation PASSED [ 48%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeCore::test_supported_traits PASSED [ 48%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeSpecificFeatures::test_incremental_updates PASSED [ 48%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeSpecificFeatures::test_multiple_range_queries PASSED [ 48%]
+0.core\test_fenwick_tree_strategy.py::TestFenwickTreeSpecificFeatures::test_zero_values PASSED [ 48%]
+0.core\test_flow_network_edge_strategy.py::TestFlowNetworkCore::test_initialization PASSED [ 48%]
+0.core\test_flow_network_edge_strategy.py::TestFlowNetworkCore::test_capacity_constraints PASSED [ 49%]
+0.core\test_flow_network_edge_strategy.py::TestFlowNetworkCore::test_max_flow_computation PASSED [ 49%]
+0.core\test_flow_network_edge_strategy.py::TestFlowNetworkCore::test_supported_traits PASSED [ 49%]
+0.core\test_hamt_strategy.py::TestHAMTStrategyCore::test_create_from_dict PASSED [ 49%]
+0.core\test_hamt_strategy.py::TestHAMTStrategyCore::test_persistent_operations PASSED [ 49%]
+0.core\test_hamt_strategy.py::TestHAMTStrategyCore::test_structural_sharing PASSED [ 49%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_initialization_default PASSED [ 49%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_initialization_with_options PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_basic_put_get PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_basic_has PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_basic_delete PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_multiple_keys PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_update_existing_key PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_get_with_default PASSED [ 50%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_iteration_keys PASSED [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_iteration_values PASSED [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_iteration_items PASSED [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_clear PASSED     [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_to_native PASSED [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_special_methods_getitem PASSED [ 51%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_special_methods_setitem PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_special_methods_delitem PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_special_methods_delitem_missing_raises PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapCore::test_supported_traits PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_empty_strategy_operations PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_single_item_operations PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_large_dataset_10k PASSED [ 52%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_unicode_keys PASSED [ 53%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_mixed_type_values PASSED [ 53%]
+0.core\test_hash_map_strategy.py::TestHashMapEdgeCases::test_collision_handling PASSED [ 53%]
+0.core\test_heap_strategy.py::TestHeapCore::test_initialization PASSED   [ 53%]
+0.core\test_heap_strategy.py::TestHeapCore::test_basic_operations PASSED [ 53%]
+0.core\test_heap_strategy.py::TestHeapCore::test_max_heap PASSED         [ 53%]
+0.core\test_heap_strategy.py::TestHeapCore::test_peek_operation PASSED   [ 54%]
+0.core\test_heap_strategy.py::TestHeapCore::test_clear_operation PASSED  [ 54%]
+0.core\test_heap_strategy.py::TestHeapCore::test_supported_traits PASSED [ 54%]
+0.core\test_hyperedge_set_edge_strategy.py::TestHyperEdgeSetCore::test_initialization PASSED [ 54%]
+0.core\test_hyperedge_set_edge_strategy.py::TestHyperEdgeSetCore::test_add_hyperedge PASSED [ 54%]
+0.core\test_hyperedge_set_edge_strategy.py::TestHyperEdgeSetCore::test_supported_traits PASSED [ 54%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_initialization PASSED [ 54%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_basic_add PASSED [ 55%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_duplicate_handling PASSED [ 55%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_large_unique_set PASSED [ 55%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_clear_operation PASSED [ 55%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogCore::test_supported_traits PASSED [ 55%]
+0.core\test_hyperloglog_strategy.py::TestHyperLogLogSpecificFeatures::test_merge_operation PASSED [ 55%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_initialization PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_add_edge PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_has_edge PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_remove_edge PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_clear_operation PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixCore::test_supported_traits PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixSpecificFeatures::test_edge_centric_representation PASSED [ 56%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixSpecificFeatures::test_multi_edge_support PASSED [ 57%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixSpecificFeatures::test_edge_property_access PASSED [ 57%]
+0.core\test_incidence_matrix_edge_strategy.py::TestIncidenceMatrixSpecificFeatures::test_neighbor_queries PASSED [ 57%]
+0.core\test_learned_index_strategy.py::TestLearnedIndex::test_init PASSED [ 57%]
+0.core\test_learned_index_strategy.py::TestLearnedIndex::test_operations PASSED [ 57%]
+0.core\test_linear_hash_strategy.py::TestLinearHash::test_init PASSED    [ 57%]
+0.core\test_linear_hash_strategy.py::TestLinearHash::test_operations PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_initialization PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_insert_and_get PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_push_operations PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_pop_operations PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_iteration PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListCore::test_clear PASSED [ 58%]
+0.core\test_linked_list_strategy.py::TestLinkedListEdgeCases::test_empty PASSED [ 59%]
+0.core\test_linked_list_strategy.py::TestLinkedListEdgeCases::test_single_element PASSED [ 59%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_initialization PASSED [ 59%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_insert_and_get PASSED [ 59%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_multiple_inserts PASSED [ 59%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_update_key PASSED [ 59%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_delete PASSED    [ 60%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_iteration PASSED [ 60%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeCore::test_clear PASSED     [ 60%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeEdgeCases::test_empty PASSED [ 60%]
+0.core\test_lsm_tree_strategy.py::TestLSMTreeEdgeCases::test_large_dataset PASSED [ 60%]
+0.core\test_masstree_strategy.py::TestMasstree::test_init PASSED         [ 60%]
+0.core\test_masstree_strategy.py::TestMasstree::test_operations PASSED   [ 60%]
+0.core\test_neural_graph_edge_strategy.py::TestNeuralGraphCore::test_initialization PASSED [ 61%]
+0.core\test_neural_graph_edge_strategy.py::TestNeuralGraphCore::test_computation_graph PASSED [ 61%]
+0.core\test_neural_graph_edge_strategy.py::TestNeuralGraphCore::test_forward_pass PASSED [ 61%]
+0.core\test_neural_graph_edge_strategy.py::TestNeuralGraphCore::test_supported_traits PASSED [ 61%]
+0.core\test_new_edge_strategies.py::TestIncidenceMatrixStrategyCore::test_create_and_add_edge PASSED [ 61%]
+0.core\test_new_edge_strategies.py::TestIncidenceMatrixStrategyCore::test_edge_centric_operations PASSED [ 61%]
+0.core\test_new_edge_strategies.py::TestEdgeListStrategyCore::test_create_and_add_edge PASSED [ 62%]
+0.core\test_new_edge_strategies.py::TestEdgeListStrategyCore::test_simple_format PASSED [ 62%]
+0.core\test_new_edge_strategies.py::TestCompressedGraphStrategyCore::test_create_and_add_edge PASSED [ 62%]
+0.core\test_new_edge_strategies.py::TestCompressedGraphStrategyCore::test_compression_features PASSED [ 62%]
+0.core\test_new_node_strategies.py::TestMasstreeStrategyCore::test_create_and_operations PASSED [ 62%]
+0.core\test_new_node_strategies.py::TestExtendibleHashStrategyCore::test_create_and_operations PASSED [ 62%]
+0.core\test_new_node_strategies.py::TestLinearHashStrategyCore::test_create_and_operations PASSED [ 62%]
+0.core\test_new_node_strategies.py::TestTTreeStrategyCore::test_create_and_operations PASSED [ 63%]
+0.core\test_new_node_strategies.py::TestLearnedIndexStrategyCore::test_create_with_placeholder PASSED [ 63%]
+0.core\test_new_node_strategies.py::TestLearnedIndexStrategyCore::test_placeholder_delegation PASSED [ 63%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_initialization PASSED [ 63%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_add_3d_spatial_edge PASSED [ 63%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_has_edge PASSED [ 63%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_octree_subdivision PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_clear_operation PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeCore::test_supported_traits PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeSpatialFeatures::test_3d_spatial_partitioning PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeSpatialFeatures::test_3d_point_location PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeSpatialFeatures::test_box_region_query PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeSpatialFeatures::test_spherical_region_query PASSED [ 64%]
+0.core\test_octree_edge_strategy.py::TestOctreeSpatialFeatures::test_get_neighbors_3d PASSED [ 65%]
+0.core\test_ordered_map_balanced_strategy.py::TestOrderedMapBalanced::test_init PASSED [ 65%]
+0.core\test_ordered_map_balanced_strategy.py::TestOrderedMapBalanced::test_operations PASSED [ 65%]
+0.core\test_ordered_map_strategy.py::TestOrderedMapCore::test_init PASSED [ 65%]
+0.core\test_ordered_map_strategy.py::TestOrderedMapCore::test_put_get PASSED [ 65%]
+0.core\test_ordered_map_strategy.py::TestOrderedMapCore::test_ordering PASSED [ 65%]
+0.core\test_ordered_map_strategy.py::TestOrderedMapCore::test_delete PASSED [ 66%]
+0.core\test_patricia_strategy.py::TestPatricia::test_init PASSED         [ 66%]
+0.core\test_patricia_strategy.py::TestPatricia::test_operations PASSED   [ 66%]
+0.core\test_persistent_tree_strategy.py::TestPersistentTree::test_init PASSED [ 66%]
+0.core\test_persistent_tree_strategy.py::TestPersistentTree::test_operations PASSED [ 66%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_initialization PASSED [ 66%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_add_spatial_edge PASSED [ 66%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_has_edge PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_quadtree_subdivision PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_clear_operation PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeCore::test_supported_traits PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeSpatialFeatures::test_2d_spatial_partitioning PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeSpatialFeatures::test_point_location_query PASSED [ 67%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeSpatialFeatures::test_rectangular_region_query PASSED [ 68%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeSpatialFeatures::test_recursive_subdivision PASSED [ 68%]
+0.core\test_quadtree_edge_strategy.py::TestQuadTreeSpatialFeatures::test_get_neighbors PASSED [ 68%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_initialization PASSED [ 68%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_add_spatial_edge PASSED [ 68%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_has_edge PASSED [ 68%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_spatial_range_query PASSED [ 68%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_clear_operation PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeCore::test_supported_traits PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeSpatialFeatures::test_bounding_rectangle_queries PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeSpatialFeatures::test_point_query PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeSpatialFeatures::test_spatial_intersection PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeSpatialFeatures::test_3d_spatial_support PASSED [ 69%]
+0.core\test_r_tree_edge_strategy.py::TestRTreeSpatialFeatures::test_edge_length_calculation PASSED [ 70%]
+0.core\test_radix_trie_strategy.py::TestRadixTrie::test_init PASSED      [ 70%]
+0.core\test_radix_trie_strategy.py::TestRadixTrie::test_operations PASSED [ 70%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_initialization PASSED [ 70%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_basic_insert_and_get PASSED [ 70%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_update_existing_key PASSED [ 70%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_delete_operation PASSED [ 70%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_has_operation PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_iteration PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_clear_operation PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_to_native PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_edge_case_empty PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_edge_case_single_element PASSED [ 71%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeCore::test_supported_traits PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_rb_tree_properties_after_insert PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_rb_tree_properties_after_delete PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_get_min_max PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_height_tracking PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_rotation_tracking PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_large_dataset PASSED [ 72%]
+0.core\test_red_black_tree_strategy.py::TestRedBlackTreeSpecificFeatures::test_case_insensitive_mode PASSED [ 73%]
+0.core\test_roaring_bitmap_strategy.py::TestRoaringBitmap::test_init PASSED [ 73%]
+0.core\test_roaring_bitmap_strategy.py::TestRoaringBitmap::test_operations PASSED [ 73%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_initialization PASSED [ 73%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_basic_operations PASSED [ 73%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_range_sum PASSED [ 73%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_range_min PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_range_max PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_update_operation PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_single_element_range PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_clear_operation PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeCore::test_supported_traits PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeSpecificFeatures::test_different_operations_with_validation PASSED [ 74%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeSpecificFeatures::test_partial_range_with_exact_values PASSED [ 75%]
+0.core\test_segment_tree_strategy.py::TestSegmentTreeSpecificFeatures::test_multiple_updates_exact_values PASSED [ 75%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_initialization PASSED [ 75%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_add_operation PASSED [ 75%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_duplicate_handling PASSED [ 75%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_remove_operation PASSED [ 75%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_set_operations PASSED [ 76%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_clear_operation PASSED [ 76%]
+0.core\test_set_hash_strategy.py::TestSetHashCore::test_supported_traits PASSED [ 76%]
+0.core\test_set_tree_strategy.py::TestSetTreeCore::test_init PASSED      [ 76%]
+0.core\test_set_tree_strategy.py::TestSetTreeCore::test_add PASSED       [ 76%]
+0.core\test_set_tree_strategy.py::TestSetTreeCore::test_duplicates PASSED [ 76%]
+0.core\test_set_tree_strategy.py::TestSetTreeCore::test_remove PASSED    [ 76%]
+0.core\test_set_tree_strategy.py::TestSetTreeCore::test_ordered PASSED   [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_init PASSED    [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_put_get PASSED [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_multiple PASSED [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_delete PASSED  [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_iteration PASSED [ 77%]
+0.core\test_skip_list_strategy.py::TestSkipListCore::test_clear PASSED   [ 78%]
+0.core\test_skip_list_strategy.py::TestSkipListEdgeCases::test_empty PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_initialization PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_basic_insert_and_get PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_update_existing_key PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_delete_operation PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_has_operation PASSED [ 78%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_iteration PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_clear_operation PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_to_native PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_edge_case_empty PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeCore::test_supported_traits PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_splay_on_access PASSED [ 79%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_splay_tracking PASSED [ 80%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_get_min_max PASSED [ 80%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_medium_dataset PASSED [ 80%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_sequential_access_pattern PASSED [ 80%]
+0.core\test_splay_tree_strategy.py::TestSplayTreeSpecificFeatures::test_case_insensitive_mode PASSED [ 80%]
+0.core\test_strategy_production_fixes.py::TestStrategyTypeCorrectness::test_hash_map_is_hybrid_not_tree PASSED [ 80%]
+0.core\test_strategy_production_fixes.py::TestStrategyTypeCorrectness::test_set_hash_is_hybrid PASSED [ 80%]
+0.core\test_strategy_production_fixes.py::TestStrategyTypeCorrectness::test_hyperloglog_is_hybrid PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestNamingConsistency::test_persistent_tree_snapshot_returns_correct_type PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestNamingConsistency::test_cow_tree_snapshot_returns_correct_type PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestNamingConsistency::test_roaring_bitmap_union_returns_correct_type PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestNamingConsistency::test_bitmap_bitwise_and_returns_correct_type PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestNamingConsistency::test_bitset_dynamic_logical_and_returns_correct_type PASSED [ 81%]
+0.core\test_strategy_production_fixes.py::TestLSMTreeProductionFeatures::test_lsm_has_wal PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestLSMTreeProductionFeatures::test_lsm_has_bloom_filters PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestLSMTreeProductionFeatures::test_lsm_has_background_compaction PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestLSMTreeProductionFeatures::test_lsm_backend_info_shows_production_features PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestBWTreeProductionFeatures::test_bw_tree_has_mapping_table PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestBWTreeProductionFeatures::test_bw_tree_has_cas_operations PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestBWTreeProductionFeatures::test_bw_tree_has_epoch_gc PASSED [ 82%]
+0.core\test_strategy_production_fixes.py::TestBWTreeProductionFeatures::test_bw_tree_backend_info_shows_production_features PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestLearnedIndexProductionFeatures::test_learned_index_has_ml_components PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestLearnedIndexProductionFeatures::test_learned_index_has_training_pipeline PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestLearnedIndexProductionFeatures::test_learned_index_training_works PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestLearnedIndexProductionFeatures::test_learned_index_backend_info_shows_production_features PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestPersistentTreeProductionFeatures::test_persistent_tree_has_version_management PASSED [ 83%]
+0.core\test_strategy_production_fixes.py::TestPersistentTreeProductionFeatures::test_persistent_tree_version_history_works PASSED [ 84%]
+0.core\test_strategy_production_fixes.py::TestCOWTreeProductionFeatures::test_cow_tree_has_memory_monitoring PASSED [ 84%]
+0.core\test_strategy_production_fixes.py::TestCOWTreeProductionFeatures::test_cow_tree_memory_pressure_works PASSED [ 84%]
+0.core\test_strategy_production_fixes.py::TestDocumentationCompliance::test_lsm_tree_has_production_features PASSED [ 84%]
+0.core\test_strategy_production_fixes.py::TestDocumentationCompliance::test_bw_tree_has_production_features PASSED [ 84%]
+0.core\test_strategy_production_fixes.py::TestDocumentationCompliance::test_learned_index_has_production_features PASSED [ 84%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_initialization PASSED [ 84%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_basic_operations PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_pattern_search PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_single_character_pattern PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_pattern_not_found PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_case_sensitivity PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_clear_operation PASSED [ 85%]
+0.core\test_suffix_array_strategy.py::TestSuffixArrayCore::test_supported_traits PASSED [ 86%]
+0.core\test_suffix_array_strategy.py::TestSuffixArraySpecificFeatures::test_multiple_patterns PASSED [ 86%]
+0.core\test_suffix_array_strategy.py::TestSuffixArraySpecificFeatures::test_overlapping_matches PASSED [ 86%]
+0.core\test_suffix_array_strategy.py::TestSuffixArraySpecificFeatures::test_longest_common_prefix PASSED [ 86%]
+0.core\test_t_tree_strategy.py::TestTTree::test_init PASSED              [ 86%]
+0.core\test_t_tree_strategy.py::TestTTree::test_operations PASSED        [ 86%]
+0.core\test_temporal_edgeset_edge_strategy.py::TestTemporalEdgeSetCore::test_initialization PASSED [ 86%]
+0.core\test_temporal_edgeset_edge_strategy.py::TestTemporalEdgeSetCore::test_add_temporal_edge PASSED [ 87%]
+0.core\test_temporal_edgeset_edge_strategy.py::TestTemporalEdgeSetCore::test_time_range_query PASSED [ 87%]
+0.core\test_temporal_edgeset_edge_strategy.py::TestTemporalEdgeSetCore::test_supported_traits PASSED [ 87%]
+0.core\test_treap_strategy.py::TestTreapCore::test_initialization PASSED [ 87%]
+0.core\test_treap_strategy.py::TestTreapCore::test_basic_insert_and_get PASSED [ 87%]
+0.core\test_treap_strategy.py::TestTreapCore::test_update_existing_key PASSED [ 87%]
+0.core\test_treap_strategy.py::TestTreapCore::test_delete_operation PASSED [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_has_operation PASSED  [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_iteration PASSED      [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_clear_operation PASSED [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_to_native PASSED      [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_edge_case_empty PASSED [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_edge_case_single_element PASSED [ 88%]
+0.core\test_treap_strategy.py::TestTreapCore::test_supported_traits PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_random_priorities PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_height_tracking PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_rotation_tracking PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_get_min_max PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_large_dataset PASSED [ 89%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_sequential_insertion PASSED [ 90%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_case_insensitive_mode PASSED [ 90%]
+0.core\test_treap_strategy.py::TestTreapSpecificFeatures::test_deterministic_priorities PASSED [ 90%]
+0.core\test_tree_graph_basic_edge_strategy.py::TestTreeGraphBasicCore::test_initialization PASSED [ 90%]
+0.core\test_tree_graph_basic_edge_strategy.py::TestTreeGraphBasicCore::test_tree_structure PASSED [ 90%]
+0.core\test_tree_graph_basic_edge_strategy.py::TestTreeGraphBasicCore::test_parent_child_relationships PASSED [ 90%]
+0.core\test_tree_graph_basic_edge_strategy.py::TestTreeGraphBasicCore::test_supported_traits PASSED [ 90%]
+0.core\test_trie_strategy.py::TestTrieCore::test_initialization PASSED   [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_insert_and_search PASSED [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_prefix_search PASSED    [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_delete_word PASSED      [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_empty_string PASSED     [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_iteration PASSED        [ 91%]
+0.core\test_trie_strategy.py::TestTrieCore::test_clear PASSED            [ 92%]
+0.core\test_trie_strategy.py::TestTrieCore::test_to_native PASSED        [ 92%]
+0.core\test_trie_strategy.py::TestTrieEdgeCases::test_empty_operations PASSED [ 92%]
+0.core\test_trie_strategy.py::TestTrieEdgeCases::test_single_character_keys PASSED [ 92%]
+0.core\test_trie_strategy.py::TestTrieEdgeCases::test_unicode_keys PASSED [ 92%]
+0.core\test_trie_strategy.py::TestTrieEdgeCases::test_overlapping_prefixes PASSED [ 92%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_initialization PASSED [ 92%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_make_set PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_union_operation PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_find_operation PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_connected_operation PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_path_compression PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_get_set_size PASSED [ 93%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_clear_operation PASSED [ 94%]
+0.core\test_union_find_strategy.py::TestUnionFindCore::test_supported_traits PASSED [ 94%]
+0.core\test_union_find_strategy.py::TestUnionFindSpecificFeatures::test_union_by_rank PASSED [ 94%]
+0.core\test_union_find_strategy.py::TestUnionFindSpecificFeatures::test_multiple_disjoint_sets PASSED [ 94%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_create_veb_tree PASSED [ 94%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_insert_and_retrieve PASSED [ 94%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_universe_boundary_validation PASSED [ 94%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_key_bounds_validation PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_integer_key_requirement PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_min_max_operations PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_successor_predecessor PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_delete_operation PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_range_query PASSED [ 95%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_iteration_order PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_large_universe_performance PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_memory_usage_stats PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_create_from_data PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_clear_operation PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreeStrategyCore::test_edge_cases PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreePerformance::test_log_log_complexity PASSED [ 96%]
+0.core\test_veb_tree_strategy.py::TestVebTreePerformance::test_sparse_data_efficiency PASSED [ 97%]
+0.core\test_veb_tree_strategy.py::TestVebTreeTraits::test_supported_traits PASSED [ 97%]
+0.core\test_veb_tree_strategy.py::TestVebTreeTraits::test_strategy_type PASSED [ 97%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_initialization PASSED [ 97%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_add_weighted_edge PASSED [ 97%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_add_weighted_edges_from_data PASSED [ 97%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_get_edge_weight PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_has_edge PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_remove_edge PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_update_edge_weight PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_clear_operation PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphCore::test_supported_traits PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphAlgorithms::test_shortest_path_exists PASSED [ 98%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphAlgorithms::test_dijkstra_shortest_path PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphAlgorithms::test_neighbors_with_weights PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphAlgorithms::test_shortest_path_nonexistent PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphAlgorithms::test_degree_calculation PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphEdgeCases::test_zero_weight_edges PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphEdgeCases::test_negative_weight_edges PASSED [ 99%]
+0.core\test_weighted_graph_edge_strategy.py::TestWeightedGraphEdgeCases::test_large_weight_values PASSED [100%]
+
+===================== 651 passed, 188 deselected in 2.43s =====================
+
+
+✓ 
+===================== 651 passed, 188 deselected in 2.43s =====================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\0.core\runner_out.md
+
+✓ ✅ Layer 0: Core Tests PASSED
+📂 ================================================================================
+ℹ ▶️ Starting: Layer 1: Unit Tests
+ℹ 📍 Runner Path: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\runner.py
+================================================================================
+================================================================================
+xwnode - Unit Tests - Module by Module
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 5 sub-module(s) with runners
+   Sub-module: common_tests
+================================================================================
+xwnode - Unit Tests - Common Module (management, monitoring, patterns, utils)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests\runner_out.md
+ℹ 
+Discovered 5 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests -m xwnode_unit
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 31 items
+
+common_tests\test_flyweight_pattern.py::TestFlyweightPattern::test_flyweight_exists PASSED [  3%]
+common_tests\test_flyweight_pattern.py::TestFlyweightPattern::test_object_pooling PASSED [  6%]
+common_tests\test_flyweight_pattern.py::TestFlyweightPerformance::test_memory_optimization PASSED [  9%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorBasics::test_monitor_initialization PASSED [ 12%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorBasics::test_monitor_tracks_operations PASSED [ 16%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitoring::test_monitor_collects_metrics PASSED [ 19%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitoring::test_monitor_handles_multiple_operations PASSED [ 22%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorEdgeCases::test_monitor_with_no_operations PASSED [ 25%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorEdgeCases::test_monitor_reusability PASSED [ 29%]
+common_tests\test_registry.py::TestRegistryBasics::test_get_registry_returns_instance PASSED [ 32%]
+common_tests\test_registry.py::TestRegistryBasics::test_registry_is_singleton PASSED [ 35%]
+common_tests\test_registry.py::TestRegistryStrategies::test_registry_has_strategies PASSED [ 38%]
+common_tests\test_registry.py::TestRegistryStrategies::test_registry_handles_node_modes PASSED [ 41%]
+common_tests\test_registry.py::TestRegistryEdgeCases::test_registry_with_invalid_mode PASSED [ 45%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_node_strategy_from_dict PASSED [ 48%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_node_strategy_from_list PASSED [ 51%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_specific_mode PASSED [ 54%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_empty_data PASSED [ 58%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_none_data PASSED [ 61%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_dict PASSED [ 64%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_list PASSED [ 67%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_nested_data PASSED [ 70%]
+common_tests\test_strategy_manager.py::TestStrategyManagerPerformance::test_strategy_creation_performance PASSED [ 74%]
+common_tests\test_strategy_manager.py::TestStrategyManagerPerformance::test_multiple_creations_work PASSED [ 77%]
+common_tests\test_strategy_manager.py::TestStrategyManagerErrors::test_invalid_data_type_handling PASSED [ 80%]
+common_tests\test_strategy_manager.py::TestStrategyManagerErrors::test_edge_case_data_handling PASSED [ 83%]
+common_tests\test_strategy_manager.py::TestStrategyManagerMetadata::test_manager_initialization PASSED [ 87%]
+common_tests\test_strategy_manager.py::TestStrategyManagerMetadata::test_manager_is_reusable PASSED [ 90%]
+common_tests\test_utils.py::TestSimpleNodeStrategy::test_simple_strategy_creation PASSED [ 93%]
+common_tests\test_utils.py::TestSimpleNodeStrategy::test_simple_strategy_operations PASSED [ 96%]
+common_tests\test_utils.py::TestUtils::test_utils_module_exists PASSED   [100%]
+
+============================= 31 passed in 1.68s ==============================
+
+
+✓ 
+============================= 31 passed in 1.68s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests\runner_out.md
+   Sub-module: edges_tests
+================================================================================
+xwnode - Unit Tests - Edges Module (strategies, executors)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\runner_out.md
+ℹ 
+Discovered 1 sub-module(s) with runners
+   Sub-module: strategies_tests
+================================================================================
+xwnode - Unit Tests - Edge Strategies (16 strategies: ADJ_LIST, R_TREE, NEURAL_GRAPH, etc.)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests\runner_out.md
+ℹ 
+Discovered 9 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests -m xwnode_unit or xwnode_edge_strategy
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 50 items
+
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_add_edge PASSED [  2%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_remove_edge PASSED [  4%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_has_edge_o1_performance PASSED [  6%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixPerformance::test_dense_graph_efficiency PASSED [  8%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixEdgeCases::test_self_loops PASSED [ 10%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixEdgeCases::test_bidirectional_edges PASSED [ 12%]
+strategies_tests\test_flow_network.py::TestFlowNetworkInterface::test_strategy_exists PASSED [ 14%]
+strategies_tests\test_flow_network.py::TestFlowNetworkInterface::test_capacity_constraints PASSED [ 16%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_strategy_exists PASSED [ 18%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_hyperedge_support PASSED [ 20%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_multi_vertex_edges PASSED [ 22%]
+strategies_tests\test_neural_graph.py::TestNeuralGraphInterface::test_strategy_exists PASSED [ 24%]
+strategies_tests\test_neural_graph.py::TestNeuralGraphInterface::test_computation_graph_support PASSED [ 26%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_initialization PASSED [ 28%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_supported_traits PASSED [ 30%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_add_edge PASSED [ 32%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_remove_edge PASSED [ 34%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_get_neighbors PASSED [ 36%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_edge_by_id PASSED [ 38%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_initialization PASSED [ 40%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_add_multiple_edges PASSED [ 42%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_simple_format PASSED [ 44%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_initialization PASSED [ 46%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_compression PASSED [ 48%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_power_law_graph PASSED [ 50%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_strategy_exists PASSED [ 52%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_compressed_storage PASSED [ 54%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_memory_reduction PASSED [ 56%]
+strategies_tests\test_sparse_formats.py::TestCSCStrategy::test_strategy_exists PASSED [ 58%]
+strategies_tests\test_sparse_formats.py::TestCSCStrategy::test_column_oriented_operations PASSED [ 60%]
+strategies_tests\test_sparse_formats.py::TestCOOStrategy::test_strategy_exists PASSED [ 62%]
+strategies_tests\test_sparse_formats.py::TestCOOStrategy::test_coordinate_format PASSED [ 64%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_rtree_strategy_exists PASSED [ 66%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_quadtree_strategy_exists PASSED [ 68%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_octree_strategy_exists PASSED [ 70%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_rtree_for_2d_3d_rectangles PASSED [ 72%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_quadtree_for_2d_partitioning PASSED [ 74%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_octree_for_3d_partitioning PASSED [ 76%]
+strategies_tests\test_spatial_strategies.py::TestSpatialPerformance::test_spatial_query_optimization PASSED [ 78%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalEdgeSetInterface::test_strategy_exists PASSED [ 80%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalEdgeSetInterface::test_temporal_capabilities PASSED [ 82%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalOperations::test_time_aware_edge_storage PASSED [ 84%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalOperations::test_temporal_queries PASSED [ 86%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalPerformance::test_temporal_query_performance PASSED [ 88%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_add_weighted_edge PASSED [ 90%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_get_edge_weight PASSED [ 92%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_weighted_path_algorithms PASSED [ 94%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_zero_weight PASSED [ 96%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_negative_weight PASSED [ 98%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_very_large_weight PASSED [100%]
+
+============================= 50 passed in 1.71s ==============================
+
+
+✓ 
+============================= 50 passed in 1.71s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests\runner_out.md
+✓ 
+✅ ALL SUB-MODULES PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\runner_out.md
+   Sub-module: facade_tests
+================================================================================
+xwnode - Unit Tests - Facade Module (XWNode public API)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests\runner_out.md
+ℹ 
+Discovered 2 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests -m xwnode_unit
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 42 items
+
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_dict PASSED [  2%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_list PASSED [  4%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_nested_data PASSED [  7%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_specific_mode PASSED [  9%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_empty_data PASSED [ 11%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_get_operation PASSED [ 14%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_set_operation PASSED [ 16%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_delete_operation PASSED [ 19%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_exists_operation PASSED [ 21%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_length_operation PASSED [ 23%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_to_native_roundtrip PASSED [ 26%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_simple_creation_is_easy PASSED [ 28%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_error_messages_are_helpful PASSED [ 30%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_common_operations_work_intuitively PASSED [ 33%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_malicious_input_handling PASSED [ 35%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_resource_limits PASSED [ 38%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_circular_reference_protection PASSED [ 40%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_empty_data_handling PASSED [ 42%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_none_values PASSED [ 45%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_unicode_data PASSED [ 47%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_mixed_types_in_dict PASSED [ 50%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_all_presets_defined PASSED [ 52%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_get_preset_returns_config PASSED [ 54%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_invalid_preset_raises_error PASSED [ 57%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[DATA_INTERCHANGE_OPTIMIZED] PASSED [ 59%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SOCIAL_GRAPH] PASSED [ 61%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[ANALYTICS] PASSED [ 64%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SEARCH_ENGINE] PASSED [ 66%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[TIME_SERIES] PASSED [ 69%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SPATIAL_MAP] PASSED [ 71%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[DATA_INTERCHANGE_OPTIMIZED] PASSED [ 73%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[SOCIAL_GRAPH] PASSED [ 76%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[ANALYTICS] PASSED [ 78%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_data_interchange_optimized_config PASSED [ 80%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_social_graph_config PASSED [ 83%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_analytics_config PASSED [ 85%]
+facade_tests\test_xwnode_presets.py::TestPresetUsage::test_list_presets_returns_all PASSED [ 88%]
+facade_tests\test_xwnode_presets.py::TestPresetUsage::test_preset_configuration_is_usable PASSED [ 90%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_all_presets_have_performance_class PASSED [ 92%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_all_presets_have_node_mode PASSED [ 95%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_preset_disabled_features_is_list PASSED [ 97%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_preset_internal_config_is_dict PASSED [100%]
+
+============================= 42 passed in 1.72s ==============================
+
+
+✓ 
+============================= 42 passed in 1.72s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests\runner_out.md
+   Sub-module: graph_tests
+   Testing: graph
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 25 items
+
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_initialization PASSED [  4%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_add_single_relationship PASSED [  8%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_add_multiple_relationships PASSED [ 12%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_query_with_type_filter PASSED [ 16%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_query_without_type_filter PASSED [ 20%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_remove_relationship PASSED [ 24%]
+graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_degree_calculation PASSED [ 28%]
+graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_isolation_key_set PASSED [ 32%]
+graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_valid_isolation_key PASSED [ 36%]
+graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_operations_within_isolation_boundary PASSED [ 40%]
+graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_separate_instances_are_isolated PASSED [ 44%]
+graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_hit_on_repeated_query PASSED [ 48%]
+graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_invalidation_on_add PASSED [ 52%]
+graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_invalidation_on_remove PASSED [ 56%]
+graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_clear_cache PASSED [ 60%]
+graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_outgoing_index PASSED [ 64%]
+graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_incoming_index PASSED [ 68%]
+graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_index_stats PASSED [ 72%]
+graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_clear_indexes PASSED [ 76%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_empty_graph_queries PASSED [ 80%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_nonexistent_entity PASSED [ 84%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_nonexistent_relationship_type PASSED [ 88%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_has_relationship_nonexistent PASSED [ 92%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_remove_nonexistent_relationship PASSED [ 96%]
+graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_limit_parameter PASSED [100%]
+
+============================= 25 passed in 0.04s ==============================
+   Sub-module: nodes_tests
+================================================================================
+xwnode - Unit Tests - Nodes Module (45+ strategies, base classes)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\runner_out.md
+ℹ 
+Discovered 1 sub-module(s) with runners
+   Sub-module: strategies_tests
+================================================================================
+xwnode - Unit Tests - Node Strategies (45+ strategies: HASH_MAP, TRIE, LSM_TREE, etc.)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests\runner_out.md
+ℹ 
+Discovered 25 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests -m xwnode_unit or xwnode_node_strategy
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 178 items
+
+strategies_tests\test_adjacency_list_node.py::TestAdjacencyListNodeInterface::test_strategy_exists PASSED [  0%]
+strategies_tests\test_adjacency_list_node.py::TestAdjacencyListNodeInterface::test_graph_representation PASSED [  1%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_creation PASSED [  1%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_with_data PASSED [  2%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_to_native_conversion PASSED [  2%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_roundtrip PASSED [  3%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyPerformance::test_large_list_handling PASSED [  3%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategySecurity::test_large_list_no_crash PASSED [  4%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyEdgeCases::test_empty_list_operations PASSED [  5%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyEdgeCases::test_list_with_none_values PASSED [  5%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_initialization PASSED [  6%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_supported_traits PASSED [  6%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_basic_put_get PASSED [  7%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_string_keys PASSED [  7%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_delete_operation PASSED [  8%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_iteration PASSED [  8%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_prefix_search PASSED [  9%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_to_native PASSED [ 10%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_backend_info PASSED [ 10%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_strategy_exists PASSED [ 11%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_self_balancing_property PASSED [ 11%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_olog_n_operations PASSED [ 12%]
+strategies_tests\test_balanced_trees.py::TestAVLTreeStrategy::test_strategy_exists PASSED [ 12%]
+strategies_tests\test_balanced_trees.py::TestAVLTreeStrategy::test_strict_balance_property PASSED [ 13%]
+strategies_tests\test_balanced_trees.py::TestTreapStrategy::test_strategy_exists PASSED [ 14%]
+strategies_tests\test_balanced_trees.py::TestTreapStrategy::test_randomized_balancing PASSED [ 14%]
+strategies_tests\test_balanced_trees.py::TestSplayTreeStrategy::test_strategy_exists PASSED [ 15%]
+strategies_tests\test_balanced_trees.py::TestSplayTreeStrategy::test_self_adjusting_property PASSED [ 15%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_strategy_exists PASSED [ 16%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_probabilistic_structure PASSED [ 16%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_concurrent_friendly PASSED [ 17%]
+strategies_tests\test_balanced_trees.py::TestBalancedTreesPerformance::test_all_provide_olog_n PASSED [ 17%]
+strategies_tests\test_bitmap_structures.py::TestBitmapStrategy::test_strategy_exists PASSED [ 18%]
+strategies_tests\test_bitmap_structures.py::TestBitmapStrategy::test_bitmap_operations PASSED [ 19%]
+strategies_tests\test_bitmap_structures.py::TestBitsetDynamicStrategy::test_strategy_exists PASSED [ 19%]
+strategies_tests\test_bitmap_structures.py::TestBitsetDynamicStrategy::test_dynamic_resizing PASSED [ 20%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_strategy_exists PASSED [ 20%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_memory_efficiency PASSED [ 21%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_compressed_storage PASSED [ 21%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterInterface::test_strategy_exists PASSED [ 22%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterInterface::test_probabilistic_membership PASSED [ 23%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterPerformance::test_memory_efficiency PASSED [ 23%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterPerformance::test_ok_operations PASSED [ 24%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_strategy_exists PASSED [ 24%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_prefix_sum_operations PASSED [ 25%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_range_update_operations PASSED [ 25%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreePerformance::test_olog_n_operations PASSED [ 26%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_insert_operation PASSED [ 26%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_find_operation PASSED [ 27%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_delete_operation PASSED [ 28%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_size_operation PASSED [ 28%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_is_empty_operation PASSED [ 29%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_to_native_conversion PASSED [ 29%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_keys_iteration PASSED [ 30%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_values_iteration PASSED [ 30%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_items_iteration PASSED [ 31%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_get_with_default PASSED [ 32%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_setdefault_operation PASSED [ 32%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_update_operation PASSED [ 33%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_clear_operation PASSED [ 33%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_contains_operation PASSED [ 34%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyPerformance::test_o1_insert_performance PASSED [ 34%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyPerformance::test_o1_find_performance PASSED [ 35%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_malicious_key_handling PASSED [ 35%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_resource_limit_protection PASSED [ 36%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_type_safety PASSED [ 37%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_none_key_handling PASSED [ 37%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_empty_key_handling PASSED [ 38%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_duplicate_key_handling PASSED [ 38%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_empty_data_handling PASSED [ 39%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_large_dataset_handling PASSED [ 39%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_unicode_keys_and_values PASSED [ 40%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_nested_structure_handling PASSED [ 41%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_strategy_mode PASSED [ 41%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_supported_traits PASSED [ 42%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_strategy_type PASSED [ 42%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_insert_operation PASSED [ 43%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_size_operation PASSED [ 43%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_is_empty PASSED [ 44%]
+strategies_tests\test_heap_strategy.py::TestHeapPerformance::test_priority_operations_fast PASSED [ 44%]
+strategies_tests\test_heap_strategy.py::TestHeapEdgeCases::test_duplicate_values PASSED [ 45%]
+strategies_tests\test_heap_strategy.py::TestHeapEdgeCases::test_negative_values PASSED [ 46%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_stack_strategy_exists PASSED [ 46%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_lifo_behavior PASSED [ 47%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_push_pop_operations PASSED [ 47%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_queue_strategy_exists PASSED [ 48%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_fifo_behavior PASSED [ 48%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_enqueue_dequeue_operations PASSED [ 49%]
+strategies_tests\test_linear_structures.py::TestPriorityQueueStrategy::test_priority_queue_exists PASSED [ 50%]
+strategies_tests\test_linear_structures.py::TestPriorityQueueStrategy::test_priority_operations PASSED [ 50%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_deque_strategy_exists PASSED [ 51%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_double_ended_operations PASSED [ 51%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_push_pop_both_ends PASSED [ 52%]
+strategies_tests\test_linear_structures.py::TestLinkedListStrategy::test_linked_list_exists PASSED [ 52%]
+strategies_tests\test_linear_structures.py::TestLinkedListStrategy::test_fast_insertion_deletion PASSED [ 53%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreeStrategyInterface::test_strategy_exists PASSED [ 53%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreeStrategyInterface::test_write_heavy_optimization PASSED [ 54%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreePerformance::test_fast_write_performance PASSED [ 55%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_initialization PASSED [ 55%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_delta_operations PASSED [ 56%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_consolidation PASSED [ 56%]
+strategies_tests\test_new_strategies.py::TestHAMTStrategyUnit::test_initialization PASSED [ 57%]
+strategies_tests\test_new_strategies.py::TestHAMTStrategyUnit::test_persistent_updates PASSED [ 57%]
+strategies_tests\test_new_strategies.py::TestMasstreeStrategyUnit::test_initialization PASSED [ 58%]
+strategies_tests\test_new_strategies.py::TestMasstreeStrategyUnit::test_operations PASSED [ 58%]
+strategies_tests\test_new_strategies.py::TestExtendibleHashStrategyUnit::test_initialization PASSED [ 59%]
+strategies_tests\test_new_strategies.py::TestExtendibleHashStrategyUnit::test_operations PASSED [ 60%]
+strategies_tests\test_new_strategies.py::TestLinearHashStrategyUnit::test_initialization PASSED [ 60%]
+strategies_tests\test_new_strategies.py::TestLinearHashStrategyUnit::test_operations PASSED [ 61%]
+strategies_tests\test_new_strategies.py::TestTTreeStrategyUnit::test_initialization PASSED [ 61%]
+strategies_tests\test_new_strategies.py::TestTTreeStrategyUnit::test_operations PASSED [ 62%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_initialization PASSED [ 62%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_delegation_works PASSED [ 63%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_placeholder_documentation PASSED [ 64%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_future_ml_methods_exist PASSED [ 64%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_strategy_exists PASSED [ 65%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_ordered_iteration PASSED [ 65%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_range_queries PASSED [ 66%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapBalancedStrategy::test_strategy_exists PASSED [ 66%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapBalancedStrategy::test_balanced_property PASSED [ 67%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapPerformance::test_olog_n_operations PASSED [ 67%]
+strategies_tests\test_persistent_trees.py::TestBTreeStrategy::test_strategy_exists PASSED [ 68%]
+strategies_tests\test_persistent_trees.py::TestBTreeStrategy::test_persistent_trait PASSED [ 69%]
+strategies_tests\test_persistent_trees.py::TestBPlusTreeStrategy::test_strategy_exists PASSED [ 69%]
+strategies_tests\test_persistent_trees.py::TestLSMTreeStrategy::test_strategy_exists PASSED [ 70%]
+strategies_tests\test_persistent_trees.py::TestLSMTreeStrategy::test_write_optimization PASSED [ 70%]
+strategies_tests\test_persistent_trees.py::TestPersistentTreeStrategy::test_strategy_exists PASSED [ 71%]
+strategies_tests\test_persistent_trees.py::TestPersistentTreeStrategy::test_immutability PASSED [ 71%]
+strategies_tests\test_persistent_trees.py::TestCOWTreeStrategy::test_strategy_exists PASSED [ 72%]
+strategies_tests\test_persistent_trees.py::TestCOWTreeStrategy::test_instant_snapshots PASSED [ 73%]
+strategies_tests\test_probabilistic_structures.py::TestCountMinSketchStrategy::test_strategy_exists PASSED [ 73%]
+strategies_tests\test_probabilistic_structures.py::TestCountMinSketchStrategy::test_streaming_frequency_estimation PASSED [ 74%]
+strategies_tests\test_probabilistic_structures.py::TestHyperLogLogStrategy::test_strategy_exists PASSED [ 74%]
+strategies_tests\test_probabilistic_structures.py::TestHyperLogLogStrategy::test_cardinality_estimation PASSED [ 75%]
+strategies_tests\test_probabilistic_structures.py::TestProbabilisticPerformance::test_memory_efficiency PASSED [ 75%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapInterface::test_strategy_exists PASSED [ 76%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapInterface::test_sparse_set_optimization PASSED [ 76%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapPerformance::test_memory_efficiency PASSED [ 77%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapPerformance::test_o1_operations PASSED [ 78%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreeInterface::test_strategy_exists PASSED [ 78%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreeInterface::test_range_query_optimization PASSED [ 79%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreePerformance::test_olog_n_operations PASSED [ 79%]
+strategies_tests\test_set_strategies.py::TestSetHashStrategy::test_strategy_exists PASSED [ 80%]
+strategies_tests\test_set_strategies.py::TestSetHashStrategy::test_set_operations PASSED [ 80%]
+strategies_tests\test_set_strategies.py::TestSetTreeStrategy::test_strategy_exists PASSED [ 81%]
+strategies_tests\test_set_strategies.py::TestSetTreeStrategy::test_ordered_set_operations PASSED [ 82%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixInterface::test_strategy_exists PASSED [ 82%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixInterface::test_matrix_operations PASSED [ 83%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixPerformance::test_memory_efficiency_for_sparse_data PASSED [ 83%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_strategy_exists PASSED [ 84%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_high_load_factor_support PASSED [ 84%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_dual_hashing PASSED [ 85%]
+strategies_tests\test_string_structures.py::TestSuffixArrayStrategy::test_strategy_exists PASSED [ 85%]
+strategies_tests\test_string_structures.py::TestSuffixArrayStrategy::test_substring_search_capability PASSED [ 86%]
+strategies_tests\test_string_structures.py::TestAhoCorasickStrategy::test_strategy_exists PASSED [ 87%]
+strategies_tests\test_string_structures.py::TestAhoCorasickStrategy::test_multi_pattern_matching PASSED [ 87%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_create_from_dict PASSED [ 88%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_tree_navigation PASSED [ 88%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_path_based_access PASSED [ 89%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_to_native_preserves_structure PASSED [ 89%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_path_traversal_prevention PASSED [ 90%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_circular_reference_handling PASSED [ 91%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_deep_nesting_handling PASSED [ 91%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_insert_string_keys PASSED [ 92%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_prefix_search PASSED [ 92%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_delete_word PASSED [ 93%]
+strategies_tests\test_trie_strategy.py::TestTriePerformance::test_ok_complexity PASSED [ 93%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_empty_string_key PASSED [ 94%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_unicode_keys PASSED [ 94%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_case_sensitivity PASSED [ 95%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_strategy_exists PASSED [ 96%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_compressed_prefix_storage PASSED [ 96%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_prefix_operations PASSED [ 97%]
+strategies_tests\test_trie_variants.py::TestPatriciaStrategy::test_strategy_exists PASSED [ 97%]
+strategies_tests\test_trie_variants.py::TestPatriciaStrategy::test_binary_trie_compression PASSED [ 98%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindInterface::test_insert_creates_element PASSED [ 98%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindInterface::test_find_operation PASSED [ 99%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindPerformance::test_nearly_constant_time_operations PASSED [100%]
+
+============================= 178 passed in 1.71s =============================
+
+
+✓ 
+============================= 178 passed in 1.71s =============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests\runner_out.md
+✓ 
+✅ ALL SUB-MODULES PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\runner_out.md
+✓ 
+✅ ALL SUB-MODULES PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\runner_out.md
+
+✓ ✅ Layer 1: Unit Tests PASSED
+📂 ================================================================================
+ℹ ▶️ Starting: Layer 2: Integration Tests
+ℹ 📍 Runner Path: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration\runner.py
+================================================================================
+================================================================================
+xwnode - Integration Tests - Cross-Module Scenarios
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 2 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\2.integration -m xwnode_integration
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 7 items
+
+2.integration\test_installation_modes.py::test_default_installation PASSED [ 14%]
+2.integration\test_installation_modes.py::test_xwsystem_integration PASSED [ 28%]
+2.integration\test_installation_modes.py::test_lazy_import PASSED        [ 42%]
+2.integration\test_installation_modes.py::test_installation_modes_standalone PASSED [ 57%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_lazy_complex_serialization PASSED [ 71%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_basic_integration PASSED [ 85%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_lazy_import_caching PASSED [100%]
+
+============================== warnings summary ===============================
+tests/2.integration/test_installation_modes.py::test_installation_modes_standalone
+  C:\Users\muham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but tests/2.integration/test_installation_modes.py::test_installation_modes_standalone returned <class 'int'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 1 warning in 1.69s =========================
+
+
+✓ 
+======================== 7 passed, 1 warning in 1.69s =========================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration\runner_out.md
+
+✓ ✅ Layer 2: Integration Tests PASSED
+📂 ================================================================================
+ℹ ▶️ Starting: Layer 3: Advance Tests
+ℹ 📍 Runner Path: D:\OneDrive\DEV\exonware\xwnode\tests\3.advance\runner.py
+================================================================================
+================================================================================
+xwnode - Advance Tests - Production Excellence (All 5 Priorities)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\3.advance
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\3.advance\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 6 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\3.advance -m xwnode_advance
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 42 items
+
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_plugin_support SKIPPED [  2%]
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_hook_system SKIPPED [  4%]
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_customization_points SKIPPED [  7%]
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_extension_api SKIPPED [  9%]
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_strategy_registration SKIPPED [ 11%]
+3.advance\test_extensibility.py::TestExtensibilityExcellence::test_backward_compatibility SKIPPED [ 14%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_no_cross_tenant_leakage PASSED [ 16%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_cross_isolation_access_prevention PASSED [ 19%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_malicious_input_handling PASSED [ 21%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_isolation_key_validation PASSED [ 23%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_no_global_state_pollution PASSED [ 26%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_resource_limit_enforcement PASSED [ 28%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_thread_safety PASSED [ 30%]
+3.advance\test_graph_security.py::TestGraphManagerSecurity::test_cache_poisoning_prevention PASSED [ 33%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_code_quality_metrics SKIPPED [ 35%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_separation_of_concerns SKIPPED [ 38%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_design_patterns SKIPPED [ 40%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_refactorability SKIPPED [ 42%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_modularity SKIPPED [ 45%]
+3.advance\test_maintainability.py::TestMaintainabilityExcellence::test_code_organization SKIPPED [ 47%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_response_time_benchmarks SKIPPED [ 50%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_memory_usage SKIPPED [ 52%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_scalability SKIPPED [ 54%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_async_performance SKIPPED [ 57%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_caching_effectiveness SKIPPED [ 59%]
+3.advance\test_performance.py::TestPerformanceExcellence::test_resource_management SKIPPED [ 61%]
+3.advance\test_security.py::TestSecurityExcellence::test_owasp_top_10_compliance SKIPPED [ 64%]
+3.advance\test_security.py::TestSecurityExcellence::test_defense_in_depth SKIPPED [ 66%]
+3.advance\test_security.py::TestSecurityExcellence::test_input_validation SKIPPED [ 69%]
+3.advance\test_security.py::TestSecurityExcellence::test_path_validation SKIPPED [ 71%]
+3.advance\test_security.py::TestSecurityExcellence::test_cryptographic_operations SKIPPED [ 73%]
+3.advance\test_security.py::TestSecurityExcellence::test_authentication_security SKIPPED [ 76%]
+3.advance\test_security.py::TestSecurityExcellence::test_authorization_controls SKIPPED [ 78%]
+3.advance\test_security.py::TestSecurityExcellence::test_data_protection SKIPPED [ 80%]
+3.advance\test_security.py::TestSecurityExcellence::test_security_logging SKIPPED [ 83%]
+3.advance\test_security.py::TestSecurityExcellence::test_dependency_security SKIPPED [ 85%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_api_intuitiveness SKIPPED [ 88%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_error_messages SKIPPED [ 90%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_documentation_completeness SKIPPED [ 92%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_examples_quality SKIPPED [ 95%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_naming_consistency SKIPPED [ 97%]
+3.advance\test_usability.py::TestUsabilityExcellence::test_api_discoverability SKIPPED [100%]
+
+======================== 8 passed, 34 skipped in 1.46s ========================
+
+
+✓ 
+======================== 8 passed, 34 skipped in 1.46s ========================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\3.advance\runner_out.md
+
+✓ ✅ Layer 3: Advance Tests PASSED
+
+TEST EXECUTION SUMMARY
+ℹ Total Layers: 4
+✓ ✅ Passed: 4
+ℹ ℹ️ Failed: 0
+✓ ALL TESTS PASSED
+ℹ 💾 
+Test results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\runner_out.md

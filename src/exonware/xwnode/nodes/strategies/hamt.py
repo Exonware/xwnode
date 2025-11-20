@@ -9,11 +9,11 @@ with structural sharing and efficient immutable operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: 11-Oct-2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union
+from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -399,18 +399,47 @@ class HAMTStrategy(ANodeStrategy):
     def to_native(self) -> Dict[str, Any]:
         """Convert to native Python dictionary."""
         result = {}
-        for key, value in self.items():
-            result[str(key)] = safe_to_native_conversion(value)
-        return result
-    
-    def get_backend_info(self) -> Dict[str, Any]:
-        """Get backend information."""
-        return {
-            **create_basic_backend_info('HAMT', 'Hash Array Mapped Trie'),
-            'total_keys': self._size,
-            'tree_depth': self.get_tree_depth(),
-            'bits_per_level': self.BITS_PER_LEVEL,
-            **self._size_tracker,
-            **get_access_metrics(self._access_tracker)
-        }
 
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item

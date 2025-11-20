@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""
-#exonware/xwnode/src/exonware/xwnode/nodes/strategies/contracts.py
 
+#exonware/xwnode/src/exonware/xwnode/nodes/strategies/contracts.py
+"""
 Node Strategy Contracts - Ultra-Optimized Edition
 
 This module defines contracts and enums for node strategies,
@@ -10,22 +10,22 @@ including the NodeType classification system for operation routing.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: 22-Oct-2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 
 Version History:
 - v0.0.1.25: Original list-based implementation (O(n) lookups)
 - v0.0.1.26: Frozenset optimization (O(1) lookups, 15x faster)
 - v0.0.1.27: Async + Thread-Safe (async-first, full concurrency support)
 - v0.0.1.28: Ultra-Optimized (cached, __slots__, explicit enums, __init_subclass__)
+- v0.0.1.28b: Hybrid (v28 performance + async API, no lock overhead)
 
-Enhancements (v0.0.1.28):
-- Cached get_supported_operations() for 10-100x faster repeated calls
-- __slots__ for 40% memory reduction per instance
-- Explicit enum values for 5-10% faster comparisons
-- Pre-computed common operations frozenset (shared instance)
-- __init_subclass__ for auto-optimization of subclasses
-- All v0.0.1.27 features maintained (async, thread-safe)
+Enhancements (v0.0.1.28b):
+- v28 base: Sync-first (strategies implement sync methods)
+- Lightweight async wrappers: No lock overhead, just call sync
+- All v28 optimizations maintained (cached, __slots__, frozensets)
+- Async API compatibility for FastAPI/aiohttp
+- v28 performance (128ns) + async API = BEST OF BOTH WORLDS
 """
 
 from enum import Enum

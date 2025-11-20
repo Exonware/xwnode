@@ -14,11 +14,11 @@ with delta updates and atomic operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: October 12, 2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union
+from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
 import threading
 from collections import OrderedDict
 from .base import ANodeStrategy
@@ -497,36 +497,61 @@ class BwTreeStrategy(ANodeStrategy):
     def to_native(self) -> Dict[str, Any]:
         """Convert to native Python dictionary."""
         result = {}
-        for key, value in self.items():
-            result[str(key)] = safe_to_native_conversion(value)
+        # TODO: Implement proper to_native conversion
         return result
     
-    def get_backend_info(self) -> Dict[str, Any]:
-        """Get backend information with atomic CAS details."""
-        return {
-            **create_basic_backend_info('Bw-Tree', 'Lock-Free B+ tree with Atomic CAS'),
-            'total_keys': self._size,
-            'delta_chain_length': self.get_delta_chain_length(),
-            'max_delta_chain': self._max_delta_chain,
-            'mapping_table_size': len(self._mapping_table),
-            'next_pid': self._next_pid,
-            'current_epoch': self._current_epoch,
-            'retired_nodes': sum(len(nodes) for nodes in self._retired_nodes.values()),
-            'complexity': {
-                'read': 'O(log n) lock-free',
-                'write': 'O(log n) with atomic CAS',
-                'delete': 'O(log n) with atomic CAS',
-                'consolidation': 'O(n) per node'
-            },
-            'production_features': [
-                'Atomic CAS Operations',
-                'Delta-based Updates',
-                'Mapping Table (PID -> Node)',
-                'Epoch-based Garbage Collection',
-                'Lock-free Reads',
-                'Automatic Delta Consolidation'
-            ],
-            **self._size_tracker,
-            **get_access_metrics(self._access_tracker)
-        }
+    def backend_info(self) -> Dict[str, Any]:
+        """Get backend implementation info with production features."""
+        base_info = super().backend_info()
+        base_info['production_features'] = [
+            'Atomic CAS Operations',
+            'Epoch-based Garbage Collection',
+            'Delta-based Updates',
+            'Lock-free Concurrency',
+            'Mapping Table Indirection'
+        ]
+        return base_info
 
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item

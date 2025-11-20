@@ -24,6 +24,7 @@ class NodeMode(Enum):
     # Special modes
     AUTO = _auto()                    # Intelligent automatic selection
     TREE_GRAPH_HYBRID = _auto()       # Tree navigation + basic graph capabilities
+    AST = _auto()                     # AST-optimized with type indexing
     
     # Basic data structures
     HASH_MAP = _auto()                # Optimized for lookups
@@ -110,6 +111,13 @@ class NodeMode(Enum):
     ROPE = _auto()                    # Rope structure - efficient text operations
     CRDT_MAP = _auto()                # Conflict-free replicated map - distributed systems
     BLOOMIER_FILTER = _auto()         # Probabilistic key→value map - approximate dictionaries
+    
+    # Query optimization structures (NEW - for xwquery integration)
+    LRU_CACHE = _auto()               # LRU cache - O(1) get/put with automatic eviction
+    HISTOGRAM = _auto()               # Histogram - statistical estimation and selectivity
+    T_DIGEST = _auto()                # T-Digest - streaming percentile estimation
+    RANGE_MAP = _auto()               # Range map - non-overlapping range→value mapping
+    CIRCULAR_BUFFER = _auto()         # Circular buffer - fixed-size ring buffer
 
 
 # ============================================================================
@@ -191,6 +199,27 @@ class GraphOptimization(Enum):
     MINIMAL = 1
     MODERATE = 2
     MAXIMUM = 3
+
+
+# ============================================================================
+# CACHE MODES (NEW in v0.0.1.29)
+# ============================================================================
+
+class CacheMode(Enum):
+    """
+    Cache implementation strategies for xwnode components.
+    
+    Maps to xwsystem.caching implementations via adapters.
+    """
+    
+    NONE = _auto()        # No caching
+    LRU = _auto()         # Least Recently Used eviction
+    LFU = _auto()         # Least Frequently Used eviction
+    TTL = _auto()         # Time-To-Live based expiration
+    TWO_TIER = _auto()    # Memory + Disk caching
+    TAGGED = _auto()      # Tag-based invalidation
+    BLOOM = _auto()       # Bloom filter for fast negative lookups
+    ADAPTIVE = _auto()    # Self-tuning cache strategy
 
 
 # ============================================================================

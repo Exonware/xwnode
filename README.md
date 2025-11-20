@@ -3,7 +3,7 @@
 **Company:** eXonware.com  
 **Author:** Eng. Muhammad AlShehri  
 **Email:** connect@exonware.com  
-**Version:** 0.0.1.26
+**Version:** 0.0.1.30
 **Last Updated:** October 12, 2025
 
 ---

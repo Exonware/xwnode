@@ -5,7 +5,7 @@ This module implements the COUNT_MIN_SKETCH strategy for probabilistic
 frequency estimation in data streams with bounded error guarantees.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple
+from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -310,17 +310,51 @@ class CountMinSketchStrategy(ANodeStrategy):
         Time Complexity: O(n * depth)
         """
         result = {}
-        for item in self._unique_items:
-            result[item] = self.estimate_count(item)
-        
-        result.update({
-            "total_count": self._total_count,
-            "unique_items": len(self._unique_items),
-            "heavy_hitters": dict(self._heavy_hitters),
-            "sketch_info": self.get("sketch_info")
-        })
-        
-        return result
+
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
+    
     
     @property
     def is_list(self) -> bool:

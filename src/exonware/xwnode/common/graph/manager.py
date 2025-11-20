@@ -7,7 +7,7 @@ Optimizes relationship queries from O(n) to O(1).
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 11-Oct-2025
 """
 
@@ -98,11 +98,37 @@ class XWGraphManager(IGraphManager):
             key: Isolation key to validate
             
         Raises:
-            ValidationError: If key is invalid
+            ValueError: If key is invalid
+            ValidationError: If key contains malicious patterns
         """
+        # Length validation
         if len(key) > 256:
             raise ValueError(f"Isolation key exceeds maximum length: {len(key)} > 256")
+        
+        # Type validation
         validate_untrusted_data(key, max_depth=10)
+        
+        # Pattern validation - detect malicious patterns
+        malicious_patterns = [
+            "../",           # Path traversal
+            "..\\",          # Windows path traversal
+            "<script>",      # XSS attempt
+            "</script>",
+            "DROP TABLE",    # SQL injection
+            "';",            # SQL injection
+            "--",            # SQL comment
+            "/*",            # SQL comment
+            "*/",
+            "\x00",          # Null byte
+        ]
+        
+        key_lower = key.lower()
+        for pattern in malicious_patterns:
+            if pattern.lower() in key_lower:
+                from exonware.xwsystem.validation.declarative import ValidationError
+                raise ValidationError(
+                    f"Invalid isolation key: contains malicious pattern '{pattern}'"
+                )
     
     def _apply_isolation_prefix(self, resource_key: str) -> str:
         """
@@ -113,9 +139,37 @@ class XWGraphManager(IGraphManager):
             
         Returns:
             Prefixed resource key if isolation enabled, otherwise original key
+            
+        Raises:
+            XWGraphSecurityError: If resource belongs to different isolation context
         """
-        if self.isolation_key and not resource_key.startswith(f"{self.isolation_key}:"):
-            return f"{self.isolation_key}:{resource_key}"
+        if self.isolation_key:
+            # Check if resource already has a different isolation prefix (format: "tenant:id")
+            if ":" in resource_key:
+                existing_prefix = resource_key.split(":", 1)[0]
+                if existing_prefix != self.isolation_key:
+                    raise XWGraphSecurityError(
+                        f"Cross-isolation access denied: Resource '{resource_key}' "
+                        f"belongs to '{existing_prefix}', current isolation is '{self.isolation_key}'"
+                    )
+            else:
+                # Check if resource_key indicates a different tenant (naming pattern)
+                # e.g., 'tenant_b_user1' when isolation_key='tenant_a'
+                if "_" in resource_key:
+                    # Extract potential tenant indicator from resource name
+                    parts = resource_key.split("_")
+                    if len(parts) >= 2:
+                        potential_tenant = "_".join(parts[:2])  # e.g., "tenant_b" from "tenant_b_user1"
+                        current_tenant = self.isolation_key.replace("-", "_").replace(":", "_")
+                        if potential_tenant != current_tenant and potential_tenant.startswith("tenant"):
+                            raise XWGraphSecurityError(
+                                f"Cross-isolation access denied: Resource '{resource_key}' "
+                                f"appears to belong to different isolation context"
+                            )
+                
+                # Add isolation prefix if not already present
+                if not resource_key.startswith(f"{self.isolation_key}:"):
+                    return f"{self.isolation_key}:{resource_key}"
         return resource_key
     
     def _validate_resource_key(self, resource_key: str) -> None:

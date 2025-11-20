@@ -3,10 +3,11 @@ Simple node strategy implementation.
 """
 
 from typing import Any, Iterator, Optional, List, Dict, Union
-from ...contracts import iNodeStrategy, NodeTrait
+from ...nodes.strategies.contracts import INodeStrategy
+from ...defs import NodeTrait
 
 
-class SimpleNodeStrategy(iNodeStrategy):
+class SimpleNodeStrategy(INodeStrategy):
     """Simple hash map-based node strategy."""
     
     def __init__(self, data: Any = None):

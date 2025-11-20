@@ -9,14 +9,14 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 22-Oct-2025
 """
 
 import logging
 from typing import Any, Dict, List, Optional, Union, Iterator
 
-from .base import XWNodeBase
+from .base import ANode
 from .config import get_config, set_config
 from .errors import XWNodeError, XWNodeTypeError, XWNodeValueError
 from .common.management.manager import StrategyManager
@@ -25,7 +25,7 @@ from .common.patterns.registry import get_registry
 logger = logging.getLogger(__name__)
 
 
-class XWNode(XWNodeBase):
+class XWNode(ANode):
     """
     Main XWNode class providing a unified interface for all node operations.
     
@@ -33,19 +33,32 @@ class XWNode(XWNodeBase):
     underlying strategy system while providing a clean, intuitive API.
     """
     
-    def __init__(self, data: Any = None, mode: str = 'AUTO', **options):
+    def __init__(self, data: Any = None, mode: str = 'AUTO', immutable: bool = False, **options):
         """
         Initialize XWNode with data and configuration.
         
         Args:
             data: Initial data to store in the node
             mode: Strategy mode ('AUTO', 'HASH_MAP', 'ARRAY_LIST', etc.)
+            immutable: If True, enable COW semantics (default: False for backward compatibility)
             **options: Additional configuration options
         """
         self._data = data
         self._mode = mode
+        self._immutable = immutable
         self._options = options
-        self._strategy_manager = StrategyManager()
+        
+        # Convert mode to NodeMode enum if needed
+        from .defs import NodeMode
+        if isinstance(mode, NodeMode):
+            mode_enum = mode
+        elif isinstance(mode, str) and mode != 'AUTO':
+            mode_enum = NodeMode[mode]
+        else:
+            mode_enum = NodeMode.AUTO
+        
+        # Pass mode to StrategyManager
+        self._strategy_manager = StrategyManager(node_mode=mode_enum, **options)
         self._setup_strategy()
         # Initialize base class with the created strategy
         super().__init__(self._strategy)
@@ -53,32 +66,38 @@ class XWNode(XWNodeBase):
     def _setup_strategy(self):
         """Setup the appropriate strategy based on mode and data."""
         try:
-            # For now, use the create_node_strategy method which handles data properly
+            # StrategyManager already has mode from __init__
             self._strategy = self._strategy_manager.create_node_strategy(self._data or {})
         except Exception as e:
-            logger.warning(f"Failed to setup strategy: {e}, using default")
+            logger.error(f"❌ Failed to setup strategy (mode={self._mode}, options={self._options}): {e}", exc_info=True)
             # Create a simple strategy as fallback
             from .common.utils.simple import SimpleNodeStrategy
             self._strategy = SimpleNodeStrategy.create_from_data(self._data or {})
+        
+        # Wrap in PersistentNode if immutable mode requested
+        if self._immutable:
+            from .common.cow import PersistentNode
+            self._strategy = PersistentNode.from_native(self._data or {})
     
     # ============================================================================
     # FACTORY METHODS
     # ============================================================================
     
     @classmethod
-    def from_native(cls, data: Any, mode: str = 'AUTO', **options) -> 'XWNode':
+    def from_native(cls, data: Any, mode: str = 'AUTO', immutable: bool = False, **options) -> 'XWNode':
         """
         Create XWNode from native Python data.
         
         Args:
             data: Native Python data (dict, list, etc.)
             mode: Strategy mode to use
+            immutable: If True, enable COW semantics (default: False)
             **options: Additional configuration options
         
         Returns:
             XWNode instance containing the data
         """
-        return cls(data=data, mode=mode, **options)
+        return cls(data=data, mode=mode, immutable=immutable, **options)
     
     # ============================================================================
     # CORE OPERATIONS
@@ -91,25 +110,72 @@ class XWNode(XWNodeBase):
         except Exception as e:
             raise XWNodeError(f"Failed to put key '{key}': {e}")
     
-    def get(self, key: Any, default: Any = None) -> Any:
-        """Retrieve a value by key."""
-        try:
-            result = self._strategy.find(key)
-            return result if result is not None else default
-        except Exception as e:
-            raise XWNodeError(f"Failed to get key '{key}': {e}")
+    # Removed: Using ANode.get() for proper path navigation support
+    # def get(self, key: Any, default: Any = None) -> Any:
+    #     """Retrieve a value by key."""
+    #     try:
+    #         result = self._strategy.find(key)
+    #         return result if result is not None else default
+    #     except Exception as e:
+    #         raise XWNodeError(f"Failed to get key '{key}': {e}")
+    
+    def get_value(self, path: str, default: Any = None) -> Any:
+        """
+        Get actual value at path (not ANode wrapper).
+        
+        Convenience method that combines get() with to_native() for direct value access.
+        For chaining operations, use get() which returns ANode.
+        
+        Handles both regular and PersistentNode strategies with appropriate fallback.
+        
+        Args:
+            path: Dot-separated path to value
+            default: Default value if path doesn't exist
+            
+        Returns:
+            Actual value at path, or default if not found
+            
+        Example:
+            >>> node = XWNode.from_native({"users": [{"name": "Alice"}]})
+            >>> node.get_value("users.0.name")  # "Alice"
+            >>> node.get_value("missing", "default")  # "default"
+        """
+        # Check if using PersistentNode strategy
+        if self._is_persistent_strategy():
+            # PersistentNode - try direct access first
+            result = self._strategy.get(path, default)
+            if result is not default:
+                return result
+            
+            # Fallback: navigate native data for flattened structures
+            return self._navigate_path_from_native(self.to_native(), path, default)
+        else:
+            # Regular strategy - get() returns ANode, extract value
+            result = self.get(path)
+            return result.to_native() if result is not None else default
     
     def has(self, key: Any) -> bool:
         """Check if key exists."""
         try:
-            return self._strategy.find(key) is not None
+            # Use strategy's has() for direct key check
+            return self._strategy.has(key)
         except Exception as e:
             raise XWNodeError(f"Failed to check key '{key}': {e}")
     
     def remove(self, key: Any) -> bool:
-        """Remove a key-value pair."""
+        """
+        Remove a key-value pair.
+        
+        Args:
+            key: Key to remove (can be string or int)
+            
+        Returns:
+            True if key was removed, False if not found
+        """
         try:
-            return self._strategy.delete(key)
+            # Convert to string if needed (strategies expect string keys)
+            str_key = str(key) if not isinstance(key, str) else key
+            return self._strategy.delete(str_key)
         except Exception as e:
             raise XWNodeError(f"Failed to remove key '{key}': {e}")
     
@@ -120,6 +186,59 @@ class XWNode(XWNodeBase):
             self._setup_strategy()
         except Exception as e:
             raise XWNodeError(f"Failed to clear: {e}")
+    
+    # ==========================================================================
+    # UTILITY METHODS
+    # ==========================================================================
+    
+    def _is_persistent_strategy(self) -> bool:
+        """
+        Check if using PersistentNode (COW) strategy.
+        
+        Returns:
+            True if strategy is PersistentNode, False otherwise
+        """
+        # Check if it's specifically a PersistentNode by checking for unique methods
+        from .common.cow.persistent_node import PersistentNode
+        return isinstance(self._strategy, PersistentNode)
+    
+    @staticmethod
+    def _navigate_path_from_native(data: Any, path: str, default: Any = None) -> Any:
+        """
+        Navigate path in native Python data.
+        
+        Utility for handling PersistentNode flattened structures where
+        intermediate paths may not exist directly.
+        
+        Args:
+            data: Native Python data (dict/list/value)
+            path: Dot-separated path
+            default: Default value if path doesn't exist
+            
+        Returns:
+            Value at path, or default if not found
+            
+        Example:
+            >>> data = {"users": [{"name": "Alice"}]}
+            >>> XWNode._navigate_path_from_native(data, "users.0.name")  # "Alice"
+        """
+        if not path:
+            return data
+        
+        parts = path.split('.')
+        current = data
+        
+        try:
+            for part in parts:
+                if isinstance(current, dict):
+                    current = current[part]
+                elif isinstance(current, (list, tuple)):
+                    current = current[int(part)]
+                else:
+                    return default
+            return current
+        except (KeyError, IndexError, ValueError, TypeError):
+            return default
     
     def size(self) -> int:
         """Get the number of items."""
@@ -195,6 +314,150 @@ class XWNode(XWNodeBase):
             raise XWNodeError(f"Failed to convert to native: {e}")
     
     # ============================================================================
+    # COPY-ON-WRITE (COW) OPERATIONS
+    # ============================================================================
+    
+    def set(self, path: str, value: Any, in_place: Optional[bool] = None) -> 'XWNode':
+        """
+        Set value at path with COW support.
+        
+        Args:
+            path: Dot-separated path to set
+            value: Value to set
+            in_place: Override immutability (None = use node's immutability setting)
+        
+        Returns:
+            self (if mutable and in_place=True) or new XWNode (if immutable or in_place=False)
+        """
+        # Determine if we should mutate in place
+        should_mutate_in_place = (in_place if in_place is not None else not self._immutable)
+        
+        if should_mutate_in_place:
+            # Mutable mode - use parent's in-place set
+            return super().set(path, value, in_place=True)
+        else:
+            # Immutable mode - COW via PersistentNode
+            if hasattr(self._strategy, 'set'):
+                # Strategy supports COW (PersistentNode)
+                new_strategy = self._strategy.set(path, value)
+                new_node = XWNode.__new__(XWNode)
+                new_node._data = self._data
+                new_node._mode = self._mode
+                new_node._immutable = self._immutable
+                new_node._options = self._options
+                new_node._strategy_manager = self._strategy_manager
+                new_node._strategy = new_strategy
+                # Initialize base class
+                ANode.__init__(new_node, new_strategy)
+                return new_node
+            else:
+                # Fallback to parent's COW
+                return super().set(path, value, in_place=False)
+    
+    def freeze(self) -> 'XWNode':
+        """
+        Convert node to immutable mode.
+        
+        Once frozen, all set() operations will return new nodes instead
+        of mutating in-place. This is irreversible.
+        
+        Returns:
+            self (now frozen)
+        """
+        if not self._immutable:
+            self._immutable = True
+            # Wrap current strategy in PersistentNode
+            from .common.cow import PersistentNode
+            native_data = self.to_native()
+            self._strategy = PersistentNode.from_native(native_data)
+        return self
+    
+    def is_frozen(self) -> bool:
+        """
+        Check if node is immutable.
+        
+        Returns:
+            True if node is frozen (immutable), False otherwise
+        """
+        return self._immutable
+    
+    # ============================================================================
+    # NAVIGATION & BATCH OPERATIONS
+    # ============================================================================
+    
+    def select(self, path: str) -> 'XWNode':
+        """
+        Select a sub-node at path (zero-copy view).
+        
+        Returns a new XWNode wrapping the value at the specified path.
+        This is different from get() which returns the raw value.
+        
+        Args:
+            path: Dot-separated path to navigate
+            
+        Returns:
+            XWNode wrapping the value at path
+            
+        Example:
+            >>> node = XWNode({'users': [{'name': 'Alice'}]})
+            >>> user_node = node.select('users.0')
+            >>> print(user_node.get('name'))  # 'Alice'
+        """
+        try:
+            value = self.navigate(path)
+            if value is None:
+                # Return empty node for non-existent paths
+                return XWNode(None, mode=self._mode, immutable=self._immutable)
+            
+            # Wrap the value in a new XWNode
+            return XWNode(value, mode=self._mode, immutable=self._immutable)
+        except Exception as e:
+            # Return empty node on error
+            logger.debug(f"Failed to select path '{path}': {e}")
+            return XWNode(None, mode=self._mode, immutable=self._immutable)
+    
+    def select_many(self, paths: List[str]) -> Dict[str, 'XWNode']:
+        """
+        Select multiple paths efficiently.
+        
+        Args:
+            paths: List of dot-separated paths to navigate
+            
+        Returns:
+            Dictionary mapping paths to XWNode instances
+            
+        Example:
+            >>> node = XWNode({'user': {'name': 'Alice'}, 'age': 30})
+            >>> results = node.select_many(['user.name', 'age'])
+            >>> results['user.name'].to_native()  # 'Alice'
+            >>> results['age'].to_native()  # 30
+        """
+        results = {}
+        for path in paths:
+            results[path] = self.select(path)
+        return results
+    
+    def set_many(self, updates: Dict[str, Any]) -> 'XWNode':
+        """
+        Set multiple values efficiently.
+        
+        Args:
+            updates: Dictionary mapping paths to values
+            
+        Returns:
+            XWNode with all updates applied (follows COW semantics)
+            
+        Example:
+            >>> node = XWNode({'user': {'name': 'Alice'}, 'age': 30})
+            >>> updated = node.set_many({'user.name': 'Bob', 'age': 31})
+            >>> updated.get('user.name')  # 'Bob'
+        """
+        current = self
+        for path, value in updates.items():
+            current = current.set(path, value)
+        return current
+    
+    # ============================================================================
     # STRATEGY INFORMATION
     # ============================================================================
     
@@ -262,22 +525,167 @@ class XWNode(XWNodeBase):
     # CONVENIENCE METHODS
     # ============================================================================
     
-    def __getitem__(self, key: Any) -> Any:
-        """Get item using bracket notation."""
-        return self.get(key)
+    def __getitem__(self, key: Union[str, int]) -> Any:
+        """
+        Get item using bracket notation - returns actual value, not ANode.
+        
+        Supports:
+        - String keys: node["item"]
+        - String indices: node["0"] (converted to int)
+        - Integer indices: node[0] (direct access)
+        - Path notation: node["users.0.name"]
+        
+        Returns actual value, not ANode wrapper.
+        
+        Args:
+            key: Key or path (string or int)
+            
+        Returns:
+            Actual value at key/path
+            
+        Example:
+            >>> node = XWNode.from_native({"users": [{"name": "Alice"}], "count": 2})
+            >>> node["count"]  # 2 (not ANode)
+            >>> node["users"]  # [{'name': 'Alice'}] (not ANode)
+            >>> node["users.0.name"]  # "Alice"
+            >>> node["users"][0]  # {'name': 'Alice'}
+        """
+        # Check if using PersistentNode strategy
+        if self._is_persistent_strategy():
+            # Convert key to string for PersistentNode
+            str_key = str(key)
+            
+            # Try direct access first
+            result = self._strategy.get(str_key)
+            if result is not None:
+                return result
+            
+            # Fallback: navigate native data for flattened structures
+            native_data = self.to_native()
+            if isinstance(native_data, dict):
+                # Try direct dict access first
+                if str_key in native_data:
+                    return native_data[str_key]
+            elif isinstance(native_data, (list, tuple)):
+                # For lists, convert string key to int
+                try:
+                    index = int(str_key)
+                    if 0 <= index < len(native_data):
+                        return native_data[index]
+                except ValueError:
+                    pass
+            
+            raise KeyError(key)
+        else:
+            # Regular strategy - use get_value() to extract value from ANode
+            # Keep int keys as int, string keys as string
+            # Use sentinel to distinguish None value from missing key
+            _sentinel = object()
+            result = self.get_value(str(key), default=_sentinel)
+            if result is _sentinel:
+                raise KeyError(key)
+            return result
     
-    def __setitem__(self, key: Any, value: Any) -> None:
-        """Set item using bracket notation."""
-        self.put(key, value)
+    def __setitem__(self, key: Union[str, int], value: Any) -> None:
+        """
+        Set item using bracket notation.
+        
+        Supports:
+        - String keys: node["item"] = value
+        - String indices: node["0"] = value  
+        - Integer indices: node[0] = value
+        - Path notation: node["users.0.name"] = value
+        
+        Args:
+            key: Key or path (string or int)
+            value: Value to set
+            
+        Example:
+            >>> node = XWNode.from_native({"count": 0})
+            >>> node["count"] = 10
+            >>> node["users.0"] = {"name": "Alice"}
+        """
+        # Check if key contains dots (path notation)
+        if isinstance(key, str) and '.' in key:
+            # Path notation - use set() method for path support
+            self.set(key, value, in_place=True)
+        else:
+            # Simple key - use put() method
+            self.put(key, value)
     
-    def __delitem__(self, key: Any) -> None:
-        """Delete item using bracket notation."""
+    def __delitem__(self, key: Union[str, int]) -> None:
+        """
+        Delete item using bracket notation.
+        
+        Supports:
+        - String keys: del node["item"]
+        - String indices: del node["0"]
+        - Integer indices: del node[0]
+        - Path notation: del node["users.0"]
+        
+        Args:
+            key: Key or path (string or int)
+            
+        Raises:
+            KeyError: If key doesn't exist
+            
+        Example:
+            >>> node = XWNode.from_native({"temp": "value", "keep": "this"})
+            >>> del node["temp"]
+        """
+        # For integer keys, keep as int for list strategies
+        # For string keys, pass as-is for dict strategies
         if not self.remove(key):
             raise KeyError(key)
     
-    def __contains__(self, key: Any) -> bool:
-        """Check if key exists using 'in' operator."""
-        return self.has(key)
+    def __contains__(self, key: Union[str, int]) -> bool:
+        """
+        Check if key exists using 'in' operator.
+        
+        Supports:
+        - String keys: "item" in node
+        - String indices: "0" in node
+        - Integer indices: 0 in node
+        - Path notation: "users.0.name" in node
+        
+        Handles PersistentNode flattened structures with fallback.
+        
+        Args:
+            key: Key or path (string or int)
+            
+        Returns:
+            True if key/path exists
+            
+        Example:
+            >>> node = XWNode.from_native({"users": [{"name": "Alice"}]})
+            >>> "users" in node  # True
+            >>> "users.0.name" in node  # True
+            >>> 0 in node  # False (top-level key, not index)
+        """
+        # Check if using PersistentNode strategy
+        if self._is_persistent_strategy():
+            # Convert key to string for PersistentNode
+            str_key = str(key)
+            
+            # Try direct access first
+            if self._strategy.exists(str_key):
+                return True
+            
+            # Fallback: check native data for flattened structures
+            native_data = self.to_native()
+            if isinstance(native_data, dict):
+                return str_key in native_data
+            elif isinstance(native_data, (list, tuple)):
+                try:
+                    index = int(str_key)
+                    return 0 <= index < len(native_data)
+                except ValueError:
+                    return False
+            
+            return False
+        else:
+            # Regular strategy - use has() method, keeping int as int
+            return self.has(str(key))
     
     def __str__(self) -> str:
         """String representation."""
@@ -354,6 +762,197 @@ def adaptive(data: Any = None) -> XWNode:
 def dual_adaptive(data: Any = None) -> XWNode:
     """Create XWNode with dual adaptive strategy."""
     return XWNode(data, mode='AUTO', adaptive=True)
+
+
+# ============================================================================
+# CACHE MANAGEMENT CONVENIENCE FUNCTIONS (NEW in v0.0.1.29)
+# ============================================================================
+
+def get_cache_stats(component: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Get cache statistics for all components or a specific component.
+    
+    Args:
+        component: Optional component name ('graph', 'traversal', 'query').
+                  If None, returns stats for all components.
+    
+    Returns:
+        Dictionary with cache statistics
+    
+    Example:
+        >>> stats = get_cache_stats('graph')
+        >>> print(f"Hit rate: {stats['hit_rate']:.2%}")
+    """
+    from .common.caching import get_cache_controller
+    controller = get_cache_controller()
+    
+    if component:
+        stats = controller.get_component_stats(component)
+        return stats.to_dict() if stats else {}
+    else:
+        return {name: stats.to_dict() 
+                for name, stats in controller.get_all_stats().items()}
+
+
+def clear_cache(component: Optional[str] = None) -> None:
+    """
+    Clear cache for all components or a specific component.
+    
+    Args:
+        component: Optional component name ('graph', 'traversal', 'query').
+                  If None, clears all caches.
+    
+    Example:
+        >>> clear_cache('graph')  # Clear only graph cache
+        >>> clear_cache()  # Clear all caches
+    """
+    from .common.caching import get_cache_controller
+    controller = get_cache_controller()
+    
+    if component:
+        controller.clear_component(component)
+    else:
+        controller.clear_all()
+
+
+def configure_cache(
+    component: str,
+    enabled: Optional[bool] = None,
+    strategy: Optional[str] = None,
+    size: Optional[int] = None,
+    **kwargs
+) -> None:
+    """
+    Configure cache settings for a specific component.
+    
+    Args:
+        component: Component name ('graph', 'traversal', 'query')
+        enabled: Enable/disable caching for this component
+        strategy: Cache strategy ('lru', 'lfu', 'ttl', 'two_tier')
+        size: Maximum cache size
+        **kwargs: Additional strategy-specific options
+    
+    Example:
+        >>> # Use LFU cache for graph operations
+        >>> configure_cache('graph', strategy='lfu', size=2000)
+        
+        >>> # Disable caching for traversal
+        >>> configure_cache('traversal', enabled=False)
+        
+        >>> # Use two-tier cache with disk backing
+        >>> configure_cache('query', strategy='two_tier', 
+        ...                size=1000, disk_size=10000)
+    """
+    from .common.caching import get_cache_controller
+    controller = get_cache_controller()
+    controller.set_component_config(
+        component=component,
+        enabled=enabled,
+        strategy=strategy,
+        size=size,
+        **kwargs
+    )
+
+
+def get_cache_health() -> Dict[str, Any]:
+    """
+    Get comprehensive cache health report.
+    
+    Returns:
+        Dictionary with health metrics, warnings, and recommendations
+    
+    Example:
+        >>> health = get_cache_health()
+        >>> for warning in health['warnings']:
+        ...     print(f"⚠️ {warning}")
+        >>> for rec in health['recommendations']:
+        ...     print(f"💡 {rec}")
+    """
+    from .common.caching import get_cache_controller
+    controller = get_cache_controller()
+    return controller.get_health_report()
+
+
+def invalidate_cache(component: str, pattern: str) -> int:
+    """
+    Invalidate cache entries matching a pattern.
+    
+    Args:
+        component: Component name ('graph', 'traversal', 'query')
+        pattern: Pattern to match (supports wildcards: *)
+    
+    Returns:
+        Number of entries invalidated
+    
+    Example:
+        >>> # Invalidate all entries for user:123
+        >>> count = invalidate_cache('graph', 'user:123:*')
+        >>> print(f"Invalidated {count} entries")
+    """
+    from .common.caching import get_cache_controller
+    controller = get_cache_controller()
+    return controller.invalidate_pattern(component, pattern)
+
+
+def get_cache_proof() -> Dict[str, Any]:
+    """
+    Get proof-of-superiority for cache performance.
+    
+    Shows concrete metrics proving cache is faster than baseline.
+    
+    Returns:
+        Dictionary with proof summary including speedup factors,
+        improvement percentages, and recommendations
+    
+    Example:
+        >>> proof = get_cache_proof()
+        >>> print(f"Average speedup: {proof['overall_metrics']['avg_speedup_factor']}x")
+        >>> print(f"Best performer: {proof['best_performer']['operation']}")
+    """
+    from .common.caching import get_telemetry_collector
+    collector = get_telemetry_collector()
+    return collector.get_proof_summary()
+
+
+def print_cache_report(component: Optional[str] = None) -> None:
+    """
+    Print formatted cache performance report to stdout.
+    
+    Args:
+        component: Optional component filter
+    
+    Example:
+        >>> print_cache_report()  # Print report for all components
+        >>> print_cache_report('graph')  # Print report for graph only
+    """
+    from .common.caching import get_telemetry_collector
+    collector = get_telemetry_collector()
+    collector.print_report(component)
+
+
+def get_cache_comparison(
+    component: Optional[str] = None,
+    operation: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Get detailed performance comparison between baseline and cached operations.
+    
+    Args:
+        component: Optional component filter
+        operation: Optional operation filter
+    
+    Returns:
+        List of comparison reports showing speedup factors and improvements
+    
+    Example:
+        >>> reports = get_cache_comparison('graph')
+        >>> for report in reports:
+        ...     print(f"{report['operation']}: {report['speedup_factor']}x faster")
+    """
+    from .common.caching import get_telemetry_collector
+    collector = get_telemetry_collector()
+    reports = collector.get_comparison_report(component, operation)
+    return [r.to_dict() for r in reports]
 
 
 class XWEdge:
@@ -457,5 +1056,14 @@ __all__ = [
     'fast',
     'optimized', 
     'adaptive',
-    'dual_adaptive'
+    'dual_adaptive',
+    # Cache Management (NEW in v0.0.1.29)
+    'get_cache_stats',
+    'clear_cache',
+    'configure_cache',
+    'get_cache_health',
+    'invalidate_cache',
+    'get_cache_proof',
+    'print_cache_report',
+    'get_cache_comparison',
 ]

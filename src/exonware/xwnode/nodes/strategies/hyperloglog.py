@@ -5,7 +5,7 @@ This module implements the HYPERLOGLOG strategy for probabilistic
 cardinality estimation with logarithmic space complexity.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Set
+from typing import Any, Iterator, List, Dict, Optional, Set, AsyncIterator
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -204,17 +204,51 @@ class HyperLogLogStrategy(ANodeStrategy):
     def to_native(self) -> Dict[str, Any]:
         """Convert to native Python dict."""
         result = {}
-        for item in self._items_added:
-            result[item] = self._values.get(item, True)
-        
-        result.update({
-            "cardinality": self.estimate_cardinality(),
-            "buckets": self._buckets.copy(),
-            "statistics": self.get_statistics(),
-            "raw_estimate": self._raw_estimate()
-        })
-        
-        return result
+
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
+    
     
     @property
     def is_list(self) -> bool:

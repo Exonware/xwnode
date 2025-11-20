@@ -411,5 +411,5 @@ class TestHashMapStrategyMetadata:
     def test_strategy_type(self):
         """Test strategy reports correct type."""
         from exonware.xwnode.nodes.strategies.contracts import NodeType
-        assert HashMapStrategy.STRATEGY_TYPE == NodeType.TREE
+        assert HashMapStrategy.STRATEGY_TYPE == NodeType.HYBRID  # Hash-based, not tree-based
 

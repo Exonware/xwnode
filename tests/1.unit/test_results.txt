@@ -1,0 +1,499 @@
+================================================================================
+xwnode - Unit Tests - Module by Module
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 5 sub-module(s) with runners
+   Sub-module: common_tests
+================================================================================
+xwnode - Unit Tests - Common Module (management, monitoring, patterns, utils)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests\runner_out.md
+ℹ 
+Discovered 5 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests -m xwnode_unit
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 31 items
+
+common_tests\test_flyweight_pattern.py::TestFlyweightPattern::test_flyweight_exists PASSED [  3%]
+common_tests\test_flyweight_pattern.py::TestFlyweightPattern::test_object_pooling PASSED [  6%]
+common_tests\test_flyweight_pattern.py::TestFlyweightPerformance::test_memory_optimization PASSED [  9%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorBasics::test_monitor_initialization PASSED [ 12%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorBasics::test_monitor_tracks_operations PASSED [ 16%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitoring::test_monitor_collects_metrics PASSED [ 19%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitoring::test_monitor_handles_multiple_operations PASSED [ 22%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorEdgeCases::test_monitor_with_no_operations PASSED [ 25%]
+common_tests\test_performance_monitor.py::TestPerformanceMonitorEdgeCases::test_monitor_reusability PASSED [ 29%]
+common_tests\test_registry.py::TestRegistryBasics::test_get_registry_returns_instance PASSED [ 32%]
+common_tests\test_registry.py::TestRegistryBasics::test_registry_is_singleton PASSED [ 35%]
+common_tests\test_registry.py::TestRegistryStrategies::test_registry_has_strategies PASSED [ 38%]
+common_tests\test_registry.py::TestRegistryStrategies::test_registry_handles_node_modes PASSED [ 41%]
+common_tests\test_registry.py::TestRegistryEdgeCases::test_registry_with_invalid_mode PASSED [ 45%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_node_strategy_from_dict PASSED [ 48%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_node_strategy_from_list PASSED [ 51%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_specific_mode PASSED [ 54%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_empty_data PASSED [ 58%]
+common_tests\test_strategy_manager.py::TestStrategyManagerCreation::test_create_with_none_data PASSED [ 61%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_dict PASSED [ 64%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_list PASSED [ 67%]
+common_tests\test_strategy_manager.py::TestStrategyManagerSelection::test_auto_selection_for_nested_data PASSED [ 70%]
+common_tests\test_strategy_manager.py::TestStrategyManagerPerformance::test_strategy_creation_performance PASSED [ 74%]
+common_tests\test_strategy_manager.py::TestStrategyManagerPerformance::test_multiple_creations_work PASSED [ 77%]
+common_tests\test_strategy_manager.py::TestStrategyManagerErrors::test_invalid_data_type_handling PASSED [ 80%]
+common_tests\test_strategy_manager.py::TestStrategyManagerErrors::test_edge_case_data_handling PASSED [ 83%]
+common_tests\test_strategy_manager.py::TestStrategyManagerMetadata::test_manager_initialization PASSED [ 87%]
+common_tests\test_strategy_manager.py::TestStrategyManagerMetadata::test_manager_is_reusable PASSED [ 90%]
+common_tests\test_utils.py::TestSimpleNodeStrategy::test_simple_strategy_creation PASSED [ 93%]
+common_tests\test_utils.py::TestSimpleNodeStrategy::test_simple_strategy_operations PASSED [ 96%]
+common_tests\test_utils.py::TestUtils::test_utils_module_exists PASSED   [100%]
+
+============================= 31 passed in 1.70s ==============================
+
+
+✓ 
+============================= 31 passed in 1.70s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\common_tests\runner_out.md
+   Sub-module: edges_tests
+================================================================================
+xwnode - Unit Tests - Edges Module (strategies, executors)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\runner_out.md
+ℹ 
+Discovered 1 sub-module(s) with runners
+   Sub-module: strategies_tests
+================================================================================
+xwnode - Unit Tests - Edge Strategies (16 strategies: ADJ_LIST, R_TREE, NEURAL_GRAPH, etc.)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests\runner_out.md
+ℹ 
+Discovered 9 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests -m xwnode_unit or xwnode_edge_strategy
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 50 items
+
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_add_edge PASSED [  2%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_remove_edge PASSED [  4%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixInterface::test_has_edge_o1_performance PASSED [  6%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixPerformance::test_dense_graph_efficiency PASSED [  8%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixEdgeCases::test_self_loops PASSED [ 10%]
+strategies_tests\test_adj_matrix_strategy.py::TestAdjMatrixEdgeCases::test_bidirectional_edges PASSED [ 12%]
+strategies_tests\test_flow_network.py::TestFlowNetworkInterface::test_strategy_exists PASSED [ 14%]
+strategies_tests\test_flow_network.py::TestFlowNetworkInterface::test_capacity_constraints PASSED [ 16%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_strategy_exists PASSED [ 18%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_hyperedge_support PASSED [ 20%]
+strategies_tests\test_hyperedge_set.py::TestHyperedgeSetInterface::test_multi_vertex_edges PASSED [ 22%]
+strategies_tests\test_neural_graph.py::TestNeuralGraphInterface::test_strategy_exists PASSED [ 24%]
+strategies_tests\test_neural_graph.py::TestNeuralGraphInterface::test_computation_graph_support PASSED [ 26%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_initialization PASSED [ 28%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_supported_traits PASSED [ 30%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_add_edge PASSED [ 32%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_remove_edge PASSED [ 34%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_get_neighbors PASSED [ 36%]
+strategies_tests\test_new_edge_strategies.py::TestIncidenceMatrixStrategyUnit::test_edge_by_id PASSED [ 38%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_initialization PASSED [ 40%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_add_multiple_edges PASSED [ 42%]
+strategies_tests\test_new_edge_strategies.py::TestEdgeListStrategyUnit::test_simple_format PASSED [ 44%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_initialization PASSED [ 46%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_compression PASSED [ 48%]
+strategies_tests\test_new_edge_strategies.py::TestCompressedGraphStrategyUnit::test_power_law_graph PASSED [ 50%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_strategy_exists PASSED [ 52%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_compressed_storage PASSED [ 54%]
+strategies_tests\test_sparse_formats.py::TestCSRStrategy::test_memory_reduction PASSED [ 56%]
+strategies_tests\test_sparse_formats.py::TestCSCStrategy::test_strategy_exists PASSED [ 58%]
+strategies_tests\test_sparse_formats.py::TestCSCStrategy::test_column_oriented_operations PASSED [ 60%]
+strategies_tests\test_sparse_formats.py::TestCOOStrategy::test_strategy_exists PASSED [ 62%]
+strategies_tests\test_sparse_formats.py::TestCOOStrategy::test_coordinate_format PASSED [ 64%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_rtree_strategy_exists PASSED [ 66%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_quadtree_strategy_exists PASSED [ 68%]
+strategies_tests\test_spatial_strategies.py::TestSpatialStrategiesExist::test_octree_strategy_exists PASSED [ 70%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_rtree_for_2d_3d_rectangles PASSED [ 72%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_quadtree_for_2d_partitioning PASSED [ 74%]
+strategies_tests\test_spatial_strategies.py::TestSpatialCapabilities::test_octree_for_3d_partitioning PASSED [ 76%]
+strategies_tests\test_spatial_strategies.py::TestSpatialPerformance::test_spatial_query_optimization PASSED [ 78%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalEdgeSetInterface::test_strategy_exists PASSED [ 80%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalEdgeSetInterface::test_temporal_capabilities PASSED [ 82%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalOperations::test_time_aware_edge_storage PASSED [ 84%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalOperations::test_temporal_queries PASSED [ 86%]
+strategies_tests\test_temporal_edgeset.py::TestTemporalPerformance::test_temporal_query_performance PASSED [ 88%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_add_weighted_edge PASSED [ 90%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_get_edge_weight PASSED [ 92%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphInterface::test_weighted_path_algorithms PASSED [ 94%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_zero_weight PASSED [ 96%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_negative_weight PASSED [ 98%]
+strategies_tests\test_weighted_graph_strategy.py::TestWeightedGraphEdgeCases::test_very_large_weight PASSED [100%]
+
+============================= 50 passed in 1.56s ==============================
+
+
+✓ 
+============================= 50 passed in 1.56s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\strategies_tests\runner_out.md
+✓ 
+✅ ALL SUB-MODULES PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\edges_tests\runner_out.md
+   Sub-module: facade_tests
+================================================================================
+xwnode - Unit Tests - Facade Module (XWNode public API)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests\runner_out.md
+ℹ 
+Discovered 2 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests -m xwnode_unit
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 42 items
+
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_dict PASSED [  2%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_list PASSED [  4%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_nested_data PASSED [  7%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_specific_mode PASSED [  9%]
+facade_tests\test_xwnode_api.py::TestXWNodeFactoryMethods::test_from_native_with_empty_data PASSED [ 11%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_get_operation PASSED [ 14%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_set_operation PASSED [ 16%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_delete_operation PASSED [ 19%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_exists_operation PASSED [ 21%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_length_operation PASSED [ 23%]
+facade_tests\test_xwnode_api.py::TestXWNodeCoreOperations::test_to_native_roundtrip PASSED [ 26%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_simple_creation_is_easy PASSED [ 28%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_error_messages_are_helpful PASSED [ 30%]
+facade_tests\test_xwnode_api.py::TestXWNodeUsability::test_common_operations_work_intuitively PASSED [ 33%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_malicious_input_handling PASSED [ 35%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_resource_limits PASSED [ 38%]
+facade_tests\test_xwnode_api.py::TestXWNodeSecurity::test_circular_reference_protection PASSED [ 40%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_empty_data_handling PASSED [ 42%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_none_values PASSED [ 45%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_unicode_data PASSED [ 47%]
+facade_tests\test_xwnode_api.py::TestXWNodeEdgeCases::test_mixed_types_in_dict PASSED [ 50%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_all_presets_defined PASSED [ 52%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_get_preset_returns_config PASSED [ 54%]
+facade_tests\test_xwnode_presets.py::TestUsabilityPresetsAvailability::test_invalid_preset_raises_error PASSED [ 57%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[DATA_INTERCHANGE_OPTIMIZED] PASSED [ 59%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SOCIAL_GRAPH] PASSED [ 61%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[ANALYTICS] PASSED [ 64%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SEARCH_ENGINE] PASSED [ 66%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[TIME_SERIES] PASSED [ 69%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_valid_node_mode[SPATIAL_MAP] PASSED [ 71%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[DATA_INTERCHANGE_OPTIMIZED] PASSED [ 73%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[SOCIAL_GRAPH] PASSED [ 76%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_preset_has_description[ANALYTICS] PASSED [ 78%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_data_interchange_optimized_config PASSED [ 80%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_social_graph_config PASSED [ 83%]
+facade_tests\test_xwnode_presets.py::TestPresetsConfiguration::test_analytics_config PASSED [ 85%]
+facade_tests\test_xwnode_presets.py::TestPresetUsage::test_list_presets_returns_all PASSED [ 88%]
+facade_tests\test_xwnode_presets.py::TestPresetUsage::test_preset_configuration_is_usable PASSED [ 90%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_all_presets_have_performance_class PASSED [ 92%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_all_presets_have_node_mode PASSED [ 95%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_preset_disabled_features_is_list PASSED [ 97%]
+facade_tests\test_xwnode_presets.py::TestPresetMetadata::test_preset_internal_config_is_dict PASSED [100%]
+
+============================= 42 passed in 1.91s ==============================
+
+
+✓ 
+============================= 42 passed in 1.91s ==============================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\facade_tests\runner_out.md
+   Sub-module: graph_tests
+   Testing: graph
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 25 items
+
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_initialization PASSED [  4%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_add_single_relationship PASSED [  8%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_add_multiple_relationships PASSED [ 12%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_query_with_type_filter PASSED [ 16%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_query_without_type_filter PASSED [ 20%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_remove_relationship PASSED [ 24%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerBasic::test_degree_calculation PASSED [ 28%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_isolation_key_set PASSED [ 32%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_valid_isolation_key PASSED [ 36%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_operations_within_isolation_boundary PASSED [ 40%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIsolation::test_separate_instances_are_isolated PASSED [ 44%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_hit_on_repeated_query PASSED [ 48%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_invalidation_on_add PASSED [ 52%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_cache_invalidation_on_remove PASSED [ 56%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerCaching::test_clear_cache PASSED [ 60%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_outgoing_index PASSED [ 64%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_incoming_index PASSED [ 68%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_index_stats PASSED [ 72%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerIndexing::test_clear_indexes PASSED [ 76%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_empty_graph_queries PASSED [ 80%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_nonexistent_entity PASSED [ 84%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_nonexistent_relationship_type PASSED [ 88%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_has_relationship_nonexistent PASSED [ 92%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_remove_nonexistent_relationship PASSED [ 96%]
+xwnode\tests\1.unit\graph_tests\test_graph_manager.py::TestGraphManagerEdgeCases::test_limit_parameter PASSED [100%]
+
+============================= 25 passed in 0.04s ==============================
+   Sub-module: nodes_tests
+================================================================================
+xwnode - Unit Tests - Nodes Module (45+ strategies, base classes)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\runner_out.md
+ℹ 
+Discovered 1 sub-module(s) with runners
+   Sub-module: strategies_tests
+================================================================================
+xwnode - Unit Tests - Node Strategies (45+ strategies: HASH_MAP, TRIE, LSM_TREE, etc.)
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests\runner_out.md
+ℹ 
+Discovered 25 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests -m xwnode_unit or xwnode_node_strategy
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 178 items
+
+strategies_tests\test_adjacency_list_node.py::TestAdjacencyListNodeInterface::test_strategy_exists PASSED [  0%]
+strategies_tests\test_adjacency_list_node.py::TestAdjacencyListNodeInterface::test_graph_representation PASSED [  1%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_creation PASSED [  1%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_with_data PASSED [  2%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_to_native_conversion PASSED [  2%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyInterface::test_list_roundtrip PASSED [  3%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyPerformance::test_large_list_handling PASSED [  3%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategySecurity::test_large_list_no_crash PASSED [  4%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyEdgeCases::test_empty_list_operations PASSED [  5%]
+strategies_tests\test_array_list_strategy.py::TestArrayListStrategyEdgeCases::test_list_with_none_values PASSED [  5%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_initialization PASSED [  6%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_supported_traits PASSED [  6%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_basic_put_get PASSED [  7%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_string_keys PASSED [  7%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_delete_operation PASSED [  8%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_iteration PASSED [  8%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_prefix_search PASSED [  9%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_to_native PASSED [ 10%]
+strategies_tests\test_art_strategy.py::TestARTStrategyUnit::test_backend_info PASSED [ 10%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_strategy_exists PASSED [ 11%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_self_balancing_property PASSED [ 11%]
+strategies_tests\test_balanced_trees.py::TestRedBlackTreeStrategy::test_olog_n_operations PASSED [ 12%]
+strategies_tests\test_balanced_trees.py::TestAVLTreeStrategy::test_strategy_exists PASSED [ 12%]
+strategies_tests\test_balanced_trees.py::TestAVLTreeStrategy::test_strict_balance_property PASSED [ 13%]
+strategies_tests\test_balanced_trees.py::TestTreapStrategy::test_strategy_exists PASSED [ 14%]
+strategies_tests\test_balanced_trees.py::TestTreapStrategy::test_randomized_balancing PASSED [ 14%]
+strategies_tests\test_balanced_trees.py::TestSplayTreeStrategy::test_strategy_exists PASSED [ 15%]
+strategies_tests\test_balanced_trees.py::TestSplayTreeStrategy::test_self_adjusting_property PASSED [ 15%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_strategy_exists PASSED [ 16%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_probabilistic_structure PASSED [ 16%]
+strategies_tests\test_balanced_trees.py::TestSkipListStrategy::test_concurrent_friendly PASSED [ 17%]
+strategies_tests\test_balanced_trees.py::TestBalancedTreesPerformance::test_all_provide_olog_n PASSED [ 17%]
+strategies_tests\test_bitmap_structures.py::TestBitmapStrategy::test_strategy_exists PASSED [ 18%]
+strategies_tests\test_bitmap_structures.py::TestBitmapStrategy::test_bitmap_operations PASSED [ 19%]
+strategies_tests\test_bitmap_structures.py::TestBitsetDynamicStrategy::test_strategy_exists PASSED [ 19%]
+strategies_tests\test_bitmap_structures.py::TestBitsetDynamicStrategy::test_dynamic_resizing PASSED [ 20%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_strategy_exists PASSED [ 20%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_memory_efficiency PASSED [ 21%]
+strategies_tests\test_bitmap_structures.py::TestRoaringBitmapStrategy::test_compressed_storage PASSED [ 21%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterInterface::test_strategy_exists PASSED [ 22%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterInterface::test_probabilistic_membership PASSED [ 23%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterPerformance::test_memory_efficiency PASSED [ 23%]
+strategies_tests\test_bloom_filter_strategy.py::TestBloomFilterPerformance::test_ok_operations PASSED [ 24%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_strategy_exists PASSED [ 24%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_prefix_sum_operations PASSED [ 25%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreeInterface::test_range_update_operations PASSED [ 25%]
+strategies_tests\test_fenwick_tree_strategy.py::TestFenwickTreePerformance::test_olog_n_operations PASSED [ 26%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_insert_operation PASSED [ 26%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_find_operation PASSED [ 27%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_delete_operation PASSED [ 28%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_size_operation PASSED [ 28%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_is_empty_operation PASSED [ 29%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_to_native_conversion PASSED [ 29%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_keys_iteration PASSED [ 30%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_values_iteration PASSED [ 30%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyInterface::test_items_iteration PASSED [ 31%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_get_with_default PASSED [ 32%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_setdefault_operation PASSED [ 32%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_update_operation PASSED [ 33%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_clear_operation PASSED [ 33%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyCore::test_contains_operation PASSED [ 34%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyPerformance::test_o1_insert_performance PASSED [ 34%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyPerformance::test_o1_find_performance PASSED [ 35%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_malicious_key_handling PASSED [ 35%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_resource_limit_protection PASSED [ 36%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategySecurity::test_type_safety PASSED [ 37%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_none_key_handling PASSED [ 37%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_empty_key_handling PASSED [ 38%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyErrors::test_duplicate_key_handling PASSED [ 38%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_empty_data_handling PASSED [ 39%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_large_dataset_handling PASSED [ 39%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_unicode_keys_and_values PASSED [ 40%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyEdgeCases::test_nested_structure_handling PASSED [ 41%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_strategy_mode PASSED [ 41%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_supported_traits PASSED [ 42%]
+strategies_tests\test_hash_map_strategy.py::TestHashMapStrategyMetadata::test_strategy_type PASSED [ 42%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_insert_operation PASSED [ 43%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_size_operation PASSED [ 43%]
+strategies_tests\test_heap_strategy.py::TestHeapStrategyInterface::test_is_empty PASSED [ 44%]
+strategies_tests\test_heap_strategy.py::TestHeapPerformance::test_priority_operations_fast PASSED [ 44%]
+strategies_tests\test_heap_strategy.py::TestHeapEdgeCases::test_duplicate_values PASSED [ 45%]
+strategies_tests\test_heap_strategy.py::TestHeapEdgeCases::test_negative_values PASSED [ 46%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_stack_strategy_exists PASSED [ 46%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_lifo_behavior PASSED [ 47%]
+strategies_tests\test_linear_structures.py::TestStackStrategy::test_push_pop_operations PASSED [ 47%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_queue_strategy_exists PASSED [ 48%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_fifo_behavior PASSED [ 48%]
+strategies_tests\test_linear_structures.py::TestQueueStrategy::test_enqueue_dequeue_operations PASSED [ 49%]
+strategies_tests\test_linear_structures.py::TestPriorityQueueStrategy::test_priority_queue_exists PASSED [ 50%]
+strategies_tests\test_linear_structures.py::TestPriorityQueueStrategy::test_priority_operations PASSED [ 50%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_deque_strategy_exists PASSED [ 51%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_double_ended_operations PASSED [ 51%]
+strategies_tests\test_linear_structures.py::TestDequeStrategy::test_push_pop_both_ends PASSED [ 52%]
+strategies_tests\test_linear_structures.py::TestLinkedListStrategy::test_linked_list_exists PASSED [ 52%]
+strategies_tests\test_linear_structures.py::TestLinkedListStrategy::test_fast_insertion_deletion PASSED [ 53%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreeStrategyInterface::test_strategy_exists PASSED [ 53%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreeStrategyInterface::test_write_heavy_optimization PASSED [ 54%]
+strategies_tests\test_lsm_tree_strategy.py::TestLSMTreePerformance::test_fast_write_performance PASSED [ 55%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_initialization PASSED [ 55%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_delta_operations PASSED [ 56%]
+strategies_tests\test_new_strategies.py::TestBwTreeStrategyUnit::test_consolidation PASSED [ 56%]
+strategies_tests\test_new_strategies.py::TestHAMTStrategyUnit::test_initialization PASSED [ 57%]
+strategies_tests\test_new_strategies.py::TestHAMTStrategyUnit::test_persistent_updates PASSED [ 57%]
+strategies_tests\test_new_strategies.py::TestMasstreeStrategyUnit::test_initialization PASSED [ 58%]
+strategies_tests\test_new_strategies.py::TestMasstreeStrategyUnit::test_operations PASSED [ 58%]
+strategies_tests\test_new_strategies.py::TestExtendibleHashStrategyUnit::test_initialization PASSED [ 59%]
+strategies_tests\test_new_strategies.py::TestExtendibleHashStrategyUnit::test_operations PASSED [ 60%]
+strategies_tests\test_new_strategies.py::TestLinearHashStrategyUnit::test_initialization PASSED [ 60%]
+strategies_tests\test_new_strategies.py::TestLinearHashStrategyUnit::test_operations PASSED [ 61%]
+strategies_tests\test_new_strategies.py::TestTTreeStrategyUnit::test_initialization PASSED [ 61%]
+strategies_tests\test_new_strategies.py::TestTTreeStrategyUnit::test_operations PASSED [ 62%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_initialization PASSED [ 62%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_delegation_works PASSED [ 63%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_placeholder_documentation FAILED [ 64%]
+strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_future_ml_methods_exist PASSED [ 64%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_strategy_exists PASSED [ 65%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_ordered_iteration PASSED [ 65%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapStrategy::test_range_queries PASSED [ 66%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapBalancedStrategy::test_strategy_exists PASSED [ 66%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapBalancedStrategy::test_balanced_property PASSED [ 67%]
+strategies_tests\test_ordered_maps.py::TestOrderedMapPerformance::test_olog_n_operations PASSED [ 67%]
+strategies_tests\test_persistent_trees.py::TestBTreeStrategy::test_strategy_exists PASSED [ 68%]
+strategies_tests\test_persistent_trees.py::TestBTreeStrategy::test_persistent_trait PASSED [ 69%]
+strategies_tests\test_persistent_trees.py::TestBPlusTreeStrategy::test_strategy_exists PASSED [ 69%]
+strategies_tests\test_persistent_trees.py::TestLSMTreeStrategy::test_strategy_exists PASSED [ 70%]
+strategies_tests\test_persistent_trees.py::TestLSMTreeStrategy::test_write_optimization PASSED [ 70%]
+strategies_tests\test_persistent_trees.py::TestPersistentTreeStrategy::test_strategy_exists PASSED [ 71%]
+strategies_tests\test_persistent_trees.py::TestPersistentTreeStrategy::test_immutability PASSED [ 71%]
+strategies_tests\test_persistent_trees.py::TestCOWTreeStrategy::test_strategy_exists PASSED [ 72%]
+strategies_tests\test_persistent_trees.py::TestCOWTreeStrategy::test_instant_snapshots PASSED [ 73%]
+strategies_tests\test_probabilistic_structures.py::TestCountMinSketchStrategy::test_strategy_exists PASSED [ 73%]
+strategies_tests\test_probabilistic_structures.py::TestCountMinSketchStrategy::test_streaming_frequency_estimation PASSED [ 74%]
+strategies_tests\test_probabilistic_structures.py::TestHyperLogLogStrategy::test_strategy_exists PASSED [ 74%]
+strategies_tests\test_probabilistic_structures.py::TestHyperLogLogStrategy::test_cardinality_estimation PASSED [ 75%]
+strategies_tests\test_probabilistic_structures.py::TestProbabilisticPerformance::test_memory_efficiency PASSED [ 75%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapInterface::test_strategy_exists PASSED [ 76%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapInterface::test_sparse_set_optimization PASSED [ 76%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapPerformance::test_memory_efficiency PASSED [ 77%]
+strategies_tests\test_roaring_bitmap_strategy.py::TestRoaringBitmapPerformance::test_o1_operations PASSED [ 78%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreeInterface::test_strategy_exists PASSED [ 78%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreeInterface::test_range_query_optimization PASSED [ 79%]
+strategies_tests\test_segment_tree_strategy.py::TestSegmentTreePerformance::test_olog_n_operations PASSED [ 79%]
+strategies_tests\test_set_strategies.py::TestSetHashStrategy::test_strategy_exists PASSED [ 80%]
+strategies_tests\test_set_strategies.py::TestSetHashStrategy::test_set_operations PASSED [ 80%]
+strategies_tests\test_set_strategies.py::TestSetTreeStrategy::test_strategy_exists PASSED [ 81%]
+strategies_tests\test_set_strategies.py::TestSetTreeStrategy::test_ordered_set_operations PASSED [ 82%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixInterface::test_strategy_exists PASSED [ 82%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixInterface::test_matrix_operations PASSED [ 83%]
+strategies_tests\test_sparse_matrix_strategy.py::TestSparseMatrixPerformance::test_memory_efficiency_for_sparse_data PASSED [ 83%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_strategy_exists PASSED [ 84%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_high_load_factor_support PASSED [ 84%]
+strategies_tests\test_specialized_hash.py::TestCuckooHashStrategy::test_dual_hashing PASSED [ 85%]
+strategies_tests\test_string_structures.py::TestSuffixArrayStrategy::test_strategy_exists PASSED [ 85%]
+strategies_tests\test_string_structures.py::TestSuffixArrayStrategy::test_substring_search_capability PASSED [ 86%]
+strategies_tests\test_string_structures.py::TestAhoCorasickStrategy::test_strategy_exists PASSED [ 87%]
+strategies_tests\test_string_structures.py::TestAhoCorasickStrategy::test_multi_pattern_matching PASSED [ 87%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_create_from_dict PASSED [ 88%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_tree_navigation PASSED [ 88%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_path_based_access PASSED [ 89%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridInterface::test_to_native_preserves_structure PASSED [ 89%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_path_traversal_prevention PASSED [ 90%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_circular_reference_handling PASSED [ 91%]
+strategies_tests\test_tree_graph_hybrid.py::TestTreeGraphHybridSecurity::test_deep_nesting_handling PASSED [ 91%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_insert_string_keys PASSED [ 92%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_prefix_search PASSED [ 92%]
+strategies_tests\test_trie_strategy.py::TestTrieStrategyInterface::test_delete_word PASSED [ 93%]
+strategies_tests\test_trie_strategy.py::TestTriePerformance::test_ok_complexity PASSED [ 93%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_empty_string_key PASSED [ 94%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_unicode_keys PASSED [ 94%]
+strategies_tests\test_trie_strategy.py::TestTrieEdgeCases::test_case_sensitivity PASSED [ 95%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_strategy_exists PASSED [ 96%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_compressed_prefix_storage PASSED [ 96%]
+strategies_tests\test_trie_variants.py::TestRadixTrieStrategy::test_prefix_operations PASSED [ 97%]
+strategies_tests\test_trie_variants.py::TestPatriciaStrategy::test_strategy_exists PASSED [ 97%]
+strategies_tests\test_trie_variants.py::TestPatriciaStrategy::test_binary_trie_compression PASSED [ 98%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindInterface::test_insert_creates_element PASSED [ 98%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindInterface::test_find_operation PASSED [ 99%]
+strategies_tests\test_union_find_strategy.py::TestUnionFindPerformance::test_nearly_constant_time_operations PASSED [100%]
+
+================================== FAILURES ===================================
+_________ TestLearnedIndexStrategyUnit.test_placeholder_documentation _________
+strategies_tests\test_new_strategies.py:155: in test_placeholder_documentation
+    assert 'status' in info
+E   AssertionError: assert 'status' in {'mode': 'LEARNED_INDEX', 'traits': 'NodeTrait.NONE', 'size': 0, 'options': {}, 'production_features': ['ML Model-based Indexing', 'Linear Regression Prediction', 'Adaptive Training', 'Cache-optimized Layout', 'O(1) Average Lookup']}
+=========================== short test summary info ===========================
+FAILED strategies_tests\test_new_strategies.py::TestLearnedIndexStrategyUnit::test_placeholder_documentation - AssertionError: assert 'status' in {'mode': 'LEARNED_INDEX', 'traits': 'NodeTrait.NONE', 'size': 0, 'options': {}, 'production_features': ['ML Model-based Indexing', 'Linear Regression Prediction', 'Adaptive Training', 'Cache-optimized Layout', 'O(1) Average Lookup']}
+======================== 1 failed, 177 passed in 2.21s ========================
+
+
+✗ 
+======================== 1 failed, 177 passed in 2.21s ========================
+
+✗ ❌ FAILED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\strategies_tests\runner_out.md
+✗ 
+❌ SOME SUB-MODULES FAILED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\nodes_tests\runner_out.md
+✗ 
+❌ SOME SUB-MODULES FAILED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\1.unit\runner_out.md

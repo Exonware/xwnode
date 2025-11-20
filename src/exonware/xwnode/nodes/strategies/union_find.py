@@ -4,7 +4,7 @@ Union-Find Node Strategy Implementation
 This module implements the UNION_FIND strategy for efficient set operations.
 """
 
-from typing import Any, Iterator, Dict, List, Set
+from typing import Any, Iterator, Dict, List, Set, Optional, AsyncIterator
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -206,6 +206,50 @@ ations on disjoint sets.
         Time Complexity: O(n)
         """
         return self._union_find.values.copy()
+
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
     
     # ============================================================================
     # GRAPH STRATEGY METHODS

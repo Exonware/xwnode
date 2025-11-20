@@ -1,0 +1,45 @@
+================================================================================
+xwnode - Integration Tests - Cross-Module Scenarios
+================================================================================
+ℹ Test Directory: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration
+ℹ Output File: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration\runner_out.md
+ℹ Added to path: D:\OneDrive\DEV\exonware\xwnode\src
+ℹ 
+Discovered 2 test file(s)
+
+Running Tests
+ℹ Command: C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe -m pytest -v --tb=short d:\OneDrive\DEV\exonware\xwnode\tests\2.integration -m xwnode_integration
+ℹ Working directory: D:\OneDrive\DEV\exonware\xwnode\tests
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\muham\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: d:\OneDrive\DEV\exonware\xwnode
+configfile: pytest.ini
+plugins: anyio-4.11.0, asyncio-1.2.0, zarr-3.1.3
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 7 items
+
+2.integration\test_installation_modes.py::test_default_installation PASSED [ 14%]
+2.integration\test_installation_modes.py::test_xwsystem_integration PASSED [ 28%]
+2.integration\test_installation_modes.py::test_lazy_import PASSED        [ 42%]
+2.integration\test_installation_modes.py::test_installation_modes_standalone PASSED [ 57%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_lazy_complex_serialization PASSED [ 71%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_basic_integration PASSED [ 85%]
+2.integration\test_xwnode_xwsystem_lazy_serialization.py::test_xwnode_xwsystem_lazy_import_caching PASSED [100%]
+
+============================== warnings summary ===============================
+tests/2.integration/test_installation_modes.py::test_installation_modes_standalone
+  C:\Users\muham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but tests/2.integration/test_installation_modes.py::test_installation_modes_standalone returned <class 'int'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 7 passed, 1 warning in 1.49s =========================
+
+
+✓ 
+======================== 7 passed, 1 warning in 1.49s =========================
+
+✓ ✅ PASSED
+ℹ Results saved to: D:\OneDrive\DEV\exonware\xwnode\tests\2.integration\runner_out.md

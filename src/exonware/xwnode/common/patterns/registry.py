@@ -128,6 +128,10 @@ class StrategyRegistry:
         from ...nodes.strategies.tree_graph_hybrid import TreeGraphHybridStrategy
         self.register_node_strategy(NodeMode.TREE_GRAPH_HYBRID, TreeGraphHybridStrategy)
         
+        # Register AST strategy
+        from ...nodes.strategies.ast import ASTStrategy
+        self.register_node_strategy(NodeMode.AST, ASTStrategy)
+        
         # Register edge strategies
         self.register_edge_strategy(EdgeMode.ADJ_LIST, AdjListStrategy)
         self.register_edge_strategy(EdgeMode.ADJ_MATRIX, AdjMatrixStrategy)
@@ -238,6 +242,13 @@ class StrategyRegistry:
         from ...nodes.strategies.crdt_map import CRDTMapStrategy
         from ...nodes.strategies.bloomier_filter import BloomierFilterStrategy
         
+        # Import query optimization strategies FIRST (NEW - v0.0.1.28)
+        from ...nodes.strategies.lru_cache import LRUCacheStrategy
+        from ...nodes.strategies.histogram import HistogramStrategy
+        from ...nodes.strategies.t_digest import TDigestStrategy
+        from ...nodes.strategies.range_map import RangeMapStrategy
+        from ...nodes.strategies.circular_buffer import CircularBufferStrategy
+        
         self.register_node_strategy(NodeMode.VEB_TREE, VebTreeStrategy)
         self.register_node_strategy(NodeMode.DAWG, DawgStrategy)
         self.register_node_strategy(NodeMode.HOPSCOTCH_HASH, HopscotchHashStrategy)
@@ -246,6 +257,13 @@ class StrategyRegistry:
         self.register_node_strategy(NodeMode.ROPE, RopeStrategy)
         self.register_node_strategy(NodeMode.CRDT_MAP, CRDTMapStrategy)
         self.register_node_strategy(NodeMode.BLOOMIER_FILTER, BloomierFilterStrategy)
+        
+        # Register query optimization strategies (NEW - v0.0.1.28)
+        self.register_node_strategy(NodeMode.LRU_CACHE, LRUCacheStrategy)
+        self.register_node_strategy(NodeMode.HISTOGRAM, HistogramStrategy)
+        self.register_node_strategy(NodeMode.T_DIGEST, TDigestStrategy)
+        self.register_node_strategy(NodeMode.RANGE_MAP, RangeMapStrategy)
+        self.register_node_strategy(NodeMode.CIRCULAR_BUFFER, CircularBufferStrategy)
         
         # Edge strategies
         self.register_edge_strategy(EdgeMode.BLOCK_ADJ_MATRIX, BlockAdjMatrixStrategy)

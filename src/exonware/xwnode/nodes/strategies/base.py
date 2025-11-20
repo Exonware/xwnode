@@ -14,7 +14,7 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 22-Oct-2025
 """
 
@@ -22,10 +22,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional, List, Dict, Iterator, Union, AsyncIterator
 import asyncio
 
-from ...contracts import iNodeStrategy
+from .contracts import NodeType, INodeStrategy
 from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
-from .contracts import NodeType, INodeStrategy
 
 
 class ANodeStrategy(INodeStrategy):
@@ -196,8 +195,43 @@ class ANodeStrategy(INodeStrategy):
         pass
     
     # ============================================================================
-    # DEFAULT IMPLEMENTATIONS (iNodeStrategy interface)
+    # DEFAULT IMPLEMENTATIONS (INodeStrategy interface compatibility)
     # ============================================================================
+    
+    def insert(self, key: Any, value: Any) -> None:
+        """
+        Insert key-value pair (INodeStrategy interface method).
+        Delegates to put() for compatibility.
+        
+        Time Complexity: Same as put()
+        """
+        self.put(key, value)
+    
+    def find(self, key: Any) -> Optional[Any]:
+        """
+        Find value by key (INodeStrategy interface method).
+        Delegates to get() for compatibility.
+        
+        Time Complexity: Same as get()
+        """
+        return self.get(key)
+    
+    def size(self) -> int:
+        """
+        Get size (INodeStrategy interface method).
+        Delegates to __len__() for compatibility.
+        
+        Time Complexity: O(1)
+        """
+        return len(self)
+    
+    def is_empty(self) -> bool:
+        """
+        Check if empty (INodeStrategy interface method).
+        
+        Time Complexity: O(1)
+        """
+        return len(self) == 0
     
     def exists(self, path: str) -> bool:
         """

@@ -14,8 +14,8 @@ to predict key positions instead of traditional tree traversal.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: October 12, 2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 
 ==============================================================================
 RESEARCH OVERVIEW: Learned Indexes
@@ -151,7 +151,7 @@ For now, this strategy:
 ==============================================================================
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Tuple
+from typing import Any, Iterator, Dict, List, Optional, Tuple, AsyncIterator
 import bisect
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -167,14 +167,10 @@ from ...common.utils import (
 )
 
 # ML imports (handled by lazy installation)
-try:
-    import numpy as np
-    from sklearn.linear_model import LinearRegression
-    HAS_SKLEARN = True
-except ImportError:
-    HAS_SKLEARN = False
-    np = None
-    LinearRegression = None
+# Direct imports - no try/except or HAS_* flags (per GUIDELINES_DEV.md)
+# With lazy installation enabled, import hook handles missing packages
+import numpy as np
+from sklearn.linear_model import LinearRegression
 
 
 class LearnedIndexStrategy(ANodeStrategy):
@@ -291,7 +287,7 @@ class LearnedIndexStrategy(ANodeStrategy):
         numeric_key = self._key_map[key_str]
         
         # Try ML prediction if model is trained
-        if self._trained and HAS_SKLEARN:
+        if self._trained:
             pos = self.predict_position(numeric_key)
             if pos >= 0 and pos < len(self._keys) and self._keys[pos] == numeric_key:
                 self._prediction_hits += 1
@@ -388,6 +384,55 @@ class LearnedIndexStrategy(ANodeStrategy):
         """Convert to native dict."""
         return {self._reverse_map[k]: v for k, v in zip(self._keys, self._values)}
     
+    def backend_info(self) -> Dict[str, Any]:
+        """Get backend implementation info with production features and model status."""
+        # Use the comprehensive get_backend_info() which includes status and model info
+        return self.get_backend_info()
+
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
+    
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
+    
     # ============================================================================
     # ML MODEL IMPLEMENTATION
     # ============================================================================
@@ -403,13 +448,8 @@ class LearnedIndexStrategy(ANodeStrategy):
             sample_rate: Fraction of data to sample (1.0 = all data)
             
         Returns:
-            True if training succeeded, False if not enough data or sklearn unavailable
+            True if training succeeded, False if not enough data
         """
-        if not HAS_SKLEARN:
-            # Sklearn not available, can't train
-            self._trained = False
-            return False
-        
         if len(self._keys) < self._train_threshold:
             # Not enough data to train
             self._trained = False
@@ -452,7 +492,7 @@ class LearnedIndexStrategy(ANodeStrategy):
         Returns:
             Predicted position in sorted array, or -1 if prediction fails
         """
-        if not self._trained or not HAS_SKLEARN or self._model is None:
+        if not self._trained or self._model is None:
             return -1
         
         try:
@@ -476,10 +516,9 @@ class LearnedIndexStrategy(ANodeStrategy):
     
     def get_model_info(self) -> Dict[str, Any]:
         """Get ML model information and statistics."""
-        if not self._trained or not HAS_SKLEARN:
+        if not self._trained:
             return {
                 'status': 'NOT_TRAINED',
-                'sklearn_available': HAS_SKLEARN,
                 'keys_count': len(self._keys),
                 'train_threshold': self._train_threshold,
                 'message': 'Model will train after {} keys'.format(self._train_threshold)
@@ -511,7 +550,6 @@ class LearnedIndexStrategy(ANodeStrategy):
             'backend': 'Sorted Array with ML Position Prediction',
             'total_keys': len(self._keys),
             'model_trained': self._trained,
-            'sklearn_available': HAS_SKLEARN,
             'complexity': {
                 'read_trained': 'O(1) amortized with ML prediction',
                 'read_untrained': 'O(log n) binary search',
@@ -520,7 +558,7 @@ class LearnedIndexStrategy(ANodeStrategy):
                 'space': 'O(n) data + O(1) model'
             },
             'production_features': [
-                'Linear Regression Model' if HAS_SKLEARN else 'Fallback Mode (no sklearn)',
+                'Linear Regression Model',
                 'Automatic Training',
                 'Error-bounded Prediction',
                 'Binary Search Fallback',

@@ -48,7 +48,7 @@ def _get_env_var(key: str, default: str, target_type: type):
             return float(value)
         return value
     except (ValueError, TypeError) as e:
-        raise xNodeValueError(
+        raise XWNodeValueError(
             f"Invalid value for environment variable {key}: '{value}'. "
             f"Could not convert to {target_type.__name__}."
         ) from e
@@ -90,6 +90,37 @@ class XWNodeConfig:
     enable_thread_safety: bool = True
     lock_timeout: float = 5.0
 
+    # --- Cache System Configuration (NEW in v0.0.1.29) ---
+    # Global cache control
+    enable_global_caching: bool = True
+    global_cache_strategy: str = "lru"  # lru, lfu, ttl, two_tier
+    global_cache_size: int = 1000
+    
+    # Component-level cache control
+    enable_graph_caching: bool = True
+    graph_cache_size: int = 1000
+    graph_cache_strategy: str = "lru"
+    
+    enable_traversal_caching: bool = True
+    traversal_cache_size: int = 500
+    traversal_cache_strategy: str = "lru"
+    
+    enable_query_caching: bool = True
+    query_cache_size: int = 2000
+    query_cache_strategy: str = "lru"
+    
+    # Two-tier cache settings (memory + disk)
+    enable_disk_cache: bool = False
+    disk_cache_size: int = 10000
+    disk_cache_dir: Optional[str] = None
+    
+    # TTL cache settings
+    cache_ttl_seconds: int = 300  # 5 minutes default
+    
+    # Performance tuning
+    cache_hit_threshold: float = 0.7  # Warn if hit rate < 70%
+    enable_cache_warmup: bool = False
+
     @classmethod
     def from_env(cls) -> 'XWNodeConfig':
         """
@@ -125,6 +156,33 @@ class XWNodeConfig:
             raise XWNodeValueError("max_path_length must be positive")
         if self.lock_timeout <= 0:
             raise XWNodeValueError("lock_timeout must be positive")
+        
+        # Validate cache settings
+        if self.global_cache_size <= 0:
+            raise XWNodeValueError("global_cache_size must be positive")
+        if self.graph_cache_size <= 0:
+            raise XWNodeValueError("graph_cache_size must be positive")
+        if self.traversal_cache_size <= 0:
+            raise XWNodeValueError("traversal_cache_size must be positive")
+        if self.query_cache_size <= 0:
+            raise XWNodeValueError("query_cache_size must be positive")
+        if self.disk_cache_size <= 0:
+            raise XWNodeValueError("disk_cache_size must be positive")
+        if self.cache_ttl_seconds <= 0:
+            raise XWNodeValueError("cache_ttl_seconds must be positive")
+        if not (0.0 <= self.cache_hit_threshold <= 1.0):
+            raise XWNodeValueError("cache_hit_threshold must be between 0.0 and 1.0")
+        
+        # Validate cache strategy values
+        valid_strategies = {"lru", "lfu", "ttl", "two_tier", "none"}
+        if self.global_cache_strategy not in valid_strategies:
+            raise XWNodeValueError(f"global_cache_strategy must be one of {valid_strategies}")
+        if self.graph_cache_strategy not in valid_strategies:
+            raise XWNodeValueError(f"graph_cache_strategy must be one of {valid_strategies}")
+        if self.traversal_cache_strategy not in valid_strategies:
+            raise XWNodeValueError(f"traversal_cache_strategy must be one of {valid_strategies}")
+        if self.query_cache_strategy not in valid_strategies:
+            raise XWNodeValueError(f"query_cache_strategy must be one of {valid_strategies}")
 
 
 def get_config() -> XWNodeConfig:

@@ -1,1 +1,0 @@
-# Core xNode functionality tests

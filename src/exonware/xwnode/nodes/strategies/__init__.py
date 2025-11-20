@@ -9,7 +9,7 @@ This package contains all node strategy implementations organized by type:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: January 2, 2025
 """
 
@@ -23,6 +23,7 @@ from .linked_list import LinkedListStrategy
 from .trie import TrieStrategy
 from .heap import HeapStrategy
 from .aho_corasick import AhoCorasickStrategy
+from .ast import ASTStrategy
 
 # Graph strategies
 from .hash_map import HashMapStrategy
@@ -37,6 +38,13 @@ from .kd_tree import KdTreeStrategy
 from .rope import RopeStrategy
 from .crdt_map import CRDTMapStrategy
 from .bloomier_filter import BloomierFilterStrategy
+
+# Query optimization strategies (NEW - v0.0.1.28)
+from .lru_cache import LRUCacheStrategy
+from .histogram import HistogramStrategy
+from .t_digest import TDigestStrategy
+from .range_map import RangeMapStrategy
+from .circular_buffer import CircularBufferStrategy
 
 __all__ = [
     # Base classes
@@ -53,6 +61,7 @@ __all__ = [
     'TrieStrategy',
     'HeapStrategy',
     'AhoCorasickStrategy',
+    'ASTStrategy',
     
     # Graph strategies
     'HashMapStrategy',
@@ -67,4 +76,11 @@ __all__ = [
     'RopeStrategy',
     'CRDTMapStrategy',
     'BloomierFilterStrategy',
+    
+    # Query optimization strategies (NEW - v0.0.1.28)
+    'LRUCacheStrategy',
+    'HistogramStrategy',
+    'TDigestStrategy',
+    'RangeMapStrategy',
+    'CircularBufferStrategy',
 ]

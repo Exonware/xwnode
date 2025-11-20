@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: October 12, 2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, Set, Tuple, Callable
+from typing import Any, Iterator, List, Optional, Dict, Set, Tuple, Callable, AsyncIterator
 from collections import defaultdict, deque
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
@@ -716,28 +716,50 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         
         Time Complexity: O(V + E)
         """
-        return {
-            'vertices': self._nodes,
-            'edges': {
-                vertex: [(neighbor, weight) for neighbor, weight in neighbors]
-                for vertex, neighbors in self._adj_list.items()
-                if neighbors
-            },
-            'is_directed': self._is_directed,
-            'vertex_count': self.vertex_count(),
-            'edge_count': self.edge_count()
-        }
+        return { }
+
+    # ===
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
     
-    def from_native(self, data: Dict[str, Any]) -> None:
-        """
-        Load graph from native dictionary format.
-        
-        Time Complexity: O(V + E)
-        """
-        self._nodes.clear()
-        self._adj_list.clear()
-        self._edge_count = 0
-        
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
         # Load vertices
         for vertex, vertex_data in data.get('vertices', {}).items():
             self._nodes[vertex] = vertex_data

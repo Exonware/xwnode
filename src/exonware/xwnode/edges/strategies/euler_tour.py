@@ -9,7 +9,7 @@ with O(log n) link and cut operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 12-Oct-2025
 """
 

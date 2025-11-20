@@ -6,7 +6,7 @@ Utils module for xwnode.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 """
 
 # Import and export main components
@@ -25,8 +25,8 @@ from .utils import (
     create_access_tracker, record_access, get_access_metrics
 )
 
-# Import all from simple.py
-from .simple import *
+# Import explicitly from simple.py
+from .simple import SimpleNodeStrategy
 
 __all__ = [
     'PathParser', 'TrieNode', 'UnionFind', 'MinHeap',
@@ -36,5 +36,6 @@ __all__ = [
     'create_basic_metrics', 'create_basic_backend_info',
     'is_list_like', 'safe_to_native_conversion', 'create_strategy_logger',
     'validate_strategy_options', 'create_size_tracker', 'update_size_tracker',
-    'create_access_tracker', 'record_access', 'get_access_metrics'
+    'create_access_tracker', 'record_access', 'get_access_metrics',
+    'SimpleNodeStrategy'  # Explicitly added
 ]

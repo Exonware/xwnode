@@ -50,6 +50,10 @@ full = [
     # All serialization, security, monitoring, and performance features
     # are inherited from xwsystem's full installation
     "exonware-xwsystem[full]",
+    
+    # xwnode-specific dependencies for advanced strategies
+    "numpy>=1.24.0",  # For learned index and probabilistic strategies
+    "scikit-learn>=1.2.0",  # For learned index strategy (ML-based indexing)
 ]
 
 [project.urls]
@@ -66,7 +70,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "0.0.1.30"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

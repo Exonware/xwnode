@@ -167,7 +167,7 @@ class TestBWTreeProductionFeatures:
     def test_bw_tree_backend_info_shows_production_features(self):
         """BW Tree backend_info should list production features."""
         strategy = BwTreeStrategy()
-        info = strategy.get_backend_info()
+        info = strategy.backend_info()
         assert 'production_features' in info
         features = info['production_features']
         assert 'Atomic CAS Operations' in features
@@ -279,13 +279,13 @@ class TestDocumentationCompliance:
     def test_bw_tree_has_production_features(self):
         """BW Tree should report production features in backend_info."""
         strategy = BwTreeStrategy()
-        info = strategy.get_backend_info()
+        info = strategy.backend_info()
         assert 'production_features' in info
     
     def test_learned_index_has_production_features(self):
         """Learned Index should report production features in backend_info."""
         strategy = LearnedIndexStrategy()
-        info = strategy.get_backend_info()
+        info = strategy.backend_info()
         assert 'production_features' in info
 
 

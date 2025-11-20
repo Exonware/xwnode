@@ -151,9 +151,9 @@ class TestLearnedIndexStrategyUnit:
     def test_placeholder_documentation(self):
         """Test placeholder has proper documentation."""
         strategy = LearnedIndexStrategy()
-        info = strategy.get_backend_info()
+        info = strategy.backend_info()
         assert 'status' in info
-        assert info['status'] == 'EXPERIMENTAL'
+        assert info['status'] == 'NOT_TRAINED'  # Untrained model status
     
     def test_future_ml_methods_exist(self):
         """Test that future ML methods are defined."""

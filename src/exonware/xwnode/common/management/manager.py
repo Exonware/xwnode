@@ -12,7 +12,7 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 07-Sep-2025
 """
 
@@ -707,7 +707,14 @@ class StrategyManager:
         self._materialize_node_strategy()
         
         if self._node_strategy is not None:
-            return self._node_strategy.create_from_data(data)
+            # Populate existing strategy with data instead of creating new instance
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    self._node_strategy.insert(key, value)
+            elif isinstance(data, (list, tuple)):
+                for i, value in enumerate(data):
+                    self._node_strategy.insert(i, value)
+            return self._node_strategy
         else:
             # This should never happen if _materialize_node_strategy() worked correctly
             raise XWNodeError(

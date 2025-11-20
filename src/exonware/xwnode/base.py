@@ -2,16 +2,27 @@
 """
 #exonware/xwnode/src/exonware/xwnode/base.py
 
-Abstract base classes for XWNode.
+Abstract base classes for XWNode - Clean Facade Architecture
 
-This module contains the abstract base classes that provide core functionality
-for all XWNode implementations.
+This module contains abstract base classes for facade implementations:
+- ANode: Abstract node base (INode → ANode → XWNode)
+- AEdge: Abstract edge base (IEdge → AEdge → XWEdge)
+
+Strategy base classes are in their respective strategy folders:
+- Node strategy bases: nodes/strategies/base.py
+- Edge strategy bases: edges/strategies/base.py
+
+Company: eXonware.com
+Author: Eng. Muhammad AlShehri
+Email: connect@exonware.com
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 """
 
 import threading
 import copy
 from abc import ABC
-from typing import Any, Iterator, Union, Optional, List, Dict, Callable
+from typing import Any, Iterator, Union, Optional, List, Dict, Callable, TYPE_CHECKING
 from collections import OrderedDict
 
 # Core XWNode imports - strategy-agnostic
@@ -19,7 +30,18 @@ from .errors import (
     XWNodeTypeError, XWNodePathError, XWNodeSecurityError, XWNodeValueError, XWNodeLimitError
 )
 from .config import get_config
-from .contracts import iNodeFacade, iNodeStrategy, iEdge, iEdgeStrategy, iQuery, iQueryResult, iQueryEngine
+from .contracts import INode, IEdge
+
+# Strategy interface imports (for type hints only - avoid circular imports)
+if TYPE_CHECKING:
+    from .nodes.strategies.contracts import INodeStrategy
+    from .edges.strategies.contracts import IEdgeStrategy
+    iNodeStrategy = INodeStrategy
+    iEdgeStrategy = IEdgeStrategy
+else:
+    # Runtime: use Any to avoid circular imports
+    iNodeStrategy = Any
+    iEdgeStrategy = Any
 
 # System-level imports - standard imports (no defensive code!)
 from exonware.xwsystem.security import get_resource_limits
@@ -49,6 +71,10 @@ _strategy_circuit_breaker = CircuitBreaker(
     )
 )
 
+
+# ==============================================================================
+# PATH UTILITIES
+# ==============================================================================
 
 class PathParser:
     """Thread-safe path parser with caching."""
@@ -180,12 +206,16 @@ def get_global_path_cache() -> GlobalPathCache:
     return _global_path_cache
 
 
-class XWNodeBase(iNodeFacade):
+# ==============================================================================
+# NODE FACADE BASE CLASS
+# ==============================================================================
+
+class ANode(INode):
     """
-    Abstract base class for all XWNode implementations.
+    Abstract base class for all node implementations.
     
-    This class provides the core functionality that all XWNode implementations
-    must have, working through the iNodeStrategy interface.
+    Follows GUIDELINES_DEV.md naming: INode → ANode → XWNode
+    Provides core node functionality, delegates to node strategies for storage.
     """
     
     __slots__ = ('_strategy', '_hash_cache', '_type_cache')
@@ -197,34 +227,75 @@ class XWNodeBase(iNodeFacade):
         self._type_cache = None
 
     @classmethod
-    def from_native(cls, data: Any) -> 'XWNodeBase':
-        """Create XWNodeBase from native data."""
+    def from_native(cls, data: Any) -> 'ANode':
+        """Create ANode from native data."""
         # For now, we'll use a simple hash map strategy
         # In the full implementation, this would use the strategy manager
         from .common.utils.simple import SimpleNodeStrategy
         strategy = SimpleNodeStrategy.create_from_data(data)
         return cls(strategy)
 
-    def get(self, path: str, default: Any = None) -> Optional['XWNodeBase']:
-        """Get a node by path."""
+    def get(self, path: str, default: Any = None) -> Optional['ANode']:
+        """Get a node by path with support for nested navigation."""
         try:
-            result_strategy = self._strategy.get(path, default)
-            if result_strategy is None:
-                return None
-            return XWNodeBase(result_strategy)
-        except Exception:
+            # Parse the path into parts (e.g., 'users.0.name' -> ['users', '0', 'name'])
+            parser = get_path_parser()
+            parts = parser.parse(path)
+            
+            # If no parts or empty path, return self
+            if not parts:
+                return self
+            
+            # Navigate through the path
+            current = self
+            for i, part in enumerate(parts):
+                if current is None:
+                    return None
+                
+                # Try to get the next level
+                try:
+                    # Use find() for single-key access (no path parsing)
+                    # Convert string numbers to int for list access
+                    key = int(part) if part.isdigit() else part
+                    result = current._strategy.find(key)
+                    
+                    if result is None:
+                        return None
+                    
+                    # Check if result is already a strategy or needs wrapping
+                    from .nodes.strategies.base import ANodeStrategy
+                    from .nodes.strategies.contracts import INodeStrategy
+                    if isinstance(result, (ANodeStrategy, INodeStrategy)):
+                        # Already a strategy, wrap in ANode
+                        current = ANode(result)
+                    else:
+                        # Raw value, need to create a strategy from it
+                        from .common.utils.simple import SimpleNodeStrategy
+                        strategy = SimpleNodeStrategy.create_from_data(result)
+                        current = ANode(strategy)
+                except Exception as e:
+                    # Log the error for debugging
+                    import logging
+                    logging.debug(f"Error navigating path part {i} ('{part}'): {e}")
+                    return None
+            
+            return current
+        except Exception as e:
+            # Log the error for debugging
+            import logging
+            logging.debug(f"Error in get() for path '{path}': {e}")
             return None
     
-    def set(self, path: str, value: Any, in_place: bool = True) -> 'XWNodeBase':
+    def set(self, path: str, value: Any, in_place: bool = True) -> 'ANode':
         """Set a value at path."""
         new_strategy = self._strategy.put(path, value)
         if in_place:
             self._strategy = new_strategy
             return self
         else:
-            return XWNodeBase(new_strategy)
+            return ANode(new_strategy)
     
-    def delete(self, path: str, in_place: bool = True) -> 'XWNodeBase':
+    def delete(self, path: str, in_place: bool = True) -> 'ANode':
         """Delete a node at path."""
         success = self._strategy.delete(path)
         return self
@@ -233,7 +304,7 @@ class XWNodeBase(iNodeFacade):
         """Check if path exists."""
         return self._strategy.exists(path)
     
-    def find(self, path: str, in_place: bool = False) -> Optional['XWNodeBase']:
+    def find(self, path: str, in_place: bool = False) -> Optional['ANode']:
         """Find a node by path."""
         return self.get(path)
     
@@ -241,9 +312,9 @@ class XWNodeBase(iNodeFacade):
         """Convert to native Python object."""
         return self._strategy.to_native()
     
-    def copy(self) -> 'XWNodeBase':
+    def copy(self) -> 'ANode':
         """Create a deep copy."""
-        return XWNodeBase(self._strategy.create_from_data(self._strategy.to_native()))
+        return ANode(self._strategy.create_from_data(self._strategy.to_native()))
     
     def count(self, path: str = ".") -> int:
         """Count nodes at path."""
@@ -273,21 +344,21 @@ class XWNodeBase(iNodeFacade):
         _flatten(self._strategy)
         return result
     
-    def merge(self, other: 'XWNodeBase', strategy: str = "replace") -> 'XWNodeBase':
+    def merge(self, other: 'ANode', strategy: str = "replace") -> 'ANode':
         """Merge with another node."""
         # Simple implementation - just replace
-        return XWNodeBase(self._strategy.create_from_data(other.to_native()))
+        return ANode(self._strategy.create_from_data(other.to_native()))
     
-    def diff(self, other: 'XWNodeBase') -> Dict[str, Any]:
+    def diff(self, other: 'ANode') -> Dict[str, Any]:
         """Get differences with another node."""
         return {"changed": True}  # Simple implementation
     
-    def transform(self, transformer: callable) -> 'XWNodeBase':
+    def transform(self, transformer: callable) -> 'ANode':
         """Transform using a function."""
         transformed_data = transformer(self.to_native())
-        return XWNodeBase(self._strategy.create_from_data(transformed_data))
+        return ANode(self._strategy.create_from_data(transformed_data))
     
-    def select(self, *paths: str) -> Dict[str, 'XWNodeBase']:
+    def select(self, *paths: str) -> Dict[str, 'ANode']:
         """Select multiple paths."""
         result = {}
         for path in paths:
@@ -301,15 +372,15 @@ class XWNodeBase(iNodeFacade):
         """Get length."""
         return len(self._strategy)
     
-    def __iter__(self) -> Iterator['XWNodeBase']:
+    def __iter__(self) -> Iterator['ANode']:
         """Iterate over children."""
         for child_strategy in self._strategy:
-            yield XWNodeBase(child_strategy)
+            yield ANode(child_strategy)
     
-    def __getitem__(self, key: Union[str, int]) -> 'XWNodeBase':
+    def __getitem__(self, key: Union[str, int]) -> 'ANode':
         """Get child by key or index."""
         child_strategy = self._strategy[key]
-        return XWNodeBase(child_strategy)
+        return ANode(child_strategy)
     
     def __setitem__(self, key: Union[str, int], value: Any) -> None:
         """Set child by key or index."""
@@ -346,8 +417,17 @@ class XWNodeBase(iNodeFacade):
         return self._strategy.value
 
 
-class aEdge(iEdge):
-    """Abstract base class for edge implementations."""
+# ==============================================================================
+# EDGE FACADE BASE CLASS
+# ==============================================================================
+
+class AEdge(IEdge):
+    """
+    Abstract base class for all edge implementations.
+    
+    Follows GUIDELINES_DEV.md naming: IEdge → AEdge → XWEdge
+    Delegates to edge strategies for actual graph storage.
+    """
     
     def __init__(self, strategy: iEdgeStrategy):
         self._strategy = strategy
@@ -407,272 +487,19 @@ class aEdge(iEdge):
         """Convert to native Python object."""
         return self._strategy.to_native()
     
-    def copy(self) -> 'aEdge':
+    def copy(self) -> 'AEdge':
         """Create a deep copy."""
-        return aEdge(copy.deepcopy(self._strategy))
+        return AEdge(copy.deepcopy(self._strategy))
 
 
-class aQuery(iQuery):
-    """Abstract base class for query implementations."""
-    
-    def __init__(self, node: XWNodeBase, engine: iQueryEngine):
-        self._node = node
-        self._engine = engine
-    
-    def query(self, query_string: str, query_type: str = "hybrid", **kwargs) -> iQueryResult:
-        """Execute a query."""
-        context = {"node": self._node, "type": query_type, **kwargs}
-        return self._engine.execute_query(query_string, context)
-    
-    def find_nodes(self, predicate: Callable[[XWNodeBase], bool], max_results: Optional[int] = None) -> iQueryResult:
-        """Find nodes matching predicate."""
-        # Simple implementation
-        results = []
-        count = 0
-        
-        def _search(node):
-            nonlocal count
-            if max_results and count >= max_results:
-                return
-            if predicate(node):
-                results.append(node)
-                count += 1
-            
-            for child in node:
-                _search(child)
-        
-        _search(self._node)
-        return SimpleQueryResult(results)
-    
-    def find_by_path(self, path_pattern: str) -> iQueryResult:
-        """Find nodes by path pattern."""
-        # Simple implementation - exact match
-        node = self._node.get(path_pattern)
-        return SimpleQueryResult([node] if node else [])
-    
-    def find_by_value(self, value: Any, exact_match: bool = True) -> iQueryResult:
-        """Find nodes by value."""
-        results = []
-        
-        def _search(node):
-            if exact_match:
-                if node.value == value:
-                    results.append(node)
-            else:
-                if str(value) in str(node.value):
-                    results.append(node)
-            
-            for child in node:
-                _search(child)
-        
-        _search(self._node)
-        return SimpleQueryResult(results)
-    
-    def count_nodes(self, predicate: Optional[Callable[[XWNodeBase], bool]] = None) -> int:
-        """Count nodes matching predicate."""
-        if predicate is None:
-            return self._node.count()
-        
-        count = 0
-        def _count(node):
-            nonlocal count
-            if predicate(node):
-                count += 1
-            for child in node:
-                _count(child)
-        
-        _count(self._node)
-        return count
-    
-    # Simplified implementations for other methods
-    def select(self, selector: str, **kwargs) -> List[XWNodeBase]:
-        return []
-    
-    def filter(self, condition: str, **kwargs) -> List[XWNodeBase]:
-        return []
-    
-    def where(self, condition: str) -> List[XWNodeBase]:
-        return []
-    
-    def sort(self, key: str = None, reverse: bool = False) -> List[XWNodeBase]:
-        return []
-    
-    def limit(self, count: int) -> List[XWNodeBase]:
-        return []
-    
-    def skip(self, count: int) -> List[XWNodeBase]:
-        return []
-    
-    def first(self) -> Optional[XWNodeBase]:
-        return None
-    
-    def last(self) -> Optional[XWNodeBase]:
-        return None
-    
-    def group_by(self, key: str) -> Dict[str, List[XWNodeBase]]:
-        return {}
-    
-    def distinct(self, key: str = None) -> List[XWNodeBase]:
-        return []
-    
-    def clear_query_cache(self):
-        pass
-    
-    def get_query_stats(self) -> Dict[str, Any]:
-        return {}
+# ==============================================================================
+# BACKWARD COMPATIBILITY ALIASES
+# ==============================================================================
 
+# Old class names (deprecated - use ANode, AEdge)
+XWNodeBase = ANode
+aEdge = AEdge
 
-class SimpleQueryResult(iQueryResult):
-    """Simple implementation of query results."""
-    
-    def __init__(self, nodes: List[XWNodeBase]):
-        self._nodes = nodes
-        self._metadata = {}
-    
-    @property
-    def nodes(self) -> List[XWNodeBase]:
-        return self._nodes
-    
-    @property
-    def metadata(self) -> Dict[str, Any]:
-        return self._metadata
-    
-    def first(self) -> Optional[XWNodeBase]:
-        return self._nodes[0] if self._nodes else None
-    
-    def count(self) -> int:
-        return len(self._nodes)
-    
-    def filter(self, predicate: Callable[[XWNodeBase], bool]) -> 'SimpleQueryResult':
-        filtered = [node for node in self._nodes if predicate(node)]
-        return SimpleQueryResult(filtered)
-    
-    def limit(self, limit: int) -> 'SimpleQueryResult':
-        return SimpleQueryResult(self._nodes[:limit])
-    
-    def offset(self, offset: int) -> 'SimpleQueryResult':
-        return SimpleQueryResult(self._nodes[offset:])
+# Query classes removed - belong in xwquery project
+# If needed, import from xwquery instead of xwnode
 
-
-class aQueryResult(iQueryResult):
-    """Abstract base class for query results."""
-    pass
-
-
-class aQueryEngine(iQueryEngine):
-    """Abstract base class for query engines with multi-language support."""
-    
-    def __init__(self):
-        self._parsers = {}
-        self._register_default_parsers()
-    
-    def _register_default_parsers(self):
-        """Register default query language parsers."""
-        # JSONPath-style queries
-        self._parsers['jsonpath'] = self._parse_jsonpath
-        self._parsers['xpath'] = self._parse_xpath
-        self._parsers['css'] = self._parse_css_selector
-        self._parsers['jq'] = self._parse_jq
-        self._parsers['sql'] = self._parse_sql_like
-        self._parsers['mongo'] = self._parse_mongodb
-        self._parsers['graphql'] = self._parse_graphql
-        # Default hybrid parser
-        self._parsers['hybrid'] = self._parse_hybrid
-    
-    def register_parser(self, language: str, parser_func: Callable):
-        """Register a custom query language parser."""
-        self._parsers[language] = parser_func
-    
-    def detect_query_language(self, query_string: str) -> str:
-        """Auto-detect query language from query string."""
-        query = query_string.strip()
-        
-        # GraphQL detection
-        if query.startswith('{') and ('query' in query or 'mutation' in query):
-            return 'graphql'
-        
-        # SQL-like detection
-        if any(keyword in query.upper() for keyword in ['SELECT', 'FROM', 'WHERE', 'JOIN']):
-            return 'sql'
-        
-        # MongoDB detection
-        if query.startswith('{') and any(op in query for op in ['$match', '$group', '$sort', '$project']):
-            return 'mongo'
-        
-        # XPath detection
-        if query.startswith('/') or query.startswith('//') or '//' in query:
-            return 'xpath'
-        
-        # CSS selector detection
-        if any(sel in query for sel in ['.', '#', '[', ':', '>']):
-            return 'css'
-        
-        # jq detection
-        if query.startswith('.') or any(func in query for func in ['map', 'select', 'group_by']):
-            return 'jq'
-        
-        # JSONPath detection
-        if query.startswith('$') or '..' in query:
-            return 'jsonpath'
-        
-        # Default to hybrid
-        return 'hybrid'
-    
-    @measure_operation('query_execute')
-    def execute_query(self, query_string: str, context: Dict[str, Any]) -> iQueryResult:
-        """Execute query with auto-detection or explicit language."""
-        query_type = context.get('query_type', self.detect_query_language(query_string))
-        
-        if query_type not in self._parsers:
-            logger.warning(f"Unknown query language: {query_type}, falling back to hybrid")
-            query_type = 'hybrid'
-        
-        try:
-            return self._parsers[query_type](query_string, context)
-        except Exception as e:
-            logger.error(f"Query execution failed for {query_type}: {e}")
-            # Fallback to hybrid parser
-            if query_type != 'hybrid':
-                return self._parsers['hybrid'](query_string, context)
-            raise
-    
-    def _parse_jsonpath(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse JSONPath-style queries."""
-        # Implementation would use jsonpath library
-        logger.debug(f"Parsing JSONPath query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_xpath(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse XPath-style queries."""
-        logger.debug(f"Parsing XPath query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_css_selector(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse CSS selector-style queries."""
-        logger.debug(f"Parsing CSS selector query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_jq(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse jq-style queries."""
-        logger.debug(f"Parsing jq query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_sql_like(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse SQL-like queries."""
-        logger.debug(f"Parsing SQL-like query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_mongodb(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse MongoDB-style queries."""
-        logger.debug(f"Parsing MongoDB query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_graphql(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse GraphQL-style queries."""
-        logger.debug(f"Parsing GraphQL query: {query}")
-        return SimpleQueryResult([])
-    
-    def _parse_hybrid(self, query: str, context: Dict[str, Any]) -> iQueryResult:
-        """Parse hybrid/default queries."""
-        logger.debug(f"Parsing hybrid query: {query}")
-        return SimpleQueryResult([])

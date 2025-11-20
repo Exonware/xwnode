@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
-Generation Date: October 12, 2025
+Version: 0.0.1.30
+Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, Tuple
+from typing import Any, Iterator, List, Optional, Dict, Tuple, AsyncIterator
 import heapq
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -334,17 +334,52 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """Convert priority queue to native dictionary format."""
         return {
             'items': [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
-            'is_max_heap': self._is_max_heap
+            'is_max_heap': self._is_max_heap,
+            'size': len(self._heap)
         }
+
+    # ============================================================================
+    # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
+    # ============================================================================
     
-    def from_native(self, data: Dict[str, Any]) -> None:
-        """Load priority queue from native dictionary format."""
-        self._heap.clear()
-        self._counter = 0
-        self._is_max_heap = data.get('is_max_heap', False)
-        
-        for priority, value in data.get('items', []):
-            self.push(value, priority)
+    async def insert_async(self, key: Any, value: Any) -> None:
+        """Lightweight async wrapper for insert (no lock overhead)."""
+        return self.insert(key, value)
+    
+    async def find_async(self, key: Any) -> Optional[Any]:
+        """Lightweight async wrapper for find (no lock overhead)."""
+        return self.find(key)
+    
+    async def delete_async(self, key: Any) -> bool:
+        """Lightweight async wrapper for delete (no lock overhead)."""
+        return self.delete(key)
+    
+    async def size_async(self) -> int:
+        """Lightweight async wrapper for size (no lock overhead)."""
+        return self.size()
+    
+    async def is_empty_async(self) -> bool:
+        """Lightweight async wrapper for is_empty (no lock overhead)."""
+        return self.is_empty()
+    
+    async def to_native_async(self) -> Any:
+        """Lightweight async wrapper for to_native (no lock overhead)."""
+        return self.to_native()
+    
+    async def keys_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for keys (no lock overhead)."""
+        for key in self.keys():
+            yield key
+    
+    async def values_async(self) -> AsyncIterator[Any]:
+        """Lightweight async wrapper for values (no lock overhead)."""
+        for value in self.values():
+            yield value
+    
+    async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
+        """Lightweight async wrapper for items (no lock overhead)."""
+        for item in self.items():
+            yield item
     
     # ============================================================================
     # REQUIRED ABSTRACT METHODS (Linear Strategy Base)
@@ -488,14 +523,6 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         sorted_items = sorted(self._heap, key=lambda x: x[0])
         return [(p if not self._is_max_heap else -p, v) for p, c, v in sorted_items]
     
-    def to_native(self) -> Dict[str, Any]:
-        """Convert priority queue to native dictionary format."""
-        return {
-            'items': [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
-            'is_max_heap': self._is_max_heap,
-            'size': len(self._heap)
-        }
-    
     def from_native(self, data: Dict[str, Any]) -> None:
         """Load priority queue from native dictionary format."""
         self._heap.clear()
@@ -526,79 +553,6 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         self._heap.clear()
         self._counter = 0
         self._record_access("clear")
-    
-    # ============================================================================
-    # REQUIRED ABSTRACT METHODS (Linear Strategy Base)
-    # ============================================================================
-    
-    def get_at_index(self, index: int) -> Any:
-        """Get item at index (heap order, not priority order)."""
-        if 0 <= index < len(self._heap):
-            return self._heap[index][2]
-        raise IndexError(f"priority queue index out of range: {index}")
-    
-    def set_at_index(self, index: int, value: Any) -> None:
-        """Set item at index (breaks heap property - requires re-heapify)."""
-        if 0 <= index < len(self._heap):
-            priority, counter, _ = self._heap[index]
-            self._heap[index] = (priority, counter, value)
-        else:
-            raise IndexError(f"priority queue index out of range: {index}")
-    
-    def push_front(self, value: Any) -> None:
-        """Push with highest priority."""
-        self.push(value, float('-inf') if not self._is_max_heap else float('inf'))
-    
-    def push_back(self, value: Any) -> None:
-        """Push with lowest priority."""
-        self.push(value, float('inf') if not self._is_max_heap else float('-inf'))
-    
-    def pop_front(self) -> Any:
-        """Pop highest priority item."""
-        return self.pop()
-    
-    def pop_back(self) -> Any:
-        """Pop lowest priority item (inefficient O(n))."""
-        if self.is_empty():
-            raise IndexError("pop from empty priority queue")
-        
-        worst_idx = max(range(len(self._heap)), key=lambda i: self._heap[i][0])
-        value = self._heap[worst_idx][2]
-        self._heap.pop(worst_idx)
-        if self._heap:
-            heapq.heapify(self._heap)
-        return value
-    
-    # Behavioral views
-    def as_linked_list(self):
-        """Priority queue can be viewed as ordered linked list."""
-        return self
-    
-    def as_stack(self):
-        """Priority queue cannot behave as Stack."""
-        raise NotImplementedError("PriorityQueue cannot behave as Stack")
-    
-    def as_queue(self):
-        """Priority queue cannot behave as Queue."""
-        raise NotImplementedError("PriorityQueue cannot behave as Queue")
-    
-    def as_deque(self):
-        """Priority queue cannot behave as Deque."""
-        raise NotImplementedError("PriorityQueue cannot behave as Deque")
-    
-    # ============================================================================
-    # PYTHON SPECIAL METHODS
-    # ============================================================================
-    
-    def __iter__(self) -> Iterator[Any]:
-        """Iterate in heap order (not priority order)."""
-        for _, _, value in self._heap:
-            yield value
-    
-    def __repr__(self) -> str:
-        """Professional string representation."""
-        heap_type = "max-heap" if self._is_max_heap else "min-heap"
-        return f"PriorityQueueStrategy(size={len(self._heap)}, type={heap_type})"
     
     # ============================================================================
     # PERFORMANCE METADATA

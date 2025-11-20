@@ -10,7 +10,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.26
+Version: 0.0.1.30
 Generation Date: 07-Sep-2025
 
 Main Classes:
@@ -49,8 +49,8 @@ Example:
 # LAZY INSTALLATION - Simple One-Line Configuration
 # =============================================================================
 # DISABLED BY DEFAULT - Users can enable manually if needed
-# from exonware.xwsystem.utils.lazy_discovery import config_package_lazy_install_enabled
-# config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
+from xwlazy.lazy import config_package_lazy_install_enabled
+config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
 
 # =============================================================================
 # IMPORTS - Standard Python Imports (No Defensive Code!)
@@ -63,8 +63,13 @@ from .facade import (
     fast, optimized, adaptive, dual_adaptive
 )
 from .errors import (
-    XWNodeError, XWNodeTypeError, XWNodePathError, XWNodeValueError,
-    XWNodeSecurityError, XWNodeLimitError, XWNodePathSecurityError
+    XWNodeError, 
+    XWNodeTypeError, 
+    XWNodePathError, 
+    XWNodeValueError,
+    XWNodeSecurityError, 
+    XWNodeLimitError, 
+    XWNodePathSecurityError
 )
 from .config import XWNodeConfig, get_config, set_config
 from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, GraphOptimization
@@ -72,8 +77,15 @@ from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, GraphOptimization
 from .common.graph import XWGraphManager
 
 # xwsystem lazy install functionality
-from exonware.xwsystem.utils.lazy_package import xwimport
+from xwlazy.lazy import xwimport
 from exonware.xwsystem.monitoring import get_metrics as get_xwsystem_metrics, reset_metrics as reset_xwsystem_metrics
+
+# Operations (xwsystem integration)
+from .operations import (
+    MergeStrategy, DiffMode, PatchOperation, DiffResult, PatchResult,
+    NodeMerger, NodeDiffer, NodePatcher,
+    merge_nodes, diff_nodes, patch_nodes
+)
 
 # Version info
 __version__ = '0.0.1'
@@ -106,17 +118,21 @@ __all__ = [
     # Enums and Types
     'NodeMode',
     'EdgeMode',
-    'QueryMode',
     'NodeTrait',
     'EdgeTrait',
-    'QueryTrait',
     'GraphOptimization',
+    # Note: QueryMode and QueryTrait are in xwquery.defs - import from there if needed
     
     # Graph Optimization
     'XWGraphManager',
     
     # Lazy Install
     'xwimport',
+    
+    # Operations (xwsystem integration)
+    'MergeStrategy', 'DiffMode', 'PatchOperation', 'DiffResult', 'PatchResult',
+    'NodeMerger', 'NodeDiffer', 'NodePatcher',
+    'merge_nodes', 'diff_nodes', 'patch_nodes',
     
     # Exceptions
     'XWNodeError',
