@@ -5,13 +5,13 @@
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: October 27, 2025
 
 Node-aware patch operations using xwsystem.operations.
 """
 
-from typing import Any, List, Dict
+from typing import Any
 from exonware.xwsystem.operations import apply_patch, PatchResult
 
 
@@ -21,7 +21,7 @@ class NodePatcher:
     def patch(
         self,
         data: Any,
-        operations: List[Dict[str, Any]]
+        operations: list[dict[str, Any]]
     ) -> PatchResult:
         """Apply patch operations to node."""
         # Convert to native if XWNode
@@ -43,7 +43,7 @@ class NodePatcher:
         return result
 
 
-def patch_nodes(data: Any, operations: List[Dict[str, Any]]) -> PatchResult:
+def patch_nodes(data: Any, operations: list[dict[str, Any]]) -> PatchResult:
     """Convenience function for patching nodes."""
     patcher = NodePatcher()
     return patcher.patch(data, operations)

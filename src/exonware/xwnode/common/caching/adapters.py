@@ -6,13 +6,13 @@ Cache adapters wrapping xwsystem.caching implementations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
 import fnmatch
 import threading
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional
 
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.caching import (
@@ -72,14 +72,18 @@ class LRUCacheAdapter(ICacheAdapter):
         Initialize LRU cache adapter.
         
         Args:
-            size: Maximum cache size
-            namespace: Cache namespace
+            size: Maximum cache size (mapped to capacity parameter)
+            namespace: Cache namespace (used for naming)
             **kwargs: Additional options
         """
-        self._cache = LRUCache(size=size, namespace=namespace)
+        # Root cause fixed: LRUCache uses 'capacity' parameter, not 'size'
+        # Also, LRUCache doesn't accept 'namespace', but uses 'name' instead
+        cache_name = f"{namespace}-LRU" if namespace != "default" else None
+        self._cache = LRUCache(capacity=size, name=cache_name)
         self._lock = threading.RLock()
         self._evictions = 0
-        logger.debug(f"Initialized LRUCacheAdapter: size={size}, namespace={namespace}")
+        self._namespace = namespace
+        logger.debug(f"Initialized LRUCacheAdapter: capacity={size}, namespace={namespace}")
     
     def get(self, key: str) -> Optional[Any]:
         """Get value from LRU cache."""
@@ -90,7 +94,8 @@ class LRUCacheAdapter(ICacheAdapter):
         """Store value in LRU cache."""
         with self._lock:
             # Track evictions if cache is full
-            if len(self._cache) >= self._cache._max_size:
+            # Root cause fixed: LRUCache uses 'capacity' attribute, not '_max_size'
+            if len(self._cache) >= self._cache.capacity:
                 self._evictions += 1
             self._cache.put(key, value)
     
@@ -108,11 +113,13 @@ class LRUCacheAdapter(ICacheAdapter):
         """Get cache statistics."""
         with self._lock:
             cache_stats = self._cache.get_stats()
+            # Root cause fixed: LRUCache.get_stats() returns 'capacity', not 'max_size'
+            max_size = cache_stats.get('max_size', cache_stats.get('capacity', 0))
             return CacheStats(
                 hits=cache_stats['hits'],
                 misses=cache_stats['misses'],
                 size=cache_stats['size'],
-                max_size=cache_stats['max_size'],
+                max_size=max_size,
                 evictions=self._evictions
             )
     
@@ -140,14 +147,18 @@ class LFUCacheAdapter(ICacheAdapter):
         Initialize LFU cache adapter.
         
         Args:
-            size: Maximum cache size
-            namespace: Cache namespace
+            size: Maximum cache size (mapped to capacity parameter)
+            namespace: Cache namespace (used for naming)
             **kwargs: Additional options
         """
-        self._cache = LFUCache(size=size, namespace=namespace)
+        # Root cause fixed: LFUCache uses 'capacity' parameter, not 'size'
+        # Also, LFUCache doesn't accept 'namespace', but uses 'name' instead
+        cache_name = f"{namespace}-LFU" if namespace != "default" else None
+        self._cache = LFUCache(capacity=size, name=cache_name)
         self._lock = threading.RLock()
         self._evictions = 0
-        logger.debug(f"Initialized LFUCacheAdapter: size={size}, namespace={namespace}")
+        self._namespace = namespace
+        logger.debug(f"Initialized LFUCacheAdapter: capacity={size}, namespace={namespace}")
     
     def get(self, key: str) -> Optional[Any]:
         """Get value from LFU cache."""
@@ -158,7 +169,8 @@ class LFUCacheAdapter(ICacheAdapter):
         """Store value in LFU cache."""
         with self._lock:
             # Track evictions if cache is full
-            if len(self._cache) >= self._cache._max_size:
+            # Root cause fixed: LFUCache uses 'capacity' attribute, not '_max_size'
+            if len(self._cache) >= self._cache.capacity:
                 self._evictions += 1
             self._cache.put(key, value)
     
@@ -176,11 +188,13 @@ class LFUCacheAdapter(ICacheAdapter):
         """Get cache statistics."""
         with self._lock:
             cache_stats = self._cache.get_stats()
+            # Root cause fixed: LFUCache.get_stats() returns 'capacity', not 'max_size'
+            max_size = cache_stats.get('max_size', cache_stats.get('capacity', 0))
             return CacheStats(
                 hits=cache_stats['hits'],
                 misses=cache_stats['misses'],
                 size=cache_stats['size'],
-                max_size=cache_stats['max_size'],
+                max_size=max_size,
                 evictions=self._evictions
             )
     
@@ -208,15 +222,19 @@ class TTLCacheAdapter(ICacheAdapter):
         Initialize TTL cache adapter.
         
         Args:
-            size: Maximum cache size
+            size: Maximum cache size (mapped to capacity parameter)
             ttl: Time-to-live in seconds
-            namespace: Cache namespace
+            namespace: Cache namespace (used for naming)
             **kwargs: Additional options
         """
-        self._cache = TTLCache(size=size, ttl=ttl, namespace=namespace)
+        # Root cause fixed: TTLCache uses 'capacity' parameter, not 'size'
+        # Also, TTLCache doesn't accept 'namespace', but uses 'name' instead
+        cache_name = f"{namespace}-TTL" if namespace != "default" else "ttl_cache"
+        self._cache = TTLCache(capacity=size, ttl=float(ttl), name=cache_name)
         self._lock = threading.RLock()
         self._evictions = 0
-        logger.debug(f"Initialized TTLCacheAdapter: size={size}, ttl={ttl}, namespace={namespace}")
+        self._namespace = namespace
+        logger.debug(f"Initialized TTLCacheAdapter: capacity={size}, ttl={ttl}, namespace={namespace}")
     
     def get(self, key: str) -> Optional[Any]:
         """Get value from TTL cache."""
@@ -227,7 +245,8 @@ class TTLCacheAdapter(ICacheAdapter):
         """Store value in TTL cache."""
         with self._lock:
             # Track evictions if cache is full
-            if len(self._cache) >= self._cache._max_size:
+            # Root cause fixed: TTLCache uses 'capacity' attribute, not '_max_size'
+            if len(self._cache) >= self._cache.capacity:
                 self._evictions += 1
             self._cache.put(key, value)
     
@@ -245,11 +264,13 @@ class TTLCacheAdapter(ICacheAdapter):
         """Get cache statistics."""
         with self._lock:
             cache_stats = self._cache.get_stats()
+            # Root cause fixed: TTLCache.get_stats() returns 'capacity', not 'max_size'
+            max_size = cache_stats.get('max_size', cache_stats.get('capacity', 0))
             return CacheStats(
                 hits=cache_stats['hits'],
                 misses=cache_stats['misses'],
                 size=cache_stats['size'],
-                max_size=cache_stats['max_size'],
+                max_size=max_size,
                 evictions=self._evictions
             )
     

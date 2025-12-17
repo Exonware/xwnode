@@ -5,7 +5,7 @@ This module implements the ADJ_LIST strategy for sparse graph representation
 with efficient edge addition and neighbor queries.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -68,11 +68,11 @@ class AdjListStrategy(AEdgeStrategy):
         self.allow_multi_edges = options.get('multi_edges', False)
         
         # Core storage: vertex -> list of (neighbor, edge_data)
-        self._outgoing: Dict[str, List[Tuple[str, Dict[str, Any]]]] = defaultdict(list)
-        self._incoming: Dict[str, List[Tuple[str, Dict[str, Any]]]] = defaultdict(list) if self.is_directed else None
+        self._outgoing: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
+        self._incoming: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list) if self.is_directed else None
         
         # Vertex set for fast membership testing
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         
         # Edge properties storage
         self._edge_count = 0
@@ -188,7 +188,7 @@ class AdjListStrategy(AEdgeStrategy):
         
         return any(neighbor == target for neighbor, _ in self._outgoing[source])
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data between source and target."""
         if source not in self._outgoing:
             return None
@@ -323,7 +323,7 @@ class AdjListStrategy(AEdgeStrategy):
     # ADVANCED OPERATIONS
     # ============================================================================
     
-    def get_subgraph(self, vertices: Set[str]) -> 'xAdjListStrategy':
+    def get_subgraph(self, vertices: set[str]) -> 'xAdjListStrategy':
         """Extract subgraph containing only specified vertices."""
         subgraph = xAdjListStrategy(
             traits=self._traits,
@@ -344,11 +344,11 @@ class AdjListStrategy(AEdgeStrategy):
         
         return subgraph
     
-    def get_edge_list(self) -> List[Tuple[str, str, Dict[str, Any]]]:
+    def get_edge_list(self) -> list[tuple[str, str, dict[str, Any]]]:
         """Get all edges as a list."""
         return list(self.edges(data=True))
     
-    def get_adjacency_dict(self) -> Dict[str, List[str]]:
+    def get_adjacency_dict(self) -> dict[str, list[str]]:
         """Get adjacency representation as a dictionary."""
         return {
             vertex: [neighbor for neighbor, _ in adj_list]
@@ -360,7 +360,7 @@ class AdjListStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'adjacency_list',
@@ -378,7 +378,7 @@ class AdjListStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         avg_degree = self._edge_count / max(1, len(self._vertices)) if self._vertices else 0
         density = self._edge_count / max(1, len(self._vertices) * (len(self._vertices) - 1)) if len(self._vertices) > 1 else 0

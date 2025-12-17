@@ -5,7 +5,7 @@ This module implements the SEGMENT_TREE strategy for range queries
 and updates with O(log n) complexity.
 """
 
-from typing import Any, Iterator, List, Optional, Callable, Dict, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Callable, Union, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -92,8 +92,8 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         self._combiner = self._get_combiner(self._operation)
         
         # Simple array to store values (0-indexed for queries)
-        self._data: List[Any] = [self._identity] * self._max_size
-        self._values: Dict[str, Any] = {}  # Key-value storage for compatibility
+        self._data: list[Any] = [self._identity] * self._max_size
+        self._values: dict[str, Any] = {}  # Key-value storage for compatibility
     
     def get_supported_traits(self) -> NodeTrait:
         """
@@ -205,7 +205,7 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         """Get the number of items."""
         return len(self._values)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self._values)
 
@@ -303,7 +303,7 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         for i in range(left, right + 1):
             self.update(i, value)
     
-    def get_operation_info(self) -> Dict[str, Any]:
+    def get_operation_info(self) -> dict[str, Any]:
         """Get information about the current operation."""
         return {
             'operation': self._operation,
@@ -315,7 +315,7 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'SEGMENT_TREE',
@@ -330,7 +330,7 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         tree_height = 0
         if len(self._values) > 0:

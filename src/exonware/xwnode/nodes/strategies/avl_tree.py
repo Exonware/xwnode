@@ -6,7 +6,7 @@ This module implements the AVL_TREE strategy for strictly balanced binary
 search trees with guaranteed O(log n) height and operations.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -265,7 +265,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         
         return node
     
-    def _insert_node(self, node: Optional[AVLTreeNode], key: str, value: Any) -> Tuple[AVLTreeNode, bool]:
+    def _insert_node(self, node: Optional[AVLTreeNode], key: str, value: Any) -> tuple[AVLTreeNode, bool]:
         """
         Insert node with given key and value.
         
@@ -330,7 +330,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
             node = node.right
         return node
     
-    def _delete_node(self, node: Optional[AVLTreeNode], key: str) -> Tuple[Optional[AVLTreeNode], bool]:
+    def _delete_node(self, node: Optional[AVLTreeNode], key: str) -> tuple[Optional[AVLTreeNode], bool]:
         """
         Delete node with given key.
         
@@ -367,7 +367,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         balanced_node = self._balance_node(node)
         return balanced_node, True
     
-    def _inorder_traversal(self, node: Optional[AVLTreeNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[AVLTreeNode]) -> Iterator[tuple[str, Any]]:
         """
         In-order traversal of tree.
         
@@ -460,7 +460,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -542,7 +542,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """
         Iterate over key-value pairs in sorted order.
         
@@ -562,7 +562,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
     # AVL TREE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_min(self) -> Optional[Tuple[str, Any]]:
+    def get_min(self) -> Optional[tuple[str, Any]]:
         """
         Get the minimum key-value pair.
         
@@ -574,7 +574,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
     
-    def get_max(self) -> Optional[Tuple[str, Any]]:
+    def get_max(self) -> Optional[tuple[str, Any]]:
         """
         Get the maximum key-value pair.
         
@@ -621,7 +621,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         node = self._find_node(self._root, key)
         return self._get_balance(node) if node else None
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get performance statistics.
         

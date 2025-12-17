@@ -20,11 +20,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -81,7 +81,7 @@ class StackStrategy(ANodeLinearStrategy):
             **options
         )
         self._max_size: Optional[int] = options.get('max_size')
-        self._stack: List[Any] = []
+        self._stack: list[Any] = []
         
         # Pre-allocate if capacity hint provided
         initial_capacity = options.get('initial_capacity', 0)
@@ -212,11 +212,11 @@ class StackStrategy(ANodeLinearStrategy):
         """Clear all items from the stack."""
         self._stack.clear()
     
-    def to_list(self) -> List[Any]:
+    def to_list(self) -> list[Any]:
         """Convert stack to list (top to bottom)."""
         return list(reversed(self._stack))
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert stack to native dictionary format."""
         return {str(i): val for i, val in enumerate(reversed(self._stack))}
 
@@ -264,7 +264,7 @@ class StackStrategy(ANodeLinearStrategy):
         for item in self.items():
             yield item
     
-    def from_native(self, data: Dict[str, Any]) -> None:
+    def from_native(self, data: dict[str, Any]) -> None:
         """Load stack from native dictionary format."""
         self._stack.clear()
         # Sort by keys and add in reverse order
@@ -304,7 +304,7 @@ class StackStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'STACK',
@@ -321,7 +321,7 @@ class StackStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': len(self._stack),

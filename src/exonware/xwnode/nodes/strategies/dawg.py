@@ -9,11 +9,11 @@ of string sets with massive memory savings over standard tries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Set, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import defaultdict
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
@@ -37,7 +37,7 @@ class DawgNode:
         
         Time Complexity: O(1)
         """
-        self.edges: Dict[str, 'DawgNode'] = {}
+        self.edges: dict[str, 'DawgNode'] = {}
         self.is_final = False
         self.value: Any = None
         self._hash: Optional[int] = None
@@ -184,8 +184,8 @@ class DawgStrategy(ANodeTreeStrategy):
         self._word_count = 0
         
         # For incremental minimization
-        self._unchecked_nodes: List[Tuple[DawgNode, str, DawgNode]] = []
-        self._minimized_nodes: Dict[DawgNode, DawgNode] = {}
+        self._unchecked_nodes: list[tuple[DawgNode, str, DawgNode]] = []
+        self._minimized_nodes: dict[DawgNode, DawgNode] = {}
         self._previous_word = ""
     
     def get_supported_traits(self) -> NodeTrait:
@@ -365,7 +365,7 @@ class DawgStrategy(ANodeTreeStrategy):
             return False
         
         # Navigate to node
-        path: List[Tuple[DawgNode, str]] = []
+        path: list[tuple[DawgNode, str]] = []
         current_node = self._root
         
         for char in key:
@@ -533,7 +533,7 @@ class DawgStrategy(ANodeTreeStrategy):
         
         return True
     
-    def get_with_prefix(self, prefix: str) -> List[str]:
+    def get_with_prefix(self, prefix: str) -> list[str]:
         """
         Get all words with given prefix.
         
@@ -617,10 +617,10 @@ class DawgStrategy(ANodeTreeStrategy):
         Returns:
             Number of nodes
         """
-        visited: Set[int] = set()
+        visited: set[int] = set()
         return self._count_nodes(self._root, visited)
     
-    def _count_nodes(self, node: DawgNode, visited: Set[int]) -> int:
+    def _count_nodes(self, node: DawgNode, visited: set[int]) -> int:
         """
         Recursively count unique nodes.
         
@@ -668,7 +668,7 @@ class DawgStrategy(ANodeTreeStrategy):
         
         return trie_nodes / dawg_nodes
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get comprehensive DAWG statistics.
         
@@ -688,7 +688,7 @@ class DawgStrategy(ANodeTreeStrategy):
     # BULK OPERATIONS
     # ============================================================================
     
-    def build_from_sorted_words(self, words: List[str], values: Optional[List[Any]] = None) -> None:
+    def build_from_sorted_words(self, words: list[str], values: Optional[list[Any]] = None) -> None:
         """
         Build DAWG from sorted word list efficiently.
         
@@ -775,7 +775,7 @@ class DawgStrategy(ANodeTreeStrategy):
     # PATTERN MATCHING
     # ============================================================================
     
-    def fuzzy_search(self, word: str, max_distance: int = 1) -> List[str]:
+    def fuzzy_search(self, word: str, max_distance: int = 1) -> list[str]:
         """
         Find words within edit distance.
         

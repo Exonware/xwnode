@@ -5,7 +5,7 @@ This module implements the LINKED_LIST strategy for efficient
 insertions and deletions with sequential access patterns.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeLinearStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -52,7 +52,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         self._tail.prev = self._head
         
         # Quick access mapping
-        self._key_to_node: Dict[str, ListNode] = {}
+        self._key_to_node: dict[str, ListNode] = {}
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
@@ -268,7 +268,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         """
         return self._size
     
-    def to_native(self) -> List[Any]:
+    def to_native(self) -> list[Any]:
         """
         Convert to native Python list.
         
@@ -540,11 +540,11 @@ class LinkedListStrategy(ANodeLinearStrategy):
         
         return count
     
-    def to_array(self) -> List[Any]:
+    def to_array(self) -> list[Any]:
         """Convert to array representation."""
         return list(self.values())
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive linked list statistics."""
         return {
             'size': self._size,
@@ -560,7 +560,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'LINKED_LIST',
@@ -578,7 +578,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

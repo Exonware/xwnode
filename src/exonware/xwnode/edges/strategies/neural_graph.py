@@ -5,7 +5,7 @@ This module implements the NEURAL_GRAPH strategy for neural network
 computation graphs with automatic differentiation and gradient tracking.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Callable, Union
+from typing import Any, Iterator, Optional, Callable, Union
 from collections import defaultdict, deque
 import math
 from enum import Enum
@@ -39,7 +39,7 @@ class NeuralEdge:
         # Gradient tracking for backpropagation
         self.gradient = 0.0
         self.accumulated_gradient = 0.0
-        self.gradient_history: List[float] = []
+        self.gradient_history: list[float] = []
         
         # Training metadata
         self.last_forward_value = 0.0
@@ -102,7 +102,7 @@ class NeuralEdge:
         self.gradient = 0.0
         self.accumulated_gradient = 0.0
     
-    def get_weight_statistics(self) -> Dict[str, float]:
+    def get_weight_statistics(self) -> dict[str, float]:
         """Get statistics about weight updates."""
         if not self.gradient_history:
             return {'mean_gradient': 0.0, 'gradient_variance': 0.0}
@@ -117,7 +117,7 @@ class NeuralEdge:
             'update_count': self.update_count
         }
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -157,8 +157,8 @@ class NeuralNode:
         self.is_frozen = properties.get('frozen', False)
         
         # Batch processing
-        self.batch_values: List[float] = []
-        self.batch_gradients: List[float] = []
+        self.batch_values: list[float] = []
+        self.batch_gradients: list[float] = []
     
     def activate(self, x: float) -> float:
         """Apply activation function."""
@@ -235,16 +235,16 @@ class NeuralGraphStrategy(AEdgeStrategy):
         self.enable_regularization = options.get('enable_regularization', True)
         
         # Core storage
-        self._edges: Dict[str, NeuralEdge] = {}  # edge_id -> NeuralEdge
-        self._nodes: Dict[str, NeuralNode] = {}  # node_id -> NeuralNode
-        self._outgoing: Dict[str, List[str]] = defaultdict(list)  # source -> [edge_ids]
-        self._incoming: Dict[str, List[str]] = defaultdict(list)  # target -> [edge_ids]
+        self._edges: dict[str, NeuralEdge] = {}  # edge_id -> NeuralEdge
+        self._nodes: dict[str, NeuralNode] = {}  # node_id -> NeuralNode
+        self._outgoing: dict[str, list[str]] = defaultdict(list)  # source -> [edge_ids]
+        self._incoming: dict[str, list[str]] = defaultdict(list)  # target -> [edge_ids]
         
         # Network topology
-        self._input_nodes: Set[str] = set()
-        self._output_nodes: Set[str] = set()
-        self._hidden_nodes: Set[str] = set()
-        self._topological_order: List[str] = []
+        self._input_nodes: set[str] = set()
+        self._output_nodes: set[str] = set()
+        self._hidden_nodes: set[str] = set()
+        self._topological_order: list[str] = []
         
         # Training state
         self._training_mode = True
@@ -346,7 +346,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
                 return True
         return False
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         for edge_id in self._outgoing.get(source, []):
             edge = self._edges[edge_id]
@@ -472,7 +472,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         """Get node value."""
         return self._nodes.get(node_id, NeuralNode("")).value
     
-    def forward_pass(self, inputs: Dict[str, float]) -> Dict[str, float]:
+    def forward_pass(self, inputs: dict[str, float]) -> dict[str, float]:
         """Perform forward pass through network."""
         # Set input values
         for node_id, value in inputs.items():
@@ -497,7 +497,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         # Return output values
         return {node_id: self.get_node_value(node_id) for node_id in self._output_nodes}
     
-    def backward_pass(self, target_outputs: Dict[str, float], 
+    def backward_pass(self, target_outputs: dict[str, float], 
                      loss_function: str = 'mse') -> float:
         """Perform backward pass for gradient computation."""
         # Compute loss and output gradients
@@ -546,7 +546,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         for edge in self._edges.values():
             edge.update_weight(optimizer_func)
     
-    def train_step(self, inputs: Dict[str, float], targets: Dict[str, float],
+    def train_step(self, inputs: dict[str, float], targets: dict[str, float],
                   loss_function: str = 'mse') -> float:
         """Perform one training step (forward + backward + update)."""
         # Forward pass
@@ -572,7 +572,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         """Set training mode (affects weight updates)."""
         self._training_mode = training
     
-    def get_network_statistics(self) -> Dict[str, Any]:
+    def get_network_statistics(self) -> dict[str, Any]:
         """Get comprehensive network statistics."""
         if not self._nodes:
             return {'nodes': 0, 'edges': 0, 'layers': 0}
@@ -616,7 +616,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'NEURAL_GRAPH',
@@ -634,7 +634,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_network_statistics()
         

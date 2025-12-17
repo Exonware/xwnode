@@ -11,12 +11,12 @@ This module defines the abstract base classes for all edge strategy implementati
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: January 2, 2025
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, List, Dict, Tuple
+from typing import Any, Optional
 
 from .contracts import IEdgeStrategy
 from ...errors import XWNodeTypeError, XWNodeValueError
@@ -100,11 +100,11 @@ class ATreeEdgeStrategy(AEdgeStrategy):
         """Get parent node."""
         raise NotImplementedError("Subclasses must implement get_parent")
     
-    def get_children(self, node: Any) -> List[Any]:
+    def get_children(self, node: Any) -> list[Any]:
         """Get child nodes."""
         raise NotImplementedError("Subclasses must implement get_children")
     
-    def get_siblings(self, node: Any) -> List[Any]:
+    def get_siblings(self, node: Any) -> list[Any]:
         """Get sibling nodes."""
         raise NotImplementedError("Subclasses must implement get_siblings")
     
@@ -112,7 +112,7 @@ class ATreeEdgeStrategy(AEdgeStrategy):
         """Get root node."""
         raise NotImplementedError("Subclasses must implement get_root")
     
-    def get_leaves(self) -> List[Any]:
+    def get_leaves(self) -> list[Any]:
         """Get leaf nodes."""
         raise NotImplementedError("Subclasses must implement get_leaves")
     
@@ -132,7 +132,7 @@ class ATreeEdgeStrategy(AEdgeStrategy):
 class AGraphEdgeStrategy(AEdgeStrategy):
     """Graph edge capabilities (network connections)."""
     
-    def get_neighbors(self, node: Any) -> List[Any]:
+    def get_neighbors(self, node: Any) -> list[Any]:
         """Get all neighboring nodes."""
         raise NotImplementedError("Subclasses must implement get_neighbors")
     
@@ -144,15 +144,15 @@ class AGraphEdgeStrategy(AEdgeStrategy):
         """Set edge weight."""
         raise NotImplementedError("Subclasses must implement set_edge_weight")
     
-    def find_shortest_path(self, start: Any, end: Any) -> List[Any]:
+    def find_shortest_path(self, start: Any, end: Any) -> list[Any]:
         """Find shortest path between nodes."""
         raise NotImplementedError("Subclasses must implement find_shortest_path")
     
-    def find_all_paths(self, start: Any, end: Any) -> List[List[Any]]:
+    def find_all_paths(self, start: Any, end: Any) -> list[list[Any]]:
         """Find all paths between nodes."""
         raise NotImplementedError("Subclasses must implement find_all_paths")
     
-    def get_connected_components(self) -> List[List[Any]]:
+    def get_connected_components(self) -> list[list[Any]]:
         """Get all connected components."""
         raise NotImplementedError("Subclasses must implement get_connected_components")
     

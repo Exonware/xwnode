@@ -6,7 +6,7 @@ This module implements the WEIGHTED_GRAPH strategy for graphs with numerical
 edge weights, optimized for network algorithms and shortest path computations.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple, Iterator
+from typing import Any, Optional, Iterator
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
@@ -101,9 +101,9 @@ class WeightedGraphStrategy(AEdgeStrategy):
         self.weight_precision = options.get('weight_precision', 6)
         
         # Core weighted graph storage
-        self._edges: Dict[Tuple[str, str], WeightedEdge] = {}
-        self._adjacency: Dict[str, Dict[str, float]] = {}  # source -> {target: weight}
-        self._reverse_adjacency: Dict[str, Dict[str, float]] = {}  # target -> {source: weight}
+        self._edges: dict[tuple[str, str], WeightedEdge] = {}
+        self._adjacency: dict[str, dict[str, float]] = {}  # source -> {target: weight}
+        self._reverse_adjacency: dict[str, dict[str, float]] = {}  # target -> {source: weight}
         self._edge_count = 0
         
         # Statistics
@@ -221,7 +221,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         edge = self.get_edge(source, target)
         return edge.weight if edge else None
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """
         Get edge data between source and target vertices.
         
@@ -231,7 +231,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         Priority: Usability #2 - Complete API implementation
         
         Returns:
-            Dict with 'weight' and other edge properties, or None if edge doesn't exist
+            dict with 'weight' and other edge properties, or None if edge doesn't exist
         """
         edge = self.get_edge(source, target)
         if edge is None:
@@ -412,7 +412,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         
         return self.get_total_weight() / len(self._edges)
     
-    def get_weight_distribution(self) -> Dict[str, int]:
+    def get_weight_distribution(self) -> dict[str, int]:
         """Get distribution of edge weights."""
         with self._lock:
             distribution = {}
@@ -463,7 +463,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
             self._min_weight = target_min
             self._max_weight = target_max
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         with self._lock:
             return {
@@ -492,7 +492,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         """Get number of edges."""
         return self._edge_count
     
-    def vertices(self) -> Set[str]:
+    def vertices(self) -> set[str]:
         """Get all vertices."""
         vertices = set()
         for source in self._adjacency.keys():
@@ -501,12 +501,12 @@ class WeightedGraphStrategy(AEdgeStrategy):
             vertices.add(target)
         return vertices
     
-    def edges(self) -> Iterator[Tuple[str, str, float]]:
+    def edges(self) -> Iterator[tuple[str, str, float]]:
         """Iterate over all edges with weights."""
         for edge in self._edges.values():
             yield (edge.source, edge.target, edge.weight)
     
-    def neighbors(self, node: str) -> List[str]:
+    def neighbors(self, node: str) -> list[str]:
         """Get neighbors of a node (delegates to get_neighbors)."""
         return self.get_neighbors(node)
     
@@ -532,7 +532,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         """Get degree of a node."""
         return self.get_degree(node)
     
-    def shortest_path(self, source: str, target: str) -> Optional[List[str]]:
+    def shortest_path(self, source: str, target: str) -> Optional[list[str]]:
         """
         Find shortest path between source and target using Dijkstra's algorithm.
         

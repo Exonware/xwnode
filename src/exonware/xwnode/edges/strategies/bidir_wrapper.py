@@ -5,7 +5,7 @@ This module implements the BIDIR_WRAPPER strategy for efficient
 undirected graph operations using dual directed edges.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -23,7 +23,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
     
     WHY this implementation:
     - Maintains dual arcs (A->B and B->A) automatically
-    - Dict storage for both outgoing and incoming
+    - dict storage for both outgoing and incoming
     - Auto-sync ensures symmetry on all operations
     - Delegates to simple adjacency list backend
     
@@ -69,12 +69,12 @@ class BidirWrapperStrategy(AEdgeStrategy):
         self.allow_self_loops = options.get('allow_self_loops', True)
         
         # Core storage: directed adjacency lists for both directions
-        self._outgoing: Dict[str, Dict[str, float]] = defaultdict(dict)  # source -> {target: weight}
-        self._incoming: Dict[str, Dict[str, float]] = defaultdict(dict)  # target -> {source: weight}
+        self._outgoing: dict[str, dict[str, float]] = defaultdict(dict)  # source -> {target: weight}
+        self._incoming: dict[str, dict[str, float]] = defaultdict(dict)  # target -> {source: weight}
         
         # Undirected edge tracking
-        self._undirected_edges: Set[Tuple[str, str]] = set()  # Canonical edge pairs (min, max)
-        self._vertices: Set[str] = set()
+        self._undirected_edges: set[tuple[str, str]] = set()  # Canonical edge pairs (min, max)
+        self._vertices: set[str] = set()
         
         # Performance tracking
         self._edge_count = 0
@@ -84,7 +84,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         """Get the traits supported by the bidirectional wrapper strategy."""
         return (EdgeTrait.SPARSE | EdgeTrait.CACHE_FRIENDLY)
     
-    def _canonical_edge(self, source: str, target: str) -> Tuple[str, str]:
+    def _canonical_edge(self, source: str, target: str) -> tuple[str, str]:
         """Get canonical representation of undirected edge."""
         return (min(source, target), max(source, target))
     
@@ -167,7 +167,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         canonical = self._canonical_edge(source, target)
         return canonical in self._undirected_edges
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if not self.has_edge(source, target):
             return None
@@ -280,7 +280,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         """Get undirected degree (number of incident edges)."""
         return self.degree(vertex, 'both')
     
-    def get_all_neighbors(self, vertex: str) -> Set[str]:
+    def get_all_neighbors(self, vertex: str) -> set[str]:
         """Get all neighbors in undirected graph."""
         neighbors = set()
         neighbors.update(self._outgoing.get(vertex, {}))
@@ -309,7 +309,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         self._sync_undirected_edge(vertex1, vertex2, weight)
         return True
     
-    def get_connected_components(self) -> List[Set[str]]:
+    def get_connected_components(self) -> list[set[str]]:
         """Find connected components using DFS."""
         visited = set()
         components = []
@@ -340,7 +340,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         components = self.get_connected_components()
         return len(components) <= 1
     
-    def spanning_tree_edges(self) -> List[Tuple[str, str, float]]:
+    def spanning_tree_edges(self) -> list[tuple[str, str, float]]:
         """Get edges of a minimum spanning tree using Kruskal's algorithm."""
         # Get all edges with weights
         edges = []
@@ -382,7 +382,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         
         return mst_edges
     
-    def validate_synchronization(self) -> Dict[str, Any]:
+    def validate_synchronization(self) -> dict[str, Any]:
         """Validate that all undirected edges are properly synchronized."""
         issues = []
         
@@ -411,7 +411,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
             'directed_edges': sum(len(adj) for adj in self._outgoing.values())
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive bidirectional wrapper statistics."""
         sync_status = self.validate_synchronization()
         components = self.get_connected_components()
@@ -460,7 +460,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'BIDIR_WRAPPER',
@@ -479,7 +479,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         sync_status = stats['sync_status']

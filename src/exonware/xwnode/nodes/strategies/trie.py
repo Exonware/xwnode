@@ -4,7 +4,7 @@ Trie Node Strategy Implementation
 This module implements the TRIE strategy for efficient string prefix operations.
 """
 
-from typing import Any, Iterator, Dict, List, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -15,7 +15,7 @@ class TrieNode:
     
     def __init__(self):
         """Time Complexity: O(1)"""
-        self.children: Dict[str, 'TrieNode'] = {}
+        self.children: dict[str, 'TrieNode'] = {}
         self.is_end_of_word = False
         self.value: Any = None
 
@@ -187,7 +187,7 @@ class TrieStrategy(ANodeTreeStrategy):
         """
         return self._size == 0
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dictionary.
         
@@ -241,7 +241,7 @@ class TrieStrategy(ANodeTreeStrategy):
         for item in self.items():
             yield item
     
-    def _collect_words(self, node: TrieNode, prefix: str, result: Dict[str, Any]) -> None:
+    def _collect_words(self, node: TrieNode, prefix: str, result: dict[str, Any]) -> None:
         """Collect all words from trie."""
         if node.is_end_of_word:
             result[prefix] = node.value
@@ -253,7 +253,7 @@ class TrieStrategy(ANodeTreeStrategy):
     # TREE STRATEGY METHODS
     # ============================================================================
     
-    def traverse(self, order: str = 'inorder') -> List[Any]:
+    def traverse(self, order: str = 'inorder') -> list[Any]:
         """Traverse tree in specified order."""
         result = []
         self._collect_words(self._root, "", result)
@@ -303,7 +303,7 @@ class TrieStrategy(ANodeTreeStrategy):
     # TRIE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def prefix_search(self, prefix: str) -> List[str]:
+    def prefix_search(self, prefix: str) -> list[str]:
         """Find all keys with given prefix."""
         node = self._root
         
@@ -333,11 +333,11 @@ class TrieStrategy(ANodeTreeStrategy):
         
         return prefix
     
-    def keys_with_prefix(self, prefix: str) -> List[str]:
+    def keys_with_prefix(self, prefix: str) -> list[str]:
         """Get all keys with given prefix."""
         return self.prefix_search(prefix)
     
-    def keys_with_suffix(self, suffix: str) -> List[str]:
+    def keys_with_suffix(self, suffix: str) -> list[str]:
         """Get all keys with given suffix."""
         # TODO: Implement suffix search
         return []
@@ -369,7 +369,7 @@ class TrieStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'TRIE',
@@ -384,7 +384,7 @@ class TrieStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': self._size,

@@ -9,13 +9,13 @@ search using proximity graphs with hierarchical navigation.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
 import math
 import random
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Callable
+from typing import Any, Iterator, Optional, Callable
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -117,17 +117,17 @@ class HNSWStrategy(AEdgeStrategy):
         
         # Multi-layer graph structure
         # _layers[vertex][layer] = set of neighbors at that layer
-        self._layers: Dict[str, Dict[int, Set[str]]] = defaultdict(lambda: defaultdict(set))
+        self._layers: dict[str, dict[int, set[str]]] = defaultdict(lambda: defaultdict(set))
         
         # Vector storage
-        self._vectors: Dict[str, Tuple[float, ...]] = {}
+        self._vectors: dict[str, tuple[float, ...]] = {}
         
         # Entry point (highest layer vertex)
         self._entry_point: Optional[str] = None
         self._entry_layer = -1
         
         # Track vertices
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get supported traits."""
@@ -137,7 +137,7 @@ class HNSWStrategy(AEdgeStrategy):
     # DISTANCE METRICS
     # ============================================================================
     
-    def _distance(self, v1: Tuple[float, ...], v2: Tuple[float, ...]) -> float:
+    def _distance(self, v1: tuple[float, ...], v2: tuple[float, ...]) -> float:
         """
         Calculate distance between vectors.
         
@@ -188,7 +188,7 @@ class HNSWStrategy(AEdgeStrategy):
     # CORE HNSW OPERATIONS
     # ============================================================================
     
-    def add_vector(self, vertex: str, vector: Tuple[float, ...]) -> None:
+    def add_vector(self, vertex: str, vector: tuple[float, ...]) -> None:
         """
         Add vector with HNSW index construction.
         
@@ -245,8 +245,8 @@ class HNSWStrategy(AEdgeStrategy):
         
         self._edge_count += sum(len(neighbors) for neighbors in self._layers[vertex].values())
     
-    def _search_layer(self, query: Tuple[float, ...], entry_point: str,
-                     ef: int, layer: int) -> List[Tuple[float, str]]:
+    def _search_layer(self, query: tuple[float, ...], entry_point: str,
+                     ef: int, layer: int) -> list[tuple[float, str]]:
         """
         Search for nearest neighbors in layer.
         
@@ -295,7 +295,7 @@ class HNSWStrategy(AEdgeStrategy):
         
         return w
     
-    def _get_neighbors_heuristic(self, vertex: str, candidates: List[Tuple[float, str]], M: int) -> List[str]:
+    def _get_neighbors_heuristic(self, vertex: str, candidates: list[tuple[float, str]], M: int) -> list[str]:
         """
         Select M neighbors using heuristic.
         
@@ -353,7 +353,7 @@ class HNSWStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """
         Add edge (requires vectors).
@@ -375,7 +375,7 @@ class HNSWStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
     
-    def search_knn(self, query: Tuple[float, ...], k: int, ef: Optional[int] = None) -> List[Tuple[str, float]]:
+    def search_knn(self, query: tuple[float, ...], k: int, ef: Optional[int] = None) -> list[tuple[str, float]]:
         """
         Search for k nearest neighbors.
         
@@ -442,7 +442,7 @@ class HNSWStrategy(AEdgeStrategy):
         return False
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """Get neighbors from layer 0."""
         return list(self._layers.get(node, {}).get(0, set()))
     
@@ -454,7 +454,7 @@ class HNSWStrategy(AEdgeStrategy):
         """Get degree of node at layer 0."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over all edges with properties."""
         for edge_dict in self.get_edges():
             yield (edge_dict['source'], edge_dict['target'], {})
@@ -463,7 +463,7 @@ class HNSWStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges from all layers."""
         edges = []
         seen = set()
@@ -483,7 +483,7 @@ class HNSWStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target, 'type': 'proximity'}
@@ -493,7 +493,7 @@ class HNSWStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path (using layer 0)."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -520,7 +520,7 @@ class HNSWStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []
     
@@ -559,11 +559,11 @@ class HNSWStrategy(AEdgeStrategy):
                 total += len(neighbors)
         return total // 2  # Undirected edges counted twice
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -580,7 +580,7 @@ class HNSWStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get HNSW statistics."""
         # Calculate layer distribution
         layer_counts = defaultdict(int)
@@ -623,11 +623,11 @@ class HNSWStrategy(AEdgeStrategy):
         return "HNSW"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.SPARSE, EdgeTrait.MULTI, EdgeTrait.DIRECTED]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'HNSW',

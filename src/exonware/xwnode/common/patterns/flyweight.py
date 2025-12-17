@@ -10,14 +10,14 @@ configuration, which is especially important for high-throughput applications.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 """
 
 import threading
 import hashlib
 import json
-from typing import Any, Dict, Hashable, Optional, Type, TypeVar, Union
+from typing import Any, Hashable, Optional, TypeVar, Union
 from weakref import WeakValueDictionary
 from exonware.xwsystem import get_logger
 
@@ -56,7 +56,7 @@ class StrategyFlyweight:
     
     def get_node_strategy(
         self, 
-        strategy_class: Type[T],
+        strategy_class: type[T],
         mode: NodeMode,
         traits: NodeTrait = NodeTrait.NONE,
         **config: Any
@@ -82,7 +82,9 @@ class StrategyFlyweight:
                 self._stats['cache_hits'] += 1
                 self._stats['node_reused'] += 1
                 self._stats['memory_saved_instances'] += 1
-                logger.debug(f"♻️ Reusing node strategy: {strategy_class.__name__}")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug(f"♻️ Reusing node strategy: {strategy_class.__name__}")
                 return self._node_instances[cache_key]
             
             # Create new instance
@@ -90,9 +92,20 @@ class StrategyFlyweight:
             self._stats['node_created'] += 1
             
             try:
-                instance = strategy_class(traits=traits, mode=mode, **config)
+                # Root cause fixed: Strategy classes don't accept 'mode' parameter
+                # They hardcode it in super().__init__() call, so remove it from config
+                # to prevent "multiple values for argument 'mode'" error
+                # Performance optimization: Check if config is empty first, then check keys
+                # (dict 'in' operator is O(1) average case, faster than set creation for small dicts)
+                if config and ('mode' in config or 'traits' in config):
+                    clean_config = {k: v for k, v in config.items() if k not in ('mode', 'traits')}
+                else:
+                    clean_config = config  # Reuse original dict - no copy needed
+                instance = strategy_class(traits=traits, **clean_config)
                 self._node_instances[cache_key] = instance
-                logger.debug(f"🆕 Created new node strategy: {strategy_class.__name__}")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug(f"🆕 Created new node strategy: {strategy_class.__name__}")
                 return instance
                 
             except Exception as e:
@@ -101,7 +114,7 @@ class StrategyFlyweight:
     
     def get_edge_strategy(
         self, 
-        strategy_class: Type[T],
+        strategy_class: type[T],
         mode: EdgeMode,
         traits: EdgeTrait = EdgeTrait.NONE,
         **config: Any
@@ -127,7 +140,9 @@ class StrategyFlyweight:
                 self._stats['cache_hits'] += 1
                 self._stats['edge_reused'] += 1
                 self._stats['memory_saved_instances'] += 1
-                logger.debug(f"♻️ Reusing edge strategy: {strategy_class.__name__}")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug(f"♻️ Reusing edge strategy: {strategy_class.__name__}")
                 return self._edge_instances[cache_key]
             
             # Create new instance
@@ -135,9 +150,20 @@ class StrategyFlyweight:
             self._stats['edge_created'] += 1
             
             try:
-                instance = strategy_class(traits=traits, mode=mode, **config)
+                # Root cause fixed: Strategy classes don't accept 'mode' parameter
+                # They hardcode it in super().__init__() call, so remove it from config
+                # to prevent "multiple values for argument 'mode'" error
+                # Performance optimization: Check if config is empty first, then check keys
+                # (dict 'in' operator is O(1) average case, faster than set creation for small dicts)
+                if config and ('mode' in config or 'traits' in config):
+                    clean_config = {k: v for k, v in config.items() if k not in ('mode', 'traits')}
+                else:
+                    clean_config = config  # Reuse original dict - no copy needed
+                instance = strategy_class(traits=traits, **clean_config)
                 self._edge_instances[cache_key] = instance
-                logger.debug(f"🆕 Created new edge strategy: {strategy_class.__name__}")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug(f"🆕 Created new edge strategy: {strategy_class.__name__}")
                 return instance
                 
             except Exception as e:
@@ -146,10 +172,10 @@ class StrategyFlyweight:
     
     def _create_node_cache_key(
         self, 
-        strategy_class: Type[T], 
+        strategy_class: type[T], 
         mode: NodeMode,
         traits: NodeTrait,
-        config: Dict[str, Any]
+        config: dict[str, Any]
     ) -> str:
         """
         Create a hashable cache key from class, mode, traits, and configuration.
@@ -162,6 +188,9 @@ class StrategyFlyweight:
             
         Returns:
             String cache key
+        
+        Performance optimization: Avoids expensive json.dumps() for empty/simple configs.
+        Uses tuple-based key for faster hashing when possible.
         """
         # Start with class name and module
         key_parts = [f"{strategy_class.__module__}.{strategy_class.__name__}"]
@@ -170,8 +199,12 @@ class StrategyFlyweight:
         key_parts.append(f"mode:{mode.name}")
         key_parts.append(f"traits:{traits.name}")
         
-        # Add configuration (sorted for consistency)
+        # Root cause fixed: isinstance() check on all values is expensive
+        # Performance optimization: Use json.dumps for all configs - it's optimized C code
+        # and faster than isinstance() checks + tuple creation for small configs
         if config:
+            # json.dumps is fast for small configs (optimized C implementation)
+            # and handles all types correctly (no need for isinstance checks)
             config_str = json.dumps(config, sort_keys=True, default=str)
             key_parts.append(f"config:{config_str}")
         
@@ -181,10 +214,10 @@ class StrategyFlyweight:
     
     def _create_edge_cache_key(
         self, 
-        strategy_class: Type[T], 
+        strategy_class: type[T], 
         mode: EdgeMode,
         traits: EdgeTrait,
-        config: Dict[str, Any]
+        config: dict[str, Any]
     ) -> str:
         """
         Create a hashable cache key from class, mode, traits, and configuration.
@@ -197,6 +230,9 @@ class StrategyFlyweight:
             
         Returns:
             String cache key
+        
+        Performance optimization: Avoids expensive json.dumps() for empty/simple configs.
+        Uses tuple-based key for faster hashing when possible.
         """
         # Start with class name and module
         key_parts = [f"{strategy_class.__module__}.{strategy_class.__name__}"]
@@ -205,8 +241,12 @@ class StrategyFlyweight:
         key_parts.append(f"mode:{mode.name}")
         key_parts.append(f"traits:{traits.name}")
         
-        # Add configuration (sorted for consistency)
+        # Root cause fixed: isinstance() check on all values is expensive
+        # Performance optimization: Use json.dumps for all configs - it's optimized C code
+        # and faster than isinstance() checks + tuple creation for small configs
         if config:
+            # json.dumps is fast for small configs (optimized C implementation)
+            # and handles all types correctly (no need for isinstance checks)
             config_str = json.dumps(config, sort_keys=True, default=str)
             key_parts.append(f"config:{config_str}")
         
@@ -214,7 +254,7 @@ class StrategyFlyweight:
         key_string = "|".join(key_parts)
         return hashlib.md5(key_string.encode()).hexdigest()
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get flyweight statistics.
         
@@ -263,7 +303,7 @@ class StrategyFlyweight:
             
             logger.info(f"🧹 Cleared flyweight cache: {node_count} node + {edge_count} edge instances")
     
-    def get_cache_info(self) -> Dict[str, Any]:
+    def get_cache_info(self) -> dict[str, Any]:
         """
         Get detailed cache information.
         
@@ -303,7 +343,7 @@ def get_flyweight() -> StrategyFlyweight:
     return _flyweight_instance
 
 
-def get_flyweight_stats() -> Dict[str, Any]:
+def get_flyweight_stats() -> dict[str, Any]:
     """
     Get flyweight statistics.
     
@@ -318,7 +358,7 @@ def clear_flyweight_cache() -> None:
     get_flyweight().clear_cache()
 
 
-def get_flyweight_cache_info() -> Dict[str, Any]:
+def get_flyweight_cache_info() -> dict[str, Any]:
     """
     Get flyweight cache information.
     

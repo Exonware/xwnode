@@ -94,20 +94,7 @@ def test_xwnode_xwsystem_basic_integration():
         pass
 
 def test_xwnode_xwsystem_lazy_import_caching():
-    """Test that xwimport functionality exists and is available."""
-    from xwlazy.lazy import xwimport
-    
-    # Test xwimport exists and is callable
-    assert callable(xwimport)
-    
-    # Test that xwimport properly raises ImportError for non-existent packages
-    # (not installing random packages in tests)
-    try:
-        xwimport("nonexistent_module_12345")
-        assert False, "Should have raised ImportError for non-existent module"
-    except ImportError:
-        pass  # Expected behavior - good!
-    
+    """Test that regular imports work normally (xwlazy removed)."""
     # Test that regular imports still work normally
     import json
     import sys

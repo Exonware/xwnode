@@ -9,11 +9,11 @@ compression including Elias-Gamma/Delta coding and reference lists.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -56,7 +56,7 @@ class EliasGamma:
         return prefix + binary
     
     @staticmethod
-    def decode(bitstream: str, offset: int = 0) -> Tuple[int, int]:
+    def decode(bitstream: str, offset: int = 0) -> tuple[int, int]:
         """
         Decode Elias Gamma code.
         
@@ -112,7 +112,7 @@ class EliasDelta:
         return length_code + binary[1:]
     
     @staticmethod
-    def decode(bitstream: str, offset: int = 0) -> Tuple[int, int]:
+    def decode(bitstream: str, offset: int = 0) -> tuple[int, int]:
         """Decode Elias Delta code."""
         # Decode length
         length, new_offset = EliasGamma.decode(bitstream, offset)
@@ -214,14 +214,14 @@ class BVGraphStrategy(AEdgeStrategy):
         self.min_interval_length = min_interval_length
         
         # Adjacency storage (sorted lists)
-        self._adjacency: Dict[str, List[str]] = defaultdict(list)
+        self._adjacency: dict[str, list[str]] = defaultdict(list)
         
         # Compressed storage (after finalization)
-        self._compressed_lists: Dict[str, bytes] = {}
-        self._reference_map: Dict[str, str] = {}  # vertex -> reference vertex
+        self._compressed_lists: dict[str, bytes] = {}
+        self._reference_map: dict[str, str] = {}  # vertex -> reference vertex
         
         # Node tracking
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         self._is_finalized = False
     
     def get_supported_traits(self) -> EdgeTrait:
@@ -232,7 +232,7 @@ class BVGraphStrategy(AEdgeStrategy):
     # COMPRESSION HELPERS
     # ============================================================================
     
-    def _encode_gap_list(self, gaps: List[int]) -> str:
+    def _encode_gap_list(self, gaps: list[int]) -> str:
         """
         Encode gap list using Elias codes.
         
@@ -261,7 +261,7 @@ class BVGraphStrategy(AEdgeStrategy):
         
         return bitstream
     
-    def _compress_adjacency_list(self, vertex: str, neighbors: List[str]) -> None:
+    def _compress_adjacency_list(self, vertex: str, neighbors: list[str]) -> None:
         """
         Compress adjacency list for vertex.
         
@@ -311,7 +311,7 @@ class BVGraphStrategy(AEdgeStrategy):
             
             self._compressed_lists[vertex] = bytes(byte_array)
     
-    def _find_reference(self, vertex: str, neighbors: List[str]) -> Optional[str]:
+    def _find_reference(self, vertex: str, neighbors: list[str]) -> Optional[str]:
         """
         Find similar adjacency list for reference encoding.
         
@@ -356,7 +356,7 @@ class BVGraphStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """
         Add edge to graph (buffer mode).
@@ -453,7 +453,7 @@ class BVGraphStrategy(AEdgeStrategy):
         return source in self._adjacency and target in self._adjacency[source]
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """
         Get neighbors (with decompression if needed).
         
@@ -484,7 +484,7 @@ class BVGraphStrategy(AEdgeStrategy):
         """Get degree of node."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over all edges with properties."""
         for edge_dict in self.get_edges():
             yield (edge_dict['source'], edge_dict['target'], {})
@@ -493,7 +493,7 @@ class BVGraphStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         
@@ -507,7 +507,7 @@ class BVGraphStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target}
@@ -517,7 +517,7 @@ class BVGraphStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (Simplified)
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path using BFS."""
         from collections import deque
         
@@ -546,7 +546,7 @@ class BVGraphStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []
     
@@ -582,11 +582,11 @@ class BVGraphStrategy(AEdgeStrategy):
         """Get number of edges."""
         return self._edge_count
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -598,7 +598,7 @@ class BVGraphStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_compression_statistics(self) -> Dict[str, Any]:
+    def get_compression_statistics(self) -> dict[str, Any]:
         """
         Get detailed compression statistics.
         
@@ -650,11 +650,11 @@ class BVGraphStrategy(AEdgeStrategy):
         return "BV_GRAPH"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.SPARSE, EdgeTrait.COMPRESSED, EdgeTrait.DIRECTED]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'BVGraph (Full WebGraph)',

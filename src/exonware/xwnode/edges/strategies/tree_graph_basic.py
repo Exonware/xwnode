@@ -6,7 +6,7 @@ This module implements the TREE_GRAPH_BASIC strategy for basic edge storage
 in tree+graph hybrid structures, providing minimal graph capabilities.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple, Iterator
+from typing import Any, Optional, Iterator
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
@@ -24,8 +24,8 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         super().__init__(EdgeMode.TREE_GRAPH_BASIC, traits, **options)
         
         # Basic edge storage - simple adjacency representation
-        self._edges: Dict[str, Set[str]] = {}  # source -> {targets}
-        self._reverse_edges: Dict[str, Set[str]] = {}  # target -> {sources}
+        self._edges: dict[str, set[str]] = {}  # source -> {targets}
+        self._reverse_edges: dict[str, set[str]] = {}  # target -> {sources}
         self._edge_count = 0
         
         # Statistics
@@ -48,7 +48,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         self._max_degree = max(self._max_degree, degree)
     
     def _add_edge_internal(self, source: str, target: str, weight: float = 1.0, 
-                          metadata: Optional[Dict[str, Any]] = None) -> bool:
+                          metadata: Optional[dict[str, Any]] = None) -> bool:
         """Internal method to add edge."""
         if source not in self._edges:
             self._edges[source] = set()
@@ -94,7 +94,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, weight: float = 1.0, 
-                 metadata: Optional[Dict[str, Any]] = None, **properties) -> str:
+                 metadata: Optional[dict[str, Any]] = None, **properties) -> str:
         """
         Add an edge between source and target nodes.
         
@@ -126,28 +126,28 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         
         return source in self._edges and target in self._edges[source]
     
-    def get_neighbors(self, node: str) -> List[str]:
+    def get_neighbors(self, node: str) -> list[str]:
         """Get all neighbors of a node."""
         if not isinstance(node, str):
             return []
         
         return list(self._edges.get(node, set()))
     
-    def get_incoming(self, node: str) -> List[str]:
+    def get_incoming(self, node: str) -> list[str]:
         """Get all incoming neighbors of a node."""
         if not isinstance(node, str):
             return []
         
         return list(self._reverse_edges.get(node, set()))
     
-    def get_outgoing(self, node: str) -> List[str]:
+    def get_outgoing(self, node: str) -> list[str]:
         """Get all outgoing neighbors of a node."""
         if not isinstance(node, str):
             return []
         
         return list(self._edges.get(node, set()))
     
-    def get_children(self, node: str) -> List[str]:
+    def get_children(self, node: str) -> list[str]:
         """
         Get children of a node in tree structure.
         
@@ -194,7 +194,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         """Check if there are no edges."""
         return self._edge_count == 0
     
-    def get_nodes(self) -> Set[str]:
+    def get_nodes(self) -> set[str]:
         """Get all nodes that have edges."""
         nodes = set()
         nodes.update(self._edges.keys())
@@ -209,7 +209,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
     # ITERATION
     # ============================================================================
     
-    def edges(self) -> Iterator[Tuple[str, str]]:
+    def edges(self) -> Iterator[tuple[str, str]]:
         """Iterate over all edges as (source, target) pairs."""
         for source, targets in self._edges.items():
             for target in targets:
@@ -219,7 +219,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         """Iterate over all nodes."""
         yield from self.get_nodes()
     
-    def __iter__(self) -> Iterator[Tuple[str, str]]:
+    def __iter__(self) -> Iterator[tuple[str, str]]:
         """Iterate over all edges."""
         yield from self.edges()
     
@@ -270,11 +270,11 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
     # TREE-GRAPH BASIC SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_children(self, node: str) -> List[str]:
+    def get_children(self, node: str) -> list[str]:
         """Get children of a node (for tree-like navigation)."""
         return self.get_outgoing(node)
     
-    def get_parents(self, node: str) -> List[str]:
+    def get_parents(self, node: str) -> list[str]:
         """Get parents of a node (for tree-like navigation)."""
         return self.get_incoming(node)
     
@@ -286,17 +286,17 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         """Check if a node is a root (no incoming edges)."""
         return self.get_in_degree(node) == 0
     
-    def get_roots(self) -> List[str]:
+    def get_roots(self) -> list[str]:
         """Get all root nodes (nodes with no incoming edges)."""
         all_nodes = self.get_nodes()
         return [node for node in all_nodes if self.is_root(node)]
     
-    def get_leaves(self) -> List[str]:
+    def get_leaves(self) -> list[str]:
         """Get all leaf nodes (nodes with no outgoing edges)."""
         all_nodes = self.get_nodes()
         return [node for node in all_nodes if self.is_leaf(node)]
     
-    def get_path(self, source: str, target: str) -> Optional[List[str]]:
+    def get_path(self, source: str, target: str) -> Optional[list[str]]:
         """Get a simple path from source to target using BFS."""
         if source == target:
             return [source]
@@ -325,7 +325,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         """Check if two nodes are connected."""
         return self.get_path(source, target) is not None
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         nodes = self.get_nodes()
         return {

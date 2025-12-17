@@ -7,7 +7,7 @@ with O(log n) expected performance for search, insertion, and deletion.
 """
 
 import random
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -21,7 +21,7 @@ class SkipListNode:
         self.key = key
         self.value = value
         self.level = level
-        self.forward: List[Optional['SkipListNode']] = [None] * (level + 1)
+        self.forward: list[Optional['SkipListNode']] = [None] * (level + 1)
         self._hash = None
     
     def __hash__(self) -> int:
@@ -169,7 +169,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         self._max_level_reached = max(self._max_level_reached, level)
         return level
     
-    def _search_path(self, key: str) -> List[Optional[SkipListNode]]:
+    def _search_path(self, key: str) -> list[Optional[SkipListNode]]:
         """Find the path to the node with given key."""
         normalized_key = self._normalize_key(key)
         current = self._header
@@ -262,7 +262,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         self._total_deletions += 1
         return True
     
-    def _inorder_traversal(self) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self) -> Iterator[tuple[str, Any]]:
         """In-order traversal of skip list."""
         current = self._header.forward[0]
         while current is not None:
@@ -317,7 +317,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -383,7 +383,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         for _, value in self._inorder_traversal():
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal()
     
@@ -395,7 +395,7 @@ class SkipListStrategy(ANodeTreeStrategy):
     # SKIP LIST SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_min(self) -> Optional[Tuple[str, Any]]:
+    def get_min(self) -> Optional[tuple[str, Any]]:
         """Get the minimum key-value pair."""
         if self._size == 0:
             return None
@@ -403,7 +403,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         current = self._header.forward[0]
         return (current.key, current.value) if current else None
     
-    def get_max(self) -> Optional[Tuple[str, Any]]:
+    def get_max(self) -> Optional[tuple[str, Any]]:
         """Get the maximum key-value pair."""
         if self._size == 0:
             return None
@@ -415,7 +415,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         
         return (current.key, current.value) if current != self._header else None
     
-    def range_query(self, start_key: str, end_key: str) -> Iterator[Tuple[str, Any]]:
+    def range_query(self, start_key: str, end_key: str) -> Iterator[tuple[str, Any]]:
         """Get all key-value pairs in range [start_key, end_key]."""
         if not isinstance(start_key, str) or not isinstance(end_key, str):
             return
@@ -442,7 +442,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         """Get maximum level reached."""
         return self._max_level_reached
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         return {
             'size': self._size,

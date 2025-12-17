@@ -10,14 +10,14 @@ selection with sophisticated heuristics.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 """
 
 import re
 import time
 import threading
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Optional, Union
 from dataclasses import dataclass
 from enum import Enum
 from exonware.xwsystem import get_logger
@@ -54,7 +54,7 @@ class StrategyRecommendation:
     reasoning: str
     estimated_performance_gain: float
     data_loss_risk: bool
-    alternative_modes: List[Union[NodeMode, EdgeMode]]
+    alternative_modes: list[Union[NodeMode, EdgeMode]]
 
 
 @dataclass
@@ -62,9 +62,9 @@ class DataProfile:
     """Comprehensive data profile for strategy selection."""
     size: int
     depth: int
-    key_types: Set[type]
-    value_types: Set[type]
-    patterns: Set[DataPattern]
+    key_types: set[type]
+    value_types: set[type]
+    patterns: set[DataPattern]
     access_pattern: str
     update_frequency: str
     memory_usage_estimate: int
@@ -291,7 +291,7 @@ class DataPatternDetector:
         else:
             return current_depth
     
-    def _analyze_types(self, data: Any) -> Tuple[Set[type], Set[type]]:
+    def _analyze_types(self, data: Any) -> tuple[set[type], set[type]]:
         """Analyze key and value types in the data."""
         key_types = set()
         value_types = set()
@@ -308,7 +308,7 @@ class DataPatternDetector:
         
         return key_types, value_types
     
-    def _detect_patterns(self, data: Any, context: Dict[str, Any]) -> Set[DataPattern]:
+    def _detect_patterns(self, data: Any, context: dict[str, Any]) -> set[DataPattern]:
         """Detect patterns in the data."""
         patterns = set()
         
@@ -354,7 +354,7 @@ class DataPatternDetector:
         
         return patterns
     
-    def _is_sequential_numeric_keys(self, keys: List[Any]) -> bool:
+    def _is_sequential_numeric_keys(self, keys: list[Any]) -> bool:
         """Check if keys are sequential numeric indices."""
         if not keys:
             return False
@@ -370,7 +370,7 @@ class DataPatternDetector:
         except (ValueError, TypeError):
             return False
     
-    def _has_prefix_patterns(self, keys: List[str]) -> bool:
+    def _has_prefix_patterns(self, keys: list[str]) -> bool:
         """Check if keys have common prefixes."""
         if len(keys) < 3:
             return False
@@ -420,7 +420,7 @@ class DataPatternDetector:
             size = self._calculate_size(data)
             return size * 50  # Rough estimate: 50 bytes per item
     
-    def _calculate_complexity_score(self, data: Any, patterns: Set[DataPattern]) -> float:
+    def _calculate_complexity_score(self, data: Any, patterns: set[DataPattern]) -> float:
         """Calculate complexity score (0.0 to 1.0)."""
         score = 0.0
         
@@ -445,7 +445,7 @@ class DataPatternDetector:
         
         return min(score, 1.0)
     
-    def _build_pattern_weights(self) -> Dict[DataPattern, float]:
+    def _build_pattern_weights(self) -> dict[DataPattern, float]:
         """Build weights for different patterns."""
         return {
             DataPattern.SEQUENTIAL_NUMERIC: 0.9,
@@ -459,7 +459,7 @@ class DataPatternDetector:
             DataPattern.WRITE_HEAVY: 0.4,
         }
     
-    def _build_strategy_rules(self) -> Dict[str, List[Dict[str, Any]]]:
+    def _build_strategy_rules(self) -> dict[str, list[dict[str, Any]]]:
         """Build strategy selection rules."""
         return {
             'node': [
@@ -510,7 +510,7 @@ class DataPatternDetector:
             ]
         }
     
-    def _evaluate_rule(self, rule: Dict[str, Any], profile: DataProfile) -> float:
+    def _evaluate_rule(self, rule: dict[str, Any], profile: DataProfile) -> float:
         """Evaluate how well a rule matches the profile."""
         conditions = rule.get('conditions', [])
         if not conditions:
@@ -542,7 +542,7 @@ class DataPatternDetector:
         total_time = self._stats['average_analysis_time'] * (self._stats['analyses_performed'] - 1)
         self._stats['average_analysis_time'] = (total_time + analysis_time) / self._stats['analyses_performed']
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get detector statistics."""
         return self._stats.copy()
 

@@ -9,12 +9,12 @@ Defines the contracts for immutable data structures with structural sharing.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 26-Oct-2025
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator, Dict
+from typing import Any, Optional, Iterator
 
 
 class ICOWNode(ABC):
@@ -193,7 +193,7 @@ class ICOWStrategy(ABC):
         pass
     
     @abstractmethod
-    def get_paths(self) -> Dict[str, Any]:
+    def get_paths(self) -> dict[str, Any]:
         """
         Get all paths and values.
         

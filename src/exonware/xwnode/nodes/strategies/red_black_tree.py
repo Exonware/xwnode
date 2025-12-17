@@ -6,7 +6,7 @@ This module implements the RED_BLACK_TREE strategy for self-balancing binary
 search trees with guaranteed O(log n) height and operations.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -512,7 +512,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         if node:
             node.set_black()
     
-    def _inorder_traversal(self, node: Optional[RedBlackTreeNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[RedBlackTreeNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -565,7 +565,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -631,7 +631,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
     
@@ -643,7 +643,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
     # RED-BLACK TREE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_min(self) -> Optional[Tuple[str, Any]]:
+    def get_min(self) -> Optional[tuple[str, Any]]:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
@@ -651,7 +651,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
     
-    def get_max(self) -> Optional[Tuple[str, Any]]:
+    def get_max(self) -> Optional[tuple[str, Any]]:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
@@ -687,7 +687,7 @@ class RedBlackTreeStrategy(ANodeTreeStrategy):
         
         return check_black_height(self._root) != -1
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         return {
             'size': self._size,

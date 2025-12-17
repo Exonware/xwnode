@@ -13,11 +13,11 @@ This strategy provides optimized operations for Abstract Syntax Trees (ASTs):
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Date: October 29, 2025
 """
 
-from typing import Dict, List, Any, Optional, Set
+from typing import Any, Optional
 from .tree_graph_hybrid import TreeGraphHybridStrategy
 from .contracts import NodeType
 from exonware.xwsystem import get_logger
@@ -86,13 +86,13 @@ class ASTStrategy(TreeGraphHybridStrategy):
         super().__init__(mode, traits, **options)
         
         # Type index: node_type -> list of (path, node)
-        self._type_index: Dict[str, List[tuple]] = {}
+        self._type_index: dict[str, list[tuple]] = {}
         
         # Path index: path -> node (for O(1) access)
-        self._path_index: Dict[str, Any] = {}
+        self._path_index: dict[str, Any] = {}
         
         # Metrics cache
-        self._metrics: Dict[str, Any] = {
+        self._metrics: dict[str, Any] = {
             'total_nodes': 0,
             'max_depth': 0,
             'type_counts': {},
@@ -191,7 +191,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
     # OPTIMIZED AST OPERATIONS
     # ========================================================================
     
-    def find_all_by_type(self, node_type: str) -> List[Any]:
+    def find_all_by_type(self, node_type: str) -> list[Any]:
         """
         Find all nodes of a given type in O(1) time.
         
@@ -244,7 +244,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
         """
         return self._metrics['type_counts'].get(node_type, 0)
     
-    def get_all_types(self) -> List[str]:
+    def get_all_types(self) -> list[str]:
         """
         Get list of all node types in AST in O(1) time.
         
@@ -259,7 +259,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
         """
         return list(self._type_index.keys())
     
-    def get_metrics(self) -> Dict[str, Any]:
+    def get_metrics(self) -> dict[str, Any]:
         """
         Get pre-computed AST metrics in O(1) time.
         
@@ -300,7 +300,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
     # PATTERN MATCHING
     # ========================================================================
     
-    def find_pattern(self, pattern: Dict[str, Any]) -> List[Any]:
+    def find_pattern(self, pattern: dict[str, Any]) -> list[Any]:
         """
         Find nodes matching a pattern using optimized type index.
         
@@ -347,7 +347,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
         
         return results
     
-    def _matches_pattern(self, node: Any, pattern: Dict[str, Any]) -> bool:
+    def _matches_pattern(self, node: Any, pattern: dict[str, Any]) -> bool:
         """
         Check if node matches pattern criteria.
         
@@ -384,7 +384,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
     # STATISTICS AND ANALYSIS
     # ========================================================================
     
-    def get_type_distribution(self) -> Dict[str, float]:
+    def get_type_distribution(self) -> dict[str, float]:
         """
         Get distribution of node types as percentages.
         

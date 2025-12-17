@@ -11,7 +11,7 @@ a single, clean implementation.
 import threading
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Union, List, Dict, Optional, Iterator, Tuple, Callable, AsyncIterator
+from typing import Any, Union, Optional, Iterator, Callable, AsyncIterator
 from collections import OrderedDict
 
 from ...defs import NodeMode, NodeTrait
@@ -152,16 +152,16 @@ class TreeGraphListNode(TreeGraphNode):
     """Internal node for a list with lazy-loading in TreeGraphHybrid strategy."""
     __slots__ = ('_children', '_source_data', '_is_lazy')
     
-    def __init__(self, source_data: List[Any], is_lazy: bool, parent: Optional['TreeGraphNode'] = None):
+    def __init__(self, source_data: list[Any], is_lazy: bool, parent: Optional['TreeGraphNode'] = None):
         super().__init__(parent)
         self._source_data = source_data
         self._is_lazy = is_lazy
-        self._children: List['TreeGraphNode'] = []
+        self._children: list['TreeGraphNode'] = []
         
         # Don't load children here to avoid recursion
         # They will be loaded on-demand in _get_child, _to_native, etc.
     
-    def _eager_load(self, data: List[Any]) -> List['TreeGraphNode']:
+    def _eager_load(self, data: list[Any]) -> list['TreeGraphNode']:
         """Eagerly load all children."""
         self._children = []
         for item in data:
@@ -204,7 +204,7 @@ class TreeGraphListNode(TreeGraphNode):
         
         return self._children[index]
     
-    def _to_native(self) -> List[Any]:
+    def _to_native(self) -> list[Any]:
         """Convert this node and its children to a native Python object."""
         # Lazy load if needed
         if self._source_data is not None:
@@ -229,17 +229,17 @@ class TreeGraphDictNode(TreeGraphNode):
     """Internal node for a dictionary with lazy-loading in TreeGraphHybrid strategy."""
     __slots__ = ('_children', '_source_data', '_is_lazy', '_keys')
     
-    def __init__(self, source_data: Dict[str, Any], is_lazy: bool, parent: Optional['TreeGraphNode'] = None):
+    def __init__(self, source_data: dict[str, Any], is_lazy: bool, parent: Optional['TreeGraphNode'] = None):
         super().__init__(parent)
         self._source_data = source_data
         self._is_lazy = is_lazy
-        self._children: Dict[str, 'TreeGraphNode'] = {}
+        self._children: dict[str, 'TreeGraphNode'] = {}
         self._keys = list(source_data.keys())
         
         # Don't load children here to avoid recursion
         # They will be loaded on-demand in _get_child, _to_native, etc.
     
-    def _eager_load(self, data: Dict[str, Any]) -> Dict[str, 'TreeGraphNode']:
+    def _eager_load(self, data: dict[str, Any]) -> dict[str, 'TreeGraphNode']:
         """Eagerly load all children."""
         # Don't clear existing children if we're loading from empty data
         if not data:
@@ -279,7 +279,7 @@ class TreeGraphDictNode(TreeGraphNode):
         
         return self._children[key]
     
-    def _to_native(self) -> Dict[str, Any]:
+    def _to_native(self) -> dict[str, Any]:
         """Convert this node and its children to a native Python object."""
         # Lazy load if needed
         if self._source_data is not None:
@@ -287,7 +287,7 @@ class TreeGraphDictNode(TreeGraphNode):
         
         return {key: child._to_native() for key, child in self._children.items()}
     
-    def items(self) -> Iterator[Tuple[str, 'TreeGraphNode']]:
+    def items(self) -> Iterator[tuple[str, 'TreeGraphNode']]:
         """Iterate over key-value pairs."""
         if self._source_data is not None:
             self._eager_load(self._source_data)
@@ -316,7 +316,7 @@ class TreeGraphReferenceNode(TreeGraphNode):
     """Internal node for a reference in TreeGraphHybrid strategy."""
     __slots__ = ('_uri', '_reference_type', '_metadata')
     
-    def __init__(self, uri: str, reference_type: str, metadata: Dict[str, Any], parent: Optional['TreeGraphNode'] = None):
+    def __init__(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: Optional['TreeGraphNode'] = None):
         super().__init__(parent)
         self._uri = uri
         self._reference_type = reference_type
@@ -333,11 +333,11 @@ class TreeGraphReferenceNode(TreeGraphNode):
         return self._reference_type
     
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Get the metadata of the reference."""
         return self._metadata
     
-    def _to_native(self) -> Dict[str, Any]:
+    def _to_native(self) -> dict[str, Any]:
         """Convert this node to a native Python object."""
         return {
             'type': 'reference',
@@ -353,7 +353,7 @@ class TreeGraphReferenceNode(TreeGraphNode):
         self._reference_type = ""
         self._metadata = {}
     
-    def reset(self, uri: str, reference_type: str, metadata: Dict[str, Any], parent: Optional['TreeGraphNode'] = None) -> None:
+    def reset(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: Optional['TreeGraphNode'] = None) -> None:
         """Reset the node to initial state."""
         super().reset(parent)
         self._uri = uri
@@ -365,7 +365,7 @@ class TreeGraphObjectNode(TreeGraphNode):
     """Internal node for an object reference in TreeGraphHybrid strategy."""
     __slots__ = ('_uri', '_object_type', '_mime_type', '_size', '_metadata')
     
-    def __init__(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: Dict[str, Any], parent: Optional['TreeGraphNode'] = None):
+    def __init__(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: dict[str, Any], parent: Optional['TreeGraphNode'] = None):
         super().__init__(parent)
         self._uri = uri
         self._object_type = object_type
@@ -394,11 +394,11 @@ class TreeGraphObjectNode(TreeGraphNode):
         return self._size
     
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Get the metadata of the object."""
         return self._metadata
     
-    def _to_native(self) -> Dict[str, Any]:
+    def _to_native(self) -> dict[str, Any]:
         """Convert this node to a native Python object."""
         result = {
             'type': 'object',
@@ -421,7 +421,7 @@ class TreeGraphObjectNode(TreeGraphNode):
         self._size = None
         self._metadata = {}
     
-    def reset(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: Dict[str, Any], parent: Optional['TreeGraphNode'] = None) -> None:
+    def reset(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: dict[str, Any], parent: Optional['TreeGraphNode'] = None) -> None:
         """Reset the node to initial state."""
         super().reset(parent)
         self._uri = uri
@@ -541,7 +541,7 @@ class PathParser:
         self._max_cache_size = max_cache_size
         self._lock = threading.RLock()
     
-    def parse(self, path: str) -> List[str]:
+    def parse(self, path: str) -> list[str]:
         """Parse a path string into parts."""
         with self._lock:
             if path in self._cache:
@@ -556,7 +556,7 @@ class PathParser:
             
             return parts
     
-    def _parse_path(self, path: str) -> List[str]:
+    def _parse_path(self, path: str) -> list[str]:
         """Internal path parsing logic."""
         if not path:
             return []
@@ -609,7 +609,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         return "tree_graph_hybrid"
     
     @property
-    def supported_traits(self) -> List[NodeTrait]:
+    def supported_traits(self) -> list[NodeTrait]:
         """Get supported traits for this strategy."""
         return [
             NodeTrait.LAZY_LOADING,
@@ -882,7 +882,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
             self._root._eager_load(self._root._source_data)
         return (child._to_native() for child in self._root._children.values())
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Get all key-value pairs."""
         if self._root is None or not isinstance(self._root, TreeGraphDictNode):
             return iter([])
@@ -901,7 +901,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
             return {}
         return self._root._to_native()
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get information about the backend implementation."""
         return {
             "strategy": "TREE_GRAPH_HYBRID",
@@ -928,7 +928,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
             ]
         }
     
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         metrics = self._performance_tracker.get_metrics()
         metrics.update({
@@ -1006,7 +1006,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         
         return current.value
     
-    def trie_starts_with(self, prefix: str) -> List[str]:
+    def trie_starts_with(self, prefix: str) -> list[str]:
         """Find all words starting with prefix in Trie structure."""
         if not isinstance(prefix, str):
             return []
@@ -1121,7 +1121,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
             # Update the strategy with new data
             self._root = TreeGraphNodeFactory.from_native(current_data, None)
     
-    def _collect_trie_words(self, node: TrieNode, prefix: str, result: Dict[str, Any]) -> None:
+    def _collect_trie_words(self, node: TrieNode, prefix: str, result: dict[str, Any]) -> None:
         """Recursively collect all words from trie."""
         if node.is_end_word:
             result[prefix] = node.value
@@ -1530,7 +1530,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         return getattr(self._root, 'mime_type', None)
 
     @property
-    def metadata(self) -> Optional[Dict[str, Any]]:
+    def metadata(self) -> Optional[dict[str, Any]]:
         """Get metadata (for reference/object nodes)."""
         if self._root is None:
             return None

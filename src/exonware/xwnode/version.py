@@ -14,13 +14,13 @@ All version references should import from this module to ensure consistency.
 # =============================================================================
 
 # Main version - update this to change version across entire project
-__version__ = "0.0.1.30"
+__version__ = "0.0.1.31"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 0
 VERSION_PATCH = 1
-VERSION_BUILD = 30  # Set to None for releases, or build number for dev builds
+VERSION_BUILD = 31  # Set to None for releases, or build number for dev builds
 
 # Version metadata
 VERSION_SUFFIX = ""  # e.g., "dev", "alpha", "beta", "rc1"

@@ -5,7 +5,7 @@ This module implements the ORDERED_MAP strategy for sorted key-value
 operations with efficient range queries and ordered iteration.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import bisect
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
@@ -37,8 +37,8 @@ thmic search operations.
         self.allow_duplicates = options.get('allow_duplicates', False)
         
         # Core storage: parallel sorted arrays
-        self._keys: List[str] = []
-        self._values: List[Any] = []
+        self._keys: list[str] = []
+        self._values: list[Any] = []
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
@@ -194,7 +194,7 @@ thmic search operations.
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict (preserves insertion order in Python 3.7+)."""
         return dict(zip(self._keys, self._values))
 
@@ -272,7 +272,7 @@ thmic search operations.
         """Get value of last key."""
         return self._values[-1] if self._size > 0 else None
     
-    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[Tuple[str, Any]]:
+    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[tuple[str, Any]]:
         """Get key-value pairs in range [start_key, end_key]."""
         start_norm = self._normalize_key(start_key)
         end_norm = self._normalize_key(end_key)
@@ -288,12 +288,12 @@ thmic search operations.
         
         return result
     
-    def get_keys_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[str]:
+    def get_keys_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[str]:
         """Get keys in range."""
         range_items = self.get_range(start_key, end_key, inclusive)
         return [key for key, _ in range_items]
     
-    def get_values_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[Any]:
+    def get_values_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[Any]:
         """Get values in key range."""
         range_items = self.get_range(start_key, end_key, inclusive)
         return [value for _, value in range_items]
@@ -323,7 +323,7 @@ thmic search operations.
         """Find smallest key >= given key."""
         return self.lower_bound(key)
     
-    def get_at_index(self, index: int) -> Optional[Tuple[str, Any]]:
+    def get_at_index(self, index: int) -> Optional[tuple[str, Any]]:
         """Get key-value pair at specific index."""
         if 0 <= index < self._size:
             return (self._keys[index], self._values[index])
@@ -340,7 +340,7 @@ thmic search operations.
         
         return -1
     
-    def pop_first(self) -> Optional[Tuple[str, Any]]:
+    def pop_first(self) -> Optional[tuple[str, Any]]:
         """Remove and return first key-value pair."""
         if self._size > 0:
             key = self._keys[0]
@@ -348,7 +348,7 @@ thmic search operations.
             return (key, value)
         return None
     
-    def pop_last(self) -> Optional[Tuple[str, Any]]:
+    def pop_last(self) -> Optional[tuple[str, Any]]:
         """Remove and return last key-value pair."""
         if self._size > 0:
             key = self._keys[-1]
@@ -366,12 +366,12 @@ thmic search operations.
         for i in range(self._size - 1, -1, -1):
             yield self._values[i]
     
-    def reverse_items(self) -> Iterator[Tuple[str, Any]]:
+    def reverse_items(self) -> Iterator[tuple[str, Any]]:
         """Get key-value pairs in reverse order."""
         for i in range(self._size - 1, -1, -1):
             yield (self._keys[i], self._values[i])
     
-    def find_prefix_keys(self, prefix: str) -> List[str]:
+    def find_prefix_keys(self, prefix: str) -> list[str]:
         """Find all keys starting with given prefix."""
         normalized_prefix = self._normalize_key(prefix)
         result = []
@@ -388,7 +388,7 @@ thmic search operations.
         """Count keys in range."""
         return len(self.get_keys_range(start_key, end_key, inclusive))
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive ordered map statistics."""
         if self._size == 0:
             return {'size': 0, 'first_key': None, 'last_key': None}
@@ -416,7 +416,7 @@ thmic search operations.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'ORDERED_MAP',
@@ -434,7 +434,7 @@ thmic search operations.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

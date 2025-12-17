@@ -6,13 +6,13 @@ Cache performance telemetry and proof-of-superiority tracking.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
 import time
 import threading
-from typing import Dict, Any, Optional, List
+from typing import Any, Optional
 from dataclasses import dataclass, field
 from collections import defaultdict
 
@@ -32,7 +32,7 @@ class CachePerformanceMetric:
     component: str
     cache_strategy: str = "none"
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             'operation': self.operation,
@@ -66,7 +66,7 @@ class CacheComparisonReport:
             return 0.0
         return ((self.baseline_avg_ms - self.cached_avg_ms) / self.baseline_avg_ms) * 100
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             'component': self.component,
@@ -102,17 +102,17 @@ class CacheTelemetryCollector:
         self._max_samples = max_samples
         
         # Store raw metrics
-        self._metrics: List[CachePerformanceMetric] = []
+        self._metrics: list[CachePerformanceMetric] = []
         
         # Aggregated statistics
-        self._stats: Dict[str, Dict[str, Any]] = defaultdict(lambda: {
+        self._stats: dict[str, dict[str, Any]] = defaultdict(lambda: {
             'baseline': {'count': 0, 'total_ms': 0.0},
             'cached': {'count': 0, 'total_ms': 0.0}
         })
         
         # Cache hit tracking
-        self._cache_hits: Dict[str, int] = defaultdict(int)
-        self._cache_misses: Dict[str, int] = defaultdict(int)
+        self._cache_hits: dict[str, int] = defaultdict(int)
+        self._cache_misses: dict[str, int] = defaultdict(int)
         
         logger.info("CacheTelemetryCollector initialized")
     
@@ -167,7 +167,7 @@ class CacheTelemetryCollector:
         self,
         component: Optional[str] = None,
         operation: Optional[str] = None
-    ) -> List[CacheComparisonReport]:
+    ) -> list[CacheComparisonReport]:
         """
         Get performance comparison report.
         
@@ -232,7 +232,7 @@ class CacheTelemetryCollector:
             
             return reports
     
-    def get_proof_summary(self) -> Dict[str, Any]:
+    def get_proof_summary(self) -> dict[str, Any]:
         """
         Get proof-of-superiority summary.
         
@@ -288,7 +288,7 @@ class CacheTelemetryCollector:
                 'recommendations': self._generate_recommendations(reports)
             }
     
-    def _generate_recommendations(self, reports: List[CacheComparisonReport]) -> List[str]:
+    def _generate_recommendations(self, reports: list[CacheComparisonReport]) -> list[str]:
         """Generate recommendations based on reports."""
         recommendations = []
         

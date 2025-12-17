@@ -5,7 +5,7 @@ This module implements the FLOW_NETWORK strategy for flow graphs with
 capacity constraints, flow algorithms, and network flow optimization.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, DefaultDict
+from typing import Any, Iterator, Optional, DefaultDict
 from collections import defaultdict, deque
 import math
 from ._base_edge import AEdgeStrategy
@@ -70,7 +70,7 @@ class FlowEdge:
             is_residual=True
         )
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -106,15 +106,15 @@ class FlowNetworkStrategy(AEdgeStrategy):
         self.precision = options.get('precision', 1e-9)  # Floating point precision
         
         # Core storage
-        self._edges: Dict[str, FlowEdge] = {}  # edge_id -> FlowEdge
-        self._outgoing: DefaultDict[str, Dict[str, str]] = defaultdict(dict)  # source -> {target: edge_id}
-        self._incoming: DefaultDict[str, Dict[str, str]] = defaultdict(dict)  # target -> {source: edge_id}
-        self._vertices: Set[str] = set()
+        self._edges: dict[str, FlowEdge] = {}  # edge_id -> FlowEdge
+        self._outgoing: Defaultdict[str, dict[str, str]] = defaultdict(dict)  # source -> {target: edge_id}
+        self._incoming: Defaultdict[str, dict[str, str]] = defaultdict(dict)  # target -> {source: edge_id}
+        self._vertices: set[str] = set()
         
         # Flow network state
-        self._source_vertices: Set[str] = set()  # Sources (supply > 0)
-        self._sink_vertices: Set[str] = set()    # Sinks (demand > 0)
-        self._vertex_supply: Dict[str, float] = defaultdict(float)  # Net supply/demand
+        self._source_vertices: set[str] = set()  # Sources (supply > 0)
+        self._sink_vertices: set[str] = set()    # Sinks (demand > 0)
+        self._vertex_supply: dict[str, float] = defaultdict(float)  # Net supply/demand
         
         # Flow statistics
         self._total_capacity = 0.0
@@ -191,7 +191,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return target in self._outgoing.get(source, {})
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if target in self._outgoing.get(source, {}):
             edge_id = self._outgoing[source][target]
@@ -374,7 +374,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         
         return residual
     
-    def find_augmenting_path(self, source: str, sink: str) -> Optional[List[str]]:
+    def find_augmenting_path(self, source: str, sink: str) -> Optional[list[str]]:
         """Find augmenting path using BFS (Ford-Fulkerson algorithm)."""
         if source not in self._vertices or sink not in self._vertices:
             return None
@@ -440,7 +440,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         
         return total_flow
     
-    def min_cut(self, source: str, sink: str) -> Tuple[Set[str], Set[str], float]:
+    def min_cut(self, source: str, sink: str) -> tuple[set[str], set[str], float]:
         """Find minimum cut using max-flow min-cut theorem."""
         # First compute max flow
         max_flow_value = self.max_flow(source, sink)
@@ -489,7 +489,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         
         return True
     
-    def get_flow_statistics(self) -> Dict[str, Any]:
+    def get_flow_statistics(self) -> dict[str, Any]:
         """Get comprehensive flow statistics."""
         if not self._edges:
             return {
@@ -521,7 +521,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'FLOW_NETWORK',
@@ -539,7 +539,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_flow_statistics()
         

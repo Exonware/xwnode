@@ -6,12 +6,12 @@ Multi-index manager for O(1) relationship lookups.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
 import threading
-from typing import Dict, List, Optional, Any
+from typing import Optional, Any
 from collections import defaultdict
 
 
@@ -29,15 +29,15 @@ class IndexManager:
         """Initialize index manager with empty indexes."""
         # Index 1: Outgoing relationships by source
         # source_id -> {relationship_type -> [relationship_data]}
-        self._outgoing_index: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+        self._outgoing_index: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
         
         # Index 2: Incoming relationships by target
         # target_id -> {relationship_type -> [relationship_data]}
-        self._incoming_index: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+        self._incoming_index: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
         
         # Index 3: All relationships by ID
         # relationship_id -> relationship_data
-        self._relationships: Dict[str, Dict[str, Any]] = {}
+        self._relationships: dict[str, dict[str, Any]] = {}
         
         # Relationship ID counter
         self._rel_id_counter = 0
@@ -142,7 +142,7 @@ class IndexManager:
         self,
         entity_id: str,
         relationship_type: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Query outgoing relationships for entity.
         
@@ -173,7 +173,7 @@ class IndexManager:
         self,
         entity_id: str,
         relationship_type: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Query incoming relationships for entity.
         
@@ -234,7 +234,7 @@ class IndexManager:
             # Check if any match target
             return any(r['target'] == target for r in rels)
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get index statistics.
         

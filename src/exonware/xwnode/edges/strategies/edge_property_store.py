@@ -5,8 +5,9 @@ This module implements the EDGE_PROPERTY_STORE strategy for columnar
 edge attribute storage with efficient analytical queries.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple, Union
+from typing import Any, Iterator, Optional, Union
 from collections import defaultdict
+from collections.abc import Callable
 import statistics
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -18,13 +19,13 @@ class PropertyColumn:
     def __init__(self, name: str, data_type: type = object):
         self.name = name
         self.data_type = data_type
-        self.values: List[Any] = []
-        self.null_bitmap: List[bool] = []  # True if value is null
+        self.values: list[Any] = []
+        self.null_bitmap: list[bool] = []  # True if value is null
         
         # Column statistics
         self._min_value = None
         self._max_value = None
-        self._unique_values: Set[Any] = set()
+        self._unique_values: set[Any] = set()
         self._stats_dirty = True
     
     def append(self, value: Any) -> None:
@@ -101,7 +102,7 @@ class PropertyColumn:
         
         self._stats_dirty = False
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get column statistics."""
         self._update_statistics()
         
@@ -134,7 +135,7 @@ class PropertyColumn:
         
         return stats
     
-    def filter_indices(self, predicate: callable) -> List[int]:
+    def filter_indices(self, predicate: Callable[[Any], bool]) -> list[int]:
         """Get indices where predicate is true."""
         return [i for i, value in enumerate(self.values) if predicate(value)]
     
@@ -159,25 +160,25 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         self.default_batch_size = options.get('batch_size', 1000)
         
         # Core edge storage
-        self._source_vertices: List[str] = []  # Source vertex names
-        self._target_vertices: List[str] = []  # Target vertex names
-        self._edge_ids: List[str] = []         # Edge identifiers
+        self._source_vertices: list[str] = []  # Source vertex names
+        self._target_vertices: list[str] = []  # Target vertex names
+        self._edge_ids: list[str] = []         # Edge identifiers
         
         # Columnar property storage
-        self._property_columns: Dict[str, PropertyColumn] = {}
+        self._property_columns: dict[str, PropertyColumn] = {}
         
         # Standard edge properties columns
         self._init_standard_columns()
         
         # Vertex management
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         self._edge_count = 0
         self._next_edge_id = 0
         
         # Indices for fast lookups
-        self._edge_index: Dict[Tuple[str, str], List[int]] = defaultdict(list)  # (source, target) -> [positions]
-        self._vertex_out_edges: Dict[str, List[int]] = defaultdict(list)  # vertex -> [edge_positions]
-        self._vertex_in_edges: Dict[str, List[int]] = defaultdict(list)   # vertex -> [edge_positions]
+        self._edge_index: dict[tuple[str, str], list[int]] = defaultdict(list)  # (source, target) -> [positions]
+        self._vertex_out_edges: dict[str, list[int]] = defaultdict(list)  # vertex -> [edge_positions]
+        self._vertex_in_edges: dict[str, list[int]] = defaultdict(list)   # vertex -> [edge_positions]
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get the traits supported by the edge property store strategy."""
@@ -317,7 +318,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         edge_key = (source, target)
         return edge_key in self._edge_index
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data with all properties."""
         edge_key = (source, target)
         positions = self._edge_index.get(edge_key, [])
@@ -464,11 +465,11 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
             return True
         return False
     
-    def get_property_columns(self) -> List[str]:
+    def get_property_columns(self) -> list[str]:
         """Get list of all property column names."""
         return list(self._property_columns.keys())
     
-    def get_column_data(self, column_name: str) -> Optional[List[Any]]:
+    def get_column_data(self, column_name: str) -> Optional[list[Any]]:
         """Get all values from a specific column."""
         if column_name in self._property_columns:
             return self._property_columns[column_name].values.copy()
@@ -502,7 +503,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         position = positions[0]
         return self._property_columns[property_name].get_value(position)
     
-    def filter_edges_by_property(self, property_name: str, predicate: callable) -> List[Tuple[str, str, Dict[str, Any]]]:
+    def filter_edges_by_property(self, property_name: str, predicate: Callable[[Any], bool]) -> list[tuple[str, str, dict[str, Any]]]:
         """Filter edges by property values."""
         if property_name not in self._property_columns:
             return []
@@ -551,7 +552,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         else:
             return None
     
-    def group_by_property(self, property_name: str) -> Dict[Any, List[int]]:
+    def group_by_property(self, property_name: str) -> dict[Any, list[int]]:
         """Group edge indices by property values."""
         if property_name not in self._property_columns:
             return {}
@@ -564,17 +565,17 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         
         return dict(groups)
     
-    def get_property_statistics(self, property_name: str) -> Optional[Dict[str, Any]]:
+    def get_property_statistics(self, property_name: str) -> Optional[dict[str, Any]]:
         """Get statistics for a specific property column."""
         if property_name in self._property_columns:
             return self._property_columns[property_name].get_statistics()
         return None
     
-    def get_all_statistics(self) -> Dict[str, Dict[str, Any]]:
+    def get_all_statistics(self) -> dict[str, dict[str, Any]]:
         """Get statistics for all property columns."""
         return {name: column.get_statistics() for name, column in self._property_columns.items()}
     
-    def export_to_dataframe_format(self) -> Dict[str, List[Any]]:
+    def export_to_dataframe_format(self) -> dict[str, list[Any]]:
         """Export data in DataFrame-compatible format."""
         data = {
             'source': self._source_vertices.copy(),
@@ -587,7 +588,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         
         return data
     
-    def get_schema(self) -> Dict[str, str]:
+    def get_schema(self) -> dict[str, str]:
         """Get schema information for all columns."""
         schema = {
             'source': 'str',
@@ -600,7 +601,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         
         return schema
     
-    def get_comprehensive_statistics(self) -> Dict[str, Any]:
+    def get_comprehensive_statistics(self) -> dict[str, Any]:
         """Get comprehensive statistics about the property store."""
         column_stats = self.get_all_statistics()
         
@@ -621,7 +622,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'EDGE_PROPERTY_STORE',
@@ -640,7 +641,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_comprehensive_statistics()
         

@@ -10,13 +10,13 @@ Moved from root contracts.py to follow GUIDELINES_DEV.md structure.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 from enum import Enum
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator, Dict, List
+from typing import Any, Optional, Iterator
 
 # Import EdgeMode and EdgeTrait from defs
 from ...defs import EdgeMode, EdgeTrait
@@ -96,7 +96,7 @@ class IEdgeStrategy(ABC):
     
     @abstractmethod
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """Add an edge between source and target with advanced properties."""
         pass
@@ -112,27 +112,27 @@ class IEdgeStrategy(ABC):
         pass
     
     @abstractmethod
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         pass
     
     @abstractmethod
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         pass
     
     @abstractmethod
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge data/properties."""
         pass
     
     @abstractmethod
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path between nodes."""
         pass
     
     @abstractmethod
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         pass
     
@@ -153,7 +153,7 @@ class IEdgeStrategy(ABC):
         pass
     
     @abstractmethod
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges with full metadata."""
         pass
     
@@ -165,7 +165,7 @@ class IEdgeStrategy(ABC):
     
     @property
     @abstractmethod
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits for this strategy."""
         pass
     

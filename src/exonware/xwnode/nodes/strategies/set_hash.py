@@ -5,7 +5,7 @@ This module implements the SET_HASH strategy for efficient set operations
 with O(1) average-case membership testing and insertion.
 """
 
-from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Set, Union
+from typing import Any, AsyncIterator, Iterator, Optional, Union
 import hashlib
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -37,8 +37,8 @@ class SetHashStrategy(ANodeStrategy):
         self.initial_capacity = options.get('initial_capacity', 16)
         
         # Core storage: hash set for uniqueness
-        self._set: Set[str] = set()
-        self._values: Dict[str, Any] = {}  # Value storage for compatibility
+        self._set: set[str] = set()
+        self._values: dict[str, Any] = {}  # Value storage for compatibility
         self._size = 0
         
         # Set-specific options
@@ -150,7 +150,7 @@ class SetHashStrategy(ANodeStrategy):
         """Get the number of elements in the set."""
         return self._size
     
-    def to_native(self) -> Set[Any]:
+    def to_native(self) -> set[Any]:
         """Convert to native Python set."""
         return set(self._set)
 
@@ -241,7 +241,7 @@ class SetHashStrategy(ANodeStrategy):
         self._size -= 1
         return value
     
-    def union(self, other: Union['SetHashStrategy', Set, List]) -> 'SetHashStrategy':
+    def union(self, other: Union['SetHashStrategy', set, list]) -> 'SetHashStrategy':
         """Return union of this set with another."""
         result = SetHashStrategy(
             traits=self.traits,
@@ -263,7 +263,7 @@ class SetHashStrategy(ANodeStrategy):
         
         return result
     
-    def intersection(self, other: Union['SetHashStrategy', Set, List]) -> 'SetHashStrategy':
+    def intersection(self, other: Union['SetHashStrategy', set, list]) -> 'SetHashStrategy':
         """Return intersection of this set with another."""
         result = SetHashStrategy(
             traits=self.traits,
@@ -283,7 +283,7 @@ class SetHashStrategy(ANodeStrategy):
         
         return result
     
-    def difference(self, other: Union['SetHashStrategy', Set, List]) -> 'SetHashStrategy':
+    def difference(self, other: Union['SetHashStrategy', set, list]) -> 'SetHashStrategy':
         """Return difference of this set with another."""
         result = SetHashStrategy(
             traits=self.traits,
@@ -304,7 +304,7 @@ class SetHashStrategy(ANodeStrategy):
         
         return result
     
-    def symmetric_difference(self, other: Union['SetHashStrategy', Set, List]) -> 'SetHashStrategy':
+    def symmetric_difference(self, other: Union['SetHashStrategy', set, list]) -> 'SetHashStrategy':
         """Return symmetric difference of this set with another."""
         result = SetHashStrategy(
             traits=self.traits,
@@ -334,7 +334,7 @@ class SetHashStrategy(ANodeStrategy):
         
         return result
     
-    def is_subset(self, other: Union['SetHashStrategy', Set, List]) -> bool:
+    def is_subset(self, other: Union['SetHashStrategy', set, list]) -> bool:
         """Check if this set is a subset of another."""
         if isinstance(other, SetHashStrategy):
             return self._set.issubset(other._set)
@@ -343,7 +343,7 @@ class SetHashStrategy(ANodeStrategy):
             return self._set.issubset(other_set)
         return False
     
-    def is_superset(self, other: Union['SetHashStrategy', Set, List]) -> bool:
+    def is_superset(self, other: Union['SetHashStrategy', set, list]) -> bool:
         """Check if this set is a superset of another."""
         if isinstance(other, SetHashStrategy):
             return self._set.issuperset(other._set)
@@ -352,7 +352,7 @@ class SetHashStrategy(ANodeStrategy):
             return self._set.issuperset(other_set)
         return False
     
-    def is_disjoint(self, other: Union['SetHashStrategy', Set, List]) -> bool:
+    def is_disjoint(self, other: Union['SetHashStrategy', set, list]) -> bool:
         """Check if this set has no elements in common with another."""
         if isinstance(other, SetHashStrategy):
             return self._set.isdisjoint(other._set)
@@ -396,7 +396,7 @@ class SetHashStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'SET_HASH',
@@ -414,7 +414,7 @@ class SetHashStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         collision_estimate = max(0, len(self._values) - len(self._set))
         

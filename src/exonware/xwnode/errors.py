@@ -9,7 +9,7 @@ actionable suggestions, and performance optimization for critical paths.
 
 import time
 import difflib
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
@@ -34,8 +34,8 @@ class XWNodeError(Exception):
     
     def __init__(self, message: str, *, 
                  error_code: str = None,
-                 context: Dict[str, Any] = None,
-                 suggestions: List[str] = None,
+                 context: dict[str, Any] = None,
+                 suggestions: list[str] = None,
                  cause: Exception = None):
         super().__init__(message)
         self.message = message
@@ -85,7 +85,7 @@ class XWNodePathError(XWNodeError, KeyError):
     __slots__ = ('path', 'segment', 'reason', 'node_type', 'available_keys')
     
     def __init__(self, path: str, segment: str = None, reason: str = "not_found", 
-                 node_type: str = None, available_keys: List[str] = None):
+                 node_type: str = None, available_keys: list[str] = None):
         self.path = path
         self.segment = segment or path
         self.reason = reason  # "not_found", "type_mismatch", "out_of_bounds"
@@ -112,7 +112,7 @@ class XWNodePathError(XWNodeError, KeyError):
                         context=context,
                         suggestions=suggestions)
     
-    def _generate_smart_suggestions(self) -> List[str]:
+    def _generate_smart_suggestions(self) -> list[str]:
         """Generate AI-like suggestions based on error context."""
         suggestions = []
         
@@ -152,7 +152,7 @@ class XWNodeTypeError(XWNodeError, TypeError):
     def __init__(self, message: str, *,
                  attempted_operation: str = None,
                  actual_type: str = None,
-                 expected_types: List[str] = None):
+                 expected_types: list[str] = None):
         self.attempted_operation = attempted_operation
         self.actual_type = actual_type
         self.expected_types = expected_types or []
@@ -182,8 +182,8 @@ class XWNodeValueError(XWNodeError, ValueError):
     
     def __init__(self, message: str, *,
                  invalid_value: Any = None,
-                 constraints: Dict[str, Any] = None,
-                 validation_rules: List[str] = None):
+                 constraints: dict[str, Any] = None,
+                 validation_rules: list[str] = None):
         self.invalid_value = invalid_value
         self.constraints = constraints or {}
         self.validation_rules = validation_rules or []
@@ -219,7 +219,7 @@ class ErrorFactory:
     """
     
     @staticmethod
-    def path_not_found(path: str, segment: str = None, available_keys: List[str] = None) -> XWNodePathError:
+    def path_not_found(path: str, segment: str = None, available_keys: list[str] = None) -> XWNodePathError:
         """Fast path for common 'not found' errors."""
         return XWNodePathError(path, segment, "not_found", available_keys=available_keys)
     
@@ -236,7 +236,7 @@ class ErrorFactory:
         ).suggest(f"Valid range: 0-{length-1}")
     
     @staticmethod
-    def operation_not_supported(operation: str, node_type: str, supported_ops: List[str] = None) -> XWNodeTypeError:
+    def operation_not_supported(operation: str, node_type: str, supported_ops: list[str] = None) -> XWNodeTypeError:
         """Fast path for unsupported operation errors."""
         message = f"Operation '{operation}' not supported on {node_type}"
         error = XWNodeTypeError(
@@ -249,7 +249,7 @@ class ErrorFactory:
         return error
     
     @staticmethod
-    def invalid_preset(preset_name: str, available_presets: List[str]) -> XWNodeValueError:
+    def invalid_preset(preset_name: str, available_presets: list[str]) -> XWNodeValueError:
         """Fast path for invalid preset errors."""
         close_matches = difflib.get_close_matches(preset_name, available_presets, n=3, cutoff=0.6)
         error = XWNodeValueError(
@@ -277,7 +277,7 @@ class XWNodeUnsupportedCapabilityError(XWNodeStrategyError):
     
     __slots__ = ('capability', 'strategy', 'available_capabilities')
     
-    def __init__(self, capability: str, strategy: str, available_capabilities: List[str] = None):
+    def __init__(self, capability: str, strategy: str, available_capabilities: list[str] = None):
         self.capability = capability
         self.strategy = strategy
         self.available_capabilities = available_capabilities or []

@@ -9,11 +9,11 @@ Supports both equi-width and equi-depth histogram types.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 from threading import RLock
 import bisect
 
@@ -100,14 +100,14 @@ class HistogramStrategy(ANodeStrategy):
         self._max_value = max_value
         
         # Buckets
-        self._buckets: List[_Bucket] = []
+        self._buckets: list[_Bucket] = []
         self._total_count = 0
         
         # Thread safety
         self._lock = RLock()
         
         # For building histogram
-        self._values: List[float] = [] if histogram_type == 'equi-depth' else None
+        self._values: list[float] = [] if histogram_type == 'equi-depth' else None
     
     def add_value(self, value: float) -> None:
         """
@@ -215,7 +215,7 @@ class HistogramStrategy(ANodeStrategy):
             
             return self._max_value
     
-    def get_buckets(self) -> List[Tuple[float, float, int]]:
+    def get_buckets(self) -> list[tuple[float, float, int]]:
         """
         Get bucket information
         

@@ -7,7 +7,7 @@ name = "exonware-xwnode"
 dynamic = ["version"]
 description = "Node-based data processing and graph computation library"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 keywords = [ "node", "graph", "computation", "data-processing", "workflow", "exonware",]
 classifiers = [ 
     "Development Status :: 3 - Alpha", 
@@ -15,10 +15,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License", 
     "Operating System :: OS Independent", 
     "Programming Language :: Python :: 3", 
-    "Programming Language :: Python :: 3.8", 
-    "Programming Language :: Python :: 3.9", 
-    "Programming Language :: Python :: 3.10", 
-    "Programming Language :: Python :: 3.11", 
     "Programming Language :: Python :: 3.12", 
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -54,6 +50,9 @@ full = [
     # xwnode-specific dependencies for advanced strategies
     "numpy>=1.24.0",  # For learned index and probabilistic strategies
     "scikit-learn>=1.2.0",  # For learned index strategy (ML-based indexing)
+    
+    # Benchmark and example dependencies
+    "openpyxl>=3.0.0",  # Excel file generation and reading for benchmarks
 ]
 
 [project.urls]
@@ -70,7 +69,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.0.1.30"
+python_version = "0.0.1.31"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

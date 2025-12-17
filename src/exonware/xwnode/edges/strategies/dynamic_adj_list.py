@@ -5,7 +5,7 @@ This module implements the DYNAMIC_ADJ_LIST strategy for efficiently handling
 graphs with frequent structural changes and dynamic edge properties.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, DefaultDict
+from typing import Any, Iterator, Optional, DefaultDict
 from collections import defaultdict, deque
 import time
 import threading
@@ -25,7 +25,7 @@ class VersionedEdge:
         self.version = 1
         self.properties = properties.copy()
         self.is_active = True
-        self.history: List[Dict[str, Any]] = []
+        self.history: list[dict[str, Any]] = []
     
     def update_properties(self, **new_properties) -> None:
         """Update edge properties with versioning."""
@@ -41,11 +41,11 @@ class VersionedEdge:
         self.updated_at = time.time()
         self.version += 1
     
-    def get_history(self) -> List[Dict[str, Any]]:
+    def get_history(self) -> list[dict[str, Any]]:
         """Get the version history of this edge."""
         return self.history.copy()
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -119,21 +119,21 @@ class DynamicAdjListStrategy(AEdgeStrategy):
         self.enable_batching = options.get('enable_batching', True)
         
         # Core storage with dynamic updates in mind
-        self._outgoing: DefaultDict[str, Dict[str, VersionedEdge]] = defaultdict(dict)
-        self._incoming: DefaultDict[str, Dict[str, VersionedEdge]] = defaultdict(dict) if self.is_directed else None
+        self._outgoing: Defaultdict[str, dict[str, VersionedEdge]] = defaultdict(dict)
+        self._incoming: Defaultdict[str, dict[str, VersionedEdge]] = defaultdict(dict) if self.is_directed else None
         
         # Vertex management
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         
         # Change tracking
         self._edge_count = 0
         self._edge_id_counter = 0
         self._change_log: deque = deque(maxlen=1000)  # Recent changes
-        self._batch_operations: List[Dict[str, Any]] = []
+        self._batch_operations: list[dict[str, Any]] = []
         
         # Performance optimizations
         self._lock = threading.RLock() if options.get('thread_safe', False) else None
-        self._dirty_vertices: Set[str] = set()  # Vertices with pending updates
+        self._dirty_vertices: set[str] = set()  # Vertices with pending updates
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get the traits supported by the dynamic adjacency list strategy."""
@@ -251,7 +251,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
         
         return self._with_lock(_has)
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data with version information."""
         def _get():
             if source not in self._outgoing or target not in self._outgoing[source]:
@@ -434,11 +434,11 @@ class DynamicAdjListStrategy(AEdgeStrategy):
             return operations_count
         return 0
     
-    def get_change_log(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_change_log(self, limit: int = 100) -> list[dict[str, Any]]:
         """Get recent change history."""
         return list(self._change_log)[-limit:] if self._change_log else []
     
-    def get_edge_history(self, source: str, target: str) -> List[Dict[str, Any]]:
+    def get_edge_history(self, source: str, target: str) -> list[dict[str, Any]]:
         """Get version history for a specific edge."""
         if source not in self._outgoing or target not in self._outgoing[source]:
             return []
@@ -446,7 +446,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
         edge = self._outgoing[source][target]
         return edge.get_history()
     
-    def get_dirty_vertices(self) -> Set[str]:
+    def get_dirty_vertices(self) -> set[str]:
         """Get vertices that have pending updates."""
         return self._dirty_vertices.copy()
     
@@ -482,7 +482,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
         
         return self._with_lock(_compact)
     
-    def get_temporal_edges(self, start_time: float, end_time: float) -> List[Tuple[str, str, Dict[str, Any]]]:
+    def get_temporal_edges(self, start_time: float, end_time: float) -> list[tuple[str, str, dict[str, Any]]]:
         """Get edges that were active during the specified time period."""
         result = []
         
@@ -499,7 +499,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'DYNAMIC_ADJ_LIST',
@@ -519,7 +519,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         total_history_entries = sum(
             len(edge.history) 

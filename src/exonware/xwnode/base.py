@@ -15,14 +15,15 @@ Strategy base classes are in their respective strategy folders:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import threading
 import copy
 from abc import ABC
-from typing import Any, Iterator, Union, Optional, List, Dict, Callable, TYPE_CHECKING
+from typing import Any, Iterator, Union, Optional, TYPE_CHECKING
+from collections.abc import Callable
 from collections import OrderedDict
 
 # Core XWNode imports - strategy-agnostic
@@ -84,7 +85,7 @@ class PathParser:
         self._max_cache_size = max_cache_size
         self._lock = threading.RLock()
     
-    def parse(self, path: str) -> List[str]:
+    def parse(self, path: str) -> list[str]:
         """Parse a path string into parts."""
         with self._lock:
             if path in self._cache:
@@ -101,7 +102,7 @@ class PathParser:
             
             return parts
     
-    def _parse_path(self, path: str) -> List[str]:
+    def _parse_path(self, path: str) -> list[str]:
         """Internal path parsing logic."""
         if not path:
             return []
@@ -181,7 +182,7 @@ class GlobalPathCache:
         with self._lock:
             self._cache.clear()
     
-    def stats(self) -> Dict[str, int]:
+    def stats(self) -> dict[str, int]:
         """Get cache statistics."""
         with self._lock:
             return self._stats.copy()
@@ -210,9 +211,12 @@ def get_global_path_cache() -> GlobalPathCache:
 # NODE FACADE BASE CLASS
 # ==============================================================================
 
-class ANode(INode):
+class ANode[T](INode[T]):
     """
-    Abstract base class for all node implementations.
+    Abstract base class for all node implementations with generic type parameter.
+    
+    Generic type parameter:
+        T: The type of the native value returned by to_native() and value property.
     
     Follows GUIDELINES_DEV.md naming: INode → ANode → XWNode
     Provides core node functionality, delegates to node strategies for storage.
@@ -227,7 +231,7 @@ class ANode(INode):
         self._type_cache = None
 
     @classmethod
-    def from_native(cls, data: Any) -> 'ANode':
+    def from_native(cls, data: Any) -> 'ANode[Any]':
         """Create ANode from native data."""
         # For now, we'll use a simple hash map strategy
         # In the full implementation, this would use the strategy manager
@@ -235,7 +239,7 @@ class ANode(INode):
         strategy = SimpleNodeStrategy.create_from_data(data)
         return cls(strategy)
 
-    def get(self, path: str, default: Any = None) -> Optional['ANode']:
+    def get(self, path: str, default: Any = None) -> Optional['ANode[T]']:
         """Get a node by path with support for nested navigation."""
         try:
             # Parse the path into parts (e.g., 'users.0.name' -> ['users', '0', 'name'])
@@ -286,16 +290,16 @@ class ANode(INode):
             logging.debug(f"Error in get() for path '{path}': {e}")
             return None
     
-    def set(self, path: str, value: Any, in_place: bool = True) -> 'ANode':
+    def set(self, path: str, value: Any, in_place: bool = True) -> 'ANode[T]':
         """Set a value at path."""
         new_strategy = self._strategy.put(path, value)
         if in_place:
             self._strategy = new_strategy
             return self
         else:
-            return ANode(new_strategy)
+            return ANode(new_strategy)  # type: ignore[return-value]
     
-    def delete(self, path: str, in_place: bool = True) -> 'ANode':
+    def delete(self, path: str, in_place: bool = True) -> 'ANode[T]':
         """Delete a node at path."""
         success = self._strategy.delete(path)
         return self
@@ -304,15 +308,15 @@ class ANode(INode):
         """Check if path exists."""
         return self._strategy.exists(path)
     
-    def find(self, path: str, in_place: bool = False) -> Optional['ANode']:
+    def find(self, path: str, in_place: bool = False) -> Optional['ANode[T]']:
         """Find a node by path."""
         return self.get(path)
     
-    def to_native(self) -> Any:
-        """Convert to native Python object."""
-        return self._strategy.to_native()
+    def to_native(self) -> T:
+        """Convert to native Python object of type T."""
+        return self._strategy.to_native()  # type: ignore[return-value]
     
-    def copy(self) -> 'ANode':
+    def copy(self) -> 'ANode[T]':
         """Create a deep copy."""
         return ANode(self._strategy.create_from_data(self._strategy.to_native()))
     
@@ -323,7 +327,7 @@ class ANode(INode):
         node = self.get(path)
         return len(node._strategy) if node else 0
     
-    def flatten(self, separator: str = ".") -> Dict[str, Any]:
+    def flatten(self, separator: str = ".") -> dict[str, Any]:
         """Flatten to dictionary."""
         result = {}
         
@@ -344,21 +348,21 @@ class ANode(INode):
         _flatten(self._strategy)
         return result
     
-    def merge(self, other: 'ANode', strategy: str = "replace") -> 'ANode':
+    def merge(self, other: 'INode[T]', strategy: str = "replace") -> 'ANode[T]':
         """Merge with another node."""
         # Simple implementation - just replace
-        return ANode(self._strategy.create_from_data(other.to_native()))
+        return ANode(self._strategy.create_from_data(other.to_native()))  # type: ignore[return-value]
     
-    def diff(self, other: 'ANode') -> Dict[str, Any]:
+    def diff(self, other: 'INode[T]') -> dict[str, Any]:
         """Get differences with another node."""
         return {"changed": True}  # Simple implementation
     
-    def transform(self, transformer: callable) -> 'ANode':
+    def transform(self, transformer: Callable[[Any], Any]) -> 'ANode[T]':
         """Transform using a function."""
         transformed_data = transformer(self.to_native())
-        return ANode(self._strategy.create_from_data(transformed_data))
+        return ANode(self._strategy.create_from_data(transformed_data))  # type: ignore[return-value]
     
-    def select(self, *paths: str) -> Dict[str, 'ANode']:
+    def select(self, *paths: str) -> dict[str, 'ANode[T]']:
         """Select multiple paths."""
         result = {}
         for path in paths:
@@ -372,13 +376,13 @@ class ANode(INode):
         """Get length."""
         return len(self._strategy)
     
-    def __iter__(self) -> Iterator['ANode']:
+    def __iter__(self) -> Iterator['ANode[T]']:
         """Iterate over children."""
         for child_strategy in self._strategy:
-            yield ANode(child_strategy)
+            yield ANode(child_strategy)  # type: ignore[misc]
     
-    def __getitem__(self, key: Union[str, int]) -> 'ANode':
-        """Get child by key or index."""
+    def __getitem__(self, key: Union[str, int, slice]) -> 'ANode[T]':
+        """Get child by key, index, or slice."""
         child_strategy = self._strategy[key]
         return ANode(child_strategy)
     
@@ -412,18 +416,21 @@ class ANode(INode):
         return self._strategy.type
     
     @property
-    def value(self) -> Any:
-        """Get the value of this node."""
-        return self._strategy.value
+    def value(self) -> T:
+        """Get the value of this node, typed as T."""
+        return self._strategy.value  # type: ignore[return-value]
 
 
 # ==============================================================================
 # EDGE FACADE BASE CLASS
 # ==============================================================================
 
-class AEdge(IEdge):
+class AEdge[P](IEdge[P]):
     """
-    Abstract base class for all edge implementations.
+    Abstract base class for all edge implementations with generic type parameter.
+    
+    Generic type parameter:
+        P: The type of values in edge property dictionaries.
     
     Follows GUIDELINES_DEV.md naming: IEdge → AEdge → XWEdge
     Delegates to edge strategies for actual graph storage.
@@ -433,10 +440,10 @@ class AEdge(IEdge):
         self._strategy = strategy
     
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, P]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
-        """Add an edge between source and target with advanced properties."""
-        return self._strategy.add_edge(source, target, edge_type, weight, properties, is_bidirectional, edge_id)
+        """Add an edge between source and target with typed properties."""
+        return self._strategy.add_edge(source, target, edge_type, weight, properties, is_bidirectional, edge_id)  # type: ignore[arg-type]
     
     def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
         """Remove an edge between source and target."""
@@ -446,23 +453,23 @@ class AEdge(IEdge):
         """Check if edge exists between source and target."""
         return self._strategy.has_edge(source, target)
     
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         return self._strategy.get_neighbors(node, edge_type, direction)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         return self._strategy.get_edges(edge_type, direction)
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        """Get edge data/properties."""
-        return self._strategy.get_edge_data(source, target, edge_id)
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, P]]:
+        """Get edge data/properties, typed as dict[str, P]."""
+        return self._strategy.get_edge_data(source, target, edge_id)  # type: ignore[return-value]
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path between nodes."""
         return self._strategy.shortest_path(source, target, edge_type)
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         return self._strategy.find_cycles(start_node, edge_type, max_depth)
     
@@ -479,7 +486,7 @@ class AEdge(IEdge):
         """Get number of edges."""
         return len(self._strategy)
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges with full metadata."""
         return iter(self._strategy)
     
@@ -487,9 +494,9 @@ class AEdge(IEdge):
         """Convert to native Python object."""
         return self._strategy.to_native()
     
-    def copy(self) -> 'AEdge':
+    def copy(self) -> 'AEdge[P]':
         """Create a deep copy."""
-        return AEdge(copy.deepcopy(self._strategy))
+        return AEdge(copy.deepcopy(self._strategy))  # type: ignore[return-value]
 
 
 # ==============================================================================

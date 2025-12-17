@@ -5,7 +5,7 @@ This module implements the CSC strategy for sparse graph representation
 using compressed sparse column format for efficient column operations.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 import bisect
 from ._base_edge import AEdgeStrategy
@@ -70,14 +70,14 @@ class CSCStrategy(AEdgeStrategy):
         
         # CSC format: Compressed Sparse Column
         # col_ptr[j] to col_ptr[j+1] gives range in row_indices/values for column j
-        self._col_ptr: List[int] = [0]  # Column pointers
-        self._row_indices: List[int] = []  # Row indices
-        self._values: List[float] = []  # Edge values/weights
+        self._col_ptr: list[int] = [0]  # Column pointers
+        self._row_indices: list[int] = []  # Row indices
+        self._values: list[float] = []  # Edge values/weights
         
         # Vertex management
-        self._vertices: Set[str] = set()
-        self._vertex_to_id: Dict[str, int] = {}
-        self._id_to_vertex: Dict[int, str] = {}
+        self._vertices: set[str] = set()
+        self._vertex_to_id: dict[str, int] = {}
+        self._id_to_vertex: dict[int, str] = {}
         self._next_vertex_id = 0
         
         # Matrix dimensions
@@ -224,7 +224,7 @@ class CSCStrategy(AEdgeStrategy):
         
         return self._find_edge_in_column(col_id, row_id) != -1
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if not self.has_edge(source, target):
             return None
@@ -354,7 +354,7 @@ class CSCStrategy(AEdgeStrategy):
     # CSC SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_column(self, target: str) -> List[Tuple[str, float]]:
+    def get_column(self, target: str) -> list[tuple[str, float]]:
         """Get all incoming edges to target vertex (column in CSC)."""
         if target not in self._vertex_to_id:
             return []
@@ -375,7 +375,7 @@ class CSCStrategy(AEdgeStrategy):
         
         return result
     
-    def matrix_vector_multiply(self, vector: Dict[str, float]) -> Dict[str, float]:
+    def matrix_vector_multiply(self, vector: dict[str, float]) -> dict[str, float]:
         """Multiply CSC matrix with vector (efficient column-wise)."""
         result = defaultdict(float)
         
@@ -410,7 +410,7 @@ class CSCStrategy(AEdgeStrategy):
             self._num_cols -= 1
             self._col_ptr.pop()
     
-    def get_memory_usage(self) -> Dict[str, int]:
+    def get_memory_usage(self) -> dict[str, int]:
         """Get detailed memory usage."""
         return {
             'col_ptr_bytes': len(self._col_ptr) * 4,  # 4 bytes per int
@@ -420,7 +420,7 @@ class CSCStrategy(AEdgeStrategy):
             'total_bytes': (len(self._col_ptr) + len(self._row_indices)) * 4 + len(self._values) * 8 + len(self._vertices) * 50
         }
     
-    def export_matrix(self) -> Dict[str, Any]:
+    def export_matrix(self) -> dict[str, Any]:
         """Export CSC matrix data."""
         return {
             'col_ptr': self._col_ptr.copy(),
@@ -432,7 +432,7 @@ class CSCStrategy(AEdgeStrategy):
             'nnz': self._nnz
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive CSC statistics."""
         memory = self.get_memory_usage()
         
@@ -455,7 +455,7 @@ class CSCStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'CSC',
@@ -473,7 +473,7 @@ class CSCStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

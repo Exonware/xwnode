@@ -2,7 +2,7 @@
 Simple node strategy implementation.
 """
 
-from typing import Any, Iterator, Optional, List, Dict, Union
+from typing import Any, Iterator, Optional, Union
 from ...nodes.strategies.contracts import INodeStrategy
 from ...defs import NodeTrait
 
@@ -269,6 +269,6 @@ class SimpleNodeStrategy(INodeStrategy):
         return "simple"
     
     @property
-    def supported_traits(self) -> List[NodeTrait]:
+    def supported_traits(self) -> list[NodeTrait]:
         """Get supported traits for this strategy."""
         return [NodeTrait.NONE]

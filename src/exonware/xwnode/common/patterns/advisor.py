@@ -9,7 +9,7 @@ performance monitoring, and optimization recommendations in the strategy system.
 
 import time
 import threading
-from typing import Dict, List, Optional, Tuple, Any, NamedTuple
+from typing import Optional, Any, NamedTuple
 from dataclasses import dataclass
 from collections import defaultdict, deque
 from exonware.xwsystem import get_logger
@@ -66,8 +66,8 @@ class StrategyAdvisor:
     def __init__(self, history_size: int = 1000):
         """Initialize the strategy advisor."""
         self.history_size = history_size
-        self._node_metrics: Dict[str, PerformanceMetrics] = defaultdict(PerformanceMetrics)
-        self._edge_metrics: Dict[str, PerformanceMetrics] = defaultdict(PerformanceMetrics)
+        self._node_metrics: dict[str, PerformanceMetrics] = defaultdict(PerformanceMetrics)
+        self._edge_metrics: dict[str, PerformanceMetrics] = defaultdict(PerformanceMetrics)
         self._operation_history: deque = deque(maxlen=history_size)
         self._lock = threading.RLock()
         
@@ -116,7 +116,7 @@ class StrategyAdvisor:
                 'is_node': is_node
             })
     
-    def get_performance_profile(self, strategy_id: str, is_node: bool = True) -> Dict[str, Any]:
+    def get_performance_profile(self, strategy_id: str, is_node: bool = True) -> dict[str, Any]:
         """
         Get performance profile for a strategy.
         
@@ -171,7 +171,7 @@ class StrategyAdvisor:
             
             return profile
     
-    def suggest_node_strategy(self, data_profile: Dict[str, Any], 
+    def suggest_node_strategy(self, data_profile: dict[str, Any], 
                             current_mode: Optional[NodeMode] = None) -> StrategyRecommendation:
         """
         Suggest optimal node strategy based on data profile.
@@ -292,7 +292,7 @@ class StrategyAdvisor:
             data_loss_risk=data_loss_risk
         )
     
-    def suggest_edge_strategy(self, graph_profile: Dict[str, Any],
+    def suggest_edge_strategy(self, graph_profile: dict[str, Any],
                             current_mode: Optional[EdgeMode] = None) -> StrategyRecommendation:
         """
         Suggest optimal edge strategy based on graph profile.
@@ -439,7 +439,7 @@ class StrategyAdvisor:
         
         return (from_mode, to_mode) in lossy_migrations
     
-    def get_advisor_stats(self) -> Dict[str, Any]:
+    def get_advisor_stats(self) -> dict[str, Any]:
         """Get advisor statistics."""
         with self._lock:
             return {

@@ -9,11 +9,11 @@ compression for power-law graphs.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -58,17 +58,17 @@ class CompressedGraphStrategy(AEdgeStrategy):
         
         # Store compressed adjacency lists
         # In full implementation, this would use gap encoding
-        self._adjacency: Dict[str, List[str]] = defaultdict(list)
+        self._adjacency: dict[str, list[str]] = defaultdict(list)
         
         # Reference encoding: node_id -> reference_node_id
         # If lists are similar, store reference instead of full list
-        self._references: Dict[str, str] = {}
+        self._references: dict[str, str] = {}
         
         # Edge properties storage
-        self._edge_properties: Dict[tuple[str, str], Dict[str, Any]] = {}
+        self._edge_properties: dict[tuple[str, str], dict[str, Any]] = {}
         
         # Node set
-        self._nodes: Set[str] = set()
+        self._nodes: set[str] = set()
         
         self.is_directed = options.get('directed', True)
     
@@ -123,7 +123,7 @@ class CompressedGraphStrategy(AEdgeStrategy):
         """Get neighbors of node (required by base class)."""
         return iter(self.get_neighbors(node, "outgoing"))
     
-    def get_neighbors(self, node: str, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, direction: str = "outgoing") -> list[str]:
         """Get neighbors with decompression."""
         # Decompress adjacency list
         if node in self._references:
@@ -139,7 +139,7 @@ class CompressedGraphStrategy(AEdgeStrategy):
         """Get degree of node."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterator over edges."""
         for source, targets in self._adjacency.items():
             for target in targets:
@@ -195,7 +195,7 @@ class CompressedGraphStrategy(AEdgeStrategy):
         
         return compressed / uncompressed
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'adjacency': dict(self._adjacency),
@@ -204,7 +204,7 @@ class CompressedGraphStrategy(AEdgeStrategy):
             'nodes': list(self._nodes)
         }
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend info."""
         return {
             'strategy': 'Compressed Graph',

@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -201,7 +201,7 @@ class DequeStrategy(ANodeLinearStrategy):
         """
         self._deque.reverse()
     
-    def extend(self, values: List[Any]) -> None:
+    def extend(self, values: list[Any]) -> None:
         """
         Extend the deque by appending elements from the iterable (right end).
         
@@ -209,7 +209,7 @@ class DequeStrategy(ANodeLinearStrategy):
         """
         self._deque.extend(values)
     
-    def extendleft(self, values: List[Any]) -> None:
+    def extendleft(self, values: list[Any]) -> None:
         """
         Extend the deque by appending elements from the iterable (left end).
         
@@ -284,11 +284,11 @@ class DequeStrategy(ANodeLinearStrategy):
         """Count occurrences of value."""
         return self._deque.count(value)
     
-    def to_list(self) -> List[Any]:
+    def to_list(self) -> list[Any]:
         """Convert deque to list (left to right)."""
         return list(self._deque)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert deque to native dictionary format."""
         return {str(i): val for i, val in enumerate(self._deque)}
 
@@ -336,7 +336,7 @@ class DequeStrategy(ANodeLinearStrategy):
         for item in self.items():
             yield item
     
-    def from_native(self, data: Dict[str, Any]) -> None:
+    def from_native(self, data: dict[str, Any]) -> None:
         """Load deque from native dictionary format."""
         self._deque.clear()
         sorted_items = sorted(data.items(), key=lambda x: int(x[0]) if x[0].isdigit() else 0)
@@ -386,7 +386,7 @@ class DequeStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'DEQUE',
@@ -406,7 +406,7 @@ class DequeStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': len(self._deque),

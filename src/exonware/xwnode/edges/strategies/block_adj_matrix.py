@@ -5,7 +5,7 @@ This module implements the BLOCK_ADJ_MATRIX strategy for cache-friendly
 dense graph operations using block-based matrix partitioning.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, Set
+from typing import Any, Iterator, Optional
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -16,7 +16,7 @@ class MatrixBlock:
     
     def __init__(self, block_size: int):
         self.block_size = block_size
-        self.data: List[List[Any]] = [[None for _ in range(block_size)] for _ in range(block_size)]
+        self.data: list[list[Any]] = [[None for _ in range(block_size)] for _ in range(block_size)]
         self.edge_count = 0
         self.is_dense = False
     
@@ -53,7 +53,7 @@ class MatrixBlock:
             return True
         return False
     
-    def get_edges(self) -> List[Tuple[int, int, Any]]:
+    def get_edges(self) -> list[tuple[int, int, Any]]:
         """Get all edges in block as (local_u, local_v, weight)."""
         edges = []
         for u in range(self.block_size):
@@ -75,7 +75,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
     
     WHY this implementation:
     - MatrixBlock class represents cache-sized tiles (default 64x64)
-    - Dict of blocks avoids allocating empty regions
+    - dict of blocks avoids allocating empty regions
     - Per-block density tracking for adaptive optimization
     - LRU cache for frequently accessed blocks
     
@@ -120,14 +120,14 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         self.cache_blocks = options.get('cache_blocks', True)
         
         # Core block matrix storage
-        self._blocks: Dict[Tuple[int, int], MatrixBlock] = {}
-        self._vertex_to_id: Dict[str, int] = {}
-        self._id_to_vertex: Dict[int, str] = {}
+        self._blocks: dict[tuple[int, int], MatrixBlock] = {}
+        self._vertex_to_id: dict[str, int] = {}
+        self._id_to_vertex: dict[int, str] = {}
         self._next_id = 0
         self._edge_count = 0
         
         # Block cache for frequently accessed blocks
-        self._block_cache: Dict[Tuple[int, int], MatrixBlock] = {}
+        self._block_cache: dict[tuple[int, int], MatrixBlock] = {}
         self._cache_size = options.get('cache_size', 16)
         self._cache_hits = 0
         self._cache_misses = 0
@@ -150,23 +150,23 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
             self._next_id += 1
         return self._vertex_to_id[vertex]
     
-    def _get_block_coords(self, vertex_id: int) -> Tuple[int, int]:
+    def _get_block_coords(self, vertex_id: int) -> tuple[int, int]:
         """Get block coordinates for vertex ID."""
         return (vertex_id // self.block_size, vertex_id // self.block_size)
     
-    def _get_edge_block_coords(self, u_id: int, v_id: int) -> Tuple[int, int]:
+    def _get_edge_block_coords(self, u_id: int, v_id: int) -> tuple[int, int]:
         """Get block coordinates for edge (u, v)."""
         return (u_id // self.block_size, v_id // self.block_size)
     
-    def _get_local_coords(self, vertex_id: int) -> Tuple[int, int]:
+    def _get_local_coords(self, vertex_id: int) -> tuple[int, int]:
         """Get local coordinates within block."""
         return (vertex_id % self.block_size, vertex_id % self.block_size)
     
-    def _get_edge_local_coords(self, u_id: int, v_id: int) -> Tuple[int, int]:
+    def _get_edge_local_coords(self, u_id: int, v_id: int) -> tuple[int, int]:
         """Get local coordinates for edge within block."""
         return (u_id % self.block_size, v_id % self.block_size)
     
-    def _get_block(self, block_coords: Tuple[int, int], create: bool = True) -> Optional[MatrixBlock]:
+    def _get_block(self, block_coords: tuple[int, int], create: bool = True) -> Optional[MatrixBlock]:
         """Get block, optionally creating it."""
         # Check cache first
         if self.cache_blocks and block_coords in self._block_cache:
@@ -197,7 +197,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         
         return None
     
-    def _update_cache(self, block_coords: Tuple[int, int], block: MatrixBlock) -> None:
+    def _update_cache(self, block_coords: tuple[int, int], block: MatrixBlock) -> None:
         """Update block cache with LRU eviction."""
         if len(self._block_cache) >= self._cache_size:
             # Simple FIFO eviction (could be improved to LRU)
@@ -306,7 +306,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         
         return block.get_edge(local_u, local_v) if block else None
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """
         Get edge data between source and target vertices.
         
@@ -316,7 +316,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         Priority: Usability #2 - Complete API implementation
         
         Returns:
-            Dict with 'weight' and other edge properties, or None if edge doesn't exist
+            dict with 'weight' and other edge properties, or None if edge doesn't exist
         """
         weight = self.get_edge_weight(source, target)
         if weight is None:
@@ -324,7 +324,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         
         return {'weight': weight}
     
-    def get_neighbors(self, vertex: str) -> List[str]:
+    def get_neighbors(self, vertex: str) -> list[str]:
         """Get neighbors using block-wise traversal."""
         if vertex not in self._vertex_to_id:
             return []
@@ -350,7 +350,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         self._matrix_accesses += len(self._blocks)
         return neighbors
     
-    def get_all_edges(self) -> List[Tuple[str, str, Any]]:
+    def get_all_edges(self) -> list[tuple[str, str, Any]]:
         """Get all edges from all blocks."""
         all_edges = []
         
@@ -387,7 +387,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         """Get number of edges."""
         return self._edge_count
     
-    def get_vertices(self) -> List[str]:
+    def get_vertices(self) -> list[str]:
         """Get all vertices."""
         return list(self._vertex_to_id.keys())
     
@@ -395,15 +395,15 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         """Get number of vertices."""
         return len(self._vertex_to_id)
     
-    def vertices(self) -> List[str]:
+    def vertices(self) -> list[str]:
         """Get all vertices (abstract method implementation)."""
         return self.get_vertices()
     
-    def edges(self) -> List[Tuple[str, str, Any]]:
+    def edges(self) -> list[tuple[str, str, Any]]:
         """Get all edges (abstract method implementation)."""
         return self.get_all_edges()
     
-    def neighbors(self, vertex: str) -> List[str]:
+    def neighbors(self, vertex: str) -> list[str]:
         """Get neighbors (abstract method implementation)."""
         return self.get_neighbors(vertex)
     
@@ -415,7 +415,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
     # BLOCK MATRIX SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_block_info(self, u: str, v: str) -> Dict[str, Any]:
+    def get_block_info(self, u: str, v: str) -> dict[str, Any]:
         """Get information about the block containing edge (u, v)."""
         if u not in self._vertex_to_id or v not in self._vertex_to_id:
             return {}
@@ -438,7 +438,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
             'block_size': self.block_size
         }
     
-    def get_dense_blocks(self) -> List[Tuple[int, int]]:
+    def get_dense_blocks(self) -> list[tuple[int, int]]:
         """Get coordinates of all dense blocks."""
         dense_blocks = []
         for coords, block in self._blocks.items():
@@ -446,7 +446,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
                 dense_blocks.append(coords)
         return dense_blocks
     
-    def get_sparse_blocks(self) -> List[Tuple[int, int]]:
+    def get_sparse_blocks(self) -> list[tuple[int, int]]:
         """Get coordinates of all sparse blocks."""
         sparse_blocks = []
         for coords, block in self._blocks.items():
@@ -454,7 +454,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
                 sparse_blocks.append(coords)
         return sparse_blocks
     
-    def matrix_multiply_block(self, other: 'xBlockAdjMatrixStrategy', block_coords: Tuple[int, int]) -> MatrixBlock:
+    def matrix_multiply_block(self, other: 'xBlockAdjMatrixStrategy', block_coords: tuple[int, int]) -> MatrixBlock:
         """Perform block-wise matrix multiplication for specific block."""
         result_block = MatrixBlock(self.block_size)
         
@@ -485,7 +485,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         
         return result_block
     
-    def get_block_statistics(self) -> Dict[str, Any]:
+    def get_block_statistics(self) -> dict[str, Any]:
         """Get comprehensive block statistics."""
         if not self._blocks:
             return {'total_blocks': 0}
@@ -522,7 +522,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
             'matrix_accesses': self._matrix_accesses
         }
     
-    def optimize_layout(self) -> Dict[str, Any]:
+    def optimize_layout(self) -> dict[str, Any]:
         """Optimize block layout for better cache performance."""
         # Reorder vertices to improve block locality
         # This is a simplified version - real optimization would use graph partitioning
@@ -575,7 +575,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'BLOCK_ADJ_MATRIX',
@@ -594,7 +594,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_block_statistics()
         

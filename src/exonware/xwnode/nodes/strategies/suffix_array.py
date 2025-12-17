@@ -5,7 +5,7 @@ This module implements the SUFFIX_ARRAY strategy for efficient substring
 searches and string pattern matching with linear time construction.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import bisect
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
@@ -39,18 +39,18 @@ icient query operations.
         
         # Core storage
         self._text = ""
-        self._suffix_array: List[int] = []
-        self._lcp_array: List[int] = []  # Longest Common Prefix
-        self._rank: List[int] = []  # Inverse suffix array
+        self._suffix_array: list[int] = []
+        self._lcp_array: list[int] = []  # Longest Common Prefix
+        self._rank: list[int] = []  # Inverse suffix array
         
         # Key-value mapping for compatibility
-        self._key_to_pos: Dict[str, List[int]] = {}
-        self._values: Dict[str, Any] = {}
+        self._key_to_pos: dict[str, list[int]] = {}
+        self._values: dict[str, Any] = {}
         self._size = 0
         
         # Performance optimizations
         self._is_built = False
-        self._pattern_cache: Dict[str, List[int]] = {}
+        self._pattern_cache: dict[str, list[int]] = {}
     
     def get_supported_traits(self) -> NodeTrait:
         """Get the traits supported by the suffix array strategy."""
@@ -243,7 +243,7 @@ icient query operations.
         """Get number of stored items."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         result = {"text": self._text}
 
@@ -313,7 +313,7 @@ icient query operations.
         self._pattern_cache.clear()
         self._size = 1
     
-    def search_pattern(self, pattern: str) -> List[int]:
+    def search_pattern(self, pattern: str) -> list[int]:
         """Search for pattern occurrences using binary search."""
         if not pattern:
             return []
@@ -393,7 +393,7 @@ icient query operations.
         """Count occurrences of pattern."""
         return len(self.search_pattern(pattern))
     
-    def find_longest_common_substring(self, other_text: str) -> Tuple[str, int, int]:
+    def find_longest_common_substring(self, other_text: str) -> tuple[str, int, int]:
         """Find longest common substring with another text."""
         if not self._text or not other_text:
             return "", 0, 0
@@ -435,7 +435,7 @@ icient query operations.
             return self._text[index:]
         return ""
     
-    def get_sorted_suffixes(self) -> List[str]:
+    def get_sorted_suffixes(self) -> list[str]:
         """Get all suffixes in sorted order."""
         self._rebuild_if_needed()
         
@@ -445,7 +445,7 @@ icient query operations.
         
         return suffixes
     
-    def find_repeated_substrings(self, min_length: int = 2) -> List[Tuple[str, int, List[int]]]:
+    def find_repeated_substrings(self, min_length: int = 2) -> list[tuple[str, int, list[int]]]:
         """Find repeated substrings using LCP array."""
         self._rebuild_if_needed()
         
@@ -480,7 +480,7 @@ icient query operations.
         
         return result
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive suffix array statistics."""
         self._rebuild_if_needed()
         
@@ -507,7 +507,7 @@ icient query operations.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'SUFFIX_ARRAY',
@@ -525,7 +525,7 @@ icient query operations.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

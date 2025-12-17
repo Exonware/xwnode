@@ -9,11 +9,11 @@ matrix representation using quadtree-based compression.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -38,7 +38,7 @@ class K2Node:
             is_leaf: Whether this is a leaf node
         """
         self.is_leaf = is_leaf
-        self.children: List[Optional['K2Node']] = [None] * 4  # NW, NE, SW, SE
+        self.children: list[Optional['K2Node']] = [None] * 4  # NW, NE, SW, SE
         self.bitmap = 0  # 4-bit bitmap for children presence
         self.leaf_bitmap = 0  # For leaf nodes, stores actual edges
 
@@ -135,13 +135,13 @@ class K2TreeStrategy(AEdgeStrategy):
         self._root = K2Node(is_leaf=False)
         
         # Track vertices and edges
-        self._vertices: Set[str] = set()
-        self._vertex_to_id: Dict[str, int] = {}
-        self._id_to_vertex: Dict[int, str] = {}
+        self._vertices: set[str] = set()
+        self._vertex_to_id: dict[str, int] = {}
+        self._id_to_vertex: dict[int, str] = {}
         self._next_id = 0
         
         # Edge properties (stored separately)
-        self._edge_properties: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        self._edge_properties: dict[tuple[str, str], dict[str, Any]] = {}
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get supported traits."""
@@ -273,7 +273,7 @@ class K2TreeStrategy(AEdgeStrategy):
     
     def _collect_edges_from_row(self, node: Optional[K2Node], 
                                row: int, row_offset: int, col_offset: int,
-                               size: int, result: List[int]) -> None:
+                               size: int, result: list[int]) -> None:
         """
         Collect all edges from a row.
         
@@ -325,7 +325,7 @@ class K2TreeStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """
         Add edge to k²-tree.
@@ -394,7 +394,7 @@ class K2TreeStrategy(AEdgeStrategy):
         return self._has_edge(self._root, source_id, target_id, self.matrix_size)
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """
         Get neighbors of vertex.
         
@@ -410,7 +410,7 @@ class K2TreeStrategy(AEdgeStrategy):
             return []
         
         node_id = self._vertex_to_id[node]
-        neighbor_ids: List[int] = []
+        neighbor_ids: list[int] = []
         
         # Collect edges from row
         self._collect_edges_from_row(
@@ -428,7 +428,7 @@ class K2TreeStrategy(AEdgeStrategy):
         """Get degree of node."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over all edges with properties."""
         for edge_dict in self.get_edges():
             yield (edge_dict['source'], edge_dict['target'], edge_dict.get('properties', {}))
@@ -437,13 +437,13 @@ class K2TreeStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         
         for source in self._vertices:
             source_id = self._vertex_to_id[source]
-            neighbor_ids: List[int] = []
+            neighbor_ids: list[int] = []
             
             self._collect_edges_from_row(
                 self._root, source_id, 0, 0, self.matrix_size, neighbor_ids
@@ -461,7 +461,7 @@ class K2TreeStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge properties."""
         if not self.has_edge(source, target):
             return None
@@ -472,7 +472,7 @@ class K2TreeStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (Simplified)
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path using BFS."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -501,7 +501,7 @@ class K2TreeStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []  # Simplified implementation
     
@@ -537,11 +537,11 @@ class K2TreeStrategy(AEdgeStrategy):
         """Get number of edges."""
         return self._edge_count
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -553,9 +553,9 @@ class K2TreeStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get k²-tree statistics."""
-        def count_nodes(node: Optional[K2Node]) -> Tuple[int, int]:
+        def count_nodes(node: Optional[K2Node]) -> tuple[int, int]:
             """Count internal and leaf nodes."""
             if node is None:
                 return (0, 0)
@@ -599,11 +599,11 @@ class K2TreeStrategy(AEdgeStrategy):
         return "K2_TREE"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.SPARSE, EdgeTrait.COMPRESSED, EdgeTrait.DIRECTED]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'k²-Tree',

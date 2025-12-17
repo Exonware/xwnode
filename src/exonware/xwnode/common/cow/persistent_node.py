@@ -10,11 +10,11 @@ Copy-on-Write semantics using HAMT for optimal performance.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 26-Oct-2025
 """
 
-from typing import Any, Optional, Dict, Iterator
+from typing import Any, Optional, Iterator
 import copy
 
 from .base import ACOWNode
@@ -104,7 +104,7 @@ class PersistentNode(ACOWNode):
         return cls.from_native(native_data)
     
     @staticmethod
-    def _flatten_data(data: Any, prefix: str = '') -> Dict[str, Any]:
+    def _flatten_data(data: Any, prefix: str = '') -> dict[str, Any]:
         """
         Flatten nested data to path -> value mappings.
         

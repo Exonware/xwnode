@@ -1,0 +1,174 @@
+{
+  "1": {
+    "1": {
+      "1": {
+        "title": "Append single record to end of file",
+        "results": {
+          "1": [
+            6.209855300025083,
+            3.4886184000060894
+          ],
+          "10": [
+            0.0021092599898111077,
+            0.0029897599888499826
+          ],
+          "50": [
+            0.0012509980029426515,
+            0.0017568339849822223
+          ],
+          "100": [
+            0.0011832050001248718,
+            0.0015864620002685114
+          ],
+          "200": [
+            0.0010923220025142654,
+            0.0015289974995539523
+          ],
+          "500": [
+            0.0013324728008592501,
+            0.0018344446028349922
+          ],
+          "1": [
+            6.321962199988775,
+            3.4587057000608183
+          ]
+        },
+        "last_v1_win": 500
+      },
+      "3": {
+        "title": "Insert record at specific position (line number)",
+        "results": {
+          "1": [
+            3.8200394000159577,
+            3.597767000028398
+          ]
+        },
+        "last_v1_win": null
+      },
+      "4": {
+        "title": "Insert with auto-generated unique ID",
+        "results": {
+          "1": [
+            3.016604600008577,
+            3.176722100004554
+          ]
+        },
+        "last_v1_win": 1
+      }
+    },
+    "4": {
+      "5": {
+        "title": "Insert at position beyond file length (should append)",
+        "results": {
+          "1": [
+            0.006448199972510338,
+            0.025700800004415214
+          ]
+        },
+        "last_v1_win": 1
+      },
+      "2": {
+        "title": "Insert record with None/null values",
+        "results": {
+          "1": [
+            0.00251580000622198,
+            0.0023086999426595867
+          ]
+        },
+        "last_v1_win": null
+      },
+      "3": {
+        "title": "Insert record with Unicode and special characters",
+        "results": {
+          "1": [
+            0.0020967000164091587,
+            0.002344900043681264
+          ]
+        },
+        "last_v1_win": 1
+      },
+      "4": {
+        "title": "Insert record without id field (should still work)",
+        "results": {
+          "1": [
+            0.0024563000188209116,
+            0.002826599986292422
+          ]
+        },
+        "last_v1_win": 1
+      }
+    },
+    "2": {
+      "1": {
+        "title": "Bulk append multiple records",
+        "results": {
+          "1": [
+            0.004142800054978579,
+            0.014101000037044287
+          ]
+        },
+        "last_v1_win": 1
+      },
+      "4": {
+        "title": "Bulk insert skipping duplicates",
+        "results": {
+          "1": [
+            0.0038846999523229897,
+            0.0008140000281855464
+          ]
+        },
+        "last_v1_win": null
+      },
+      "5": {
+        "title": "All-or-nothing bulk insert",
+        "results": {
+          "1": [
+            0.0005924999713897705,
+            2.2599997464567423e-05
+          ]
+        },
+        "last_v1_win": null
+      }
+    },
+    "3": {
+      "1": {
+        "title": "Insert only if condition is met",
+        "results": {
+          "1": [
+            0.0019566999981179833,
+            0.0023243999457918108
+          ]
+        },
+        "last_v1_win": 1
+      }
+    }
+  },
+  "2": {
+    "2": {
+      "4": {
+        "title": "Retrieve paginated results (offset + limit)",
+        "results": {
+          "1": [
+            0.01398920000065118,
+            0.00035769998794421554
+          ]
+        },
+        "last_v1_win": null
+      }
+    }
+  },
+  "5": {
+    "1": {
+      "4": {
+        "title": "Skip N records, get next M",
+        "results": {
+          "1": [
+            0.017052899987902492,
+            0.0007642999989911914
+          ]
+        },
+        "last_v1_win": null
+      }
+    }
+  }
+}

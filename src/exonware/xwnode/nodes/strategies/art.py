@@ -9,11 +9,11 @@ with O(k) complexity where k = key length.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -66,8 +66,8 @@ class ARTNode4(ARTNode):
         Time Complexity: O(1)
         """
         super().__init__()
-        self.keys: List[int] = []  # Byte values (0-255)
-        self.children: List[Any] = []  # Child nodes or leaf values
+        self.keys: list[int] = []  # Byte values (0-255)
+        self.children: list[Any] = []  # Child nodes or leaf values
         
     def find_child(self, byte: int) -> Optional[Any]:
         """
@@ -118,8 +118,8 @@ class ARTNode16(ARTNode):
         Time Complexity: O(1)
         """
         super().__init__()
-        self.keys: List[int] = []
-        self.children: List[Any] = []
+        self.keys: list[int] = []
+        self.children: list[Any] = []
     
     def find_child(self, byte: int) -> Optional[Any]:
         """
@@ -158,8 +158,8 @@ class ARTNode48(ARTNode):
         """
         super().__init__()
         # Index array: 256 bytes mapping byte->child_index
-        self.index: List[int] = [255] * 256  # 255 = empty
-        self.children: List[Any] = []
+        self.index: list[int] = [255] * 256  # 255 = empty
+        self.children: list[Any] = []
     
     def find_child(self, byte: int) -> Optional[Any]:
         """
@@ -196,7 +196,7 @@ class ARTNode256(ARTNode):
         Space Complexity: O(1) - fixed 256-element array
         """
         super().__init__()
-        self.children: List[Optional[Any]] = [None] * 256
+        self.children: list[Optional[Any]] = [None] * 256
     
     def find_child(self, byte: int) -> Optional[Any]:
         """
@@ -580,7 +580,7 @@ class ARTStrategy(ANodeStrategy):
     # ITERATION METHODS
     # ============================================================================
     
-    def _collect_all(self, node: Optional[ARTNode], prefix: bytes) -> List[tuple[bytes, Any]]:
+    def _collect_all(self, node: Optional[ARTNode], prefix: bytes) -> list[tuple[bytes, Any]]:
         """
         Collect all key-value pairs from tree.
         
@@ -684,7 +684,7 @@ class ARTStrategy(ANodeStrategy):
     # ADVANCED FEATURES
     # ============================================================================
     
-    def prefix_search(self, prefix: str) -> List[tuple[str, Any]]:
+    def prefix_search(self, prefix: str) -> list[tuple[str, Any]]:
         """
         Search for all keys with given prefix.
         
@@ -706,7 +706,7 @@ class ARTStrategy(ANodeStrategy):
                 results.append((key, value))
         return results
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dictionary.
         

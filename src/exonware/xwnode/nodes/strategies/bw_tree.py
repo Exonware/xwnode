@@ -14,11 +14,11 @@ with delta updates and atomic operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 import threading
 from collections import OrderedDict
 from .base import ANodeStrategy
@@ -57,9 +57,9 @@ class BwTreeNode:
     
     def __init__(self, is_leaf: bool = True):
         self.is_leaf = is_leaf
-        self.keys: List[Any] = []
-        self.values: List[Any] = []  # For leaf nodes
-        self.children: List['BwTreeNode'] = []  # For internal nodes
+        self.keys: list[Any] = []
+        self.values: list[Any] = []  # For leaf nodes
+        self.children: list['BwTreeNode'] = []  # For internal nodes
         self.delta_chain: Optional[BwTreeDelta] = None  # Head of delta chain
         self.base_node: bool = True  # True if this is a consolidated base node
     
@@ -155,7 +155,7 @@ class BwTreeStrategy(ANodeStrategy):
         super().__init__(NodeMode.BW_TREE, traits, **options)
         
         # Mapping table: PID (Page ID) -> Physical Node
-        self._mapping_table: Dict[int, BwTreeNode] = {}
+        self._mapping_table: dict[int, BwTreeNode] = {}
         self._next_pid = 0
         self._cas_lock = threading.Lock()  # Simulates atomic CAS
         
@@ -172,7 +172,7 @@ class BwTreeStrategy(ANodeStrategy):
         
         # Epoch-based garbage collection
         self._current_epoch = 0
-        self._retired_nodes: Dict[int, List[BwTreeNode]] = {}  # epoch -> nodes
+        self._retired_nodes: dict[int, list[BwTreeNode]] = {}  # epoch -> nodes
         self._epoch_lock = threading.Lock()
     
     def get_supported_traits(self) -> NodeTrait:
@@ -417,7 +417,7 @@ class BwTreeStrategy(ANodeStrategy):
     # ITERATION METHODS
     # ============================================================================
     
-    def _get_all_items(self) -> List[tuple[Any, Any]]:
+    def _get_all_items(self) -> list[tuple[Any, Any]]:
         """Get all items by consolidating the root node (lock-free snapshot)."""
         # Get current root node from mapping table
         root_node = self._get_node(self._root_pid)
@@ -494,13 +494,13 @@ class BwTreeStrategy(ANodeStrategy):
             current = current.next
         return count
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dictionary."""
         result = {}
         # TODO: Implement proper to_native conversion
         return result
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info with production features."""
         base_info = super().backend_info()
         base_info['production_features'] = [

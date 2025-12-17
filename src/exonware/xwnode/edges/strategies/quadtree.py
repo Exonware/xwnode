@@ -5,7 +5,7 @@ This module implements the QUADTREE strategy for 2D spatial
 graph partitioning and efficient spatial queries.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
@@ -23,10 +23,10 @@ class QuadTreeNode:
         self.capacity = capacity
         
         # Points stored in this node
-        self.points: List[Tuple[float, float, str]] = []  # (x, y, vertex_id)
+        self.points: list[tuple[float, float, str]] = []  # (x, y, vertex_id)
         
         # Child nodes (NW, NE, SW, SE)
-        self.children: List[Optional['QuadTreeNode']] = [None, None, None, None]
+        self.children: list[Optional['QuadTreeNode']] = [None, None, None, None]
         self.is_leaf = True
     
     def contains_point(self, x: float, y: float) -> bool:
@@ -87,7 +87,7 @@ class QuadTreeNode:
                     return True
             return False
     
-    def query_range(self, rect_x: float, rect_y: float, rect_w: float, rect_h: float) -> List[Tuple[float, float, str]]:
+    def query_range(self, rect_x: float, rect_y: float, rect_w: float, rect_h: float) -> list[tuple[float, float, str]]:
         """Query points within given rectangle."""
         result = []
         
@@ -105,7 +105,7 @@ class QuadTreeNode:
         
         return result
     
-    def query_radius(self, center_x: float, center_y: float, radius: float) -> List[Tuple[float, float, str]]:
+    def query_radius(self, center_x: float, center_y: float, radius: float) -> list[tuple[float, float, str]]:
         """Query points within given radius."""
         # Convert circle to bounding rectangle for initial filtering
         rect_x = center_x - radius
@@ -207,9 +207,9 @@ class QuadTreeStrategy(AEdgeStrategy):
                                  self.bounds_width, self.bounds_height, self.capacity)
         
         # Vertex management
-        self._vertices: Dict[str, Tuple[float, float]] = {}  # vertex_id -> (x, y)
-        self._edges: Dict[Tuple[str, str], Dict[str, Any]] = {}  # (source, target) -> properties
-        self._spatial_edges: Set[Tuple[str, str]] = set()  # Edges based on spatial proximity
+        self._vertices: dict[str, tuple[float, float]] = {}  # vertex_id -> (x, y)
+        self._edges: dict[tuple[str, str], dict[str, Any]] = {}  # (source, target) -> properties
+        self._spatial_edges: set[tuple[str, str]] = set()  # Edges based on spatial proximity
         
         # Performance tracking
         self._edge_count = 0
@@ -313,7 +313,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         edge_key = (min(source, target), max(source, target))
         return edge_key in self._edges
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         edge_key = (min(source, target), max(source, target))
         return self._edges.get(edge_key)
@@ -410,7 +410,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         # Auto-connect to nearby vertices
         self._auto_connect_spatial(vertex, x, y)
     
-    def get_vertex_position(self, vertex: str) -> Optional[Tuple[float, float]]:
+    def get_vertex_position(self, vertex: str) -> Optional[tuple[float, float]]:
         """Get vertex position."""
         return self._vertices.get(vertex)
     
@@ -418,17 +418,17 @@ class QuadTreeStrategy(AEdgeStrategy):
         """Update vertex position."""
         self.add_spatial_vertex(vertex, x, y)
     
-    def query_range(self, x: float, y: float, width: float, height: float) -> List[str]:
+    def query_range(self, x: float, y: float, width: float, height: float) -> list[str]:
         """Query vertices within rectangular range."""
         points = self._root.query_range(x, y, width, height)
         return [vertex_id for _, _, vertex_id in points]
     
-    def query_radius(self, center_x: float, center_y: float, radius: float) -> List[str]:
+    def query_radius(self, center_x: float, center_y: float, radius: float) -> list[str]:
         """Query vertices within circular range."""
         points = self._root.query_radius(center_x, center_y, radius)
         return [vertex_id for _, _, vertex_id in points]
     
-    def nearest_neighbors(self, vertex: str, k: int = 1) -> List[Tuple[str, float]]:
+    def nearest_neighbors(self, vertex: str, k: int = 1) -> list[tuple[str, float]]:
         """Find k nearest neighbors to vertex."""
         if vertex not in self._vertices:
             return []
@@ -454,7 +454,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         distances.sort(key=lambda x: x[1])
         return distances[:k]
     
-    def get_spatial_edges_in_range(self, x: float, y: float, width: float, height: float) -> List[Tuple[str, str]]:
+    def get_spatial_edges_in_range(self, x: float, y: float, width: float, height: float) -> list[tuple[str, str]]:
         """Get edges where both vertices are in given range."""
         vertices_in_range = set(self.query_range(x, y, width, height))
         
@@ -465,7 +465,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         
         return spatial_edges
     
-    def cluster_vertices(self, max_distance: float) -> List[List[str]]:
+    def cluster_vertices(self, max_distance: float) -> list[list[str]]:
         """Cluster vertices based on spatial proximity."""
         visited = set()
         clusters = []
@@ -499,7 +499,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         
         return clusters
     
-    def get_spatial_statistics(self) -> Dict[str, Any]:
+    def get_spatial_statistics(self) -> dict[str, Any]:
         """Get comprehensive spatial statistics."""
         if not self._vertices:
             return {'vertices': 0, 'edges': 0, 'spatial_density': 0}
@@ -542,7 +542,7 @@ class QuadTreeStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'QUADTREE',
@@ -560,7 +560,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_spatial_statistics()
         

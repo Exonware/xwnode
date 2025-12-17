@@ -5,7 +5,7 @@ This module implements the FENWICK_TREE strategy for efficient prefix sum
 queries and point updates with O(log n) complexity.
 """
 
-from typing import Any, Iterator, List, Dict, Union, Optional, AsyncIterator
+from typing import Any, Iterator, Union, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -87,10 +87,10 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
         self.initial_size = options.get('initial_size', 1000)
         
         # Fenwick tree (1-indexed for easier bit operations)
-        self._tree: List[float] = [0.0] * (self.initial_size + 1)
-        self._values: Dict[str, Any] = {}  # Key-value storage for compatibility  
-        self._indices: Dict[str, int] = {}  # Map keys to tree indices
-        self._reverse_indices: Dict[int, str] = {}  # Map indices to keys
+        self._tree: list[float] = [0.0] * (self.initial_size + 1)
+        self._values: dict[str, Any] = {}  # Key-value storage for compatibility  
+        self._indices: dict[str, int] = {}  # Map keys to tree indices
+        self._reverse_indices: dict[int, str] = {}  # Map indices to keys
         self._next_index = 1  # 1-indexed
         self._size = 0
     
@@ -192,7 +192,7 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
         """Get the number of items."""
         return self._size
     
-    def to_native(self) -> List[Any]:
+    def to_native(self) -> list[Any]:
         """Convert to native Python list (preserving order)."""
         return [self._values[key] for key in self.keys()]
 
@@ -383,7 +383,7 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
         
         return idx  # Returns 1-indexed, caller should adjust if needed
     
-    def get_range_statistics(self, left: int, right: int) -> Dict[str, float]:
+    def get_range_statistics(self, left: int, right: int) -> dict[str, float]:
         """Get statistics for a range."""
         if left > right or right < 0 or left >= self._size:
             return {'sum': 0.0, 'count': 0, 'average': 0.0}
@@ -401,7 +401,7 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
             'average': average
         }
     
-    def bulk_update(self, updates: List[tuple[int, float]]) -> None:
+    def bulk_update(self, updates: list[tuple[int, float]]) -> None:
         """Perform multiple point updates efficiently."""
         for index, value in updates:
             if 0 <= index < self._size:
@@ -412,7 +412,7 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'FENWICK_TREE',
@@ -428,7 +428,7 @@ class FenwickTreeStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         tree_utilization = self._size / max(1, len(self._tree) - 1) * 100
         

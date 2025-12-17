@@ -6,11 +6,11 @@ Edge List Edge Strategy Implementation
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional
+from typing import Any, Iterator, Optional
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
@@ -67,8 +67,8 @@ class EdgeListStrategy(AEdgeStrategy):
     
     def __init__(self, traits: EdgeTrait = EdgeTrait.NONE, **options):
         super().__init__(EdgeMode.EDGE_LIST, traits, **options)
-        self._edges: List[Dict[str, Any]] = []
-        self._nodes: Set[str] = set()
+        self._edges: list[dict[str, Any]] = []
+        self._nodes: set[str] = set()
         self._edge_id_counter = 0
     
     def get_supported_traits(self) -> EdgeTrait:
@@ -119,7 +119,7 @@ class EdgeListStrategy(AEdgeStrategy):
         """Get neighbors of node (required by base class)."""
         return iter(self.get_neighbors(node, "outgoing"))
     
-    def get_neighbors(self, node: str, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, direction: str = "outgoing") -> list[str]:
         """Get neighbors (O(m) where m = total edges)."""
         neighbors = set()
         
@@ -140,7 +140,7 @@ class EdgeListStrategy(AEdgeStrategy):
         """Get degree of node."""
         return len(self.get_neighbors(node, "both"))
     
-    def edges(self) -> Iterator[tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterator over edges."""
         for edge in self._edges:
             yield (edge['source'], edge['target'], edge['properties'])
@@ -153,11 +153,11 @@ class EdgeListStrategy(AEdgeStrategy):
         """Get number of edges."""
         return len(self._edges)
     
-    def to_native(self) -> List[tuple[str, str]]:
+    def to_native(self) -> list[tuple[str, str]]:
         """Convert to simple edge list format."""
         return [(e['source'], e['target']) for e in self._edges]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend info."""
         return {
             'strategy': 'Edge List',

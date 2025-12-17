@@ -9,11 +9,11 @@ Uses HashMap for O(1) lookups and doubly linked list for LRU ordering.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 from threading import RLock
 
 from .base import ANodeStrategy
@@ -76,7 +76,7 @@ class LRUCacheStrategy(ANodeStrategy):
         self._size = 0
         
         # HashMap for O(1) lookups
-        self._cache: Dict[str, _ListNode] = {}
+        self._cache: dict[str, _ListNode] = {}
         
         # Doubly linked list for LRU ordering
         # head = most recently used, tail = least recently used
@@ -184,7 +184,7 @@ class LRUCacheStrategy(ANodeStrategy):
         """Get maximum cache size"""
         return self._max_size
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get cache statistics
         

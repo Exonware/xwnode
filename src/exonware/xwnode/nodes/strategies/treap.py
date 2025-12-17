@@ -7,7 +7,7 @@ combining binary search tree and heap properties.
 """
 
 import random
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -193,7 +193,7 @@ class TreapStrategy(ANodeTreeStrategy):
         
         return node
     
-    def _insert_node(self, node: Optional[TreapNode], key: str, value: Any, priority: int = None) -> Tuple[TreapNode, bool]:
+    def _insert_node(self, node: Optional[TreapNode], key: str, value: Any, priority: int = None) -> tuple[TreapNode, bool]:
         """Insert node with given key and value."""
         if not node:
             new_node = TreapNode(key, value, priority)
@@ -245,7 +245,7 @@ class TreapStrategy(ANodeTreeStrategy):
             node = node.right
         return node
     
-    def _delete_node(self, node: Optional[TreapNode], key: str) -> Tuple[Optional[TreapNode], bool]:
+    def _delete_node(self, node: Optional[TreapNode], key: str) -> tuple[Optional[TreapNode], bool]:
         """Delete node with given key."""
         if not node:
             return None, False
@@ -278,7 +278,7 @@ class TreapStrategy(ANodeTreeStrategy):
         
         return node, True
     
-    def _inorder_traversal(self, node: Optional[TreapNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[TreapNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -341,7 +341,7 @@ class TreapStrategy(ANodeTreeStrategy):
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -407,7 +407,7 @@ class TreapStrategy(ANodeTreeStrategy):
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
     
@@ -419,7 +419,7 @@ class TreapStrategy(ANodeTreeStrategy):
     # TREAP SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_min(self) -> Optional[Tuple[str, Any]]:
+    def get_min(self) -> Optional[tuple[str, Any]]:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
@@ -427,7 +427,7 @@ class TreapStrategy(ANodeTreeStrategy):
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
     
-    def get_max(self) -> Optional[Tuple[str, Any]]:
+    def get_max(self) -> Optional[tuple[str, Any]]:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
@@ -455,7 +455,7 @@ class TreapStrategy(ANodeTreeStrategy):
         self._root = self._balance_treap(self._root)
         return True
     
-    def get_max_priority(self) -> Optional[Tuple[str, Any, int]]:
+    def get_max_priority(self) -> Optional[tuple[str, Any, int]]:
         """Get node with maximum priority."""
         if not self._root:
             return None
@@ -497,7 +497,7 @@ class TreapStrategy(ANodeTreeStrategy):
         
         return check_treap(self._root)
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         return {
             'size': self._size,

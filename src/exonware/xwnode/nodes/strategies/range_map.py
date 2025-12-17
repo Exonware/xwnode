@@ -9,11 +9,11 @@ Simpler than INTERVAL_TREE when ranges don't overlap.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 from threading import RLock
 import bisect
 
@@ -72,7 +72,7 @@ class RangeMapStrategy(ANodeStrategy):
             **kwargs
         )
         # Sorted list of ranges for binary search
-        self._ranges: List[_Range] = []
+        self._ranges: list[_Range] = []
         # Thread safety
         self._lock = RLock()
     
@@ -134,7 +134,7 @@ class RangeMapStrategy(ANodeStrategy):
             
             return None
     
-    def get_range_for_point(self, point: float) -> Optional[Tuple[float, float, Any]]:
+    def get_range_for_point(self, point: float) -> Optional[tuple[float, float, Any]]:
         """
         Get complete range information for point
         
@@ -163,7 +163,7 @@ class RangeMapStrategy(ANodeStrategy):
             
             return None
     
-    def get_all_ranges(self) -> List[Tuple[float, float, Any]]:
+    def get_all_ranges(self) -> list[tuple[float, float, Any]]:
         """
         Get all ranges
         

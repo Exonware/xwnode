@@ -6,12 +6,12 @@ Cache controller implementing 4-level caching hierarchy.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
 import threading
-from typing import Dict, Optional, Any, List
+from typing import Optional, Any
 from contextlib import contextmanager
 
 from exonware.xwsystem import get_logger
@@ -59,13 +59,13 @@ class CacheController:
         self._lock = threading.RLock()
         
         # Cache instance pool (Flyweight pattern)
-        self._cache_instances: Dict[str, ICacheAdapter] = {}
+        self._cache_instances: dict[str, ICacheAdapter] = {}
         
         # Component-specific configurations
-        self._component_configs: Dict[str, Dict[str, Any]] = {}
+        self._component_configs: dict[str, dict[str, Any]] = {}
         
         # Runtime overrides (temporary)
-        self._runtime_overrides: Dict[str, Dict[str, Any]] = {}
+        self._runtime_overrides: dict[str, dict[str, Any]] = {}
         
         # Initialize default component configurations
         self._initialize_component_configs()
@@ -146,8 +146,8 @@ class CacheController:
     def _get_effective_config(
         self,
         component: str,
-        runtime_options: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        runtime_options: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Compute effective configuration for component.
         
@@ -188,7 +188,7 @@ class CacheController:
         
         return True
     
-    def _get_cache_key(self, component: str, config: Dict[str, Any]) -> str:
+    def _get_cache_key(self, component: str, config: dict[str, Any]) -> str:
         """Generate unique cache key for Flyweight pattern."""
         strategy = config.get('strategy', 'lru')
         size = config.get('size', 1000)
@@ -197,7 +197,7 @@ class CacheController:
     def _create_cache_adapter(
         self,
         component: str,
-        config: Dict[str, Any]
+        config: dict[str, Any]
     ) -> ICacheAdapter:
         """
         Create cache adapter based on strategy.
@@ -312,7 +312,7 @@ class CacheController:
                 self._runtime_overrides.pop(component, None)
             logger.debug(f"Restored runtime overrides for '{component}'")
     
-    def get_all_stats(self) -> Dict[str, CacheStats]:
+    def get_all_stats(self) -> dict[str, CacheStats]:
         """
         Get statistics for all cache instances.
         
@@ -384,7 +384,7 @@ class CacheController:
             
             return total
     
-    def get_health_report(self) -> Dict[str, Any]:
+    def get_health_report(self) -> dict[str, Any]:
         """
         Get comprehensive health report for all caches.
         

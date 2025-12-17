@@ -9,11 +9,11 @@ operations using semiring algebra.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Callable
+from typing import Any, Iterator, Optional, Callable
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -151,17 +151,17 @@ class GraphBLASStrategy(AEdgeStrategy):
         self.semiring = semiring or PLUS_TIMES
         
         # CSR storage (row pointers, column indices, values)
-        self._row_ptr: List[int] = [0]
-        self._col_idx: List[int] = []
-        self._values: List[float] = []
+        self._row_ptr: list[int] = [0]
+        self._col_idx: list[int] = []
+        self._values: list[float] = []
         
         # Adjacency for construction
-        self._adjacency: Dict[str, Dict[str, float]] = defaultdict(dict)
+        self._adjacency: dict[str, dict[str, float]] = defaultdict(dict)
         
         # Vertex mapping
-        self._vertices: Set[str] = set()
-        self._vertex_to_id: Dict[str, int] = {}
-        self._id_to_vertex: Dict[int, str] = {}
+        self._vertices: set[str] = set()
+        self._vertex_to_id: dict[str, int] = {}
+        self._id_to_vertex: dict[int, str] = {}
         self._next_id = 0
         
         # Matrix state
@@ -256,7 +256,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """Add edge."""
         self._adjacency[source][target] = weight
@@ -288,7 +288,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         return source in self._adjacency and target in self._adjacency[source]
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """Get neighbors."""
         return list(self._adjacency.get(node, {}).keys())
     
@@ -300,7 +300,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         """Get degree of node."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over all edges with properties."""
         for edge_dict in self.get_edges():
             yield (edge_dict['source'], edge_dict['target'], {'weight': edge_dict.get('weight', 1.0)})
@@ -309,7 +309,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         
@@ -324,7 +324,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if self.has_edge(source, target):
             return {
@@ -338,7 +338,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -365,7 +365,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles."""
         return []
     
@@ -400,11 +400,11 @@ class GraphBLASStrategy(AEdgeStrategy):
         """Get number of edges."""
         return self._edge_count
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -416,7 +416,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get GraphBLAS statistics."""
         return {
             'vertices': len(self._vertices),
@@ -435,11 +435,11 @@ class GraphBLASStrategy(AEdgeStrategy):
         return "GRAPHBLAS"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.SPARSE, EdgeTrait.DENSE, EdgeTrait.WEIGHTED, EdgeTrait.DIRECTED]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'GraphBLAS',

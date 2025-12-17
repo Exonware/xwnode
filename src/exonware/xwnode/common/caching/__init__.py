@@ -6,7 +6,7 @@ Cache system for xwnode components.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
@@ -26,6 +26,7 @@ from .telemetry import (
     get_telemetry_collector,
     reset_telemetry
 )
+from .path_cache import PathNavigationCache
 
 __all__ = [
     # Controller
@@ -51,5 +52,8 @@ __all__ = [
     'CacheComparisonReport',
     'get_telemetry_collector',
     'reset_telemetry',
+    
+    # Path Cache
+    'PathNavigationCache',
 ]
 

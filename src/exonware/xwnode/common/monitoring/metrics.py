@@ -9,13 +9,13 @@ memory usage, and optimization recommendations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
@@ -45,7 +45,7 @@ class MetricSnapshot:
     timestamp: float
     metric_type: MetricType
     value: float
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -62,7 +62,7 @@ class StrategyMetrics:
     error_rate: float = 0.0
     optimization_score: float = 0.0
     last_updated: float = field(default_factory=time.time)
-    snapshots: List[MetricSnapshot] = field(default_factory=list)
+    snapshots: list[MetricSnapshot] = field(default_factory=list)
 
 
 class StrategyMetricsCollector:
@@ -78,8 +78,8 @@ class StrategyMetricsCollector:
             history_size: Maximum number of metric snapshots to keep
         """
         self._history_size = history_size
-        self._strategy_metrics: Dict[str, StrategyMetrics] = {}
-        self._global_metrics: Dict[str, Any] = {
+        self._strategy_metrics: dict[str, StrategyMetrics] = {}
+        self._global_metrics: dict[str, Any] = {
             'total_strategies': 0,
             'total_operations': 0,
             'total_memory_usage': 0.0,
@@ -91,7 +91,7 @@ class StrategyMetricsCollector:
         self._collection_interval = 60.0  # 1 minute
         self._last_collection = time.time()
     
-    def collect_comprehensive_metrics(self) -> Dict[str, Any]:
+    def collect_comprehensive_metrics(self) -> dict[str, Any]:
         """
         Collect comprehensive metrics from all components.
         
@@ -201,7 +201,7 @@ class StrategyMetricsCollector:
         with self._lock:
             return self._strategy_metrics.get(strategy_id)
     
-    def get_top_performing_strategies(self, limit: int = 5) -> List[StrategyMetrics]:
+    def get_top_performing_strategies(self, limit: int = 5) -> list[StrategyMetrics]:
         """
         Get top performing strategies by average operation time.
         
@@ -222,7 +222,7 @@ class StrategyMetricsCollector:
             
             return strategies[:limit]
     
-    def get_memory_usage_summary(self) -> Dict[str, Any]:
+    def get_memory_usage_summary(self) -> dict[str, Any]:
         """
         Get memory usage summary across all strategies.
         
@@ -243,7 +243,7 @@ class StrategyMetricsCollector:
                 }
             }
     
-    def get_performance_trends(self, strategy_id: str, hours: int = 24) -> Dict[str, Any]:
+    def get_performance_trends(self, strategy_id: str, hours: int = 24) -> dict[str, Any]:
         """
         Get performance trends for a strategy over time.
         
@@ -294,7 +294,7 @@ class StrategyMetricsCollector:
                 'data_points': len(performance_snapshots)
             }
     
-    def _get_strategy_metrics_summary(self) -> Dict[str, Any]:
+    def _get_strategy_metrics_summary(self) -> dict[str, Any]:
         """Get summary of all strategy metrics."""
         with self._lock:
             if not self._strategy_metrics:
@@ -324,7 +324,7 @@ class StrategyMetricsCollector:
                 }
             }
     
-    def _generate_optimization_recommendations(self) -> List[Dict[str, Any]]:
+    def _generate_optimization_recommendations(self) -> list[dict[str, Any]]:
         """Generate optimization recommendations based on metrics."""
         recommendations = []
         
@@ -365,7 +365,7 @@ class StrategyMetricsCollector:
         
         return recommendations
     
-    def _assess_system_health(self) -> Dict[str, Any]:
+    def _assess_system_health(self) -> dict[str, Any]:
         """Assess overall system health based on metrics."""
         with self._lock:
             if not self._strategy_metrics:
@@ -400,7 +400,7 @@ class StrategyMetricsCollector:
                 'recommendations_count': len(self._generate_optimization_recommendations())
             }
     
-    def export_metrics(self, format: str = 'json') -> Union[Dict[str, Any], str]:
+    def export_metrics(self, format: str = 'json') -> Union[dict[str, Any], str]:
         """
         Export metrics in specified format.
         
@@ -417,7 +417,7 @@ class StrategyMetricsCollector:
         else:
             return metrics
     
-    def _format_summary(self, metrics: Dict[str, Any]) -> str:
+    def _format_summary(self, metrics: dict[str, Any]) -> str:
         """Format metrics as a human-readable summary."""
         global_metrics = metrics.get('global_metrics', {})
         system_health = metrics.get('system_health', {})
@@ -481,7 +481,7 @@ def get_metrics_collector() -> StrategyMetricsCollector:
     return _metrics_collector
 
 
-def collect_comprehensive_metrics() -> Dict[str, Any]:
+def collect_comprehensive_metrics() -> dict[str, Any]:
     """
     Collect comprehensive metrics using the global collector.
     
@@ -525,7 +525,7 @@ def get_metrics_summary() -> str:
     return get_metrics_collector().export_metrics('summary')
 
 
-def export_metrics(format: str = 'json') -> Union[Dict[str, Any], str]:
+def export_metrics(format: str = 'json') -> Union[dict[str, Any], str]:
     """
     Export metrics in specified format.
     

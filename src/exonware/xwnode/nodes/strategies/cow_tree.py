@@ -13,11 +13,11 @@ atomic snapshots and versioning capabilities.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, Set, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import weakref
 import gc
 from .base import ANodeTreeStrategy
@@ -43,7 +43,7 @@ class COWTreeNode:
         self._frozen = False
         self._hash = None
         self._generation = 0  # Generational tracking
-        self._weak_refs: List[weakref.ref] = []  # Weak references for cycle detection
+        self._weak_refs: list[weakref.ref] = []  # Weak references for cycle detection
     
     def __hash__(self) -> int:
         """
@@ -88,7 +88,7 @@ class COWTreeNode:
         """Add weak reference for cycle detection."""
         self._weak_refs.append(ref)
     
-    def has_cycles(self, visited: Optional[Set[int]] = None) -> bool:
+    def has_cycles(self, visited: Optional[set[int]] = None) -> bool:
         """
         Check for reference cycles (advanced feature).
         
@@ -136,7 +136,7 @@ with reference counting.
         self._root: Optional[COWTreeNode] = None
         self._size = 0
         self._version = 0
-        self._snapshots: List['COWTreeStrategy'] = []
+        self._snapshots: list['COWTreeStrategy'] = []
         
         # Statistics
         self._total_copies = 0
@@ -275,7 +275,7 @@ with reference counting.
         
         return node
     
-    def _insert_node(self, node: Optional[COWTreeNode], key: str, value: Any) -> Tuple[Optional[COWTreeNode], bool]:
+    def _insert_node(self, node: Optional[COWTreeNode], key: str, value: Any) -> tuple[Optional[COWTreeNode], bool]:
         """Insert node with COW semantics."""
         if not node:
             new_node = self._create_node(key, value)
@@ -331,7 +331,7 @@ with reference counting.
         else:
             return node
     
-    def _delete_node(self, node: Optional[COWTreeNode], key: str) -> Tuple[Optional[COWTreeNode], bool]:
+    def _delete_node(self, node: Optional[COWTreeNode], key: str) -> tuple[Optional[COWTreeNode], bool]:
         """Delete node with COW semantics."""
         if not node:
             return None, False
@@ -380,7 +380,7 @@ with reference counting.
             node = node.left
         return node
     
-    def _inorder_traversal(self, node: Optional[COWTreeNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[COWTreeNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -459,7 +459,7 @@ with reference counting.
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -525,7 +525,7 @@ with reference counting.
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
     
@@ -571,7 +571,7 @@ with reference counting.
         if self._root:
             self._root.increment_ref()
     
-    def get_snapshots(self) -> List['COWTreeStrategy']:
+    def get_snapshots(self) -> list['COWTreeStrategy']:
         """Get list of all snapshots."""
         return self._snapshots.copy()
     
@@ -601,7 +601,7 @@ with reference counting.
         # Reset node count estimate
         self._total_nodes = self._size * 2  # Rough estimate
     
-    def get_memory_pressure(self) -> Dict[str, Any]:
+    def get_memory_pressure(self) -> dict[str, Any]:
         """
         Get memory pressure statistics.
         
@@ -621,7 +621,7 @@ with reference counting.
         """Get current version number."""
         return self._version
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics with memory pressure details."""
         memory_pressure = self.get_memory_pressure()
         

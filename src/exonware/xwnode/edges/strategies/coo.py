@@ -5,7 +5,7 @@ This module implements the COO strategy for sparse graph representation
 using coordinate format for efficient sparse matrix operations and conversions.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 import bisect
 from ._base_edge import AEdgeStrategy
@@ -71,14 +71,14 @@ class COOStrategy(AEdgeStrategy):
         self.sort_coordinates = options.get('sort_coordinates', True)
         
         # COO format: three parallel arrays
-        self._row_indices: List[int] = []  # Row indices
-        self._col_indices: List[int] = []  # Column indices
-        self._values: List[float] = []     # Edge values/weights
+        self._row_indices: list[int] = []  # Row indices
+        self._col_indices: list[int] = []  # Column indices
+        self._values: list[float] = []     # Edge values/weights
         
         # Vertex management
-        self._vertices: Set[str] = set()
-        self._vertex_to_id: Dict[str, int] = {}
-        self._id_to_vertex: Dict[int, str] = {}
+        self._vertices: set[str] = set()
+        self._vertex_to_id: dict[str, int] = {}
+        self._id_to_vertex: dict[int, str] = {}
         self._next_vertex_id = 0
         
         # Matrix dimensions and metadata
@@ -89,7 +89,7 @@ class COOStrategy(AEdgeStrategy):
         
         # Quick access structures
         self._edge_count = 0
-        self._coordinate_index: Dict[Tuple[int, int], List[int]] = defaultdict(list)  # (row, col) -> [positions]
+        self._coordinate_index: dict[tuple[int, int], list[int]] = defaultdict(list)  # (row, col) -> [positions]
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get the traits supported by the COO strategy."""
@@ -177,7 +177,7 @@ class COOStrategy(AEdgeStrategy):
         
         self._is_sorted = True
     
-    def _find_coordinate_positions(self, row: int, col: int) -> List[int]:
+    def _find_coordinate_positions(self, row: int, col: int) -> list[int]:
         """Find all positions of coordinate (row, col)."""
         coord_key = (row, col)
         return self._coordinate_index.get(coord_key, [])
@@ -235,7 +235,7 @@ class COOStrategy(AEdgeStrategy):
         
         return len(self._find_coordinate_positions(row_id, col_id)) > 0
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         if not self.has_edge(source, target):
             return None
@@ -376,7 +376,7 @@ class COOStrategy(AEdgeStrategy):
         """Sort coordinates by (row, col)."""
         self._sort_coordinates()
     
-    def get_coordinates(self) -> Tuple[List[int], List[int], List[float]]:
+    def get_coordinates(self) -> tuple[list[int], list[int], list[float]]:
         """Get COO coordinate arrays."""
         if self.sort_coordinates:
             self._sort_coordinates()
@@ -430,7 +430,7 @@ class COOStrategy(AEdgeStrategy):
             self._remove_coordinate_at_position(pos)
             self._edge_count -= 1
     
-    def to_dense_matrix(self) -> List[List[float]]:
+    def to_dense_matrix(self) -> list[list[float]]:
         """Convert to dense matrix representation."""
         if self._num_rows == 0 or self._num_cols == 0:
             return []
@@ -482,7 +482,7 @@ class COOStrategy(AEdgeStrategy):
             return 0.0
         return 1.0 - (self._nnz / total_entries)
     
-    def get_memory_usage(self) -> Dict[str, int]:
+    def get_memory_usage(self) -> dict[str, int]:
         """Get detailed memory usage."""
         return {
             'row_indices_bytes': len(self._row_indices) * 4,  # 4 bytes per int
@@ -493,7 +493,7 @@ class COOStrategy(AEdgeStrategy):
             'total_bytes': len(self._row_indices) * 4 + len(self._col_indices) * 4 + len(self._values) * 8 + len(self._coordinate_index) * 50 + len(self._vertices) * 50
         }
     
-    def export_matrix(self) -> Dict[str, Any]:
+    def export_matrix(self) -> dict[str, Any]:
         """Export COO matrix data."""
         return {
             'row_indices': self._row_indices.copy(),
@@ -506,7 +506,7 @@ class COOStrategy(AEdgeStrategy):
             'is_sorted': self._is_sorted
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive COO statistics."""
         memory = self.get_memory_usage()
         
@@ -540,7 +540,7 @@ class COOStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'COO',
@@ -559,7 +559,7 @@ class COOStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

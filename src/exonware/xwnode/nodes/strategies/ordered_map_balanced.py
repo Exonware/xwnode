@@ -5,7 +5,7 @@ This module implements the ORDERED_MAP_BALANCED strategy for self-balancing
 ordered operations with guaranteed O(log n) performance.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -258,14 +258,14 @@ rmance in all scenarios.
         
         return node
     
-    def _inorder_traversal(self, node: Optional[AVLNode], result: List[Tuple[str, Any]]) -> None:
+    def _inorder_traversal(self, node: Optional[AVLNode], result: list[tuple[str, Any]]) -> None:
         """Inorder traversal to collect key-value pairs."""
         if node:
             self._inorder_traversal(node.left, result)
             result.append((node.key, node.value))
             self._inorder_traversal(node.right, result)
     
-    def _range_query(self, node: Optional[AVLNode], start: str, end: str, inclusive: bool, result: List[Tuple[str, Any]]) -> None:
+    def _range_query(self, node: Optional[AVLNode], start: str, end: str, inclusive: bool, result: list[tuple[str, Any]]) -> None:
         """Collect nodes in range."""
         if not node:
             return
@@ -385,7 +385,7 @@ rmance in all scenarios.
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -467,7 +467,7 @@ rmance in all scenarios.
             node = node.right
         return node.key
     
-    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[Tuple[str, Any]]:
+    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[tuple[str, Any]]:
         """Get key-value pairs in range with O(log n + k) complexity."""
         result = []
         self._range_query(self._root, start_key, end_key, inclusive, result)
@@ -537,9 +537,9 @@ rmance in all scenarios.
             return self.remove(key)
         return False
     
-    def get_balance_statistics(self) -> Dict[str, Any]:
+    def get_balance_statistics(self) -> dict[str, Any]:
         """Get comprehensive balance statistics."""
-        def _analyze_balance(node: Optional[AVLNode]) -> Dict[str, Any]:
+        def _analyze_balance(node: Optional[AVLNode]) -> dict[str, Any]:
             if not node:
                 return {
                     'nodes': 0,
@@ -587,7 +587,7 @@ rmance in all scenarios.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'ORDERED_MAP_BALANCED',
@@ -607,7 +607,7 @@ rmance in all scenarios.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         balance_stats = self.get_balance_statistics()
         

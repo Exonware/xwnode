@@ -9,12 +9,12 @@ queries and nearest neighbor search.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import math
-from typing import Any, Iterator, List, Dict, Optional, Tuple, Callable, AsyncIterator
+from typing import Any, Iterator, Optional, Callable, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -31,7 +31,7 @@ class KdNode:
     - Logarithmic depth for n points
     """
     
-    def __init__(self, point: Tuple[float, ...], value: Any, axis: int):
+    def __init__(self, point: tuple[float, ...], value: Any, axis: int):
         """
         Initialize k-d tree node.
         
@@ -140,7 +140,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
         self.dimensions = dimensions
         self._root: Optional[KdNode] = None
         self._size = 0
-        self._points: Dict[Tuple[float, ...], Any] = {}  # Point -> value mapping
+        self._points: dict[tuple[float, ...], Any] = {}  # Point -> value mapping
     
     def get_supported_traits(self) -> NodeTrait:
         """Get supported traits."""
@@ -150,7 +150,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
     # HELPER METHODS
     # ============================================================================
     
-    def _validate_point(self, point: Any) -> Tuple[float, ...]:
+    def _validate_point(self, point: Any) -> tuple[float, ...]:
         """
         Validate and normalize point to tuple.
         
@@ -174,7 +174,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
                 f"Point must be tuple or list, got {type(point).__name__}"
             )
     
-    def _euclidean_distance(self, p1: Tuple[float, ...], p2: Tuple[float, ...]) -> float:
+    def _euclidean_distance(self, p1: tuple[float, ...], p2: tuple[float, ...]) -> float:
         """Calculate Euclidean distance between points."""
         return math.sqrt(sum((a - b) ** 2 for a, b in zip(p1, p2)))
     
@@ -213,7 +213,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
                 self._points[point] = value
                 self._size += 1
     
-    def _insert_recursive(self, node: KdNode, point: Tuple[float, ...], 
+    def _insert_recursive(self, node: KdNode, point: tuple[float, ...], 
                          value: Any, depth: int) -> KdNode:
         """
         Recursively insert point.
@@ -242,7 +242,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
         
         return node
     
-    def _update_value(self, node: Optional[KdNode], point: Tuple[float, ...],
+    def _update_value(self, node: Optional[KdNode], point: tuple[float, ...],
                      value: Any, depth: int) -> bool:
         """Update value for existing point."""
         if node is None:
@@ -325,8 +325,8 @@ class KdTreeStrategy(ANodeTreeStrategy):
     # K-D TREE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def nearest_neighbor(self, query_point: Tuple[float, ...], 
-                        distance_fn: Optional[Callable] = None) -> Optional[Tuple[Tuple[float, ...], Any]]:
+    def nearest_neighbor(self, query_point: tuple[float, ...], 
+                        distance_fn: Optional[Callable] = None) -> Optional[tuple[tuple[float, ...], Any]]:
         """
         Find nearest neighbor to query point.
         
@@ -386,8 +386,8 @@ class KdTreeStrategy(ANodeTreeStrategy):
         
         return (best[0].point, best[0].value)
     
-    def range_search(self, min_bounds: Tuple[float, ...], 
-                    max_bounds: Tuple[float, ...]) -> List[Tuple[Tuple[float, ...], Any]]:
+    def range_search(self, min_bounds: tuple[float, ...], 
+                    max_bounds: tuple[float, ...]) -> list[tuple[tuple[float, ...], Any]]:
         """
         Find all points within hyperrectangle.
         
@@ -441,8 +441,8 @@ class KdTreeStrategy(ANodeTreeStrategy):
         search_range(self._root, 0)
         return result
     
-    def k_nearest_neighbors(self, query_point: Tuple[float, ...], k: int,
-                           distance_fn: Optional[Callable] = None) -> List[Tuple[Tuple[float, ...], Any, float]]:
+    def k_nearest_neighbors(self, query_point: tuple[float, ...], k: int,
+                           distance_fn: Optional[Callable] = None) -> list[tuple[tuple[float, ...], Any, float]]:
         """
         Find k nearest neighbors.
         
@@ -466,7 +466,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
             distance_fn = self._euclidean_distance
         
         # Priority queue of k nearest (max heap by distance)
-        nearest: List[Tuple[float, KdNode]] = []
+        nearest: list[tuple[float, KdNode]] = []
         
         def search_knn(node: Optional[KdNode], depth: int) -> None:
             """Recursive k-NN search."""
@@ -514,7 +514,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
         """Get iterator over all points."""
         yield from self._inorder_traversal(self._root)
     
-    def _inorder_traversal(self, node: Optional[KdNode]) -> Iterator[Tuple[float, ...]]:
+    def _inorder_traversal(self, node: Optional[KdNode]) -> Iterator[tuple[float, ...]]:
         """Inorder traversal."""
         if node is None:
             return
@@ -624,7 +624,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get k-d tree statistics.
         
@@ -669,7 +669,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
         Create k-d tree from data.
         
         Args:
-            data: Dict with point tuples as keys or list of points
+            data: dict with point tuples as keys or list of points
             dimensions: Number of dimensions
             
         Returns:
@@ -704,7 +704,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
     # BULK CONSTRUCTION (OPTIMAL)
     # ============================================================================
     
-    def build_balanced(self, points: List[Tuple[Tuple[float, ...], Any]]) -> None:
+    def build_balanced(self, points: list[tuple[tuple[float, ...], Any]]) -> None:
         """
         Build balanced k-d tree from points using median splitting.
         
@@ -718,7 +718,7 @@ class KdTreeStrategy(ANodeTreeStrategy):
         """
         self.clear()
         
-        def build_recursive(point_list: List[Tuple[Tuple[float, ...], Any]], 
+        def build_recursive(point_list: list[tuple[tuple[float, ...], Any]], 
                           depth: int) -> Optional[KdNode]:
             """Recursively build balanced tree."""
             if not point_list:

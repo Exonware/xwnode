@@ -9,11 +9,11 @@ for cache-friendly variable-length key operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import OrderedDict
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -115,7 +115,7 @@ class MasstreeStrategy(ANodeStrategy):
         """Time Complexity: O(1)"""
         return len(self._data)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Time Complexity: O(n)"""
         return dict(self._data)
 
@@ -163,7 +163,7 @@ class MasstreeStrategy(ANodeStrategy):
         for item in self.items():
             yield item
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Time Complexity: O(1)"""
         return {
             **create_basic_backend_info('Masstree', 'B+ tree + trie hybrid'),

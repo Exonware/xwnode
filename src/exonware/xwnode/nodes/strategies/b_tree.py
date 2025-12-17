@@ -5,7 +5,7 @@ This module implements the B_TREE strategy for efficient range queries
 and sorted key operations with guaranteed O(log n) performance.
 """
 
-from typing import Any, Iterator, List, Optional, Union, Dict, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -21,9 +21,9 @@ class BTreeNode:
         Time Complexity: O(1)
         """
         self.degree = degree
-        self.keys: List[str] = []
-        self.values: List[Any] = []
-        self.children: List['BTreeNode'] = []
+        self.keys: list[str] = []
+        self.values: list[Any] = []
+        self.children: list['BTreeNode'] = []
         self.is_leaf = is_leaf
     
     def is_full(self) -> bool:
@@ -388,7 +388,7 @@ class BTreeStrategy(ANodeTreeStrategy):
         """
         return self._size == 0
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -462,7 +462,7 @@ class BTreeStrategy(ANodeTreeStrategy):
     # B-TREE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def range_query(self, start_key: str, end_key: str) -> List[tuple[str, Any]]:
+    def range_query(self, start_key: str, end_key: str) -> list[tuple[str, Any]]:
         """
         Get all key-value pairs in the specified range [start_key, end_key].
         
@@ -476,7 +476,7 @@ class BTreeStrategy(ANodeTreeStrategy):
                 break
         return result
     
-    def prefix_search(self, prefix: str) -> List[tuple[str, Any]]:
+    def prefix_search(self, prefix: str) -> list[tuple[str, Any]]:
         """
         Find all keys that start with the given prefix.
         
@@ -554,7 +554,7 @@ class BTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -574,7 +574,7 @@ class BTreeStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         

@@ -14,11 +14,11 @@ with eventual consistency and compaction.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import time
 import threading
 import hashlib
@@ -100,7 +100,7 @@ class WriteAheadLog:
         """Initialize WAL with optional file path."""
         self.path = path
         self.enabled = path is not None
-        self.operations: List[Tuple[str, str, Any, float]] = []  # op, key, value, timestamp
+        self.operations: list[tuple[str, str, Any, float]] = []  # op, key, value, timestamp
         self._lock = threading.Lock()
     
     def append(self, operation: str, key: str, value: Any) -> None:
@@ -115,7 +115,7 @@ class WriteAheadLog:
             # In production, this would write to disk
             # For now, keep in memory for simplicity
     
-    def replay(self) -> Iterator[Tuple[str, str, Any]]:
+    def replay(self) -> Iterator[tuple[str, str, Any]]:
         """Replay all operations from the WAL."""
         for operation, key, value, _ in self.operations:
             yield (operation, key, value)
@@ -135,7 +135,7 @@ class MemTable:
     """In-memory table for LSM tree."""
     
     def __init__(self, max_size: int = 1000):
-        self.data: Dict[str, Tuple[Any, float]] = {}  # key -> (value, timestamp)
+        self.data: dict[str, tuple[Any, float]] = {}  # key -> (value, timestamp)
         self.max_size = max_size
         self.size = 0
     
@@ -146,7 +146,7 @@ class MemTable:
             self.size += 1
         return self.size >= self.max_size
     
-    def get(self, key: str) -> Optional[Tuple[Any, float]]:
+    def get(self, key: str) -> Optional[tuple[Any, float]]:
         """Get value and timestamp."""
         return self.data.get(key)
     
@@ -161,7 +161,7 @@ class MemTable:
             return True
         return False
     
-    def items(self) -> Iterator[Tuple[str, Tuple[Any, float]]]:
+    def items(self) -> Iterator[tuple[str, tuple[Any, float]]]:
         """Get all items."""
         return iter(self.data.items())
     
@@ -178,7 +178,7 @@ class SSTable:
     Provides fast negative lookups using bloom filter before checking data.
     """
     
-    def __init__(self, level: int, data: Dict[str, Tuple[Any, float]]):
+    def __init__(self, level: int, data: dict[str, tuple[Any, float]]):
         self.level = level
         self.data = dict(sorted(data.items()))  # Keep sorted
         self.creation_time = time.time()
@@ -194,7 +194,7 @@ class SSTable:
         for key in data.keys():
             self.bloom_filter.add(key)
     
-    def get(self, key: str) -> Optional[Tuple[Any, float]]:
+    def get(self, key: str) -> Optional[tuple[Any, float]]:
         """Get value and timestamp."""
         return self.data.get(key)
     
@@ -202,7 +202,7 @@ class SSTable:
         """Check if key exists."""
         return key in self.data
     
-    def items(self) -> Iterator[Tuple[str, Tuple[Any, float]]]:
+    def items(self) -> Iterator[tuple[str, tuple[Any, float]]]:
         """Get all items in sorted order."""
         return iter(self.data.items())
     
@@ -210,7 +210,7 @@ class SSTable:
         """Get all keys in sorted order."""
         return iter(self.data.keys())
     
-    def range_query(self, start_key: str, end_key: str) -> List[Tuple[str, Any, float]]:
+    def range_query(self, start_key: str, end_key: str) -> list[tuple[str, Any, float]]:
         """Query range [start_key, end_key]."""
         result = []
         for key, (value, timestamp) in self.data.items():
@@ -245,9 +245,9 @@ ted disk-based SSTables.
         
         # Storage components
         self.memtable = MemTable(self.memtable_size)
-        self.immutable_memtables: List[MemTable] = []
-        self.sstables: Dict[int, List[SSTable]] = defaultdict(list)
-        self._values: Dict[str, Any] = {}  # Direct key-value cache for fast access
+        self.immutable_memtables: list[MemTable] = []
+        self.sstables: dict[int, list[SSTable]] = defaultdict(list)
+        self._values: dict[str, Any] = {}  # Direct key-value cache for fast access
         
         # Compaction control
         self._compaction_lock = threading.RLock()
@@ -392,7 +392,7 @@ ted disk-based SSTables.
         """Get the number of items."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -522,7 +522,7 @@ ted disk-based SSTables.
                 if self.sstables[level]:
                     self._compact_level(level)
     
-    def range_query(self, start_key: str, end_key: str) -> List[Tuple[str, Any]]:
+    def range_query(self, start_key: str, end_key: str) -> list[tuple[str, Any]]:
         """Efficient range query across all levels."""
         result_map = {}
         
@@ -536,7 +536,7 @@ ted disk-based SSTables.
         # Return sorted results (excluding tombstones)
         return [(k, v) for k, (v, _) in sorted(result_map.items()) if v is not None]
     
-    def get_level_stats(self) -> Dict[int, Dict[str, Any]]:
+    def get_level_stats(self) -> dict[int, dict[str, Any]]:
         """Get statistics for each level."""
         stats = {}
         for level in range(self.max_levels):
@@ -609,7 +609,7 @@ ted disk-based SSTables.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'LSM_TREE',
@@ -635,7 +635,7 @@ ted disk-based SSTables.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         total_sstables = sum(len(tables) for tables in self.sstables.values())
         memtable_utilization = self.memtable.size / self.memtable_size * 100

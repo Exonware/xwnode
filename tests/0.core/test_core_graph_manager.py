@@ -83,13 +83,23 @@ class TestGraphManagerCore:
         """Test caching improves repeated query performance."""
         gm = XWGraphManager(enable_caching=True, enable_indexing=True)
         
-        # Add relationships
+        # Verify caching is enabled
+        stats = gm.get_stats()
+        assert stats['caching_enabled'] is True, "Caching should be enabled"
+        
+        # Add relationships (this will invalidate cache for 'alice' multiple times)
         for i in range(100):
             gm.add_relationship('alice', f'entity_{i}', 'follows')
         
-        # First query - cache miss
+        # First query - cache miss (cache was invalidated during relationship addition)
         stats_before = gm.get_stats()
+        cache_hits_before = stats_before.get('cache_hits', 0)
         result1 = gm.get_outgoing('alice', 'follows')
+        
+        # Verify first query cached the result
+        stats_after_first = gm.get_stats()
+        cache_misses_after_first = stats_after_first.get('cache_misses', 0)
+        assert cache_misses_after_first > 0, "First query should be a cache miss"
         
         # Second query - should hit cache
         result2 = gm.get_outgoing('alice', 'follows')
@@ -98,8 +108,10 @@ class TestGraphManagerCore:
         # Verify results are same
         assert len(result1) == len(result2) == 100
         
-        # Verify cache was used
-        assert stats_after['cache_hits'] > stats_before['cache_hits']
+        # Verify cache was used (cache hits should have increased)
+        cache_hits_after = stats_after.get('cache_hits', 0)
+        assert cache_hits_after > cache_hits_before, \
+            f"Cache hits should increase: before={cache_hits_before}, after={cache_hits_after}"
     
     def test_bidirectional_queries(self):
         """Test both incoming and outgoing relationships."""

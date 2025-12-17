@@ -6,7 +6,7 @@ Hash Map Node Strategy Implementation
 Status: Production Ready ✅
 True Purpose: Fast O(1) average key-value operations using hash table
 Complexity: O(1) average for get/put/delete operations
-Production Features: ✓ SipHash Security, ✓ Python Dict Delegation, ✓ Path Navigation
+Production Features: ✓ SipHash Security, ✓ Python dict Delegation, ✓ Path Navigation
 
 This module implements the HASH_MAP strategy for fast key-value operations
 using Python's built-in dictionary.
@@ -14,11 +14,11 @@ using Python's built-in dictionary.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -101,7 +101,7 @@ class HashMapStrategy(ANodeStrategy):
         Space Complexity: O(1)
         """
         super().__init__(mode=mode or NodeMode.HASH_MAP, traits=traits or NodeTrait.NONE, **options)
-        self._data: Dict[str, Any] = {}
+        self._data: dict[str, Any] = {}
         self._size_tracker = create_size_tracker()
         self._access_tracker = create_access_tracker()
     
@@ -306,7 +306,7 @@ class HashMapStrategy(ANodeStrategy):
             return default
         return self._data[str_key]
     
-    def update(self, other: Dict[str, Any]) -> None:
+    def update(self, other: dict[str, Any]) -> None:
         """
         Update hash map with key-value pairs from dict.
         
@@ -414,7 +414,7 @@ class HashMapStrategy(ANodeStrategy):
             instance.put('_value', data)
         return instance
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dictionary."""
         # Return a copy with all nested XWNode objects converted to native types
         return {k: safe_to_native_conversion(v) for k, v in self._data.items()}
@@ -522,7 +522,7 @@ class HashMapStrategy(ANodeStrategy):
         return None
     
     @property
-    def metadata(self) -> Optional[Dict[str, Any]]:
+    def metadata(self) -> Optional[dict[str, Any]]:
         """Get the metadata of this node."""
         return None
     
@@ -530,7 +530,7 @@ class HashMapStrategy(ANodeStrategy):
     # PERFORMANCE CHARACTERISTICS
     # ============================================================================
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return create_basic_backend_info(
             'HASH_MAP',
@@ -539,7 +539,7 @@ class HashMapStrategy(ANodeStrategy):
             collision_rate='~5% (Python dict optimized)'
         )
     
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         base_metrics = create_basic_metrics('HASH_MAP', self._size_tracker['size'])
         access_metrics = get_access_metrics(self._access_tracker)

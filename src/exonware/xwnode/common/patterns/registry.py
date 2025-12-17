@@ -8,7 +8,7 @@ discovery, and instantiation in the strategy system.
 """
 
 import threading
-from typing import Dict, Type, List, Optional, Any, Callable
+from typing import Optional, Any, Callable
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
@@ -28,12 +28,12 @@ class StrategyRegistry:
     
     def __init__(self):
         """Initialize the strategy registry."""
-        self._node_strategies: Dict[NodeMode, Type] = {}
-        self._edge_strategies: Dict[EdgeMode, Type] = {}
-        self._query_strategies: Dict[str, Type] = {}
-        self._node_factories: Dict[NodeMode, Callable] = {}
-        self._edge_factories: Dict[EdgeMode, Callable] = {}
-        self._query_factories: Dict[str, Callable] = {}
+        self._node_strategies: dict[NodeMode, type] = {}
+        self._edge_strategies: dict[EdgeMode, type] = {}
+        self._query_strategies: dict[str, type] = {}
+        self._node_factories: dict[NodeMode, Callable] = {}
+        self._edge_factories: dict[EdgeMode, Callable] = {}
+        self._query_factories: dict[str, Callable] = {}
         self._lock = threading.RLock()
         
         # Register default strategies
@@ -293,7 +293,7 @@ class StrategyRegistry:
         """Get the data interchange optimized strategy factory."""
         return getattr(self, '_data_interchange_optimized_factory', None)
     
-    def register_node_strategy(self, mode: NodeMode, strategy_class: Type, 
+    def register_node_strategy(self, mode: NodeMode, strategy_class: type, 
                              factory: Optional[Callable] = None) -> None:
         """
         Register a node strategy implementation.
@@ -310,7 +310,7 @@ class StrategyRegistry:
             
             logger.debug(f"📝 Registered node strategy: {mode.name} -> {strategy_class.__name__}")
     
-    def register_edge_strategy(self, mode: EdgeMode, strategy_class: Type,
+    def register_edge_strategy(self, mode: EdgeMode, strategy_class: type,
                              factory: Optional[Callable] = None) -> None:
         """
         Register an edge strategy implementation.
@@ -327,7 +327,7 @@ class StrategyRegistry:
             
             logger.debug(f"📝 Registered edge strategy: {mode.name} -> {strategy_class.__name__}")
     
-    def register_query_strategy(self, query_type: str, strategy_class: Type,
+    def register_query_strategy(self, query_type: str, strategy_class: type,
                               factory: Optional[Callable] = None) -> None:
         """
         Register a query strategy implementation.
@@ -379,7 +379,7 @@ class StrategyRegistry:
             except Exception as e:
                 raise XWNodeError(message=f"Failed to initialize strategy '{mode.name}': {e}", cause=e)
     
-    def get_node_strategy_class(self, mode: NodeMode) -> Type:
+    def get_node_strategy_class(self, mode: NodeMode) -> type:
         """
         Get the strategy class for the specified mode.
         
@@ -459,7 +459,7 @@ class StrategyRegistry:
             except Exception as e:
                 raise XWNodeError(message=f"Failed to initialize query strategy '{query_type}': {e}", cause=e)
     
-    def get_query_strategy_class(self, query_type: str) -> Type:
+    def get_query_strategy_class(self, query_type: str) -> type:
         """
         Get the query strategy class for the specified type.
         
@@ -479,17 +479,17 @@ class StrategyRegistry:
             
             return self._query_strategies[query_type_upper]
     
-    def list_node_modes(self) -> List[NodeMode]:
+    def list_node_modes(self) -> list[NodeMode]:
         """List all registered node modes."""
         with self._lock:
             return list(self._node_strategies.keys())
     
-    def list_edge_modes(self) -> List[EdgeMode]:
+    def list_edge_modes(self) -> list[EdgeMode]:
         """List all registered edge modes."""
         with self._lock:
             return list(self._edge_strategies.keys())
     
-    def list_query_types(self) -> List[str]:
+    def list_query_types(self) -> list[str]:
         """List all registered query types."""
         with self._lock:
             return list(self._query_strategies.keys())
@@ -587,7 +587,7 @@ class StrategyRegistry:
             self._query_factories.clear()
             logger.info("🗑️ Cleared all query strategies")
     
-    def get_registry_stats(self) -> Dict[str, Any]:
+    def get_registry_stats(self) -> dict[str, Any]:
         """Get registry statistics."""
         with self._lock:
             return {
@@ -615,19 +615,19 @@ def get_registry() -> StrategyRegistry:
     return _registry
 
 
-def register_node_strategy(mode: NodeMode, strategy_class: Type, 
+def register_node_strategy(mode: NodeMode, strategy_class: type, 
                          factory: Optional[Callable] = None) -> None:
     """Register a node strategy with the global registry."""
     get_registry().register_node_strategy(mode, strategy_class, factory)
 
 
-def register_edge_strategy(mode: EdgeMode, strategy_class: Type,
+def register_edge_strategy(mode: EdgeMode, strategy_class: type,
                          factory: Optional[Callable] = None) -> None:
     """Register an edge strategy with the global registry."""
     get_registry().register_edge_strategy(mode, strategy_class, factory)
 
 
-def register_query_strategy(query_type: str, strategy_class: Type,
+def register_query_strategy(query_type: str, strategy_class: type,
                           factory: Optional[Callable] = None) -> None:
     """Register a query strategy with the global registry."""
     get_registry().register_query_strategy(query_type, strategy_class, factory)

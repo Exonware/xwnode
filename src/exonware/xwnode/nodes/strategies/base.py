@@ -14,12 +14,12 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 22-Oct-2025
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, List, Dict, Iterator, Union, AsyncIterator
+from typing import Any, Optional, Iterator, Union, AsyncIterator
 import asyncio
 
 from .contracts import NodeType, INodeStrategy
@@ -63,21 +63,41 @@ class ANodeStrategy(INodeStrategy):
             mode: The NodeMode for this strategy
             traits: NodeTrait flags for this strategy
             **options: Additional strategy-specific options
+        
+        Root cause fixed: Remove 'mode' and 'traits' from options if present
+        to prevent "multiple values for argument" errors when strategy classes
+        pass these explicitly and also include them in **options.
         """
+        # Root cause fixed: Remove 'mode' and 'traits' from options to prevent conflicts
+        # These are passed explicitly as parameters, not as part of options
+        # Performance optimization: Check if options is empty first, then check keys
+        # (dict 'in' operator is O(1) average case, faster than set creation for small dicts)
+        if options and ('mode' in options or 'traits' in options):
+            clean_options = {k: v for k, v in options.items() if k not in ('mode', 'traits')}
+        else:
+            clean_options = options  # Reuse original dict - no copy needed
+        
         self.mode = mode
         self.traits = traits
-        self.options = options
-        self._data: Dict[str, Any] = {}
+        self.options = clean_options
+        self._data: dict[str, Any] = {}
         self._size = 0
         
-        # Validate traits compatibility with mode
-        self._validate_traits()
+        # Root cause fixed: Trait validation runs on every strategy initialization
+        # Performance optimization: Make validation optional via validate_traits option
+        # Default to True for safety, but can be disabled for performance-critical paths
+        validate_traits = clean_options.get('validate_traits', True)
+        if validate_traits:
+            self._validate_traits()
     
     def _validate_traits(self) -> None:
         """
         Validate that the requested traits are compatible with this strategy.
         
         Time Complexity: O(t) where t is number of trait flags
+        
+        Performance optimization: Can be disabled via validate_traits=False option
+        in __init__ for performance-critical paths where traits are known to be valid.
         """
         supported_traits = self.get_supported_traits()
         unsupported = self.traits & ~supported_traits
@@ -393,7 +413,7 @@ class ANodeStrategy(INodeStrategy):
         return None
     
     @property
-    def metadata(self) -> Optional[Dict[str, Any]]:
+    def metadata(self) -> Optional[dict[str, Any]]:
         """Get metadata (for reference/object nodes)."""
         return None
     
@@ -404,7 +424,7 @@ class ANodeStrategy(INodeStrategy):
         return self.mode.name
     
     @property
-    def supported_traits(self) -> List[NodeTrait]:
+    def supported_traits(self) -> list[NodeTrait]:
         """Get supported traits for this strategy."""
         supported = self.get_supported_traits()
         return [trait for trait in NodeTrait if trait in supported]
@@ -413,7 +433,7 @@ class ANodeStrategy(INodeStrategy):
     # CAPABILITY-BASED OPERATIONS (Default implementations with trait checking)
     # ============================================================================
     
-    def get_ordered(self, start: Any = None, end: Any = None) -> List[tuple[Any, Any]]:
+    def get_ordered(self, start: Any = None, end: Any = None) -> list[tuple[Any, Any]]:
         """
         Get items in order (requires ORDERED trait).
         
@@ -431,7 +451,7 @@ class ANodeStrategy(INodeStrategy):
             items = [(k, v) for k, v in items if k < end]
         return items
     
-    def get_with_prefix(self, prefix: str) -> List[tuple[Any, Any]]:
+    def get_with_prefix(self, prefix: str) -> list[tuple[Any, Any]]:
         """
         Get items with given prefix (requires HIERARCHICAL trait).
         
@@ -480,7 +500,7 @@ class ANodeStrategy(INodeStrategy):
         """Get the capabilities supported by this strategy."""
         return self.traits
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get information about the backend implementation."""
         return {
             "mode": self.mode.name,
@@ -489,7 +509,7 @@ class ANodeStrategy(INodeStrategy):
             "options": self.options.copy() if self.options else {}
         }
     
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics for this strategy."""
         return {
             "size": len(self),
@@ -592,11 +612,11 @@ class ANodeMatrixStrategy(ANodeStrategy):
         """Set element at matrix position."""
         raise NotImplementedError("Subclasses must implement set_at_position")
     
-    def get_row(self, row: int) -> List[Any]:
+    def get_row(self, row: int) -> list[Any]:
         """Get entire row."""
         raise NotImplementedError("Subclasses must implement get_row")
     
-    def get_column(self, col: int) -> List[Any]:
+    def get_column(self, col: int) -> list[Any]:
         """Get entire column."""
         raise NotImplementedError("Subclasses must implement get_column")
     
@@ -655,11 +675,11 @@ class ANodeGraphStrategy(ANodeStrategy):
         """Check if edge exists."""
         raise NotImplementedError("Subclasses must implement has_edge")
     
-    def find_path(self, start: Any, end: Any) -> List[Any]:
+    def find_path(self, start: Any, end: Any) -> list[Any]:
         """Find path between nodes."""
         raise NotImplementedError("Subclasses must implement find_path")
     
-    def get_neighbors(self, node: Any) -> List[Any]:
+    def get_neighbors(self, node: Any) -> list[Any]:
         """Get neighboring nodes."""
         raise NotImplementedError("Subclasses must implement get_neighbors")
     
@@ -704,7 +724,7 @@ class ANodeTreeStrategy(ANodeGraphStrategy):
     STRATEGY_TYPE: NodeType = NodeType.TREE
     
     # Tree-specific operations (optional)
-    def traverse(self, order: str = 'inorder') -> List[Any]:
+    def traverse(self, order: str = 'inorder') -> list[Any]:
         """Traverse tree in specified order (inorder, preorder, postorder)."""
         raise NotImplementedError("Subclasses must implement traverse")
     

@@ -5,7 +5,7 @@ This module implements the TEMPORAL_EDGESET strategy for time-aware graphs
 with temporal queries and time-based edge evolution.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, NamedTuple
+from typing import Any, Iterator, Optional, NamedTuple
 from collections import defaultdict
 import time
 import bisect
@@ -53,7 +53,7 @@ class TemporalEdge:
         """Check if this edge's time interval overlaps with another."""
         return self.interval.overlaps(other.interval)
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -85,16 +85,16 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         
         # Core temporal storage
         # edges_by_time: timestamp -> list of (edge_id, 'start'/'end')
-        self._edges_by_time: Dict[float, List[Tuple[str, str]]] = defaultdict(list)
-        self._sorted_timestamps: List[float] = []  # Sorted for binary search
+        self._edges_by_time: dict[float, list[tuple[str, str]]] = defaultdict(list)
+        self._sorted_timestamps: list[float] = []  # Sorted for binary search
         
         # Edge storage
-        self._edges: Dict[str, TemporalEdge] = {}  # edge_id -> TemporalEdge
-        self._outgoing: Dict[str, Set[str]] = defaultdict(set)  # source -> set of edge_ids
-        self._incoming: Dict[str, Set[str]] = defaultdict(set) if self.is_directed else None
+        self._edges: dict[str, TemporalEdge] = {}  # edge_id -> TemporalEdge
+        self._outgoing: dict[str, set[str]] = defaultdict(set)  # source -> set of edge_ids
+        self._incoming: dict[str, set[str]] = defaultdict(set) if self.is_directed else None
         
         # Vertex management
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         self._edge_id_counter = 0
         self._current_time_cache = None
         self._cache_timestamp = 0
@@ -117,7 +117,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         if rounded_time not in self._sorted_timestamps:
             bisect.insort(self._sorted_timestamps, rounded_time)
     
-    def _get_active_edges_at(self, timestamp: float) -> Set[str]:
+    def _get_active_edges_at(self, timestamp: float) -> set[str]:
         """Get all active edge IDs at a specific timestamp."""
         # Use cache if timestamp is current
         current_time = time.time()
@@ -259,7 +259,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         return False
     
     def get_edge_data(self, source: str, target: str, 
-                     timestamp: Optional[float] = None) -> Optional[Dict[str, Any]]:
+                     timestamp: Optional[float] = None) -> Optional[dict[str, Any]]:
         """Get edge data at specific time."""
         if timestamp is None:
             timestamp = time.time()
@@ -391,7 +391,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
     # TEMPORAL-SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_edge_history(self, source: str, target: str) -> List[Dict[str, Any]]:
+    def get_edge_history(self, source: str, target: str) -> list[dict[str, Any]]:
         """Get complete temporal history of edges between two vertices."""
         history = []
         
@@ -403,7 +403,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         history.sort(key=lambda x: x['start_time'])
         return history
     
-    def get_graph_at_time(self, timestamp: float) -> Dict[str, Any]:
+    def get_graph_at_time(self, timestamp: float) -> dict[str, Any]:
         """Get complete graph state at specific timestamp."""
         active_edges = self._get_active_edges_at(timestamp)
         
@@ -419,7 +419,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         
         return graph_state
     
-    def range_query_time(self, start_time: float, end_time: float) -> Iterator[Dict[str, Any]]:
+    def range_query_time(self, start_time: float, end_time: float) -> Iterator[dict[str, Any]]:
         """
         Query edges within time range.
         
@@ -433,7 +433,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         for edge_data in edges:
             yield edge_data
     
-    def get_time_range_edges(self, start_time: float, end_time: float) -> List[Dict[str, Any]]:
+    def get_time_range_edges(self, start_time: float, end_time: float) -> list[dict[str, Any]]:
         """Get all edges that were active during the time range."""
         result = []
         
@@ -447,7 +447,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         return result
     
     def get_temporal_path(self, source: str, target: str, 
-                         start_time: float, max_duration: float) -> Optional[List[str]]:
+                         start_time: float, max_duration: float) -> Optional[list[str]]:
         """Find temporal path respecting edge timing constraints."""
         # Simple temporal BFS
         queue = [(source, start_time, [source])]
@@ -514,7 +514,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         self._current_time_cache = None
         return len(to_remove)
     
-    def get_temporal_statistics(self) -> Dict[str, Any]:
+    def get_temporal_statistics(self) -> dict[str, Any]:
         """Get statistics about temporal aspects."""
         current_time = time.time()
         active_count = len(self._get_active_edges_at(current_time))
@@ -544,7 +544,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'TEMPORAL_EDGESET',
@@ -562,7 +562,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_temporal_statistics()
         

@@ -5,7 +5,7 @@ This module implements the ARRAY_LIST strategy for sequential data
 with fast indexed access.
 """
 
-from typing import Any, Iterator, List, Union, Dict, Optional, AsyncIterator
+from typing import Any, Iterator, Union, Optional, AsyncIterator
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -29,7 +29,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
         Space Complexity: O(1)
         """
         super().__init__(NodeMode.ARRAY_LIST, traits, **options)
-        self._data: List[Any] = []
+        self._data: list[Any] = []
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
@@ -111,7 +111,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
         """
         return self._size == 0
     
-    def to_native(self) -> List[Any]:
+    def to_native(self) -> list[Any]:
         """
         Convert to native Python list.
         
@@ -369,7 +369,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
             self._size -= 1
         return value
     
-    def extend(self, values: List[Any]) -> None:
+    def extend(self, values: list[Any]) -> None:
         """
         Extend with multiple values.
         
@@ -383,7 +383,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -402,7 +402,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         

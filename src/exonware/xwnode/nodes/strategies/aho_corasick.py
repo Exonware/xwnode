@@ -5,8 +5,9 @@ This module implements the AHO_CORASICK strategy for efficient multi-pattern
 string matching using the Aho-Corasick automaton algorithm.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import deque, defaultdict
+from collections.abc import Callable
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -21,10 +22,10 @@ class ACNode:
         
         Time Complexity: O(1)
         """
-        self.children: Dict[str, 'ACNode'] = {}
+        self.children: dict[str, 'ACNode'] = {}
         self.failure: Optional['ACNode'] = None
-        self.output: Set[str] = set()  # Patterns that end at this node
-        self.pattern_indices: Set[int] = set()  # Indices of patterns
+        self.output: set[str] = set()  # Patterns that end at this node
+        self.pattern_indices: set[int] = set()  # Indices of patterns
         self.depth = 0
     
     def is_leaf(self) -> bool:
@@ -62,18 +63,18 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         
         # Core automaton
         self._root = ACNode()
-        self._patterns: List[str] = []
-        self._pattern_to_index: Dict[str, int] = {}
+        self._patterns: list[str] = []
+        self._pattern_to_index: dict[str, int] = {}
         self._automaton_built = False
         
         # Key-value mapping for compatibility
-        self._values: Dict[str, Any] = {}
+        self._values: dict[str, Any] = {}
         self._size = 0
         
         # Statistics
         self._total_nodes = 1  # Root node
         self._max_depth = 0
-        self._search_cache: Dict[str, List[Tuple[str, int]]] = {}
+        self._search_cache: dict[str, list[tuple[str, int]]] = {}
     
     def get_supported_traits(self) -> NodeTrait:
         """
@@ -359,7 +360,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -442,7 +443,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         """
         self.put(pattern, metadata)
     
-    def search_text(self, text: str) -> List[Tuple[str, int, Any]]:
+    def search_text(self, text: str) -> list[tuple[str, int, Any]]:
         """
         Search for all pattern matches in text.
         
@@ -486,7 +487,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         
         return matches
     
-    def find_all_matches(self, text: str) -> Dict[str, List[int]]:
+    def find_all_matches(self, text: str) -> dict[str, list[int]]:
         """
         Find all positions where each pattern matches.
         
@@ -502,7 +503,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         # Convert to regular dict
         return dict(result)
     
-    def count_matches(self, text: str) -> Dict[str, int]:
+    def count_matches(self, text: str) -> dict[str, int]:
         """
         Count occurrences of each pattern.
         
@@ -540,7 +541,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         
         return False
     
-    def find_longest_match(self, text: str) -> Optional[Tuple[str, int, int]]:
+    def find_longest_match(self, text: str) -> Optional[tuple[str, int, int]]:
         """
         Find the longest pattern match in text.
         
@@ -555,7 +556,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         pattern, start_pos, _ = longest
         return pattern, start_pos, len(pattern)
     
-    def replace_patterns(self, text: str, replacement_func: callable = None) -> str:
+    def replace_patterns(self, text: str, replacement_func: Callable[[str], str] | None = None) -> str:
         """
         Replace all pattern matches in text.
         
@@ -581,7 +582,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         
         return result
     
-    def get_pattern_statistics(self) -> Dict[str, Any]:
+    def get_pattern_statistics(self) -> dict[str, Any]:
         """
         Get statistics about patterns and automaton.
         
@@ -617,7 +618,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         """
         self._build_automaton()
         
-        def _validate_node(node: ACNode, visited: Set[ACNode]) -> bool:
+        def _validate_node(node: ACNode, visited: set[ACNode]) -> bool:
             if node in visited:
                 return True
             
@@ -636,7 +637,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         
         return _validate_node(self._root, set())
     
-    def export_automaton(self) -> Dict[str, Any]:
+    def export_automaton(self) -> dict[str, Any]:
         """
         Export automaton structure for analysis.
         
@@ -645,7 +646,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         """
         self._build_automaton()
         
-        def _export_node(node: ACNode, node_id: int) -> Dict[str, Any]:
+        def _export_node(node: ACNode, node_id: int) -> dict[str, Any]:
             return {
                 'id': node_id,
                 'depth': node.depth,
@@ -677,7 +678,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -699,7 +700,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         

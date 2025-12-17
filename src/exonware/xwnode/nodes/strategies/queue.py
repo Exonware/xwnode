@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -220,11 +220,11 @@ class QueueStrategy(ANodeLinearStrategy):
         """Clear all items from the queue."""
         self._queue.clear()
     
-    def to_list(self) -> List[Any]:
+    def to_list(self) -> list[Any]:
         """Convert queue to list (front to back)."""
         return list(self._queue)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert queue to native dictionary format."""
         return {str(i): val for i, val in enumerate(self._queue)}
 
@@ -272,7 +272,7 @@ class QueueStrategy(ANodeLinearStrategy):
         for item in self.items():
             yield item
     
-    def from_native(self, data: Dict[str, Any]) -> None:
+    def from_native(self, data: dict[str, Any]) -> None:
         """Load queue from native dictionary format."""
         self._queue.clear()
         # Sort by keys to maintain order
@@ -311,7 +311,7 @@ class QueueStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'QUEUE',
@@ -328,7 +328,7 @@ class QueueStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': len(self._queue),

@@ -6,7 +6,7 @@ This module implements the SPLAY_TREE strategy for self-adjusting binary
 search trees with amortized O(log n) performance.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -310,7 +310,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         self._total_deletions += 1
         return True
     
-    def _inorder_traversal(self, node: Optional[SplayTreeNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[SplayTreeNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -363,7 +363,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -429,7 +429,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
     
@@ -441,7 +441,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
     # SPLAY TREE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_min(self) -> Optional[Tuple[str, Any]]:
+    def get_min(self) -> Optional[tuple[str, Any]]:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
@@ -454,7 +454,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         self._splay(current)
         return (current.key, current.value)
     
-    def get_max(self) -> Optional[Tuple[str, Any]]:
+    def get_max(self) -> Optional[tuple[str, Any]]:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
@@ -484,7 +484,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         """Get the value of the root node."""
         return self._root.value if self._root else None
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         return {
             'size': self._size,

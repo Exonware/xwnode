@@ -6,7 +6,7 @@ in the strategy system.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Iterator, Union, Set
+from typing import Any, Optional, Iterator, Union
 from ...defs import EdgeMode, EdgeTrait
 
 
@@ -23,8 +23,8 @@ class AEdgeStrategy(ABC):
         self.mode = mode
         self.traits = traits
         self.options = options
-        self._edges: Dict[tuple[Any, Any], Dict[str, Any]] = {}
-        self._vertices: Set[Any] = set()
+        self._edges: dict[tuple[Any, Any], dict[str, Any]] = {}
+        self._vertices: set[Any] = set()
         self._edge_count = 0
         
         # Validate traits compatibility with mode
@@ -124,7 +124,7 @@ class AEdgeStrategy(ABC):
         pass
     
     @abstractmethod
-    def edges(self) -> Iterator[tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """
         Get all edges in the graph.
         
@@ -220,7 +220,7 @@ class AEdgeStrategy(ABC):
         if (u, v) in self._edges:
             self._edges[(u, v)][property_name] = value
     
-    def get_spatial_edges(self, bounds: Dict[str, Any]) -> List[tuple[Any, Any, Dict[str, Any]]]:
+    def get_spatial_edges(self, bounds: dict[str, Any]) -> list[tuple[Any, Any, dict[str, Any]]]:
         """
         Get edges within spatial bounds (requires SPATIAL trait).
         
@@ -240,7 +240,7 @@ class AEdgeStrategy(ABC):
         # This would be overridden by actual spatial implementations
         return list(self.edges())
     
-    def get_temporal_edges(self, start_time: Any, end_time: Any) -> List[tuple[Any, Any, Dict[str, Any]]]:
+    def get_temporal_edges(self, start_time: Any, end_time: Any) -> list[tuple[Any, Any, dict[str, Any]]]:
         """
         Get edges within temporal range (requires TEMPORAL trait).
         
@@ -265,7 +265,7 @@ class AEdgeStrategy(ABC):
                 result.append((u, v, props))
         return result
     
-    def add_hyperedge(self, vertices: List[Any], **properties) -> str:
+    def add_hyperedge(self, vertices: list[Any], **properties) -> str:
         """
         Add a hyperedge connecting multiple vertices (requires HYPER trait).
         
@@ -333,7 +333,7 @@ class AEdgeStrategy(ABC):
         """Get the capabilities supported by this strategy."""
         return self.traits
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get information about the backend implementation."""
         return {
             "mode": self.mode.name,
@@ -344,7 +344,7 @@ class AEdgeStrategy(ABC):
             "options": self.options.copy()
         }
     
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics for this strategy."""
         return {
             "vertices": self.vertex_count(),

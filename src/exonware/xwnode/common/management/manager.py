@@ -12,13 +12,13 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
-from typing import Dict, Optional, Any, Union, List
+from typing import Optional, Any, Union
 from exonware.xwsystem import get_logger
 
 logger = get_logger(__name__)
@@ -128,7 +128,9 @@ class StrategyManager:
                     error=False
                 )
                 
-                logger.info(f"🎯 Materialized node strategy: {actual_mode.name} (flyweight optimized)")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(20):  # INFO level
+                    logger.info(f"🎯 Materialized node strategy: {actual_mode.name} (flyweight optimized)")
                 
             except XWNodeStrategyError as e:
                 logger.error(f"❌ Requested node strategy '{actual_mode.name}' is not available")
@@ -158,10 +160,12 @@ class StrategyManager:
         if self._edge_strategy is not None:
             return
         
-        # If edge mode is None (disabled for DATA_INTERCHANGE_OPTIMIZED), skip materialization
-        if self._edge_mode_requested is None:
-            logger.debug("🚫 Edge strategy disabled (None mode)")
-            return
+            # If edge mode is None (disabled for DATA_INTERCHANGE_OPTIMIZED), skip materialization
+            if self._edge_mode_requested is None:
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug("🚫 Edge strategy disabled (None mode)")
+                return
         
         with self._lock:
             if self._edge_strategy is not None:  # Double-check
@@ -182,7 +186,9 @@ class StrategyManager:
                 )
                 self._edge_locked = True
                 
-                logger.info(f"🎯 Materialized edge strategy: {actual_mode.name}")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(20):  # INFO level
+                    logger.info(f"🎯 Materialized edge strategy: {actual_mode.name}")
                 
             except XWNodeStrategyError as e:
                 logger.error(f"❌ Requested edge strategy '{actual_mode.name}' is not available")
@@ -212,8 +218,10 @@ class StrategyManager:
                 # Get recommendation
                 recommendation = self._detector.recommend_node_strategy(profile, **self._options)
                 
-                logger.debug(f"🤖 Pattern-based recommendation: {recommendation.mode.name} "
-                           f"(confidence: {recommendation.confidence:.2f})")
+                # Performance optimization: Guard logging with isEnabledFor check
+                if logger.isEnabledFor(10):  # DEBUG level
+                    logger.debug(f"🤖 Pattern-based recommendation: {recommendation.mode.name} "
+                               f"(confidence: {recommendation.confidence:.2f})")
                 
                 return recommendation.mode
                 
@@ -479,12 +487,12 @@ class StrategyManager:
         else:
             self._edge_metrics["operations"] += 1
     
-    def get_performance_profile(self, is_node: bool = True) -> Dict[str, Any]:
+    def get_performance_profile(self, is_node: bool = True) -> dict[str, Any]:
         """Get performance profile for current strategy."""
         strategy_id = f"{self._get_current_node_mode().name if is_node else self._get_current_edge_mode().name}"
         return self._advisor.get_performance_profile(strategy_id, is_node)
     
-    def get_enhanced_performance_summary(self) -> Dict[str, Any]:
+    def get_enhanced_performance_summary(self) -> dict[str, Any]:
         """Get comprehensive performance summary with all metrics."""
         return {
             'flyweight_stats': self._flyweight.get_stats(),
@@ -493,7 +501,7 @@ class StrategyManager:
             'strategy_info': self.get_strategy_info()
         }
     
-    def get_optimization_recommendations(self) -> Dict[str, Any]:
+    def get_optimization_recommendations(self) -> dict[str, Any]:
         """Get optimization recommendations for current strategies."""
         recommendations = {}
         
@@ -531,7 +539,7 @@ class StrategyManager:
         """Analyze data patterns for strategy optimization."""
         return self._detector.analyze_data(data, **context)
     
-    def get_flyweight_stats(self) -> Dict[str, Any]:
+    def get_flyweight_stats(self) -> dict[str, Any]:
         """Get flyweight pattern statistics."""
         return self._flyweight.get_stats()
     
@@ -540,11 +548,11 @@ class StrategyManager:
         self._flyweight.clear_cache()
         logger.info("🧹 Cleared flyweight cache")
     
-    def get_monitor_history(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_monitor_history(self, limit: int = 100) -> list[dict[str, Any]]:
         """Get recent operation history from monitor."""
         return self._monitor.get_operation_history(limit)
     
-    def get_strategy_info(self) -> Dict[str, Any]:
+    def get_strategy_info(self) -> dict[str, Any]:
         """Get comprehensive strategy information."""
         with self._lock:
             return {
@@ -669,7 +677,7 @@ class StrategyManager:
     # PERFORMANCE MONITORING
     # ============================================================================
     
-    def get_performance_report(self) -> Dict[str, Any]:
+    def get_performance_report(self) -> dict[str, Any]:
         """Get basic performance report for this strategy manager."""
         node_mode = self._get_current_node_mode()
         edge_mode = self._get_current_edge_mode()
@@ -721,7 +729,7 @@ class StrategyManager:
                 message="Node strategy materialization failed but no exception was raised"
             )
     
-    def create_reference_strategy(self, uri: str, reference_type: str = "generic", metadata: Optional[Dict[str, Any]] = None) -> Any:
+    def create_reference_strategy(self, uri: str, reference_type: str = "generic", metadata: Optional[dict[str, Any]] = None) -> Any:
         """Create a reference strategy."""
         self._materialize_node_strategy()
         
@@ -744,7 +752,7 @@ class StrategyManager:
                 message="Node strategy materialization failed but no exception was raised"
             )
     
-    def create_object_strategy(self, uri: str, object_type: str, mime_type: Optional[str] = None, size: Optional[int] = None, metadata: Optional[Dict[str, Any]] = None) -> Any:
+    def create_object_strategy(self, uri: str, object_type: str, mime_type: Optional[str] = None, size: Optional[int] = None, metadata: Optional[dict[str, Any]] = None) -> Any:
         """Create an object strategy."""
         self._materialize_node_strategy()
         

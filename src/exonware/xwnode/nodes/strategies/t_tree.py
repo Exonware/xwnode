@@ -6,11 +6,11 @@ T-Tree Node Strategy Implementation
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, AsyncIterator, Dict, Iterator, Optional
+from typing import Any, AsyncIterator, Iterator, Optional
 from collections import OrderedDict
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -93,7 +93,7 @@ class TTreeStrategy(ANodeStrategy):
         """Time Complexity: O(1)"""
         return len(self._data)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Time Complexity: O(n)"""
         return dict(self._data)
 
@@ -141,7 +141,7 @@ class TTreeStrategy(ANodeStrategy):
         for item in self.items():
             yield item
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Time Complexity: O(1)"""
         return {
             **create_basic_backend_info('T-Tree', 'Hybrid AVL tree + array nodes'),

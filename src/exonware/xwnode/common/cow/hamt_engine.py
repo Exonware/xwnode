@@ -12,11 +12,11 @@ Based on Phil Bagwell's Ideal Hash Trees (2001) and Clojure's PersistentHashMap.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 26-Oct-2025
 """
 
-from typing import Any, Optional, Dict, List, Tuple
+from typing import Any, Optional
 from .base import ACOWStrategy
 
 
@@ -41,7 +41,7 @@ class HAMTNode:
     
     __slots__ = ('bitmap', 'children')
     
-    def __init__(self, bitmap: int = 0, children: Optional[List[Any]] = None):
+    def __init__(self, bitmap: int = 0, children: Optional[list[Any]] = None):
         """
         Initialize HAMT node.
         
@@ -179,7 +179,7 @@ class HAMTEngine(ACOWStrategy):
         self._root = root if root is not None else HAMTNode()
         self._version = version
         # Cache for performance
-        self._path_cache: Optional[Dict[str, Any]] = None
+        self._path_cache: Optional[dict[str, Any]] = None
     
     def get_value(self, path: str, default: Any = None) -> Any:
         """
@@ -224,7 +224,7 @@ class HAMTEngine(ACOWStrategy):
         result = self._traverse_get(self._root, path, 0)
         return result is not None
     
-    def get_paths(self) -> Dict[str, Any]:
+    def get_paths(self) -> dict[str, Any]:
         """
         Get all paths (cached for performance).
         
@@ -375,7 +375,7 @@ class HAMTEngine(ACOWStrategy):
         
         return node.set_child(bit_pos, new_child)
     
-    def _collect_paths(self, node: HAMTNode, prefix: str, result: Dict[str, Any]) -> None:
+    def _collect_paths(self, node: HAMTNode, prefix: str, result: dict[str, Any]) -> None:
         """
         Collect all paths from HAMT tree.
         

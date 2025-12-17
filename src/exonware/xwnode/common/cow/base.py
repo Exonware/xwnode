@@ -9,12 +9,12 @@ Provides base implementations for Copy-on-Write components.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 26-Oct-2025
 """
 
 from abc import abstractmethod
-from typing import Any, Optional, Iterator, Dict
+from typing import Any, Optional, Iterator
 
 from .contracts import ICOWNode, ICOWStrategy
 
@@ -71,7 +71,7 @@ class ACOWNode(ICOWNode):
         return iter(self._strategy.get_paths().keys())
     
     @staticmethod
-    def _reconstruct_native(paths: Dict[str, Any]) -> Any:
+    def _reconstruct_native(paths: dict[str, Any]) -> Any:
         """
         Reconstruct native Python data from flat paths.
         
@@ -137,7 +137,7 @@ class ACOWStrategy(ICOWStrategy):
     Provides common functionality for different COW implementations.
     """
     
-    def __init__(self, paths: Optional[Dict[str, Any]] = None, version: int = 0):
+    def __init__(self, paths: Optional[dict[str, Any]] = None, version: int = 0):
         """
         Initialize with paths and version.
         
@@ -156,7 +156,7 @@ class ACOWStrategy(ICOWStrategy):
         """Check if path exists."""
         return path in self._paths
     
-    def get_paths(self) -> Dict[str, Any]:
+    def get_paths(self) -> dict[str, Any]:
         """Get all paths."""
         return self._paths
     

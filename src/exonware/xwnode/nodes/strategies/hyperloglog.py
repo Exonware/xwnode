@@ -5,7 +5,7 @@ This module implements the HYPERLOGLOG strategy for probabilistic
 cardinality estimation with logarithmic space complexity.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Set, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -43,11 +43,11 @@ class HyperLogLogStrategy(ANodeStrategy):
         self.alpha = self._calculate_alpha()
         
         # Core storage: buckets store maximum leading zeros + 1
-        self._buckets: List[int] = [0] * self.num_buckets
+        self._buckets: list[int] = [0] * self.num_buckets
         
         # Key-value mapping for compatibility
-        self._values: Dict[str, Any] = {}
-        self._items_added: Set[str] = set()
+        self._values: dict[str, Any] = {}
+        self._items_added: set[str] = set()
         self._size = 0
         
         # Performance tracking
@@ -201,7 +201,7 @@ class HyperLogLogStrategy(ANodeStrategy):
         """Get number of unique items tracked."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         result = {}
 
@@ -336,7 +336,7 @@ class HyperLogLogStrategy(ANodeStrategy):
         card_intersection = card_a + card_b - card_union
         return max(0.0, card_intersection / card_union)
     
-    def get_bucket_statistics(self) -> Dict[str, Any]:
+    def get_bucket_statistics(self) -> dict[str, Any]:
         """Get statistics about bucket distribution."""
         non_zero = sum(1 for bucket in self._buckets if bucket > 0)
         max_bucket = max(self._buckets) if self._buckets else 0
@@ -356,7 +356,7 @@ class HyperLogLogStrategy(ANodeStrategy):
             'bucket_distribution': bucket_dist
         }
     
-    def get_error_bounds(self) -> Dict[str, float]:
+    def get_error_bounds(self) -> dict[str, float]:
         """Get theoretical error bounds."""
         # Standard error: 1.04 / sqrt(m)
         standard_error = 1.04 / math.sqrt(self.num_buckets)
@@ -373,7 +373,7 @@ class HyperLogLogStrategy(ANodeStrategy):
             'confidence': 0.95  # 95% confidence interval
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive HyperLogLog statistics."""
         bucket_stats = self.get_bucket_statistics()
         error_bounds = self.get_error_bounds()
@@ -391,7 +391,7 @@ class HyperLogLogStrategy(ANodeStrategy):
             'memory_usage': self.num_buckets * 1  # 1 byte per bucket
         }
     
-    def export_state(self) -> Dict[str, Any]:
+    def export_state(self) -> dict[str, Any]:
         """Export HyperLogLog state."""
         return {
             'precision': self.precision,
@@ -404,7 +404,7 @@ class HyperLogLogStrategy(ANodeStrategy):
             }
         }
     
-    def import_state(self, state: Dict[str, Any]) -> None:
+    def import_state(self, state: dict[str, Any]) -> None:
         """Import HyperLogLog state."""
         self.precision = state['precision']
         self.num_buckets = state['num_buckets']
@@ -421,7 +421,7 @@ class HyperLogLogStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'HYPERLOGLOG',
@@ -439,7 +439,7 @@ class HyperLogLogStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         error_bounds = stats['error_bounds']

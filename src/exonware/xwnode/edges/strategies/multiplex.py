@@ -9,11 +9,11 @@ with per-layer edge semantics and cross-layer analysis.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -88,7 +88,7 @@ class MultiplexStrategy(AEdgeStrategy):
     """
     
     def __init__(self, traits: EdgeTrait = EdgeTrait.NONE,
-                 default_layers: Optional[List[str]] = None, **options):
+                 default_layers: Optional[list[str]] = None, **options):
         """
         Initialize multiplex strategy.
         
@@ -100,18 +100,18 @@ class MultiplexStrategy(AEdgeStrategy):
         super().__init__(EdgeMode.MULTIPLEX, traits, **options)
         
         # Layer storage: layers[layer_name][source] = {target: properties}
-        self._layers: Dict[str, Dict[str, Dict[str, Dict[str, Any]]]] = defaultdict(
+        self._layers: dict[str, dict[str, dict[str, dict[str, Any]]]] = defaultdict(
             lambda: defaultdict(dict)
         )
         
         # Inter-layer edges (optional)
-        self._inter_layer_edges: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
+        self._inter_layer_edges: dict[tuple[str, str, str], dict[str, Any]] = {}
         
         # Vertices
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         
         # Per-layer edge counts
-        self._layer_edge_counts: Dict[str, int] = defaultdict(int)
+        self._layer_edge_counts: dict[str, int] = defaultdict(int)
         
         # Initialize default layers
         if default_layers:
@@ -162,7 +162,7 @@ class MultiplexStrategy(AEdgeStrategy):
         
         return True
     
-    def get_layers(self) -> List[str]:
+    def get_layers(self) -> list[str]:
         """Get list of layer names."""
         return list(self._layers.keys())
     
@@ -171,7 +171,7 @@ class MultiplexStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """
         Add edge to layer.
@@ -272,7 +272,7 @@ class MultiplexStrategy(AEdgeStrategy):
         return source in self._layers[layer_name] and target in self._layers[layer_name][source]
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """
         Get neighbors from specific layer or all layers.
         
@@ -306,7 +306,7 @@ class MultiplexStrategy(AEdgeStrategy):
         """Get total degree across all layers."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over all edges with properties."""
         for edge_dict in self.get_edges():
             source = edge_dict['source']
@@ -318,7 +318,7 @@ class MultiplexStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """
         Get edges from specific layer or all layers.
         
@@ -349,7 +349,7 @@ class MultiplexStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get edge data from all layers."""
         for layer_name, layer in self._layers.items():
             if source in layer and target in layer[source]:
@@ -363,7 +363,7 @@ class MultiplexStrategy(AEdgeStrategy):
     # CROSS-LAYER OPERATIONS
     # ============================================================================
     
-    def get_common_neighbors(self, node: str, layers: List[str]) -> Set[str]:
+    def get_common_neighbors(self, node: str, layers: list[str]) -> set[str]:
         """
         Get neighbors common across multiple layers.
         
@@ -386,7 +386,7 @@ class MultiplexStrategy(AEdgeStrategy):
         
         return common
     
-    def get_layer_statistics(self, layer_name: str) -> Dict[str, Any]:
+    def get_layer_statistics(self, layer_name: str) -> dict[str, Any]:
         """
         Get statistics for specific layer.
         
@@ -414,7 +414,7 @@ class MultiplexStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path in layer or aggregate."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -441,7 +441,7 @@ class MultiplexStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles."""
         return []
     
@@ -476,11 +476,11 @@ class MultiplexStrategy(AEdgeStrategy):
         """Get total number of edges across all layers."""
         return self._edge_count
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges from all layers."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -492,7 +492,7 @@ class MultiplexStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get multiplex graph statistics."""
         layer_stats = {
             layer: self.get_layer_statistics(layer)
@@ -518,11 +518,11 @@ class MultiplexStrategy(AEdgeStrategy):
         return "MULTIPLEX"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.MULTI, EdgeTrait.DIRECTED, EdgeTrait.SPARSE]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'Multiplex/Layered Edges',

@@ -5,7 +5,7 @@ This module implements seamless migration between different node and edge
 strategies while preserving data integrity.
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple, Type
+from typing import Any, Optional
 from enum import Enum
 import threading
 import time
@@ -26,8 +26,8 @@ class MigrationPlan:
         self.strategy_type = strategy_type  # 'node' or 'edge'
         self.cost_estimate = 0
         self.data_loss_risk = 'none'  # 'none', 'low', 'medium', 'high'
-        self.warnings: List[str] = []
-        self.required_operations: List[str] = []
+        self.warnings: list[str] = []
+        self.required_operations: list[str] = []
         self.estimated_time_ms = 0
         
     def add_warning(self, warning: str) -> None:
@@ -54,7 +54,7 @@ class StrategyMigrator:
     def __init__(self):
         self._registry = get_registry()
         self._migration_lock = threading.RLock()
-        self._migration_history: List[Dict[str, Any]] = []
+        self._migration_history: list[dict[str, Any]] = []
     
     # ============================================================================
     # MIGRATION PLANNING
@@ -374,11 +374,11 @@ class StrategyMigrator:
     # MIGRATION HISTORY AND ANALYSIS
     # ============================================================================
     
-    def get_migration_history(self) -> List[Dict[str, Any]]:
+    def get_migration_history(self) -> list[dict[str, Any]]:
         """Get the history of all migrations."""
         return self._migration_history.copy()
     
-    def get_migration_stats(self) -> Dict[str, Any]:
+    def get_migration_stats(self) -> dict[str, Any]:
         """Get statistics about migrations."""
         if not self._migration_history:
             return {'total_migrations': 0}

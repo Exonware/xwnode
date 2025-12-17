@@ -173,14 +173,37 @@ Examples:
     if results_file.exists():
         try:
             from openpyxl import load_workbook
-            wb = load_workbook(results_file)
-            ws = wb.active
-            row_count = ws.max_row - 1  # Subtract header row
-            wb.close()
+            
+            # Root cause fixed: Large Excel files (220K+ rows) can cause openpyxl parsing errors
+            # Use read_only mode for large files to avoid memory issues and parsing errors
+            # Performance optimization: read_only=True loads file without parsing all cells
+            file_size_mb = results_file.stat().st_size / (1024 * 1024)
+            
+            if file_size_mb > 10:  # Files larger than 10MB
+                # Use read_only mode for large files
+                wb = load_workbook(results_file, read_only=True, data_only=True)
+                ws = wb.active
+                # In read_only mode, we need to count rows differently
+                row_count = sum(1 for _ in ws.iter_rows(min_row=2))  # Skip header
+                wb.close()
+            else:
+                # Normal mode for smaller files
+                wb = load_workbook(results_file, data_only=True)
+                ws = wb.active
+                row_count = ws.max_row - 1  # Subtract header row
+                wb.close()
+            
             print(f"\n[OK] Results file exists: {results_file}")
+            print(f"  File size: {file_size_mb:.1f}MB")
             print(f"  Total records in Excel: {row_count:,}")
         except Exception as e:
+            # Root cause fixed: Better error handling for Excel file reading
+            # Don't fail the entire benchmark run if Excel reading fails
             print(f"\n[WARNING] Results file exists but couldn't read: {e}")
+            print(f"  File: {results_file}")
+            print(f"  File size: {results_file.stat().st_size / (1024 * 1024):.1f}MB")
+            print(f"  This is a non-critical error - benchmarks completed successfully.")
+            print(f"  You can manually open the Excel file to view results.")
     else:
         print(f"\n[WARNING] Results file not found: {results_file}")
         print("   Individual benchmarks should have created this file.")

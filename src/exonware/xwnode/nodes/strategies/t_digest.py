@@ -9,11 +9,11 @@ Implements Ted Dunning's T-Digest algorithm for accurate percentiles.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 from threading import RLock
 import math
 
@@ -77,7 +77,7 @@ class TDigestStrategy(ANodeStrategy):
             **kwargs
         )
         self._compression = compression
-        self._centroids: List[_Centroid] = []
+        self._centroids: list[_Centroid] = []
         self._total_weight = 0.0
         self._min = float('inf')
         self._max = float('-inf')
@@ -233,7 +233,7 @@ class TDigestStrategy(ANodeStrategy):
         with self._lock:
             return self._total_weight
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get T-Digest statistics"""
         with self._lock:
             return {

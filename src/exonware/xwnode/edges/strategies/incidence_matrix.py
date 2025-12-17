@@ -9,11 +9,11 @@ graph representation and queries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -30,7 +30,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
     - Standard in graph theory textbooks and research
     
     WHY this implementation:
-    - Dict[node][edge] = {1, -1, 0} for directed graphs
+    - dict[node][edge] = {1, -1, 0} for directed graphs
     - Separate edge storage for O(1) property access
     - 1/-1 encoding enables incidence-based algorithms
     - Multi-edge support through unique edge IDs
@@ -76,13 +76,13 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
         self.is_directed = options.get('directed', True)
         
         # Incidence matrix: node -> edge_id -> value {1, -1, 0}
-        self._matrix: Dict[str, Dict[str, int]] = defaultdict(dict)
+        self._matrix: dict[str, dict[str, int]] = defaultdict(dict)
         
         # Edge storage: edge_id -> {source, target, properties}
-        self._edges: Dict[str, Dict[str, Any]] = {}
+        self._edges: dict[str, dict[str, Any]] = {}
         
         # Node set
-        self._nodes: Set[str] = set()
+        self._nodes: set[str] = set()
         
         # Edge counter
         self._edge_id_counter = 0
@@ -167,7 +167,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
         """Get neighbors of node (required by base class)."""
         return iter(self.get_neighbors(node, "outgoing"))
     
-    def get_neighbors(self, node: str, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, direction: str = "outgoing") -> list[str]:
         """Get neighbors of node."""
         neighbors = set()
         
@@ -196,7 +196,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
             return 0
         return len(self._matrix[node])
     
-    def edges(self) -> Iterator[tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterator over all edges."""
         for edge_data in self._edges.values():
             yield (edge_data['source'], edge_data['target'], edge_data['properties'])
@@ -213,11 +213,11 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
     # EDGE-CENTRIC OPERATIONS
     # ============================================================================
     
-    def get_edge_by_id(self, edge_id: str) -> Optional[Dict[str, Any]]:
+    def get_edge_by_id(self, edge_id: str) -> Optional[dict[str, Any]]:
         """Get edge data by edge ID (O(1) operation)."""
         return self._edges.get(edge_id)
     
-    def get_incident_edges(self, node: str) -> List[Dict[str, Any]]:
+    def get_incident_edges(self, node: str) -> list[dict[str, Any]]:
         """Get all edges incident to node."""
         if node not in self._matrix:
             return []
@@ -225,11 +225,11 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
         edge_ids = self._matrix[node].keys()
         return [self._edges[eid] for eid in edge_ids]
     
-    def get_all_edge_ids(self) -> List[str]:
+    def get_all_edge_ids(self) -> list[str]:
         """Get list of all edge IDs."""
         return list(self._edges.keys())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'edges': list(self._edges.values()),
@@ -237,7 +237,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
             'directed': self.is_directed
         }
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'Incidence Matrix',

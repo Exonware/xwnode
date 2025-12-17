@@ -5,7 +5,7 @@ This module implements the BITSET_DYNAMIC strategy for dynamic bitset
 operations with automatic resizing and bit manipulation capabilities.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -37,7 +37,7 @@ boolean data processing.
         self.auto_trim = options.get('auto_trim', True)
         
         # Core dynamic bitset
-        self._bits: List[int] = [0] * ((self.initial_capacity + 63) // 64)  # 64-bit chunks
+        self._bits: list[int] = [0] * ((self.initial_capacity + 63) // 64)  # 64-bit chunks
         self._capacity = len(self._bits) * 64
         self._size = 0  # Number of set bits
         self._highest_bit = -1  # Highest set bit index
@@ -325,7 +325,7 @@ boolean data processing.
         """
         return self._size
     
-    def to_native(self) -> Dict[str, bool]:
+    def to_native(self) -> dict[str, bool]:
         """
         Convert to native Python dict of set bits.
         
@@ -415,7 +415,7 @@ boolean data processing.
         self._set_bit(abs(index), not current_value)
         self._trim_if_needed()
     
-    def get_set_bits(self) -> List[int]:
+    def get_set_bits(self) -> list[int]:
         """Get list of all set bit indices."""
         result = []
         for i in range(self._highest_bit + 1):
@@ -423,7 +423,7 @@ boolean data processing.
                 result.append(i)
         return result
     
-    def get_clear_bits(self, max_index: Optional[int] = None) -> List[int]:
+    def get_clear_bits(self, max_index: Optional[int] = None) -> list[int]:
         """Get list of clear bit indices up to max_index."""
         if max_index is None:
             max_index = self._highest_bit + 10  # Some reasonable limit
@@ -566,7 +566,7 @@ boolean data processing.
             if bit_char == '1':
                 self._set_bit(i, True)
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive bitset statistics."""
         chunks_used = (self._highest_bit // 64) + 1 if self._highest_bit >= 0 else 0
         
@@ -590,7 +590,7 @@ boolean data processing.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'BITSET_DYNAMIC',
@@ -611,7 +611,7 @@ boolean data processing.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         

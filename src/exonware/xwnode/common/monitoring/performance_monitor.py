@@ -9,13 +9,14 @@ This enables data-driven strategy selection and performance tuning.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
-from typing import Any, Dict, List, Optional, Tuple, Union
+import os
+from typing import Any, Optional, Union
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
@@ -70,7 +71,7 @@ class StrategyProfile:
     mode: Union[NodeMode, EdgeMode]
     total_operations: int = 0
     total_time: float = 0.0
-    operations: Dict[OperationType, OperationMetrics] = field(default_factory=dict)
+    operations: dict[OperationType, OperationMetrics] = field(default_factory=dict)
     memory_usage: float = 0.0
     error_rate: float = 0.0
     last_used: float = 0.0
@@ -102,17 +103,31 @@ class PerformanceRecommendation:
 class StrategyPerformanceMonitor:
     """
     Monitors strategy performance and provides optimization recommendations.
+    
+    Performance optimization: Can be disabled via enabled=False to eliminate
+    all monitoring overhead in production hot paths.
     """
     
-    def __init__(self, history_size: int = 1000):
+    def __init__(self, history_size: int = 1000, enabled: bool = True):
         """
         Initialize performance monitor.
         
         Args:
             history_size: Maximum number of operations to keep in history
+            enabled: If False, monitoring is disabled (zero overhead)
+        
+        Root cause fixed: Performance monitoring was always enabled, causing
+        significant overhead (locks, dict operations, list appends, logging)
+        on every operation. Now can be disabled for maximum performance.
+        
+        Priority alignment:
+        - Performance (#4): Zero overhead when disabled
+        - Usability (#2): Optional feature, doesn't break existing code
+        - Maintainability (#3): Clean flag-based control
         """
+        self._enabled = enabled
         self._history_size = history_size
-        self._profiles: Dict[str, StrategyProfile] = {}
+        self._profiles: dict[str, StrategyProfile] = {}
         self._operation_history: deque = deque(maxlen=history_size)
         self._lock = threading.RLock()
         self._stats = {
@@ -141,7 +156,14 @@ class StrategyPerformanceMonitor:
             memory_usage: Memory usage in bytes
             error: Whether the operation resulted in an error
             **metadata: Additional metadata
+        
+        Performance optimization: Early exit when disabled for zero overhead.
         """
+        # Root cause fixed: Early exit when disabled eliminates all overhead
+        # (lock acquisition, dict operations, list appends, logging)
+        if not self._enabled:
+            return
+        
         with self._lock:
             # Get or create strategy profile
             if strategy_id not in self._profiles:
@@ -194,7 +216,7 @@ class StrategyPerformanceMonitor:
         with self._lock:
             return self._profiles.get(strategy_id)
     
-    def get_top_performing_strategies(self, limit: int = 5) -> List[Tuple[str, StrategyProfile]]:
+    def get_top_performing_strategies(self, limit: int = 5) -> list[tuple[str, StrategyProfile]]:
         """
         Get top performing strategies by average operation time.
         
@@ -216,7 +238,7 @@ class StrategyPerformanceMonitor:
             
             return [(sid, prof) for sid, prof, _ in strategies[:limit]]
     
-    def get_underperforming_strategies(self, threshold: float = 0.1) -> List[Tuple[str, StrategyProfile]]:
+    def get_underperforming_strategies(self, threshold: float = 0.1) -> list[tuple[str, StrategyProfile]]:
         """
         Get strategies that are underperforming.
         
@@ -234,7 +256,7 @@ class StrategyPerformanceMonitor:
             
             return underperforming
     
-    def generate_recommendations(self, strategy_id: str) -> List[PerformanceRecommendation]:
+    def generate_recommendations(self, strategy_id: str) -> list[PerformanceRecommendation]:
         """
         Generate performance recommendations for a strategy.
         
@@ -304,7 +326,7 @@ class StrategyPerformanceMonitor:
         self._stats['recommendations_given'] += len(recommendations)
         return recommendations
     
-    def get_performance_summary(self) -> Dict[str, Any]:
+    def get_performance_summary(self) -> dict[str, Any]:
         """
         Get overall performance summary.
         
@@ -350,7 +372,7 @@ class StrategyPerformanceMonitor:
                 ]
             }
     
-    def get_operation_history(self, limit: int = 100) -> List[Dict[str, Any]]:
+    def get_operation_history(self, limit: int = 100) -> list[dict[str, Any]]:
         """
         Get recent operation history.
         
@@ -397,10 +419,10 @@ class StrategyPerformanceMonitor:
         alternatives = {
             NodeMode.HASH_MAP: "ARRAY_LIST or TREE_GRAPH_HYBRID",
             NodeMode.ARRAY_LIST: "HASH_MAP or TREE_GRAPH_HYBRID",
-            NodeMode.TREE_GRAPH_HYBRID: "HASH_MAP or DATA_OPTIMIZED",
-            NodeMode.DATA_OPTIMIZED: "HASH_MAP or TREE_GRAPH_HYBRID",
-            EdgeMode.ADJ_LIST: "ADJACENCY_MATRIX",
-            EdgeMode.ADJACENCY_MATRIX: "adjacency_list"
+            NodeMode.TREE_GRAPH_HYBRID: "HASH_MAP or DATA_INTERCHANGE_OPTIMIZED",
+            NodeMode.DATA_INTERCHANGE_OPTIMIZED: "HASH_MAP or TREE_GRAPH_HYBRID",
+            EdgeMode.ADJ_LIST: "ADJ_MATRIX",
+            EdgeMode.ADJ_MATRIX: "ADJ_LIST"
         }
         
         return alternatives.get(current_mode, "Unknown alternative")
@@ -410,10 +432,10 @@ class StrategyPerformanceMonitor:
         memory_efficient = {
             NodeMode.HASH_MAP: "ARRAY_LIST (for sequential data)",
             NodeMode.ARRAY_LIST: "HASH_MAP (for sparse data)",
-            NodeMode.TREE_GRAPH_HYBRID: "DATA_OPTIMIZED (for large datasets)",
-            NodeMode.DATA_OPTIMIZED: "HASH_MAP (for small datasets)",
-            EdgeMode.ADJ_LIST: "ADJACENCY_MATRIX (for dense graphs)",
-            EdgeMode.ADJACENCY_MATRIX: "adjacency_list (for sparse graphs)"
+            NodeMode.TREE_GRAPH_HYBRID: "DATA_INTERCHANGE_OPTIMIZED (for large datasets)",
+            NodeMode.DATA_INTERCHANGE_OPTIMIZED: "HASH_MAP (for small datasets)",
+            EdgeMode.ADJ_LIST: "ADJ_MATRIX (for dense graphs)",
+            EdgeMode.ADJ_MATRIX: "ADJ_LIST (for sparse graphs)"
         }
         
         return memory_efficient.get(current_mode, "Consider data structure optimization")
@@ -428,6 +450,9 @@ def get_monitor() -> StrategyPerformanceMonitor:
     """
     Get the global performance monitor instance.
     
+    Performance optimization: Can be disabled via XWNODE_DISABLE_PERF_MONITOR=1
+    environment variable for maximum performance in production.
+    
     Returns:
         Global StrategyPerformanceMonitor instance
     """
@@ -436,8 +461,14 @@ def get_monitor() -> StrategyPerformanceMonitor:
     if _monitor_instance is None:
         with _monitor_lock:
             if _monitor_instance is None:
-                _monitor_instance = StrategyPerformanceMonitor()
-                logger.info("📊 Initialized global strategy performance monitor")
+                # Root cause fixed: Allow disabling via environment variable
+                # for maximum performance in production benchmarks
+                enabled = os.environ.get('XWNODE_DISABLE_PERF_MONITOR', '0') != '1'
+                _monitor_instance = StrategyPerformanceMonitor(enabled=enabled)
+                if enabled:
+                    logger.info("📊 Initialized global strategy performance monitor")
+                else:
+                    logger.debug("📊 Performance monitoring disabled (XWNODE_DISABLE_PERF_MONITOR=1)")
     
     return _monitor_instance
 
@@ -464,7 +495,7 @@ def record_operation(
     get_monitor().record_operation(strategy_id, operation, duration, memory_usage, error, **metadata)
 
 
-def get_performance_summary() -> Dict[str, Any]:
+def get_performance_summary() -> dict[str, Any]:
     """
     Get performance summary from global monitor.
     
@@ -474,7 +505,7 @@ def get_performance_summary() -> Dict[str, Any]:
     return get_monitor().get_performance_summary()
 
 
-def get_strategy_recommendations(strategy_id: str) -> List[PerformanceRecommendation]:
+def get_strategy_recommendations(strategy_id: str) -> list[PerformanceRecommendation]:
     """
     Get recommendations for a strategy from global monitor.
     

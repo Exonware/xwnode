@@ -6,13 +6,13 @@ Graph manager contracts and enums.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
 from enum import Enum
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Any
+from typing import Optional, Any
 
 
 class GraphOptimization(Enum):
@@ -64,7 +64,7 @@ class IGraphManager(ABC):
         entity_id: str,
         relationship_type: Optional[str] = None,
         limit: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get outgoing relationships for entity."""
         pass
     
@@ -74,7 +74,7 @@ class IGraphManager(ABC):
         entity_id: str,
         relationship_type: Optional[str] = None,
         limit: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get incoming relationships for entity."""
         pass
     
@@ -89,7 +89,7 @@ class IGraphManager(ABC):
         pass
     
     @abstractmethod
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get graph statistics."""
         pass
     

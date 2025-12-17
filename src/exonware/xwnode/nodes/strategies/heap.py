@@ -5,7 +5,7 @@ This module implements the HEAP strategy for priority queue operations.
 """
 
 import heapq
-from typing import Any, Iterator, List, Optional, Dict, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -151,7 +151,7 @@ urable min/max behavior.
         """
         return self._size == 0
     
-    def to_native(self) -> List[Any]:
+    def to_native(self) -> list[Any]:
         """
         Convert to native Python list.
         
@@ -207,7 +207,7 @@ urable min/max behavior.
     # TREE STRATEGY METHODS
     # ============================================================================
     
-    def traverse(self, order: str = 'inorder') -> List[Any]:
+    def traverse(self, order: str = 'inorder') -> list[Any]:
         """Traverse heap in priority order."""
         return self.to_native()
     
@@ -308,7 +308,7 @@ urable min/max behavior.
         # Heap is already heapified
         pass
     
-    def nlargest(self, n: int) -> List[Any]:
+    def nlargest(self, n: int) -> list[Any]:
         """Get n largest items."""
         if self._is_max_heap:
             # For max heap, get first n items
@@ -329,7 +329,7 @@ urable min/max behavior.
             # For min heap, this is not efficient
             return []
     
-    def nsmallest(self, n: int) -> List[Any]:
+    def nsmallest(self, n: int) -> list[Any]:
         """Get n smallest items."""
         if not self._is_max_heap:
             # For min heap, get first n items
@@ -373,7 +373,7 @@ urable min/max behavior.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'HEAP',
@@ -387,7 +387,7 @@ urable min/max behavior.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': self._size,

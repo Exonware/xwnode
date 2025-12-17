@@ -5,7 +5,7 @@ This module implements the HYPEREDGE_SET strategy for hypergraphs where
 edges can connect multiple vertices simultaneously.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, FrozenSet
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 import uuid
 import time
@@ -16,7 +16,7 @@ from ...defs import EdgeMode, EdgeTrait
 class HyperEdge:
     """Represents a hyperedge connecting multiple vertices."""
     
-    def __init__(self, edge_id: str, vertices: Set[str], **properties):
+    def __init__(self, edge_id: str, vertices: set[str], **properties):
         self.edge_id = edge_id
         self.vertices = frozenset(vertices)  # Immutable set of vertices
         self.properties = properties.copy()
@@ -31,7 +31,7 @@ class HyperEdge:
         """Check if vertex is in this hyperedge."""
         return vertex in self.vertices
     
-    def get_other_vertices(self, vertex: str) -> Set[str]:
+    def get_other_vertices(self, vertex: str) -> set[str]:
         """Get all other vertices in this hyperedge."""
         if vertex not in self.vertices:
             return set()
@@ -45,11 +45,11 @@ class HyperEdge:
         """Check if all vertices are contained in another hyperedge."""
         return self.vertices.issubset(other.vertices)
     
-    def union_with(self, other: 'HyperEdge') -> Set[str]:
+    def union_with(self, other: 'HyperEdge') -> set[str]:
         """Get union of vertices with another hyperedge."""
         return set(self.vertices | other.vertices)
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -89,12 +89,12 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         self.track_statistics = options.get('track_statistics', True)
         
         # Core storage
-        self._hyperedges: Dict[str, HyperEdge] = {}  # edge_id -> HyperEdge
-        self._vertex_to_edges: Dict[str, Set[str]] = defaultdict(set)  # vertex -> set of edge_ids
-        self._vertices: Set[str] = set()
+        self._hyperedges: dict[str, HyperEdge] = {}  # edge_id -> HyperEdge
+        self._vertex_to_edges: dict[str, set[str]] = defaultdict(set)  # vertex -> set of edge_ids
+        self._vertices: set[str] = set()
         
         # Size-based indexing for efficient queries
-        self._edges_by_size: Dict[int, Set[str]] = defaultdict(set) if self.enable_indexing else None
+        self._edges_by_size: dict[int, set[str]] = defaultdict(set) if self.enable_indexing else None
         
         # Statistics
         self._edge_count = 0
@@ -163,7 +163,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         """Add a binary hyperedge (compatibility method)."""
         return self.add_hyperedge([source, target], **properties)
     
-    def add_hyperedge(self, vertices: List[str], edge_id: Optional[str] = None, **properties) -> str:
+    def add_hyperedge(self, vertices: list[str], edge_id: Optional[str] = None, **properties) -> str:
         """Add a hyperedge connecting multiple vertices."""
         # Validate input
         vertex_set = set(vertices)
@@ -229,7 +229,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return False
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get data for binary edge (compatibility method)."""
         # Find first hyperedge containing both vertices
         if source not in self._vertex_to_edges:
@@ -242,7 +242,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return None
     
-    def get_hyperedge_data(self, edge_id: str) -> Optional[Dict[str, Any]]:
+    def get_hyperedge_data(self, edge_id: str) -> Optional[dict[str, Any]]:
         """Get data for a specific hyperedge."""
         hyperedge = self._hyperedges.get(edge_id)
         return hyperedge.to_dict() if hyperedge else None
@@ -338,7 +338,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
     # HYPERGRAPH-SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_hyperedges_containing(self, vertex: str) -> List[HyperEdge]:
+    def get_hyperedges_containing(self, vertex: str) -> list[HyperEdge]:
         """Get all hyperedges containing a specific vertex."""
         result = []
         for edge_id in self._vertex_to_edges.get(vertex, set()):
@@ -347,7 +347,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
                 result.append(hyperedge)
         return result
     
-    def get_hyperedges_by_size(self, size: int) -> List[HyperEdge]:
+    def get_hyperedges_by_size(self, size: int) -> list[HyperEdge]:
         """Get all hyperedges of specific size."""
         if self._edges_by_size is None or size not in self._edges_by_size:
             return []
@@ -377,7 +377,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return subgraph
     
-    def find_maximal_cliques(self) -> List[Set[str]]:
+    def find_maximal_cliques(self) -> list[set[str]]:
         """Find maximal cliques in the hypergraph."""
         # Simple algorithm - can be optimized
         cliques = []
@@ -411,7 +411,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return cliques
     
-    def get_incidence_matrix(self) -> Tuple[List[str], List[str], List[List[int]]]:
+    def get_incidence_matrix(self) -> tuple[list[str], list[str], list[list[int]]]:
         """Get incidence matrix representation."""
         vertices = sorted(self._vertices)
         edge_ids = sorted(self._hyperedges.keys())
@@ -424,7 +424,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return vertices, edge_ids, matrix
     
-    def get_vertex_neighborhoods(self, vertex: str, radius: int = 1) -> Set[str]:
+    def get_vertex_neighborhoods(self, vertex: str, radius: int = 1) -> set[str]:
         """Get all vertices within given radius from vertex."""
         if radius <= 0 or vertex not in self._vertices:
             return set()
@@ -445,7 +445,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         
         return all_neighbors
     
-    def hypergraph_statistics(self) -> Dict[str, Any]:
+    def hypergraph_statistics(self) -> dict[str, Any]:
         """Get comprehensive hypergraph statistics."""
         if not self._hyperedges:
             return {
@@ -475,7 +475,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         stats = self.hypergraph_statistics()
         
@@ -495,7 +495,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.hypergraph_statistics()
         

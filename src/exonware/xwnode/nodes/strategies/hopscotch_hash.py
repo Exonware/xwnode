@@ -9,11 +9,11 @@ open addressing with bounded neighborhood search.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -133,7 +133,7 @@ class HopscotchHashStrategy(ANodeTreeStrategy):
         
         # Ensure capacity is power of 2
         self.capacity = self._next_power_of_2(max(initial_capacity, self.HOP_RANGE))
-        self._table: List[HopscotchEntry] = [HopscotchEntry() for _ in range(self.capacity)]
+        self._table: list[HopscotchEntry] = [HopscotchEntry() for _ in range(self.capacity)]
         self._size = 0
     
     def _next_power_of_2(self, n: int) -> int:
@@ -463,7 +463,7 @@ class HopscotchHashStrategy(ANodeTreeStrategy):
         """
         return self._size / self.capacity if self.capacity > 0 else 0.0
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get hash table statistics.
         

@@ -9,11 +9,11 @@ overlap queries using augmented balanced trees.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -204,7 +204,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         
         self._root: Optional[IntervalNode] = None
         self._size = 0
-        self._intervals: Dict[Any, Interval] = {}  # Key -> Interval mapping
+        self._intervals: dict[Any, Interval] = {}  # Key -> Interval mapping
     
     def get_supported_traits(self) -> NodeTrait:
         """Get supported traits."""
@@ -452,7 +452,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
     # INTERVAL QUERY OPERATIONS
     # ============================================================================
     
-    def find_overlaps(self, query: Tuple[float, float]) -> List[Interval]:
+    def find_overlaps(self, query: tuple[float, float]) -> list[Interval]:
         """
         Find all intervals that overlap with query interval.
         
@@ -484,7 +484,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         return result
     
     def _search_overlaps(self, node: Optional[IntervalNode], 
-                        query: Interval, result: List[Interval]) -> None:
+                        query: Interval, result: list[Interval]) -> None:
         """
         Recursively search for overlapping intervals.
         
@@ -513,7 +513,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         if node.right and node.interval.low <= query.high:
             self._search_overlaps(node.right, query, result)
     
-    def find_containing_point(self, point: float) -> List[Interval]:
+    def find_containing_point(self, point: float) -> list[Interval]:
         """
         Find all intervals containing a point.
         
@@ -526,7 +526,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         query = Interval(point, point)
         return self.find_overlaps(query)
     
-    def find_contained_in(self, interval: Tuple[float, float]) -> List[Interval]:
+    def find_contained_in(self, interval: tuple[float, float]) -> list[Interval]:
         """
         Find all intervals contained within query interval.
         
@@ -546,7 +546,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         return result
     
     def _search_contained(self, node: Optional[IntervalNode],
-                         query: Interval, result: List[Interval]) -> None:
+                         query: Interval, result: list[Interval]) -> None:
         """Search for intervals contained in query."""
         if node is None:
             return
@@ -692,7 +692,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get tree statistics.
         
@@ -764,7 +764,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         Create interval tree from data.
         
         Args:
-            data: Dict of intervals or list of tuples
+            data: dict of intervals or list of tuples
             
         Returns:
             New IntervalTreeStrategy instance

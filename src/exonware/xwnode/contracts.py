@@ -12,7 +12,7 @@ Strategy interfaces are in their respective strategy folders:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 
 Version History:
@@ -22,36 +22,55 @@ Version History:
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Iterator, Optional, Dict, List, Union, Callable
+from typing import Any, Iterator, Optional, Union, TypeVar
+from collections.abc import Callable
 
 # Import enums from defs.py
 from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
+
+# Type variables for generic types
+# T: Node value type - the type of data stored in nodes (e.g., dict[str, int], User, Any)
+# P: Edge property type - the type of values in edge property dictionaries (e.g., str, dict[str, Any], Any)
+T = TypeVar('T')  # Value type for nodes
+P = TypeVar('P')  # Property type for edges
 
 
 # ==============================================================================
 # NODE FACADE INTERFACE
 # ==============================================================================
 
-class INode(ABC):
+class INode[T](ABC):
     """
-    Node interface - defines the contract for all node implementations.
+    Node interface with generic type parameter - defines the contract for all node implementations.
+    
+    Generic type parameter:
+        T: The type of the native value returned by to_native() and value property.
+           Defaults to Any for backward compatibility with heterogeneous data.
     
     This is the top-level interface that all node classes must implement.
     Follows GUIDELINES_DEV.md naming: INode (interface) → ANode (abstract) → XWNode (concrete).
+    
+    Examples:
+        # Flexible usage (default - Any type)
+        node: INode[Any] = XWNode.from_native({"key": "value"})
+        
+        # Type-safe usage for known structures
+        user_data: INode[dict[str, Any]] = XWNode.from_native({"name": "Alice", "age": 30})
+        user_list: INode[list[dict[str, Any]]] = XWNode.from_native([{"name": "Alice"}])
     """
     
     @abstractmethod
-    def get(self, path: str, default: Any = None) -> Optional['INode']:
+    def get(self, path: str, default: Any = None) -> Optional['INode[T]']:
         """Get a node by path."""
         pass
     
     @abstractmethod
-    def set(self, path: str, value: Any, in_place: bool = True) -> 'INode':
+    def set(self, path: str, value: Any, in_place: bool = True) -> 'INode[T]':
         """Set a value at path."""
         pass
     
     @abstractmethod
-    def delete(self, path: str, in_place: bool = True) -> 'INode':
+    def delete(self, path: str, in_place: bool = True) -> 'INode[T]':
         """Delete a node at path."""
         pass
     
@@ -61,17 +80,17 @@ class INode(ABC):
         pass
     
     @abstractmethod
-    def find(self, path: str, in_place: bool = False) -> Optional['INode']:
+    def find(self, path: str, in_place: bool = False) -> Optional['INode[T]']:
         """Find a node by path."""
         pass
     
     @abstractmethod
-    def to_native(self) -> Any:
-        """Convert to native Python object."""
+    def to_native(self) -> T:
+        """Convert to native Python object of type T."""
         pass
     
     @abstractmethod
-    def copy(self) -> 'INode':
+    def copy(self) -> 'INode[T]':
         """Create a deep copy."""
         pass
     
@@ -81,27 +100,27 @@ class INode(ABC):
         pass
     
     @abstractmethod
-    def flatten(self, separator: str = ".") -> Dict[str, Any]:
+    def flatten(self, separator: str = ".") -> dict[str, Any]:
         """Flatten to dictionary."""
         pass
     
     @abstractmethod
-    def merge(self, other: 'INode', strategy: str = "replace") -> 'INode':
+    def merge(self, other: 'INode[T]', strategy: str = "replace") -> 'INode[T]':
         """Merge with another node."""
         pass
     
     @abstractmethod
-    def diff(self, other: 'INode') -> Dict[str, Any]:
+    def diff(self, other: 'INode[T]') -> dict[str, Any]:
         """Get differences with another node."""
         pass
     
     @abstractmethod
-    def transform(self, transformer: callable) -> 'INode':
+    def transform(self, transformer: Callable[[Any], Any]) -> 'INode[T]':
         """Transform using a function."""
         pass
     
     @abstractmethod
-    def select(self, *paths: str) -> Dict[str, 'INode']:
+    def select(self, *paths: str) -> dict[str, 'INode[T]']:
         """Select multiple paths."""
         pass
     
@@ -112,13 +131,13 @@ class INode(ABC):
         pass
     
     @abstractmethod
-    def __iter__(self) -> Iterator['INode']:
+    def __iter__(self) -> Iterator['INode[T]']:
         """Iterate over children."""
         pass
     
     @abstractmethod
-    def __getitem__(self, key: Union[str, int]) -> 'INode':
-        """Get child by key or index."""
+    def __getitem__(self, key: Union[str, int, slice]) -> 'INode[T]':
+        """Get child by key, index, or slice."""
         pass
     
     @abstractmethod
@@ -158,8 +177,8 @@ class INode(ABC):
     
     @property
     @abstractmethod
-    def value(self) -> Any:
-        """Get the value of this node."""
+    def value(self) -> T:
+        """Get the value of this node, typed as T."""
         pass
 
 
@@ -167,19 +186,31 @@ class INode(ABC):
 # EDGE FACADE INTERFACE
 # ==============================================================================
 
-class IEdge(ABC):
+class IEdge[P](ABC):
     """
-    Edge interface - defines the contract for all edge implementations.
+    Edge interface with generic type parameter - defines the contract for all edge implementations.
+    
+    Generic type parameter:
+        P: The type of values in edge property dictionaries.
+           Defaults to Any for backward compatibility with mixed property types.
     
     This is the top-level interface that all edge classes must implement.
     Follows GUIDELINES_DEV.md naming: IEdge (interface) → AEdge (abstract) → XWEdge (concrete).
+    
+    Examples:
+        # Flexible usage (default - Any property type)
+        edge: IEdge[Any] = XWEdge()
+        
+        # Type-safe usage for known property structures
+        typed_edge: IEdge[str] = XWEdge()  # Properties are dict[str, str]
+        complex_edge: IEdge[dict[str, Any]] = XWEdge()  # Nested properties
     """
     
     @abstractmethod
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, P]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
-        """Add an edge between source and target with advanced properties."""
+        """Add an edge between source and target with typed properties."""
         pass
     
     @abstractmethod
@@ -193,27 +224,27 @@ class IEdge(ABC):
         pass
     
     @abstractmethod
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> List[str]:
+    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         pass
     
     @abstractmethod
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         pass
     
     @abstractmethod
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        """Get edge data/properties."""
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, P]]:
+        """Get edge data/properties, typed as dict[str, P]."""
         pass
     
     @abstractmethod
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path between nodes."""
         pass
     
     @abstractmethod
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         pass
     
@@ -234,7 +265,7 @@ class IEdge(ABC):
         pass
     
     @abstractmethod
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over edges with full metadata."""
         pass
     
@@ -244,6 +275,6 @@ class IEdge(ABC):
         pass
     
     @abstractmethod
-    def copy(self) -> 'IEdge':
+    def copy(self) -> 'IEdge[P]':
         """Create a deep copy."""
         pass

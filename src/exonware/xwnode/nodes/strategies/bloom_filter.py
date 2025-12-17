@@ -14,11 +14,11 @@ probabilistic membership testing with no false negatives.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -58,7 +58,7 @@ class BloomFilterStrategy(ANodeStrategy):
         
         # Core storage
         self._bit_array = [0] * self.bit_array_size
-        self._values: Dict[str, Any] = {}  # Store actual values for retrieval
+        self._values: dict[str, Any] = {}  # Store actual values for retrieval
         self._size = 0
         self._insertions = 0
         
@@ -104,7 +104,7 @@ class BloomFilterStrategy(ANodeStrategy):
         k = (m / n) * math.log(2)
         return max(1, int(round(k)))
     
-    def _generate_hash_seeds(self) -> List[int]:
+    def _generate_hash_seeds(self) -> list[int]:
         """
         Generate seeds for multiple hash functions.
         
@@ -127,7 +127,7 @@ class BloomFilterStrategy(ANodeStrategy):
         hash_int = int(hash_obj.hexdigest(), 16)
         return hash_int % self.bit_array_size
     
-    def _get_bit_positions(self, element: str) -> List[int]:
+    def _get_bit_positions(self, element: str) -> list[int]:
         """
         Get all bit positions for an element.
         
@@ -264,7 +264,7 @@ class BloomFilterStrategy(ANodeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict of stored values.
         
@@ -423,11 +423,11 @@ class BloomFilterStrategy(ANodeStrategy):
         estimated_size = estimated_ratio * min(self._insertions, other._insertions)
         return max(0.0, estimated_size)
     
-    def export_bit_array(self) -> List[int]:
+    def export_bit_array(self) -> list[int]:
         """Export the bit array for analysis or storage."""
         return self._bit_array.copy()
     
-    def import_bit_array(self, bit_array: List[int]) -> None:
+    def import_bit_array(self, bit_array: list[int]) -> None:
         """Import a bit array (must match current size)."""
         if len(bit_array) != self.bit_array_size:
             raise ValueError(f"Bit array size mismatch: expected {self.bit_array_size}, got {len(bit_array)}")
@@ -453,7 +453,7 @@ class BloomFilterStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'BLOOM_FILTER',
@@ -472,7 +472,7 @@ class BloomFilterStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         current_fp_rate = self.get_false_positive_probability()
         capacity_util = self.get_capacity_utilization()

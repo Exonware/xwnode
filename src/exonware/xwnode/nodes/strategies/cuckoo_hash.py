@@ -5,7 +5,7 @@ This module implements the CUCKOO_HASH strategy for guaranteed O(1)
 worst-case lookup time with efficient space utilization.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import hashlib
 import random
 from .base import ANodeStrategy
@@ -36,8 +36,8 @@ class CuckooHashStrategy(ANodeStrategy):
         
         # Two hash tables
         self.capacity = self.initial_capacity
-        self._table1: List[Optional[Tuple[str, Any]]] = [None] * self.capacity
-        self._table2: List[Optional[Tuple[str, Any]]] = [None] * self.capacity
+        self._table1: list[Optional[tuple[str, Any]]] = [None] * self.capacity
+        self._table2: list[Optional[tuple[str, Any]]] = [None] * self.capacity
         
         # Hash function parameters
         self._hash1_a = random.randint(1, 1000000)
@@ -309,7 +309,7 @@ class CuckooHashStrategy(ANodeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -383,7 +383,7 @@ class CuckooHashStrategy(ANodeStrategy):
     # CUCKOO HASH SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_table_utilization(self) -> Tuple[float, float]:
+    def get_table_utilization(self) -> tuple[float, float]:
         """Get utilization of each table."""
         table1_used = sum(1 for entry in self._table1 if entry is not None)
         table2_used = sum(1 for entry in self._table2 if entry is not None)
@@ -397,7 +397,7 @@ class CuckooHashStrategy(ANodeStrategy):
         """Get maximum probe distance (always 1 for cuckoo hashing)."""
         return 1  # Cuckoo hashing guarantees O(1) lookup
     
-    def get_eviction_stats(self) -> Dict[str, int]:
+    def get_eviction_stats(self) -> dict[str, int]:
         """Get statistics about evictions (would need tracking in real implementation)."""
         return {
             'total_evictions': 0,  # Would track in real implementation
@@ -423,7 +423,7 @@ class CuckooHashStrategy(ANodeStrategy):
         for key, value in current_items:
             self.put(key, value)
     
-    def analyze_distribution(self) -> Dict[str, Any]:
+    def analyze_distribution(self) -> dict[str, Any]:
         """Analyze the distribution of elements across tables."""
         table1_count = sum(1 for entry in self._table1 if entry is not None)
         table2_count = sum(1 for entry in self._table2 if entry is not None)
@@ -466,7 +466,7 @@ class CuckooHashStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         util1, util2 = self.get_table_utilization()
         
@@ -488,7 +488,7 @@ class CuckooHashStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         overall_load = self._size / (2 * self.capacity) if self.capacity > 0 else 0
         util1, util2 = self.get_table_utilization()

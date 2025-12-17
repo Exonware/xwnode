@@ -4,7 +4,7 @@ exonware package - Enterprise-grade Python framework ecosystem
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 2025-01-03
 
 This is a namespace package allowing multiple exonware subpackages

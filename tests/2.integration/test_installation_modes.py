@@ -42,16 +42,10 @@ def test_xwsystem_integration():
     assert data_from_json == data
 
 def test_lazy_import():
-    """Test lazy import functionality."""
-    from xwlazy.lazy import xwimport
-    
-    # Test importing a third-party module (if lazy mode is enabled)
-    # Standard library modules like json don't need xwimport
+    """Test regular import functionality (xwlazy removed)."""
+    # Test that regular imports work normally
     import json
     assert json is not None
-    
-    # Test xwimport exists and is callable
-    assert callable(xwimport)
 
 def test_installation_modes_standalone():
     """Test script that can be run standalone to verify installation modes."""
@@ -60,7 +54,7 @@ def test_installation_modes_standalone():
     tests = [
         ("Default Installation", test_default_installation),
         ("XWSystem Integration", test_xwsystem_integration),
-        ("Lazy Import", test_lazy_import),
+        ("Regular Import", test_lazy_import),
     ]
     
     results = []

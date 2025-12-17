@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, Set, Tuple, Callable, AsyncIterator
+from typing import Any, Iterator, Optional, Callable, AsyncIterator
 from collections import defaultdict, deque
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
@@ -92,8 +92,8 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         )
         
         self._is_directed: bool = options.get('is_directed', True)
-        self._adj_list: Dict[str, List[Tuple[str, float]]] = defaultdict(list)
-        self._nodes: Dict[str, Any] = {}
+        self._adj_list: dict[str, list[tuple[str, float]]] = defaultdict(list)
+        self._nodes: dict[str, Any] = {}
         self._edge_count = 0
         
         # Initialize vertices if provided
@@ -235,7 +235,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         
         return True
     
-    def get_neighbors(self, vertex: str) -> List[str]:
+    def get_neighbors(self, vertex: str) -> list[str]:
         """
         Get all neighbors of a vertex.
         
@@ -248,7 +248,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
             return []
         return [neighbor for neighbor, _ in self._adj_list[vertex]]
     
-    def get_neighbors_with_weights(self, vertex: str) -> List[Tuple[str, float]]:
+    def get_neighbors_with_weights(self, vertex: str) -> list[tuple[str, float]]:
         """
         Get all neighbors with edge weights.
         
@@ -335,7 +335,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # GRAPH TRAVERSAL ALGORITHMS (Production-Grade)
     # ============================================================================
     
-    def dfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> List[str]:
+    def dfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> list[str]:
         """
         Depth-First Search from start vertex.
         
@@ -368,7 +368,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         dfs_recursive(start)
         return result
     
-    def bfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> List[str]:
+    def bfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> list[str]:
         """
         Breadth-First Search from start vertex.
         
@@ -405,7 +405,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         
         return result
     
-    def find_path(self, start: str, end: str) -> List[str]:
+    def find_path(self, start: str, end: str) -> list[str]:
         """
         Find path between two vertices using BFS.
         
@@ -494,7 +494,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
             
             return False
     
-    def topological_sort(self) -> Optional[List[str]]:
+    def topological_sort(self) -> Optional[list[str]]:
         """
         Perform topological sort on the graph.
         
@@ -530,7 +530,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         
         return list(reversed(stack))
     
-    def get_connected_components(self) -> List[Set[str]]:
+    def get_connected_components(self) -> list[set[str]]:
         """
         Get all connected components in the graph.
         
@@ -690,7 +690,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         """
         return self._edge_count
     
-    def vertices(self) -> List[str]:
+    def vertices(self) -> list[str]:
         """
         Get all vertices.
         
@@ -698,7 +698,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         """
         return list(self._nodes.keys())
     
-    def edges(self) -> List[Tuple[str, str, float]]:
+    def edges(self) -> list[tuple[str, str, float]]:
         """
         Get all edges as (from, to, weight) tuples.
         
@@ -710,7 +710,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
                 result.append((from_vertex, to_vertex, weight))
         return result
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert graph to native dictionary format.
         
@@ -829,7 +829,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -855,7 +855,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         

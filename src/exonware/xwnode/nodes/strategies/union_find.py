@@ -4,7 +4,7 @@ Union-Find Node Strategy Implementation
 This module implements the UNION_FIND strategy for efficient set operations.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -15,9 +15,9 @@ class UnionFind:
     
     def __init__(self):
         """Time Complexity: O(1)"""
-        self.parent: Dict[str, str] = {}
-        self.rank: Dict[str, int] = {}
-        self.values: Dict[str, Any] = {}
+        self.parent: dict[str, str] = {}
+        self.rank: dict[str, int] = {}
+        self.values: dict[str, Any] = {}
     
     def make_set(self, x: str, value: Any = None) -> None:
         """
@@ -74,7 +74,7 @@ class UnionFind:
         """
         return self.find(x) == self.find(y)
     
-    def get_set_members(self, x: str) -> Set[str]:
+    def get_set_members(self, x: str) -> set[str]:
         """
         Get all members of the set containing x.
         
@@ -83,7 +83,7 @@ class UnionFind:
         root = self.find(x)
         return {member for member in self.parent.keys() if self.find(member) == root}
     
-    def get_all_sets(self) -> List[Set[str]]:
+    def get_all_sets(self) -> list[set[str]]:
         """
         Get all disjoint sets.
         
@@ -199,7 +199,7 @@ ations on disjoint sets.
         """
         return self._size == 0
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dictionary.
         
@@ -298,7 +298,7 @@ ations on disjoint sets.
         
         return self._union_find.connected(str_from, str_to)
     
-    def find_path(self, start: Any, end: Any) -> List[Any]:
+    def find_path(self, start: Any, end: Any) -> list[Any]:
         """
         Find path between nodes.
         
@@ -308,7 +308,7 @@ ations on disjoint sets.
             return [start, end]
         return []
     
-    def get_neighbors(self, node: Any) -> List[Any]:
+    def get_neighbors(self, node: Any) -> list[Any]:
         """
         Get neighboring nodes (all nodes in same set).
         
@@ -369,11 +369,11 @@ ations on disjoint sets.
         """Check if element1 and element2 are in the same set."""
         return self._union_find.connected(element1, element2)
     
-    def get_set_members(self, element: str) -> Set[str]:
+    def get_set_members(self, element: str) -> set[str]:
         """Get all members of the set containing element."""
         return self._union_find.get_set_members(element)
     
-    def get_all_sets(self) -> List[Set[str]]:
+    def get_all_sets(self) -> list[set[str]]:
         """Get all disjoint sets."""
         return self._union_find.get_all_sets()
     
@@ -406,7 +406,7 @@ ations on disjoint sets.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'UNION_FIND',
@@ -420,7 +420,7 @@ ations on disjoint sets.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'elements': self._size,

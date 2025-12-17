@@ -13,11 +13,11 @@ trees with structural sharing and lock-free concurrency.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import time
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
@@ -86,7 +86,7 @@ sharing unchanged nodes.
         self._version = 0
         
         # Version management
-        self._version_history: List[Tuple[int, PersistentTreeNode, float]] = []  # version, root, timestamp
+        self._version_history: list[tuple[int, PersistentTreeNode, float]] = []  # version, root, timestamp
         self._max_versions = options.get('max_versions', 100)  # Retention limit
         self._version_retention_policy = options.get('retention_policy', 'keep_recent')  # or 'keep_all'
         
@@ -178,7 +178,7 @@ sharing unchanged nodes.
         
         return node
     
-    def _insert_node(self, node: Optional[PersistentTreeNode], key: str, value: Any) -> Tuple[PersistentTreeNode, bool]:
+    def _insert_node(self, node: Optional[PersistentTreeNode], key: str, value: Any) -> tuple[PersistentTreeNode, bool]:
         """Insert node with structural sharing."""
         if not node:
             new_node = self._create_node(key, value)
@@ -230,7 +230,7 @@ sharing unchanged nodes.
         else:
             return node
     
-    def _delete_node(self, node: Optional[PersistentTreeNode], key: str) -> Tuple[Optional[PersistentTreeNode], bool]:
+    def _delete_node(self, node: Optional[PersistentTreeNode], key: str) -> tuple[Optional[PersistentTreeNode], bool]:
         """Delete node with structural sharing."""
         if not node:
             return None, False
@@ -275,7 +275,7 @@ sharing unchanged nodes.
             node = node.left
         return node
     
-    def _inorder_traversal(self, node: Optional[PersistentTreeNode]) -> Iterator[Tuple[str, Any]]:
+    def _inorder_traversal(self, node: Optional[PersistentTreeNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -347,7 +347,7 @@ sharing unchanged nodes.
         """Get number of key-value pairs."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
 
@@ -413,7 +413,7 @@ sharing unchanged nodes.
         for _, value in self._inorder_traversal(self._root):
             yield value
     
-    def items(self) -> Iterator[Tuple[str, Any]]:
+    def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
     
@@ -471,7 +471,7 @@ sharing unchanged nodes.
         """Get current version number."""
         return self._version
     
-    def get_version_history(self) -> List[Tuple[int, float]]:
+    def get_version_history(self) -> list[tuple[int, float]]:
         """Get list of available versions with timestamps."""
         return [(v, ts) for v, _, ts in self._version_history]
     
@@ -493,7 +493,7 @@ sharing unchanged nodes.
                 return True
         return False
     
-    def compare_versions(self, version1: int, version2: int) -> Dict[str, Any]:
+    def compare_versions(self, version1: int, version2: int) -> dict[str, Any]:
         """
         Compare two versions and return differences.
         
@@ -502,7 +502,7 @@ sharing unchanged nodes.
             version2: Second version number
             
         Returns:
-            Dict with added, removed, and modified keys
+            dict with added, removed, and modified keys
         """
         # Find roots for both versions
         root1 = None
@@ -549,7 +549,7 @@ sharing unchanged nodes.
         self._version_history = self._version_history[-keep_count:]
         return removed
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get performance statistics with version management."""
         return {
             'size': self._size,

@@ -5,7 +5,7 @@ This module implements the COUNT_MIN_SKETCH strategy for probabilistic
 frequency estimation in data streams with bounded error guarantees.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -43,13 +43,13 @@ class CountMinSketchStrategy(ANodeStrategy):
         self.depth = self._calculate_depth()
         
         # Core sketch matrix
-        self._sketch: List[List[int]] = [[0 for _ in range(self.width)] for _ in range(self.depth)]
+        self._sketch: list[list[int]] = [[0 for _ in range(self.width)] for _ in range(self.depth)]
         
         # Hash functions (using different seeds)
         self._hash_seeds = self._generate_hash_seeds()
         
         # Key-value mapping for compatibility
-        self._values: Dict[str, Any] = {}
+        self._values: dict[str, Any] = {}
         self._total_count = 0
         self._unique_items = set()
         self._size = 0
@@ -57,7 +57,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         # Heavy hitters tracking
         self.track_heavy_hitters = options.get('track_heavy_hitters', True)
         self.heavy_hitter_threshold = options.get('heavy_hitter_threshold', 0.01)  # 1% of total
-        self._heavy_hitters: Dict[str, int] = {}
+        self._heavy_hitters: dict[str, int] = {}
     
     def get_supported_traits(self) -> NodeTrait:
         """
@@ -86,7 +86,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         # depth = ceil(ln(1/delta))
         return max(1, int(math.ceil(math.log(1.0 / self.delta))))
     
-    def _generate_hash_seeds(self) -> List[int]:
+    def _generate_hash_seeds(self) -> list[int]:
         """
         Generate seeds for hash functions.
         
@@ -303,7 +303,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -396,7 +396,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         """Increment count for item."""
         self.put(item, count)
     
-    def get_frequent_items(self, threshold: Optional[int] = None) -> List[Tuple[str, int]]:
+    def get_frequent_items(self, threshold: Optional[int] = None) -> list[tuple[str, int]]:
         """Get items above frequency threshold."""
         if threshold is None:
             threshold = max(1, int(self._total_count * self.heavy_hitter_threshold))
@@ -411,7 +411,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         frequent.sort(key=lambda x: x[1], reverse=True)
         return frequent
     
-    def get_top_k(self, k: int) -> List[Tuple[str, int]]:
+    def get_top_k(self, k: int) -> list[tuple[str, int]]:
         """Get top-k most frequent items."""
         all_items = [(item, self.estimate_count(item)) for item in self._unique_items]
         all_items.sort(key=lambda x: x[1], reverse=True)
@@ -453,7 +453,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         
         return merged
     
-    def get_error_bounds(self, item: str) -> Tuple[int, int, float]:
+    def get_error_bounds(self, item: str) -> tuple[int, int, float]:
         """Get error bounds for item count estimate."""
         estimate = self.estimate_count(item)
         
@@ -463,7 +463,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         
         return estimate, estimate + max_error, confidence
     
-    def point_query(self, item: str) -> Dict[str, Any]:
+    def point_query(self, item: str) -> dict[str, Any]:
         """Comprehensive point query with error analysis."""
         estimate = self.estimate_count(item)
         lower_bound, upper_bound, confidence = self.get_error_bounds(item)
@@ -478,12 +478,12 @@ class CountMinSketchStrategy(ANodeStrategy):
             'is_heavy_hitter': item in self._heavy_hitters
         }
     
-    def range_query(self, items: List[str]) -> int:
+    def range_query(self, items: list[str]) -> int:
         """Estimate total count for a range of items."""
         # Simple sum - can lead to overestimation due to hash collisions
         return sum(self.estimate_count(item) for item in items)
     
-    def get_sketch_statistics(self) -> Dict[str, Any]:
+    def get_sketch_statistics(self) -> dict[str, Any]:
         """Get comprehensive sketch statistics."""
         # Calculate sketch density
         total_cells = self.width * self.depth
@@ -511,7 +511,7 @@ class CountMinSketchStrategy(ANodeStrategy):
             'memory_usage': total_cells * 4  # 4 bytes per int
         }
     
-    def export_sketch(self) -> Dict[str, Any]:
+    def export_sketch(self) -> dict[str, Any]:
         """Export sketch for analysis or persistence."""
         return {
             'sketch_matrix': [row.copy() for row in self._sketch],
@@ -529,7 +529,7 @@ class CountMinSketchStrategy(ANodeStrategy):
             }
         }
     
-    def import_sketch(self, sketch_data: Dict[str, Any]) -> None:
+    def import_sketch(self, sketch_data: dict[str, Any]) -> None:
         """Import sketch from exported data."""
         self._sketch = [row.copy() for row in sketch_data['sketch_matrix']]
         
@@ -551,7 +551,7 @@ class CountMinSketchStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'COUNT_MIN_SKETCH',
@@ -571,7 +571,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_sketch_statistics()
         

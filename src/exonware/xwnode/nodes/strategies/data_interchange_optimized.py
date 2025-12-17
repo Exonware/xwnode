@@ -19,12 +19,12 @@ Ultra-lightweight strategy specifically optimized for data interchange patterns:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import weakref
-from typing import Any, Iterator, Dict, List, Optional, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
@@ -74,7 +74,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         self.options = options
         
         # Core data storage (ultra-efficient)
-        self._data: Dict[str, Any] = {}
+        self._data: dict[str, Any] = {}
         self._size = 0
         
         # COW optimization flags
@@ -203,7 +203,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dictionary (optimized for xData).
         
@@ -392,7 +392,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -416,7 +416,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         
@@ -433,7 +433,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         })
         return metrics
     
-    def get_xdata_stats(self) -> Dict[str, Any]:
+    def get_xdata_stats(self) -> dict[str, Any]:
         """Get xData-specific performance statistics."""
         return {
             'strategy': 'DATA_INTERCHANGE_OPTIMIZED',
@@ -450,7 +450,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     # DISABLED FEATURES (Maximum Performance)
     # ============================================================================
     
-    def get_ordered(self, start: Any = None, end: Any = None) -> List[tuple[Any, Any]]:
+    def get_ordered(self, start: Any = None, end: Any = None) -> list[tuple[Any, Any]]:
         """Ordered operations not supported in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
             'ordered_operations', 
@@ -458,7 +458,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             ['fast_lookup', 'copy_on_write', 'structural_hashing']
         ).suggest("Use preset='ANALYTICS' for ordered operations")
     
-    def get_with_prefix(self, prefix: str) -> List[tuple[Any, Any]]:
+    def get_with_prefix(self, prefix: str) -> list[tuple[Any, Any]]:
         """Prefix operations not optimized in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
             'prefix_operations',

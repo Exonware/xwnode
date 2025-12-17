@@ -5,7 +5,7 @@ This module implements the SET_TREE strategy for ordered set operations
 using a balanced binary search tree with efficient range queries.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -53,7 +53,7 @@ ions, and range queries.
         self._size = 0
         
         # Key-value mapping for compatibility
-        self._values: Dict[str, Any] = {}
+        self._values: dict[str, Any] = {}
     
     def get_supported_traits(self) -> NodeTrait:
         """
@@ -233,7 +233,7 @@ ions, and range queries.
         else:
             return self._search_node(node.right, key)
     
-    def _inorder_traversal(self, node: Optional[TreeNode], result: List[Tuple[str, Any]]) -> None:
+    def _inorder_traversal(self, node: Optional[TreeNode], result: list[tuple[str, Any]]) -> None:
         """Inorder traversal to get sorted keys."""
         if node:
             self._inorder_traversal(node.left, result)
@@ -326,7 +326,7 @@ ions, and range queries.
         """Get number of elements in set."""
         return self._size
     
-    def to_native(self) -> List[str]:
+    def to_native(self) -> list[str]:
         """Convert to native Python sorted list."""
         return list(self.keys())
 
@@ -398,11 +398,11 @@ ions, and range queries.
         """Remove element if present (no error if not found)."""
         self.remove(key)
     
-    def get_sorted_keys(self) -> List[str]:
+    def get_sorted_keys(self) -> list[str]:
         """Get all keys in sorted order."""
         return list(self.keys())
     
-    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[str]:
+    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[str]:
         """Get keys in range [start_key, end_key]."""
         result = []
         start_norm = self._normalize_key(start_key)
@@ -487,7 +487,7 @@ ions, and range queries.
         
         return _check_balance(self._root)
     
-    def get_tree_statistics(self) -> Dict[str, Any]:
+    def get_tree_statistics(self) -> dict[str, Any]:
         """Get comprehensive tree statistics."""
         if not self._root:
             return {'size': 0, 'height': 0, 'balanced': True}
@@ -507,7 +507,7 @@ ions, and range queries.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'SET_TREE',
@@ -525,7 +525,7 @@ ions, and range queries.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_tree_statistics()
         

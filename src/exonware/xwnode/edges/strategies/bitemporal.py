@@ -9,12 +9,12 @@ valid-time and transaction-time dimensions for audit and time-travel queries.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 12-Oct-2025
 """
 
 import time
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -34,7 +34,7 @@ class BitemporalEdge:
     def __init__(self, source: str, target: str,
                  valid_start: float, valid_end: float,
                  tx_start: float, tx_end: Optional[float] = None,
-                 properties: Optional[Dict[str, Any]] = None):
+                 properties: Optional[dict[str, Any]] = None):
         """
         Initialize bitemporal edge.
         
@@ -151,17 +151,17 @@ class BitemporalStrategy(AEdgeStrategy):
         super().__init__(EdgeMode.BITEMPORAL, traits, **options)
         
         # All edge versions (including historical)
-        self._edges: List[BitemporalEdge] = []
+        self._edges: list[BitemporalEdge] = []
         
         # Current valid edges (cached)
-        self._current_edges: Set[Tuple[str, str]] = set()
+        self._current_edges: set[tuple[str, str]] = set()
         
         # Vertices
-        self._vertices: Set[str] = set()
+        self._vertices: set[str] = set()
         
         # Temporal index (for efficient queries)
-        self._valid_time_index: Dict[float, List[BitemporalEdge]] = defaultdict(list)
-        self._tx_time_index: Dict[float, List[BitemporalEdge]] = defaultdict(list)
+        self._valid_time_index: dict[float, list[BitemporalEdge]] = defaultdict(list)
+        self._tx_time_index: dict[float, list[BitemporalEdge]] = defaultdict(list)
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get supported traits."""
@@ -172,7 +172,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # ============================================================================
     
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[Dict[str, Any]] = None,
+                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
                  is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
         """
         Add edge with temporal metadata.
@@ -260,7 +260,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # TEMPORAL QUERIES
     # ============================================================================
     
-    def get_edges_at_time(self, valid_time: float, tx_time: float) -> List[Dict[str, Any]]:
+    def get_edges_at_time(self, valid_time: float, tx_time: float) -> list[dict[str, Any]]:
         """
         Get edges active at specific valid and transaction times.
         
@@ -292,7 +292,7 @@ class BitemporalStrategy(AEdgeStrategy):
         
         return result
     
-    def as_of_query(self, tx_time: float) -> List[Dict[str, Any]]:
+    def as_of_query(self, tx_time: float) -> list[dict[str, Any]]:
         """
         Get graph state as it was known at transaction time.
         
@@ -316,7 +316,7 @@ class BitemporalStrategy(AEdgeStrategy):
         
         return result
     
-    def get_edge_history(self, source: str, target: str) -> List[Dict[str, Any]]:
+    def get_edge_history(self, source: str, target: str) -> list[dict[str, Any]]:
         """
         Get complete history of edge.
         
@@ -346,7 +346,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # ============================================================================
     
     def get_neighbors(self, node: str, edge_type: Optional[str] = None,
-                     direction: str = "outgoing") -> List[str]:
+                     direction: str = "outgoing") -> list[str]:
         """Get current neighbors."""
         neighbors = set()
         
@@ -364,7 +364,7 @@ class BitemporalStrategy(AEdgeStrategy):
         """Get degree of node in current snapshot."""
         return len(self.get_neighbors(node))
     
-    def edges(self) -> Iterator[Tuple[Any, Any, Dict[str, Any]]]:
+    def edges(self) -> Iterator[tuple[Any, Any, dict[str, Any]]]:
         """Iterate over current edges with properties."""
         for edge_dict in self.get_edges():
             yield (edge_dict['source'], edge_dict['target'], {})
@@ -373,7 +373,7 @@ class BitemporalStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
     
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> List[Dict[str, Any]]:
+    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get current edges."""
         edges = []
         
@@ -386,7 +386,7 @@ class BitemporalStrategy(AEdgeStrategy):
         
         return edges
     
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
         """Get current edge data."""
         for edge in self._edges:
             if edge.source == source and edge.target == target and edge.tx_end is None:
@@ -404,7 +404,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (on current snapshot)
     # ============================================================================
     
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> List[str]:
+    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
         """Find shortest path in current snapshot."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -431,7 +431,7 @@ class BitemporalStrategy(AEdgeStrategy):
         
         return []
     
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> List[List[str]]:
+    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in current snapshot."""
         return []
     
@@ -466,11 +466,11 @@ class BitemporalStrategy(AEdgeStrategy):
         """Get number of current edges."""
         return len(self._current_edges)
     
-    def __iter__(self) -> Iterator[Dict[str, Any]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         """Iterate over current edges."""
         return iter(self.get_edges())
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native representation."""
         return {
             'vertices': list(self._vertices),
@@ -482,7 +482,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get bitemporal statistics."""
         active_edges = sum(1 for e in self._edges if e.tx_end is None)
         historical_edges = sum(1 for e in self._edges if e.tx_end is not None)
@@ -506,11 +506,11 @@ class BitemporalStrategy(AEdgeStrategy):
         return "BITEMPORAL"
     
     @property
-    def supported_traits(self) -> List[EdgeTrait]:
+    def supported_traits(self) -> list[EdgeTrait]:
         """Get supported traits."""
         return [EdgeTrait.TEMPORAL, EdgeTrait.DIRECTED, EdgeTrait.SPARSE]
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend information."""
         return {
             'strategy': 'Bitemporal Edges',

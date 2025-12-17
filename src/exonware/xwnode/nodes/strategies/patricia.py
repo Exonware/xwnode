@@ -5,7 +5,7 @@ This module implements the PATRICIA strategy (Practical Algorithm to
 Retrieve Information Coded in Alphanumeric) for binary trie compression.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -211,7 +211,7 @@ d binary trie structure.
         # Update statistics
         self._total_bits_saved += 1  # Compression achieved
     
-    def _collect_all_pairs(self, node: Optional[PatriciaNode]) -> List[Tuple[str, Any]]:
+    def _collect_all_pairs(self, node: Optional[PatriciaNode]) -> list[tuple[str, Any]]:
         """Collect all key-value pairs from subtree."""
         if not node:
             return []
@@ -224,7 +224,7 @@ d binary trie structure.
         result.extend(self._collect_all_pairs(node.right))
         return result
     
-    def _collect_with_prefix(self, node: Optional[PatriciaNode], prefix: str) -> List[Tuple[str, Any]]:
+    def _collect_with_prefix(self, node: Optional[PatriciaNode], prefix: str) -> list[tuple[str, Any]]:
         """Collect all keys with given prefix."""
         if not node:
             return []
@@ -330,7 +330,7 @@ d binary trie structure.
         """Get number of keys."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         all_pairs = self._collect_all_pairs(self._root)
 
@@ -393,12 +393,12 @@ d binary trie structure.
     # PATRICIA SPECIFIC OPERATIONS
     # ============================================================================
     
-    def find_with_prefix(self, prefix: str) -> List[Tuple[str, Any]]:
+    def find_with_prefix(self, prefix: str) -> list[tuple[str, Any]]:
         """Find all keys starting with given prefix."""
         normalized_prefix = self._normalize_key(prefix)
         return self._collect_with_prefix(self._root, normalized_prefix)
     
-    def get_keys_with_prefix(self, prefix: str) -> List[str]:
+    def get_keys_with_prefix(self, prefix: str) -> list[str]:
         """Get keys starting with given prefix."""
         prefix_pairs = self.find_with_prefix(prefix)
         return [key for key, _ in prefix_pairs]
@@ -455,9 +455,9 @@ d binary trie structure.
         
         return _calculate_depth(self._root)
     
-    def get_compression_statistics(self) -> Dict[str, Any]:
+    def get_compression_statistics(self) -> dict[str, Any]:
         """Get detailed compression statistics."""
-        def _analyze_tree(node: Optional[PatriciaNode]) -> Dict[str, int]:
+        def _analyze_tree(node: Optional[PatriciaNode]) -> dict[str, int]:
             if not node:
                 return {'internal_nodes': 0, 'leaf_nodes': 0, 'total_nodes': 0}
             
@@ -489,7 +489,7 @@ d binary trie structure.
             'space_efficiency': stats['leaf_nodes'] / max(1, stats['total_nodes'])
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive PATRICIA statistics."""
         compression_stats = self.get_compression_statistics()
         
@@ -504,9 +504,9 @@ d binary trie structure.
             'space_efficiency': f"{compression_stats['space_efficiency']:.2%}"
         }
     
-    def export_tree_structure(self) -> Dict[str, Any]:
+    def export_tree_structure(self) -> dict[str, Any]:
         """Export tree structure for analysis."""
-        def _export_node(node: Optional[PatriciaNode], node_id: int = 0) -> Tuple[Dict[str, Any], int]:
+        def _export_node(node: Optional[PatriciaNode], node_id: int = 0) -> tuple[dict[str, Any], int]:
             if not node:
                 return {}, node_id
             
@@ -540,7 +540,7 @@ d binary trie structure.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'PATRICIA',
@@ -558,7 +558,7 @@ d binary trie structure.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         comp_stats = stats['compression_statistics']

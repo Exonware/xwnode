@@ -5,7 +5,7 @@ This module implements the B_PLUS_TREE strategy for database-friendly
 operations with efficient range queries and sequential access.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -21,9 +21,9 @@ class BPlusTreeNode:
         Time Complexity: O(1)
         """
         self.is_leaf = is_leaf
-        self.keys: List[str] = []
-        self.values: List[Any] = [] if is_leaf else []  # Only leaves store values
-        self.children: List['BPlusTreeNode'] = [] if not is_leaf else []  # Internal nodes have children
+        self.keys: list[str] = []
+        self.values: list[Any] = [] if is_leaf else []  # Only leaves store values
+        self.children: list['BPlusTreeNode'] = [] if not is_leaf else []  # Internal nodes have children
         self.next_leaf: Optional['BPlusTreeNode'] = None  # Leaf linking for sequential access
         self.parent: Optional['BPlusTreeNode'] = None
         self.max_keys = max_keys
@@ -230,7 +230,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         leaf.values.insert(pos, value)
         self._size += 1
     
-    def _split_leaf(self, leaf: BPlusTreeNode) -> Tuple[BPlusTreeNode, str]:
+    def _split_leaf(self, leaf: BPlusTreeNode) -> tuple[BPlusTreeNode, str]:
         """
         Split full leaf node.
         
@@ -257,7 +257,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self._total_splits += 1
         return new_leaf, new_leaf.keys[0]  # Return new node and separator key
     
-    def _split_internal(self, node: BPlusTreeNode) -> Tuple[BPlusTreeNode, str]:
+    def _split_internal(self, node: BPlusTreeNode) -> tuple[BPlusTreeNode, str]:
         """
         Split full internal node.
         
@@ -487,7 +487,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         """
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dict.
         
@@ -588,7 +588,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             return last_leaf.keys[-1]
         return None
     
-    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> List[Tuple[str, Any]]:
+    def get_range(self, start_key: str, end_key: str, inclusive: bool = True) -> list[tuple[str, Any]]:
         """
         Get key-value pairs in range.
         
@@ -658,7 +658,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         
         return -1
     
-    def find_prefix_keys(self, prefix: str) -> List[str]:
+    def find_prefix_keys(self, prefix: str) -> list[str]:
         """
         Find all keys starting with given prefix.
         
@@ -678,7 +678,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         
         return result
     
-    def bulk_load(self, items: List[Tuple[str, Any]]) -> None:
+    def bulk_load(self, items: list[tuple[str, Any]]) -> None:
         """
         Bulk load sorted key-value pairs (more efficient than individual inserts).
         
@@ -692,7 +692,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         for key, value in sorted_items:
             self.put(key, value)
     
-    def get_tree_statistics(self) -> Dict[str, Any]:
+    def get_tree_statistics(self) -> dict[str, Any]:
         """
         Get detailed tree statistics.
         
@@ -702,7 +702,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             return {'size': 0, 'height': 0, 'nodes': 0}
         
         # Analyze tree structure
-        def _analyze_level(nodes: List[BPlusTreeNode], level: int) -> Dict[str, Any]:
+        def _analyze_level(nodes: list[BPlusTreeNode], level: int) -> dict[str, Any]:
             if not nodes:
                 return {'levels': level, 'leaf_nodes': 0, 'internal_nodes': 0, 'total_keys': 0}
             
@@ -751,7 +751,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
         
@@ -774,7 +774,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
         

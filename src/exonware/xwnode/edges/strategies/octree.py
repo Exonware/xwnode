@@ -5,7 +5,7 @@ This module implements the OCTREE strategy for 3D spatial
 graph partitioning and efficient 3D spatial queries.
 """
 
-from typing import Any, Iterator, List, Dict, Set, Optional, Tuple
+from typing import Any, Iterator, Optional
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
@@ -23,10 +23,10 @@ class OctreeNode:
         self.capacity = capacity
         
         # Points stored in this node
-        self.points: List[Tuple[float, float, float, str]] = []  # (x, y, z, vertex_id)
+        self.points: list[tuple[float, float, float, str]] = []  # (x, y, z, vertex_id)
         
         # Child nodes (8 octants)
-        self.children: List[Optional['OctreeNode']] = [None] * 8
+        self.children: list[Optional['OctreeNode']] = [None] * 8
         self.is_leaf = True
     
     def contains_point(self, x: float, y: float, z: float) -> bool:
@@ -116,7 +116,7 @@ class OctreeNode:
             return False
     
     def query_box(self, box_x: float, box_y: float, box_z: float,
-                  box_w: float, box_h: float, box_d: float) -> List[Tuple[float, float, float, str]]:
+                  box_w: float, box_h: float, box_d: float) -> list[tuple[float, float, float, str]]:
         """Query points within given box."""
         result = []
         
@@ -136,7 +136,7 @@ class OctreeNode:
         
         return result
     
-    def query_sphere(self, center_x: float, center_y: float, center_z: float, radius: float) -> List[Tuple[float, float, float, str]]:
+    def query_sphere(self, center_x: float, center_y: float, center_z: float, radius: float) -> list[tuple[float, float, float, str]]:
         """Query points within given sphere."""
         if not self.intersects_sphere(center_x, center_y, center_z, radius):
             return []
@@ -243,9 +243,9 @@ class OctreeStrategy(AEdgeStrategy):
         self._root = OctreeNode(self.center_x, self.center_y, self.center_z, self.size, self.capacity)
         
         # Vertex management
-        self._vertices: Dict[str, Tuple[float, float, float]] = {}  # vertex_id -> (x, y, z)
-        self._edges: Dict[Tuple[str, str], Dict[str, Any]] = {}  # (source, target) -> properties
-        self._spatial_edges: Set[Tuple[str, str]] = set()  # Edges based on spatial proximity
+        self._vertices: dict[str, tuple[float, float, float]] = {}  # vertex_id -> (x, y, z)
+        self._edges: dict[tuple[str, str], dict[str, Any]] = {}  # (source, target) -> properties
+        self._spatial_edges: set[tuple[str, str]] = set()  # Edges based on spatial proximity
         
         # Performance tracking
         self._edge_count = 0
@@ -353,7 +353,7 @@ class OctreeStrategy(AEdgeStrategy):
         edge_key = (min(source, target), max(source, target))
         return edge_key in self._edges
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         edge_key = (min(source, target), max(source, target))
         return self._edges.get(edge_key)
@@ -450,7 +450,7 @@ class OctreeStrategy(AEdgeStrategy):
         # Auto-connect to nearby vertices
         self._auto_connect_spatial(vertex, x, y, z)
     
-    def get_vertex_position(self, vertex: str) -> Optional[Tuple[float, float, float]]:
+    def get_vertex_position(self, vertex: str) -> Optional[tuple[float, float, float]]:
         """Get vertex 3D position."""
         return self._vertices.get(vertex)
     
@@ -459,17 +459,17 @@ class OctreeStrategy(AEdgeStrategy):
         self.add_spatial_vertex(vertex, x, y, z)
     
     def query_box(self, x: float, y: float, z: float, 
-                  width: float, height: float, depth: float) -> List[str]:
+                  width: float, height: float, depth: float) -> list[str]:
         """Query vertices within 3D box."""
         points = self._root.query_box(x, y, z, width, height, depth)
         return [vertex_id for _, _, _, vertex_id in points]
     
-    def query_sphere(self, center_x: float, center_y: float, center_z: float, radius: float) -> List[str]:
+    def query_sphere(self, center_x: float, center_y: float, center_z: float, radius: float) -> list[str]:
         """Query vertices within 3D sphere."""
         points = self._root.query_sphere(center_x, center_y, center_z, radius)
         return [vertex_id for _, _, _, vertex_id in points]
     
-    def nearest_neighbors_3d(self, vertex: str, k: int = 1) -> List[Tuple[str, float]]:
+    def nearest_neighbors_3d(self, vertex: str, k: int = 1) -> list[tuple[str, float]]:
         """Find k nearest neighbors to vertex in 3D space."""
         if vertex not in self._vertices:
             return []
@@ -496,7 +496,7 @@ class OctreeStrategy(AEdgeStrategy):
         return distances[:k]
     
     def get_spatial_edges_in_box(self, x: float, y: float, z: float,
-                                width: float, height: float, depth: float) -> List[Tuple[str, str]]:
+                                width: float, height: float, depth: float) -> list[tuple[str, str]]:
         """Get edges where both vertices are in given 3D box."""
         vertices_in_box = set(self.query_box(x, y, z, width, height, depth))
         
@@ -507,7 +507,7 @@ class OctreeStrategy(AEdgeStrategy):
         
         return spatial_edges
     
-    def cluster_vertices_3d(self, max_distance: float) -> List[List[str]]:
+    def cluster_vertices_3d(self, max_distance: float) -> list[list[str]]:
         """Cluster vertices based on 3D spatial proximity."""
         visited = set()
         clusters = []
@@ -541,7 +541,7 @@ class OctreeStrategy(AEdgeStrategy):
         
         return clusters
     
-    def get_bounding_box(self) -> Tuple[float, float, float, float, float, float]:
+    def get_bounding_box(self) -> tuple[float, float, float, float, float, float]:
         """Get 3D bounding box of all vertices."""
         if not self._vertices:
             return (0, 0, 0, 0, 0, 0)
@@ -556,7 +556,7 @@ class OctreeStrategy(AEdgeStrategy):
         
         return (min_x, min_y, min_z, max_x, max_y, max_z)
     
-    def get_3d_statistics(self) -> Dict[str, Any]:
+    def get_3d_statistics(self) -> dict[str, Any]:
         """Get comprehensive 3D spatial statistics."""
         if not self._vertices:
             return {'vertices': 0, 'edges': 0, 'volume': 0}
@@ -596,7 +596,7 @@ class OctreeStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'OCTREE',
@@ -616,7 +616,7 @@ class OctreeStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_3d_statistics()
         

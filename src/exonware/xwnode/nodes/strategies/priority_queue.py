@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import heapq
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -89,7 +89,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         )
         self._max_size: Optional[int] = options.get('max_size')
         self._is_max_heap: bool = options.get('is_max_heap', False)
-        self._heap: List[Tuple[float, int, Any]] = []  # (priority, counter, value)
+        self._heap: list[tuple[float, int, Any]] = []  # (priority, counter, value)
         self._counter = 0
         
         # Build heap from initial items if provided
@@ -170,7 +170,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         
         return self._heap[0][2]  # Return value from (priority, counter, value)
     
-    def peek_with_priority(self) -> Tuple[float, Any]:
+    def peek_with_priority(self) -> tuple[float, Any]:
         """
         Peek at the highest priority item with its priority.
         
@@ -189,7 +189,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         actual_priority = -priority if self._is_max_heap else priority
         return (actual_priority, value)
     
-    def pop_with_priority(self) -> Tuple[float, Any]:
+    def pop_with_priority(self) -> tuple[float, Any]:
         """
         Extract and return the highest priority item with its priority.
         
@@ -323,14 +323,14 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         self._counter = 0
         self._record_access("clear")
     
-    def to_list(self) -> List[Tuple[float, Any]]:
+    def to_list(self) -> list[tuple[float, Any]]:
         """Convert to sorted list of (priority, value) tuples."""
         return sorted(
             [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
             key=lambda x: x[0]
         )
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert priority queue to native dictionary format."""
         return {
             'items': [(p if not self._is_max_heap else -p, v) for p, c, v in self._heap],
@@ -473,7 +473,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
     # ADVANCED HEAP OPERATIONS
     # ============================================================================
     
-    def nsmallest(self, n: int) -> List[Tuple[float, Any]]:
+    def nsmallest(self, n: int) -> list[tuple[float, Any]]:
         """
         Get n smallest priority items without removing them.
         
@@ -485,7 +485,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         items = heapq.nsmallest(n, self._heap, key=lambda x: x[0])
         return [(p if not self._is_max_heap else -p, v) for p, c, v in items]
     
-    def nlargest(self, n: int) -> List[Tuple[float, Any]]:
+    def nlargest(self, n: int) -> list[tuple[float, Any]]:
         """
         Get n largest priority items without removing them.
         
@@ -518,12 +518,12 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
     # COMPATIBILITY INTERFACE
     # ============================================================================
     
-    def to_list(self) -> List[Tuple[float, Any]]:
+    def to_list(self) -> list[tuple[float, Any]]:
         """Convert to sorted list of (priority, value) tuples."""
         sorted_items = sorted(self._heap, key=lambda x: x[0])
         return [(p if not self._is_max_heap else -p, v) for p, c, v in sorted_items]
     
-    def from_native(self, data: Dict[str, Any]) -> None:
+    def from_native(self, data: dict[str, Any]) -> None:
         """Load priority queue from native dictionary format."""
         self._heap.clear()
         self._counter = 0
@@ -559,7 +559,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'PRIORITY_QUEUE',
@@ -578,7 +578,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         return {
             'size': len(self._heap),

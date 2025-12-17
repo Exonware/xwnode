@@ -5,7 +5,7 @@ This module implements the CSR strategy for memory-efficient sparse graph
 representation with fast row-wise operations.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Union
+from typing import Any, Iterator, Optional, Union
 import bisect
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -68,20 +68,20 @@ class CSRStrategy(AEdgeStrategy):
         self.allow_self_loops = options.get('self_loops', True)
         
         # CSR storage format
-        self._row_ptr: List[int] = [0]  # Pointers to start of each row
-        self._col_indices: List[int] = []  # Column indices of non-zero elements
-        self._values: List[Dict[str, Any]] = []  # Edge data for each non-zero element
+        self._row_ptr: list[int] = [0]  # Pointers to start of each row
+        self._col_indices: list[int] = []  # Column indices of non-zero elements
+        self._values: list[dict[str, Any]] = []  # Edge data for each non-zero element
         
         # Vertex management
-        self._vertex_to_index: Dict[str, int] = {}
-        self._index_to_vertex: Dict[int, str] = {}
+        self._vertex_to_index: dict[str, int] = {}
+        self._index_to_vertex: dict[int, str] = {}
         self._vertex_count = 0
         self._edge_count = 0
         self._edge_id_counter = 0
         
         # Build cache
         self._needs_rebuild = False
-        self._build_cache: List[Tuple[str, str, Dict[str, Any]]] = []
+        self._build_cache: list[tuple[str, str, dict[str, Any]]] = []
     
     def get_supported_traits(self) -> EdgeTrait:
         """Get the traits supported by the CSR strategy."""
@@ -272,7 +272,7 @@ class CSRStrategy(AEdgeStrategy):
         return (pos < end - start and 
                 self._col_indices[start + pos] == target_idx)
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data between source and target."""
         if source not in self._vertex_to_index or target not in self._vertex_to_index:
             return None
@@ -474,15 +474,15 @@ class CSRStrategy(AEdgeStrategy):
     # CSR-SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_csr_arrays(self) -> Tuple[List[int], List[int], List[float]]:
+    def get_csr_arrays(self) -> tuple[list[int], list[int], list[float]]:
         """Get the raw CSR arrays (row_ptr, col_indices, weights)."""
         self._rebuild_csr()
         
         weights = [edge_data.get('weight', 1.0) for edge_data in self._values]
         return self._row_ptr.copy(), self._col_indices.copy(), weights
     
-    def from_csr_arrays(self, row_ptr: List[int], col_indices: List[int], 
-                       weights: List[float], vertices: List[str]) -> None:
+    def from_csr_arrays(self, row_ptr: list[int], col_indices: list[int], 
+                       weights: list[float], vertices: list[str]) -> None:
         """Build graph from CSR arrays."""
         if len(row_ptr) != len(vertices) + 1:
             raise ValueError("row_ptr length must be vertices + 1")
@@ -508,7 +508,7 @@ class CSRStrategy(AEdgeStrategy):
                 
                 self.add_edge(vertex, target, weight=weight)
     
-    def multiply_vector(self, vector: List[float]) -> List[float]:
+    def multiply_vector(self, vector: list[float]) -> list[float]:
         """Multiply the adjacency matrix by a vector (SpMV operation)."""
         if len(vector) != self._vertex_count:
             raise ValueError(f"Vector length {len(vector)} must match vertex count {self._vertex_count}")
@@ -540,7 +540,7 @@ class CSRStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'CSR',
@@ -558,7 +558,7 @@ class CSRStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         compression_ratio = self.get_compression_ratio()
         avg_degree = self._edge_count / max(1, self._vertex_count) if self._vertex_count else 0

@@ -5,7 +5,7 @@ This module implements the BITMAP strategy for efficient bit manipulation
 and boolean operations with compressed storage.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 import array
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
@@ -44,9 +44,9 @@ mpressed representation.
         self._max_index = -1  # Highest index with a bit set
         
         # Key-value mapping for compatibility
-        self._key_to_index: Dict[str, int] = {}
-        self._index_to_key: Dict[int, str] = {}
-        self._values: Dict[str, Any] = {}  # Associated values
+        self._key_to_index: dict[str, int] = {}
+        self._index_to_key: dict[int, str] = {}
+        self._values: dict[str, Any] = {}  # Associated values
         self._next_index = 0
         
         # Initialize with initial capacity
@@ -285,7 +285,7 @@ mpressed representation.
         """
         return self._size
     
-    def to_native(self) -> Dict[str, bool]:
+    def to_native(self) -> dict[str, bool]:
         """
         Convert to native Python dict of boolean values.
         
@@ -549,7 +549,7 @@ mpressed representation.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'BITMAP',
@@ -567,7 +567,7 @@ mpressed representation.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         compression_ratio = self.get_compression_ratio()
         memory_efficiency = (self._size * 8) / max(1, len(self._bits)) * 100

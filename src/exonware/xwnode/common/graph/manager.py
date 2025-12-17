@@ -7,12 +7,12 @@ Optimizes relationship queries from O(n) to O(1).
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 11-Oct-2025
 """
 
 import threading
-from typing import Dict, List, Optional, Any
+from typing import Optional, Any
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.security import get_resource_limits
 from exonware.xwsystem.validation import validate_untrusted_data
@@ -281,7 +281,7 @@ class XWGraphManager(IGraphManager):
         entity_id: str,
         relationship_type: Optional[str] = None,
         limit: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get outgoing relationships (O(1) with indexing).
         
@@ -329,7 +329,7 @@ class XWGraphManager(IGraphManager):
         entity_id: str,
         relationship_type: Optional[str] = None,
         limit: Optional[int] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get incoming relationships (O(1) with indexing).
         
@@ -376,7 +376,7 @@ class XWGraphManager(IGraphManager):
         self,
         entity_id: str,
         relationship_type: Optional[str] = None
-    ) -> Dict[str, List[Dict[str, Any]]]:
+    ) -> dict[str, list[dict[str, Any]]]:
         """
         Get both incoming and outgoing relationships.
         
@@ -433,8 +433,8 @@ class XWGraphManager(IGraphManager):
     
     def add_relationships_batch(
         self,
-        relationships: List[Dict[str, Any]]
-    ) -> List[str]:
+        relationships: list[dict[str, Any]]
+    ) -> list[str]:
         """
         Add multiple relationships in batch.
         
@@ -491,7 +491,7 @@ class XWGraphManager(IGraphManager):
             self._index_manager.clear()
             logger.warning("Graph manager indexes cleared")
     
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get graph statistics.
         
@@ -558,7 +558,7 @@ class XWGraphManager(IGraphManager):
         entity_id1: str,
         entity_id2: str,
         relationship_type: Optional[str] = None
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Get entities connected to both entities.
         
@@ -584,7 +584,7 @@ class XWGraphManager(IGraphManager):
         entity_id1: str,
         entity_id2: str,
         relationship_type: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get bidirectional relationships between two entities.
         

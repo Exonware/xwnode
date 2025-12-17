@@ -11,7 +11,7 @@ Note: Query-related enums (QueryMode, QueryTrait) are in xwquery.defs module.
 """
 
 from enum import Enum, Flag, auto as _auto
-from typing import Dict, List, Any, Optional
+from typing import Any, Optional
 
 
 # ============================================================================
@@ -410,10 +410,10 @@ class StrategyMetadata:
                  mode: NodeMode | EdgeMode,
                  traits: NodeTrait | EdgeTrait,
                  description: str,
-                 best_for: List[str],
+                 best_for: list[str],
                  performance_gain: str,
                  memory_usage: str = "medium",
-                 time_complexity: Dict[str, str] = None):
+                 time_complexity: dict[str, str] = None):
         self.mode = mode
         self.traits = traits
         self.description = description
@@ -424,7 +424,7 @@ class StrategyMetadata:
 
 
 # Node strategy metadata
-NODE_STRATEGY_METADATA: Dict[NodeMode, StrategyMetadata] = {
+NODE_STRATEGY_METADATA: dict[NodeMode, StrategyMetadata] = {
     NodeMode.TREE_GRAPH_HYBRID: StrategyMetadata(
         NodeMode.TREE_GRAPH_HYBRID,
         NodeTrait.HIERARCHICAL,
@@ -789,7 +789,7 @@ NODE_STRATEGY_METADATA: Dict[NodeMode, StrategyMetadata] = {
 
 
 # Edge strategy metadata
-EDGE_STRATEGY_METADATA: Dict[EdgeMode, StrategyMetadata] = {
+EDGE_STRATEGY_METADATA: dict[EdgeMode, StrategyMetadata] = {
     EdgeMode.TREE_GRAPH_BASIC: StrategyMetadata(
         EdgeMode.TREE_GRAPH_BASIC,
         EdgeTrait.SPARSE,
@@ -1027,8 +1027,8 @@ class PresetConfig:
                  edge_traits: EdgeTrait = EdgeTrait.NONE,
                  description: str = "",
                  performance_class: str = "balanced",
-                 disabled_features: List[str] = None,
-                 internal_config: Dict[str, Any] = None):
+                 disabled_features: list[str] = None,
+                 internal_config: dict[str, Any] = None):
         self.node_mode = node_mode
         self.edge_mode = edge_mode
         self.node_traits = node_traits
@@ -1040,7 +1040,7 @@ class PresetConfig:
 
 
 # === A+ USABILITY PRESETS ===
-USABILITY_PRESETS: Dict[str, PresetConfig] = {
+USABILITY_PRESETS: dict[str, PresetConfig] = {
     # === DATA INTERCHANGE OPTIMIZATION ===
     'DATA_INTERCHANGE_OPTIMIZED': PresetConfig(
         node_mode=NodeMode.HASH_MAP,
@@ -1184,12 +1184,12 @@ def get_preset(name: str) -> PresetConfig:
     return USABILITY_PRESETS[name]
 
 
-def list_presets() -> List[str]:
+def list_presets() -> list[str]:
     """Get list of available preset names."""
     return list(USABILITY_PRESETS.keys())
 
 
-def get_presets_by_performance_class(performance_class: str) -> List[str]:
+def get_presets_by_performance_class(performance_class: str) -> list[str]:
     """Get presets by performance class."""
     return [name for name, config in USABILITY_PRESETS.items() 
             if config.performance_class == performance_class]

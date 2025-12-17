@@ -10,7 +10,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 07-Sep-2025
 
 Main Classes:
@@ -46,13 +46,6 @@ Example:
 """
 
 # =============================================================================
-# LAZY INSTALLATION - Simple One-Line Configuration
-# =============================================================================
-# DISABLED BY DEFAULT - Users can enable manually if needed
-from xwlazy.lazy import config_package_lazy_install_enabled
-config_package_lazy_install_enabled("xwnode")  # Auto-detect [lazy] extra
-
-# =============================================================================
 # IMPORTS - Standard Python Imports (No Defensive Code!)
 # =============================================================================
 from .facade import (
@@ -76,8 +69,6 @@ from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, GraphOptimization
 # Note: QueryMode and QueryTrait are in xwquery.defs module
 from .common.graph import XWGraphManager
 
-# xwsystem lazy install functionality
-from xwlazy.lazy import xwimport
 from exonware.xwsystem.monitoring import get_metrics as get_xwsystem_metrics, reset_metrics as reset_xwsystem_metrics
 
 # Operations (xwsystem integration)
@@ -125,9 +116,6 @@ __all__ = [
     
     # Graph Optimization
     'XWGraphManager',
-    
-    # Lazy Install
-    'xwimport',
     
     # Operations (xwsystem integration)
     'MergeStrategy', 'DiffMode', 'PatchOperation', 'DiffResult', 'PatchResult',

@@ -7,17 +7,17 @@ Now powered by xwsystem.caching via CacheController.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
 import threading
-from typing import Any, Optional, List
+from typing import Any, Optional
 
 from ..caching import get_cache_controller, ICacheAdapter
 
 
-class CacheManager:
+class CacheManager[K, V]:
     """
     Cache manager for graph query results.
     
@@ -29,6 +29,10 @@ class CacheManager:
     - 4-level cache hierarchy
     - Automatic failover to no-cache on errors
     - Comprehensive statistics
+    
+    Generic Types:
+    - K: Key type (typically str)
+    - V: Value type (cached data)
     """
     
     def __init__(self, max_size: int = 1000, strategy: str = 'lru'):
@@ -58,7 +62,7 @@ class CacheManager:
             import logging
             logging.warning(f"Failed to initialize cache, using NoCacheAdapter: {e}")
     
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: K) -> Optional[V]:
         """
         Get cached result.
         
@@ -73,7 +77,7 @@ class CacheManager:
         with self._lock:
             return self._cache.get(key)
     
-    def put(self, key: str, value: Any) -> None:
+    def put(self, key: K, value: V) -> None:
         """
         Cache a query result.
         

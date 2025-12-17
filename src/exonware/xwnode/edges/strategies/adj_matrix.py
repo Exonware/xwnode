@@ -5,7 +5,7 @@ This module implements the ADJ_MATRIX strategy for dense graph representation
 with O(1) edge operations and efficient matrix-based algorithms.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, Union
+from typing import Any, Iterator, Optional, Union
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
@@ -68,12 +68,12 @@ class AdjMatrixStrategy(AEdgeStrategy):
         self.default_weight = options.get('default_weight', 1.0)
         
         # Core storage: 2D matrix of edge weights/properties
-        self._matrix: List[List[Optional[Dict[str, Any]]]] = []
+        self._matrix: list[list[Optional[dict[str, Any]]]] = []
         self._capacity = 0
         
         # Vertex management
-        self._vertex_to_index: Dict[str, int] = {}
-        self._index_to_vertex: Dict[int, str] = {}
+        self._vertex_to_index: dict[str, int] = {}
+        self._index_to_vertex: dict[int, str] = {}
         self._vertex_count = 0
         self._edge_count = 0
         self._edge_id_counter = 0
@@ -202,7 +202,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         
         return self._matrix[source_idx][target_idx] is not None
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data between source and target."""
         if source not in self._vertex_to_index or target not in self._vertex_to_index:
             return None
@@ -352,7 +352,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
     # MATRIX-SPECIFIC OPERATIONS
     # ============================================================================
     
-    def get_matrix(self) -> List[List[Optional[float]]]:
+    def get_matrix(self) -> list[list[Optional[float]]]:
         """Get the adjacency matrix as weights."""
         matrix = []
         for source_idx in range(self._vertex_count):
@@ -364,7 +364,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
             matrix.append(row)
         return matrix
     
-    def get_binary_matrix(self) -> List[List[int]]:
+    def get_binary_matrix(self) -> list[list[int]]:
         """Get the adjacency matrix as binary (0/1)."""
         matrix = []
         for source_idx in range(self._vertex_count):
@@ -375,7 +375,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
             matrix.append(row)
         return matrix
     
-    def set_matrix(self, matrix: List[List[Union[float, int, None]]], vertices: List[str]) -> None:
+    def set_matrix(self, matrix: list[list[Union[float, int, None]]], vertices: list[str]) -> None:
         """Set the entire matrix from a weight matrix."""
         if len(matrix) != len(vertices) or any(len(row) != len(vertices) for row in matrix):
             raise ValueError("Matrix dimensions must match vertex count")
@@ -451,7 +451,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'ADJ_MATRIX',
@@ -469,7 +469,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         density = self._edge_count / max(1, self._vertex_count * (self._vertex_count - 1)) if self._vertex_count > 1 else 0
         memory_utilization = self._vertex_count / max(1, self._capacity) * 100

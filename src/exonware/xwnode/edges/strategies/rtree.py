@@ -5,7 +5,7 @@ This module implements the R_TREE strategy for spatial indexing of edges
 with geometric coordinates and efficient spatial queries.
 """
 
-from typing import Any, Iterator, Dict, List, Set, Optional, Tuple, NamedTuple
+from typing import Any, Iterator, Optional, NamedTuple
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
@@ -60,8 +60,8 @@ class SpatialEdge:
     """Represents an edge with spatial coordinates."""
     
     def __init__(self, edge_id: str, source: str, target: str, 
-                 source_coords: Tuple[float, float], 
-                 target_coords: Tuple[float, float], **properties):
+                 source_coords: tuple[float, float], 
+                 target_coords: tuple[float, float], **properties):
         self.edge_id = edge_id
         self.source = source
         self.target = target
@@ -115,8 +115,8 @@ class SpatialEdge:
         
         return False
     
-    def _segments_intersect(self, p1: Tuple[float, float], p2: Tuple[float, float],
-                           p3: Tuple[float, float], p4: Tuple[float, float]) -> bool:
+    def _segments_intersect(self, p1: tuple[float, float], p2: tuple[float, float],
+                           p3: tuple[float, float], p4: tuple[float, float]) -> bool:
         """Check if two line segments intersect."""
         def ccw(A, B, C):
             return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0])
@@ -145,7 +145,7 @@ class SpatialEdge:
         
         return math.sqrt((x - closest_x) ** 2 + (y - closest_y) ** 2)
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             'id': self.edge_id,
@@ -170,7 +170,7 @@ class RTreeNode:
     def __init__(self, is_leaf: bool = False, max_entries: int = 4):
         self.is_leaf = is_leaf
         self.max_entries = max_entries
-        self.entries: List[Tuple[Rectangle, Any]] = []  # (bounding_rect, child_or_edge)
+        self.entries: list[tuple[Rectangle, Any]] = []  # (bounding_rect, child_or_edge)
         self.bounding_rect: Optional[Rectangle] = None
     
     def is_full(self) -> bool:
@@ -252,9 +252,9 @@ class RTreeStrategy(AEdgeStrategy):
         self.is_directed = options.get('directed', True)
         
         # Core storage
-        self._edges: Dict[str, SpatialEdge] = {}
-        self._vertex_coords: Dict[str, Tuple[float, float]] = {}
-        self._vertices: Set[str] = set()
+        self._edges: dict[str, SpatialEdge] = {}
+        self._vertex_coords: dict[str, tuple[float, float]] = {}
+        self._vertices: set[str] = set()
         
         # R-Tree structure
         self._root: Optional[RTreeNode] = None
@@ -301,7 +301,7 @@ class RTreeStrategy(AEdgeStrategy):
         
         return current
     
-    def _split_node(self, node: RTreeNode) -> Tuple[RTreeNode, RTreeNode]:
+    def _split_node(self, node: RTreeNode) -> tuple[RTreeNode, RTreeNode]:
         """Split overfull node using quadratic split algorithm."""
         # Find two entries with maximum waste of space
         max_waste = -1
@@ -633,7 +633,7 @@ class RTreeStrategy(AEdgeStrategy):
                 return True
         return False
     
-    def get_edge_data(self, source: str, target: str) -> Optional[Dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
         """Get edge data."""
         for edge in self._edges.values():
             if edge.source == source and edge.target == target:
@@ -686,7 +686,7 @@ class RTreeStrategy(AEdgeStrategy):
         self._edge_id_counter = 0
         self._tree_height = 0
     
-    def add_vertex(self, vertex: str, coords: Tuple[float, float] = None) -> None:
+    def add_vertex(self, vertex: str, coords: tuple[float, float] = None) -> None:
         """Add vertex with coordinates."""
         self._vertices.add(vertex)
         if coords:
@@ -714,7 +714,7 @@ class RTreeStrategy(AEdgeStrategy):
     # SPATIAL QUERY OPERATIONS
     # ============================================================================
     
-    def range_query(self, min_x: float, min_y: float, max_x: float, max_y: float) -> List[SpatialEdge]:
+    def range_query(self, min_x: float, min_y: float, max_x: float, max_y: float) -> list[SpatialEdge]:
         """Find all edges intersecting with rectangle."""
         query_rect = Rectangle(min_x, min_y, max_x, max_y)
         result = []
@@ -736,7 +736,7 @@ class RTreeStrategy(AEdgeStrategy):
         search_node(self._root)
         return result
     
-    def point_query(self, x: float, y: float, radius: float = 0.0) -> List[SpatialEdge]:
+    def point_query(self, x: float, y: float, radius: float = 0.0) -> list[SpatialEdge]:
         """Find edges near a point within radius."""
         if radius == 0.0:
             # Exact point query
@@ -759,7 +759,7 @@ class RTreeStrategy(AEdgeStrategy):
         
         return result
     
-    def nearest_neighbor(self, x: float, y: float, k: int = 1) -> List[Tuple[SpatialEdge, float]]:
+    def nearest_neighbor(self, x: float, y: float, k: int = 1) -> list[tuple[SpatialEdge, float]]:
         """Find k nearest edges to point."""
         # Simple implementation - can be optimized with priority queue
         distances = []
@@ -771,7 +771,7 @@ class RTreeStrategy(AEdgeStrategy):
         distances.sort(key=lambda x: x[1])
         return distances[:k]
     
-    def edges_in_region(self, center_x: float, center_y: float, radius: float) -> List[SpatialEdge]:
+    def edges_in_region(self, center_x: float, center_y: float, radius: float) -> list[SpatialEdge]:
         """Find all edges within circular region."""
         # Use square approximation for efficiency
         candidates = self.range_query(center_x - radius, center_y - radius,
@@ -798,7 +798,7 @@ class RTreeStrategy(AEdgeStrategy):
             return self._root.bounding_rect
         return None
     
-    def spatial_statistics(self) -> Dict[str, Any]:
+    def spatial_statistics(self) -> dict[str, Any]:
         """Get spatial statistics."""
         if not self._edges:
             return {'edges': 0, 'vertices': 0, 'total_length': 0, 'avg_length': 0}
@@ -826,7 +826,7 @@ class RTreeStrategy(AEdgeStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'R_TREE',
@@ -844,7 +844,7 @@ class RTreeStrategy(AEdgeStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.spatial_statistics()
         

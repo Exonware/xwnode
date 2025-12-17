@@ -6,7 +6,7 @@ without creating cross-dependencies between strategies.
 """
 
 import threading
-from typing import Any, Dict, List, Optional, Iterator, Tuple, Union
+from typing import Any, Optional, Iterator, Union
 from collections import OrderedDict
 import weakref
 import time
@@ -29,7 +29,7 @@ class PathParser:
         self._max_cache_size = max_cache_size
         self._lock = threading.RLock()
     
-    def parse(self, path: str) -> List[str]:
+    def parse(self, path: str) -> list[str]:
         """Parse a path string into parts."""
         with self._lock:
             if path in self._cache:
@@ -44,7 +44,7 @@ class PathParser:
             
             return parts
     
-    def _parse_path(self, path: str) -> List[str]:
+    def _parse_path(self, path: str) -> list[str]:
         """Internal path parsing logic."""
         if not path:
             return []
@@ -61,7 +61,7 @@ class TrieNode:
     """Internal node for Trie structure - shared across strategies."""
     
     def __init__(self):
-        self.children: Dict[str, 'TrieNode'] = {}
+        self.children: dict[str, 'TrieNode'] = {}
         self.is_end_word: bool = False
         self.value: Any = None
     
@@ -73,8 +73,8 @@ class UnionFind:
     """Union-Find (Disjoint Set) data structure - shared across strategies."""
     
     def __init__(self):
-        self._parent: Dict[Any, Any] = {}
-        self._rank: Dict[Any, int] = {}
+        self._parent: dict[Any, Any] = {}
+        self._rank: dict[Any, int] = {}
         self._sets_count = 0
     
     def make_set(self, x: Any) -> None:
@@ -137,7 +137,7 @@ class MinHeap:
     """Min-heap implementation for priority queue operations - shared across strategies."""
     
     def __init__(self):
-        self._heap: List[Tuple[float, Any]] = []
+        self._heap: list[tuple[float, Any]] = []
         self._size = 0
     
     def push(self, value: Any, priority: float = 0.0) -> None:
@@ -221,7 +221,7 @@ def recursive_to_native(obj: Any) -> Any:
         return obj
 
 
-def is_sequential_numeric_keys(data: Dict[str, Any]) -> bool:
+def is_sequential_numeric_keys(data: dict[str, Any]) -> bool:
     """
     Check if dictionary keys are sequential numeric indices (for list detection).
     
@@ -238,7 +238,7 @@ def is_sequential_numeric_keys(data: Dict[str, Any]) -> bool:
         return False
 
 
-def calculate_structural_hash(data: Dict[str, Any]) -> int:
+def calculate_structural_hash(data: dict[str, Any]) -> int:
     """
     Calculate a structural hash based on keys only (not values).
     
@@ -273,7 +273,7 @@ class PerformanceTracker:
         self._access_count = 0
         self._cache_hits = 0
         self._cache_misses = 0
-        self._operation_times: Dict[str, List[float]] = {}
+        self._operation_times: dict[str, list[float]] = {}
         self._lock = threading.RLock()
     
     def record_access(self) -> None:
@@ -298,7 +298,7 @@ class PerformanceTracker:
                 self._operation_times[operation] = []
             self._operation_times[operation].append(time_taken)
     
-    def get_metrics(self) -> Dict[str, Any]:
+    def get_metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         with self._lock:
             metrics = {
@@ -340,7 +340,7 @@ class ObjectPool:
     """Generic object pool for strategies that need pooling."""
     
     def __init__(self, max_size: int = 100):
-        self._pool: List[Any] = []
+        self._pool: list[Any] = []
         self._max_size = max_size
         self._lock = threading.RLock()
         self._stats = {
@@ -390,7 +390,7 @@ class ObjectPool:
                 self._stats['pooled'] += 1
                 logger.debug(f"🔄 Returned object to pool")
     
-    def get_stats(self) -> Dict[str, int]:
+    def get_stats(self) -> dict[str, int]:
         """Get pool statistics."""
         with self._lock:
             stats = self._stats.copy()
@@ -429,7 +429,7 @@ def create_object_pool(max_size: int = 100) -> ObjectPool:
     return ObjectPool(max_size)
 
 
-def create_basic_metrics(strategy_name: str, size: int, **additional_metrics) -> Dict[str, Any]:
+def create_basic_metrics(strategy_name: str, size: int, **additional_metrics) -> dict[str, Any]:
     """Create basic metrics dictionary for strategies."""
     metrics = {
         'strategy': strategy_name,
@@ -441,7 +441,7 @@ def create_basic_metrics(strategy_name: str, size: int, **additional_metrics) ->
     return metrics
 
 
-def create_basic_backend_info(strategy_name: str, backend_type: str, **additional_info) -> Dict[str, Any]:
+def create_basic_backend_info(strategy_name: str, backend_type: str, **additional_info) -> dict[str, Any]:
     """Create basic backend info dictionary for strategies."""
     info = {
         'strategy': strategy_name,
@@ -457,7 +457,7 @@ def create_basic_backend_info(strategy_name: str, backend_type: str, **additiona
     return info
 
 
-def is_list_like(keys: List[str]) -> bool:
+def is_list_like(keys: list[str]) -> bool:
     """Check if keys represent a list-like structure."""
     if not keys:
         return False
@@ -490,22 +490,22 @@ def create_strategy_logger(strategy_name: str):
     return get_logger(f"xnode.strategy.{strategy_name}")
 
 
-def validate_strategy_options(options: Dict[str, Any], allowed_options: List[str]) -> Dict[str, Any]:
+def validate_strategy_options(options: dict[str, Any], allowed_options: list[str]) -> dict[str, Any]:
     """Validate strategy options and return only allowed ones."""
     return {k: v for k, v in options.items() if k in allowed_options}
 
 
-def create_size_tracker() -> Dict[str, int]:
+def create_size_tracker() -> dict[str, int]:
     """Create a size tracking dictionary."""
     return {'size': 0}
 
 
-def update_size_tracker(tracker: Dict[str, int], delta: int) -> None:
+def update_size_tracker(tracker: dict[str, int], delta: int) -> None:
     """Update size tracker with delta change."""
     tracker['size'] = max(0, tracker['size'] + delta)
 
 
-def create_access_tracker() -> Dict[str, int]:
+def create_access_tracker() -> dict[str, int]:
     """Create an access tracking dictionary."""
     return {
         'get_count': 0,
@@ -515,14 +515,14 @@ def create_access_tracker() -> Dict[str, int]:
     }
 
 
-def record_access(tracker: Dict[str, int], operation: str) -> None:
+def record_access(tracker: dict[str, int], operation: str) -> None:
     """Record an access operation."""
     if operation in tracker:
         tracker[operation] += 1
     tracker['access_count'] += 1
 
 
-def get_access_metrics(tracker: Dict[str, int]) -> Dict[str, Any]:
+def get_access_metrics(tracker: dict[str, int]) -> dict[str, Any]:
     """Get access metrics from tracker."""
     return {
         'total_accesses': tracker['access_count'],

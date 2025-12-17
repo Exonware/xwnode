@@ -9,12 +9,12 @@ on fixed-universe integer keys.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import math
-from typing import Any, Iterator, List, Dict, Optional, Set, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -178,7 +178,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         
         self.universe_size = universe_size
         self._root = VebNode(universe_size)
-        self._values: Dict[int, Any] = {}  # Store actual values
+        self._values: dict[int, Any] = {}  # Store actual values
         self._size = 0
     
     def get_supported_traits(self) -> NodeTrait:
@@ -714,7 +714,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         
         return self._veb_predecessor(self._root, key)
     
-    def range_query(self, low: int, high: int) -> List[tuple[int, Any]]:
+    def range_query(self, low: int, high: int) -> list[tuple[int, Any]]:
         """
         Find all keys in range [low, high].
         
@@ -770,7 +770,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
             depth += 1
         return depth
     
-    def get_memory_usage(self) -> Dict[str, Any]:
+    def get_memory_usage(self) -> dict[str, Any]:
         """
         Estimate memory usage.
         

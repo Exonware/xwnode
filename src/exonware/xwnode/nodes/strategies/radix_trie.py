@@ -5,7 +5,7 @@ This module implements the RADIX_TRIE strategy for compressed prefix
 matching with path compression for memory efficiency.
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -17,7 +17,7 @@ class RadixTrieNode:
     def __init__(self, edge_label: str = ""):
         """Time Complexity: O(1)"""
         self.edge_label = edge_label  # Compressed edge label
-        self.children: Dict[str, 'RadixTrieNode'] = {}
+        self.children: dict[str, 'RadixTrieNode'] = {}
         self.is_terminal = False
         self.value = None
         self.key = None  # Full key that ends at this node
@@ -186,7 +186,7 @@ prefix-based operations.
         
         return current if current and current.is_terminal else None
     
-    def _collect_all_keys(self, node: RadixTrieNode, prefix: str = "") -> List[Tuple[str, Any]]:
+    def _collect_all_keys(self, node: RadixTrieNode, prefix: str = "") -> list[tuple[str, Any]]:
         """Collect all keys with values starting from given node."""
         result = []
         
@@ -200,7 +200,7 @@ prefix-based operations.
         
         return result
     
-    def _collect_prefix_keys(self, node: RadixTrieNode, prefix: str, target_prefix: str) -> List[Tuple[str, Any]]:
+    def _collect_prefix_keys(self, node: RadixTrieNode, prefix: str, target_prefix: str) -> list[tuple[str, Any]]:
         """Collect keys with given prefix starting from node."""
         result = []
         current_prefix = prefix + node.edge_label
@@ -305,7 +305,7 @@ prefix-based operations.
         """Get number of keys."""
         return self._size
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         all_items = self._collect_all_keys(self._root)
 
@@ -368,17 +368,17 @@ prefix-based operations.
     # RADIX TRIE SPECIFIC OPERATIONS
     # ============================================================================
     
-    def find_with_prefix(self, prefix: str) -> List[Tuple[str, Any]]:
+    def find_with_prefix(self, prefix: str) -> list[tuple[str, Any]]:
         """Find all keys starting with given prefix."""
         normalized_prefix = self._normalize_key(prefix)
         return self._collect_prefix_keys(self._root, "", normalized_prefix)
     
-    def get_keys_with_prefix(self, prefix: str) -> List[str]:
+    def get_keys_with_prefix(self, prefix: str) -> list[str]:
         """Get keys starting with given prefix."""
         prefix_items = self.find_with_prefix(prefix)
         return [key for key, _ in prefix_items]
     
-    def get_values_with_prefix(self, prefix: str) -> List[Any]:
+    def get_values_with_prefix(self, prefix: str) -> list[Any]:
         """Get values for keys starting with given prefix."""
         prefix_items = self.find_with_prefix(prefix)
         return [value for _, value in prefix_items]
@@ -403,7 +403,7 @@ prefix-based operations.
         common_len = self._find_common_prefix(first_key, last_key)
         return first_key[:common_len]
     
-    def get_all_prefixes(self, key: str) -> List[str]:
+    def get_all_prefixes(self, key: str) -> list[str]:
         """Get all prefixes of key that exist in trie."""
         normalized_key = self._normalize_key(key)
         prefixes = []
@@ -419,14 +419,14 @@ prefix-based operations.
         """Check if prefix is a prefix of any key in trie."""
         return len(self.find_with_prefix(prefix)) > 0
     
-    def get_autocomplete_suggestions(self, prefix: str, max_suggestions: int = 10) -> List[str]:
+    def get_autocomplete_suggestions(self, prefix: str, max_suggestions: int = 10) -> list[str]:
         """Get autocomplete suggestions for given prefix."""
         suggestions = self.get_keys_with_prefix(prefix)
         return suggestions[:max_suggestions]
     
-    def compute_compression_statistics(self) -> Dict[str, Any]:
+    def compute_compression_statistics(self) -> dict[str, Any]:
         """Compute detailed compression statistics."""
-        def _analyze_node(node: RadixTrieNode, depth: int = 0) -> Dict[str, int]:
+        def _analyze_node(node: RadixTrieNode, depth: int = 0) -> dict[str, int]:
             stats = {
                 'nodes': 1,
                 'terminals': 1 if node.is_terminal else 0,
@@ -462,7 +462,7 @@ prefix-based operations.
             'keys': self._size
         }
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get comprehensive radix trie statistics."""
         compression_stats = self.compute_compression_statistics()
         
@@ -481,7 +481,7 @@ prefix-based operations.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'RADIX_TRIE',
@@ -499,7 +499,7 @@ prefix-based operations.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         stats = self.get_statistics()
         comp_stats = stats['compression_statistics']

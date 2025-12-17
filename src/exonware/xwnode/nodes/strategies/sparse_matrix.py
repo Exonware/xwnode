@@ -15,11 +15,11 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Optional, Dict, Tuple, Set, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import defaultdict
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
@@ -87,10 +87,10 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         )
         
         # COO format: list of (row, col, value) triplets
-        self._data: List[Tuple[int, int, Any]] = []
+        self._data: list[tuple[int, int, Any]] = []
         
         # Hash indexes for O(1) lookups
-        self._row_index: Dict[Tuple[int, int], int] = {}  # (row, col) -> index in _data
+        self._row_index: dict[tuple[int, int], int] = {}  # (row, col) -> index in _data
         
         # Dimensions
         shape = options.get('shape', (0, 0))
@@ -173,7 +173,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         for idx, (row, col, _) in enumerate(self._data):
             self._row_index[(row, col)] = idx
     
-    def get_row(self, row: int) -> List[Any]:
+    def get_row(self, row: int) -> list[Any]:
         """
         Get entire row as dense list.
         
@@ -185,7 +185,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
                 result[c] = value
         return result
     
-    def get_col(self, col: int) -> List[Any]:
+    def get_col(self, col: int) -> list[Any]:
         """
         Get entire column as dense list.
         
@@ -300,7 +300,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
     # ============================================================================
     
     @property
-    def shape(self) -> Tuple[int, int]:
+    def shape(self) -> tuple[int, int]:
         """Get matrix dimensions (rows, cols)."""
         return (self._rows, self._cols)
     
@@ -322,7 +322,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
             return 0.0
         return self.nnz / total_elements
     
-    def to_dense(self) -> List[List[Any]]:
+    def to_dense(self) -> list[list[Any]]:
         """
         Convert to dense matrix representation.
         
@@ -337,7 +337,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         return result
     
     @classmethod
-    def from_dense(cls, matrix: List[List[Any]], default_value: Any = 0) -> 'SparseMatrixStrategy':
+    def from_dense(cls, matrix: list[list[Any]], default_value: Any = 0) -> 'SparseMatrixStrategy':
         """
         Create sparse matrix from dense representation.
         
@@ -420,7 +420,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         self._rows = 0
         self._cols = 0
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert sparse matrix to native dictionary format."""
         return {
             'data': [(row, col, val) for row, col, val in self._data],
@@ -483,7 +483,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         """Return True if matrix has non-zero elements."""
         return bool(self._data)
     
-    def __iter__(self) -> Iterator[Tuple[int, int, Any]]:
+    def __iter__(self) -> Iterator[tuple[int, int, Any]]:
         """Iterate through non-zero elements as (row, col, value) triplets."""
         return iter(self._data)
     
@@ -500,7 +500,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         return {
             'strategy': 'SPARSE_MATRIX',
@@ -519,7 +519,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         total_elements = self._rows * self._cols
         memory_bytes = self.nnz * (8 + 8 + 8)  # row, col, value

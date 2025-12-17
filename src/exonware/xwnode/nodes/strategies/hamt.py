@@ -9,11 +9,11 @@ with structural sharing and efficient immutable operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Union, AsyncIterator
+from typing import Any, Iterator, Optional, Union, AsyncIterator
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -40,7 +40,7 @@ class HAMTNode:
     def __init__(self):
         """Time Complexity: O(1)"""
         self.bitmap: int = 0  # 32-bit bitmap for tracking occupied slots
-        self.children: List[Any] = []  # Compact array of children/values
+        self.children: list[Any] = []  # Compact array of children/values
     
     def index_for_bit(self, bit_pos: int) -> int:
         """
@@ -339,7 +339,7 @@ class HAMTStrategy(ANodeStrategy):
     # ITERATION METHODS
     # ============================================================================
     
-    def _collect_all(self, node: HAMTNode) -> List[tuple[Any, Any]]:
+    def _collect_all(self, node: HAMTNode) -> list[tuple[Any, Any]]:
         """Collect all key-value pairs from HAMT."""
         results = []
         
@@ -396,7 +396,7 @@ class HAMTStrategy(ANodeStrategy):
         
         return depth(self._root, 0)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native Python dictionary."""
         result = {}
 

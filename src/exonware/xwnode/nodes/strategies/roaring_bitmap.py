@@ -14,11 +14,11 @@ bitmap operations with excellent performance for sparse data.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Set, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from collections import defaultdict
 import struct
 from .base import ANodeMatrixStrategy
@@ -53,7 +53,7 @@ class Container:
         """Remove value from container. Returns True if value existed."""
         raise NotImplementedError
     
-    def to_array(self) -> List[int]:
+    def to_array(self) -> list[int]:
         """Convert container to sorted array."""
         raise NotImplementedError
 
@@ -63,7 +63,7 @@ class ArrayContainer(Container):
     
     def __init__(self):
         super().__init__()
-        self.values: List[int] = []
+        self.values: list[int] = []
     
     def contains(self, x: int) -> bool:
         """Binary search for value."""
@@ -110,7 +110,7 @@ class ArrayContainer(Container):
         
         return False
     
-    def to_array(self) -> List[int]:
+    def to_array(self) -> list[int]:
         """Return copy of values array."""
         return self.values.copy()
     
@@ -156,7 +156,7 @@ class BitmapContainer(Container):
         self.cardinality -= 1
         return True
     
-    def to_array(self) -> List[int]:
+    def to_array(self) -> list[int]:
         """Convert bitmap to array of set values."""
         result = []
         for byte_index in range(len(self.bitmap)):
@@ -190,20 +190,20 @@ ormance characteristics.
         super().__init__(NodeMode.ROARING_BITMAP, traits, **options)
         
         # Roaring bitmap structure: high 16 bits -> container
-        self._containers: Dict[int, Container] = {}  # high_bits -> container
+        self._containers: dict[int, Container] = {}  # high_bits -> container
         self._size = 0
         
         # Key-value mapping for compatibility
-        self._key_to_value: Dict[str, int] = {}  # key -> 32-bit value
-        self._value_to_key: Dict[int, str] = {}  # value -> key
-        self._values: Dict[str, Any] = {}  # Associated data
+        self._key_to_value: dict[str, int] = {}  # key -> 32-bit value
+        self._value_to_key: dict[int, str] = {}  # value -> key
+        self._values: dict[str, Any] = {}  # Associated data
         self._next_value = 0
     
     def get_supported_traits(self) -> NodeTrait:
         """Get the traits supported by the roaring bitmap strategy."""
         return (NodeTrait.COMPRESSED | NodeTrait.INDEXED | NodeTrait.STREAMING | NodeTrait.SPATIAL)
     
-    def _split_value(self, value: int) -> Tuple[int, int]:
+    def _split_value(self, value: int) -> tuple[int, int]:
         """Split 32-bit value into high 16 bits and low 16 bits."""
         high = (value >> 16) & 0xFFFF
         low = value & 0xFFFF
@@ -379,7 +379,7 @@ ormance characteristics.
         """Get the number of set bits."""
         return self._size
     
-    def to_native(self) -> Dict[str, bool]:
+    def to_native(self) -> dict[str, bool]:
         """Convert to native Python dict of boolean values."""
         result = {}
 
@@ -519,7 +519,7 @@ ormance characteristics.
         
         return result
     
-    def to_array(self) -> List[int]:
+    def to_array(self) -> list[int]:
         """Convert to sorted array of all values."""
         result = []
         
@@ -593,7 +593,7 @@ ormance characteristics.
     # ============================================================================
     
     @property
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info."""
         array_containers = sum(1 for c in self._containers.values() 
                               if isinstance(c, ArrayContainer))
@@ -616,7 +616,7 @@ ormance characteristics.
         }
     
     @property
-    def metrics(self) -> Dict[str, Any]:
+    def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
         compression_ratio = self.get_compression_ratio()
         

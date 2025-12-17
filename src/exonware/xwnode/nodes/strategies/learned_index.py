@@ -14,7 +14,7 @@ to predict key positions instead of traditional tree traversal.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 
 ==============================================================================
@@ -151,7 +151,7 @@ For now, this strategy:
 ==============================================================================
 """
 
-from typing import Any, Iterator, Dict, List, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 import bisect
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -218,10 +218,10 @@ class LearnedIndexStrategy(ANodeStrategy):
         super().__init__(NodeMode.LEARNED_INDEX, traits, **options)
         
         # Sorted array storage for efficient range access
-        self._keys: List[Any] = []  # Sorted keys (numeric for ML)
-        self._values: List[Any] = []  # Corresponding values
-        self._key_map: Dict[str, int] = {}  # String key -> numeric index
-        self._reverse_map: Dict[int, str] = {}  # Numeric index -> string key
+        self._keys: list[Any] = []  # Sorted keys (numeric for ML)
+        self._values: list[Any] = []  # Corresponding values
+        self._key_map: dict[str, int] = {}  # String key -> numeric index
+        self._reverse_map: dict[int, str] = {}  # Numeric index -> string key
         self._next_numeric_key = 0
         
         # ML model components
@@ -380,11 +380,11 @@ class LearnedIndexStrategy(ANodeStrategy):
         """Get size."""
         return len(self._keys)
     
-    def to_native(self) -> Dict[str, Any]:
+    def to_native(self) -> dict[str, Any]:
         """Convert to native dict."""
         return {self._reverse_map[k]: v for k, v in zip(self._keys, self._values)}
     
-    def backend_info(self) -> Dict[str, Any]:
+    def backend_info(self) -> dict[str, Any]:
         """Get backend implementation info with production features and model status."""
         # Use the comprehensive get_backend_info() which includes status and model info
         return self.get_backend_info()
@@ -514,7 +514,7 @@ class LearnedIndexStrategy(ANodeStrategy):
             # Prediction failed, return -1 to trigger fallback
             return -1
     
-    def get_model_info(self) -> Dict[str, Any]:
+    def get_model_info(self) -> dict[str, Any]:
         """Get ML model information and statistics."""
         if not self._trained:
             return {
@@ -543,7 +543,7 @@ class LearnedIndexStrategy(ANodeStrategy):
             'retrain_frequency': self._retrain_frequency
         }
     
-    def get_backend_info(self) -> Dict[str, Any]:
+    def get_backend_info(self) -> dict[str, Any]:
         """Get backend info with ML model details."""
         return {
             **create_basic_backend_info('Learned Index', 'ML-based learned index with Linear Regression'),

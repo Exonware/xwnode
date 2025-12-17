@@ -9,12 +9,12 @@ data type with Last-Write-Wins semantics for distributed systems.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import time
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -40,7 +40,7 @@ class VectorClock:
         Args:
             replica_id: Unique replica identifier
         """
-        self.clocks: Dict[str, int] = {replica_id: 0}
+        self.clocks: dict[str, int] = {replica_id: 0}
         self.replica_id = replica_id
     
     def increment(self) -> None:
@@ -215,7 +215,7 @@ class CRDTMapStrategy(ANodeTreeStrategy):
         super().__init__(mode, traits, **options)
         
         self.replica_id = replica_id or f"replica_{id(self)}"
-        self._entries: Dict[Any, CRDTEntry] = {}
+        self._entries: dict[Any, CRDTEntry] = {}
         self._vector_clock = VectorClock(self.replica_id)
         self._size = 0
     
@@ -410,7 +410,7 @@ class CRDTMapStrategy(ANodeTreeStrategy):
                     elif not old_tombstone and new_tombstone:
                         self._size -= 1
     
-    def get_replica_state(self) -> Dict[str, Any]:
+    def get_replica_state(self) -> dict[str, Any]:
         """
         Get current replica state for synchronization.
         
@@ -431,7 +431,7 @@ class CRDTMapStrategy(ANodeTreeStrategy):
             }
         }
     
-    def apply_replica_state(self, state: Dict[str, Any]) -> None:
+    def apply_replica_state(self, state: dict[str, Any]) -> None:
         """
         Apply replica state from synchronization.
         
@@ -609,7 +609,7 @@ class CRDTMapStrategy(ANodeTreeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get CRDT statistics.
         

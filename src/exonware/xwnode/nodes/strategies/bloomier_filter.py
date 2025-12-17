@@ -9,12 +9,12 @@ approximate key→value mapping with controlled false positive rates.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
 import hashlib
-from typing import Any, Iterator, List, Dict, Optional, Set, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -129,13 +129,13 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
         self.num_hashes = self._calculate_hashes(false_positive_rate)
         
         # Storage arrays
-        self._table: List[Optional[int]] = [None] * self.size  # Encoded values
-        self._keys: Set[Any] = set()  # Track inserted keys
-        self._key_to_value: Dict[Any, Any] = {}  # For exact retrieval
+        self._table: list[Optional[int]] = [None] * self.size  # Encoded values
+        self._keys: set[Any] = set()  # Track inserted keys
+        self._key_to_value: dict[Any, Any] = {}  # For exact retrieval
         
         # Construction state
         self._is_finalized = False
-        self._pending: Dict[Any, Any] = {}
+        self._pending: dict[Any, Any] = {}
         
         # Security: Random salt for hashing
         self._salt = hashlib.sha256(str(id(self)).encode()).digest()
@@ -203,7 +203,7 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
         hash_value = int.from_bytes(h.digest()[:4], 'big')
         return hash_value % self.size
     
-    def _get_hash_positions(self, key: Any) -> List[int]:
+    def _get_hash_positions(self, key: Any) -> list[int]:
         """Get all hash positions for key."""
         return [self._hash_key(key, i) for i in range(self.num_hashes)]
     
@@ -459,7 +459,7 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get Bloomier filter statistics.
         

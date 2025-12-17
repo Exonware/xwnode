@@ -9,11 +9,11 @@ using a binary tree structure.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, List, Dict, Optional, Tuple, AsyncIterator
+from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -398,7 +398,7 @@ class RopeStrategy(ANodeTreeStrategy):
         return ''.join(result)
     
     def _collect_substring(self, node: Optional[RopeNode], offset: int,
-                          start: int, end: int, result: List[str]) -> None:
+                          start: int, end: int, result: list[str]) -> None:
         """Recursively collect substring."""
         if node is None or offset >= end:
             return
@@ -457,7 +457,7 @@ class RopeStrategy(ANodeTreeStrategy):
         
         self._total_length += len(text)
     
-    def _split_at(self, index: int) -> Tuple[Optional[RopeNode], Optional[RopeNode]]:
+    def _split_at(self, index: int) -> tuple[Optional[RopeNode], Optional[RopeNode]]:
         """
         Split rope at index.
         
@@ -540,7 +540,7 @@ class RopeStrategy(ANodeTreeStrategy):
         self._collect_text(self._root, result)
         return ''.join(result)
     
-    def _collect_text(self, node: Optional[RopeNode], result: List[str]) -> None:
+    def _collect_text(self, node: Optional[RopeNode], result: list[str]) -> None:
         """Recursively collect text from leaves."""
         if node is None:
             return
@@ -686,9 +686,9 @@ class RopeStrategy(ANodeTreeStrategy):
     # STATISTICS
     # ============================================================================
     
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get rope statistics."""
-        def count_nodes(node: Optional[RopeNode]) -> Tuple[int, int]:
+        def count_nodes(node: Optional[RopeNode]) -> tuple[int, int]:
             """Count leaves and internal nodes."""
             if node is None:
                 return (0, 0)

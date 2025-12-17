@@ -6,13 +6,13 @@ Cache adapter interface and contracts.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.30
+Version: 0.0.1.31
 Generation Date: November 4, 2025
 """
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Optional, Dict, List
+from typing import Any, Optional
 
 
 @dataclass
@@ -36,7 +36,7 @@ class CacheStats:
         """Total cache requests."""
         return self.hits + self.misses
     
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert stats to dictionary."""
         return {
             'hits': self.hits,
@@ -134,7 +134,7 @@ class ICacheAdapter(ABC):
         """
         return self.get(key) is not None
     
-    def get_many(self, keys: List[str]) -> Dict[str, Any]:
+    def get_many(self, keys: list[str]) -> dict[str, Any]:
         """
         Get multiple values from cache.
         
@@ -151,7 +151,7 @@ class ICacheAdapter(ABC):
                 result[key] = value
         return result
     
-    def put_many(self, items: Dict[str, Any]) -> None:
+    def put_many(self, items: dict[str, Any]) -> None:
         """
         Store multiple values in cache.
         
