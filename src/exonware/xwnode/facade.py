@@ -9,7 +9,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.31
+Version: 0.1.0.1
 Generation Date: 22-Oct-2025
 """
 
@@ -206,6 +206,11 @@ class XWNode[T](ANode[T]):
     def has(self, key: Any) -> bool:
         """Check if key exists."""
         try:
+            # PersistentNode (COW) uses path semantics, not key semantics
+            if self._is_persistent_strategy():
+                path = str(key) if not isinstance(key, str) else key
+                return self._strategy.exists(path)
+
             # Use strategy's has() for direct key check
             return self._strategy.has(key)
         except Exception as e:
@@ -226,6 +231,16 @@ class XWNode[T](ANode[T]):
         try:
             # Convert to string if needed (strategies expect string keys)
             str_key = str(key) if not isinstance(key, str) else key
+            if self._is_persistent_strategy():
+                existed = self._strategy.exists(str_key)
+                if not existed:
+                    return False
+                # ACOWNode.delete returns a new node instance; update this facade's strategy
+                new_node = self._strategy.delete(str_key)
+                self._strategy = new_node._strategy
+                self._nav_cache.invalidate(str_key)
+                return True
+
             result = self._strategy.delete(str_key)
             if result:
                 # Invalidate cache for this key and any paths starting with it
@@ -915,9 +930,19 @@ def create_with_preset(data: Any = None, preset: str = 'DEFAULT') -> XWNode:
     
     try:
         preset_config = get_preset(preset)
-        # For now, create with basic configuration
-        # TODO: Integrate with StrategyManager for full preset support
-        return XWNode(data)
+        
+        # Integrate with StrategyManager for full preset support
+        # Create StrategyManager with preset configuration
+        strategy_manager = StrategyManager(
+            node_mode=preset_config.node_mode,
+            edge_mode=preset_config.edge_mode,
+            node_traits=preset_config.node_traits,
+            edge_traits=preset_config.edge_traits,
+            **preset_config.options
+        )
+        
+        # Create XWNode with StrategyManager
+        return XWNode(data, strategy_manager=strategy_manager)
     except ValueError as e:
         logger.warning(f"Unknown preset '{preset}', using DEFAULT: {e}")
         return XWNode(data)

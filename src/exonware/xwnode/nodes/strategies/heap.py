@@ -228,18 +228,34 @@ urable min/max behavior.
     # ============================================================================
     
     def as_trie(self):
-        """Provide Trie behavioral view."""
-        # TODO: Implement Trie view
-        return self
+        """
+        Provide Trie behavioral view.
+        
+        Heap cannot meaningfully behave as a trie (different data structure).
+        Raises NotImplementedError to indicate incompatibility.
+        """
+        raise NotImplementedError(
+            "Heap cannot behave as Trie - use TrieStrategy for prefix-based operations"
+        )
     
     def as_heap(self):
-        """Provide Heap behavioral view."""
+        """
+        Provide Heap behavioral view.
+        
+        This strategy IS a heap, so return self.
+        """
         return self
     
     def as_skip_list(self):
-        """Provide SkipList behavioral view."""
-        # TODO: Implement SkipList view
-        return self
+        """
+        Provide SkipList behavioral view.
+        
+        Heap cannot meaningfully behave as a skip list (different data structure).
+        Raises NotImplementedError to indicate incompatibility.
+        """
+        raise NotImplementedError(
+            "Heap cannot behave as SkipList - use SkipListStrategy for probabilistic sorted operations"
+        )
     
     # ============================================================================
     # HEAP SPECIFIC OPERATIONS

@@ -204,7 +204,7 @@ graph.add_edge(edge)
 2. **Advanced Caching**: Multi-level caching strategies
 3. **Distributed Operations**: Cluster-aware node operations
 4. **Schema Validation**: Integration with xSchema library
-5. **Action Triggers**: Integration with xAction library
+5. **Action Triggers**: Integration with xwaction library
 
 ---
 

@@ -290,14 +290,26 @@ class TrieStrategy(ANodeTreeStrategy):
         return self
     
     def as_heap(self):
-        """Provide Heap behavioral view."""
-        # TODO: Implement Heap view
-        return self
+        """
+        Provide Heap behavioral view.
+        
+        Trie cannot meaningfully behave as a heap (different data structure).
+        Raises NotImplementedError to indicate incompatibility.
+        """
+        raise NotImplementedError(
+            "Trie cannot behave as Heap - use HeapStrategy for priority-based operations"
+        )
     
     def as_skip_list(self):
-        """Provide SkipList behavioral view."""
-        # TODO: Implement SkipList view
-        return self
+        """
+        Provide SkipList behavioral view.
+        
+        Trie cannot meaningfully behave as a skip list (different data structure).
+        Raises NotImplementedError to indicate incompatibility.
+        """
+        raise NotImplementedError(
+            "Trie cannot behave as SkipList - use SkipListStrategy for probabilistic sorted operations"
+        )
     
     # ============================================================================
     # TRIE SPECIFIC OPERATIONS
@@ -338,9 +350,23 @@ class TrieStrategy(ANodeTreeStrategy):
         return self.prefix_search(prefix)
     
     def keys_with_suffix(self, suffix: str) -> list[str]:
-        """Get all keys with given suffix."""
-        # TODO: Implement suffix search
-        return []
+        """
+        Get all keys with given suffix.
+        
+        Implements suffix search by traversing the trie and checking if keys end with suffix.
+        
+        Time Complexity: O(n * m) where n is number of keys, m is suffix length
+        """
+        if not suffix:
+            return list(self.keys())
+        
+        result = []
+        # Collect all keys and filter by suffix
+        for key in self.keys():
+            if key.endswith(suffix):
+                result.append(key)
+        
+        return result
     
     # ============================================================================
     # ITERATION

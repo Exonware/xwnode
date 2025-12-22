@@ -13,7 +13,7 @@ This strategy provides optimized operations for Abstract Syntax Trees (ASTs):
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.31
+Version: 0.1.0.1
 Date: October 29, 2025
 """
 

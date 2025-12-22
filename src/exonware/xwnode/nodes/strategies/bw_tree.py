@@ -14,7 +14,7 @@ with delta updates and atomic operations.
 Company: eXonware.com
 Author: Eng. Muhammad AlShehri
 Email: connect@exonware.com
-Version: 0.0.1.31
+Version: 0.1.0.1
 Generation Date: 24-Oct-2025
 """
 
@@ -495,9 +495,32 @@ class BwTreeStrategy(ANodeStrategy):
         return count
     
     def to_native(self) -> dict[str, Any]:
-        """Convert to native Python dictionary."""
+        """
+        Convert to native Python dictionary.
+        
+        Consolidates the Bw-Tree and converts all key-value pairs to a dictionary.
+        This creates a snapshot of the current state by consolidating all delta chains.
+        
+        Returns:
+            Dictionary representation of all key-value pairs in the tree
+        """
+        # Get consolidated snapshot of root node
+        root_node = self._get_node(self._root_pid)
+        if root_node is None:
+            return {}
+        
+        # Consolidate to get clean snapshot (applies all deltas)
+        consolidated = root_node.consolidate()
+        
+        # Convert to dictionary
         result = {}
-        # TODO: Implement proper to_native conversion
+        if consolidated.is_leaf:
+            for i, key in enumerate(consolidated.keys):
+                if i < len(consolidated.values):
+                    # Convert key to string for dictionary (or keep as-is if hashable)
+                    key_str = str(key) if not isinstance(key, (str, int, float, bool, type(None))) else key
+                    result[key_str] = consolidated.values[i]
+        
         return result
     
     def backend_info(self) -> dict[str, Any]:

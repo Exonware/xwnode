@@ -302,37 +302,156 @@ class ArrayListStrategy(ANodeLinearStrategy):
         """
         Provide LinkedList behavioral view.
         
-        Time Complexity: O(1)
+        Array list can be viewed as a linked list with sequential access.
+        Provides linked list interface while using array list's efficient random access.
+        
+        Time Complexity: O(1) view creation, O(1) operations
         """
-        # TODO: Implement LinkedList view
+        # Array list already supports sequential access like linked list
+        # Return self since array list can behave as linked list
         return self
     
     def as_stack(self):
         """
-        Provide Stack behavioral view.
+        Provide Stack behavioral view (LIFO).
         
-        Time Complexity: O(1)
+        Array list can be used as a stack by using append/pop operations.
+        Provides stack interface (push/pop) while using array list backend.
+        
+        Time Complexity: O(1) view creation, O(1) push/pop operations
         """
-        # TODO: Implement Stack view
-        return self
+        # Create stack adapter that uses array list's append/pop
+        class StackView:
+            """Stack behavioral view adapter for array list."""
+            def __init__(self, array_list_strategy):
+                self._strategy = array_list_strategy
+            
+            def push(self, value: Any) -> None:
+                """Push value onto stack (append to end)."""
+                self._strategy.append(value)
+            
+            def pop(self) -> Any:
+                """Pop value from stack (remove from end)."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("pop from empty stack")
+                return self._strategy._data.pop()
+            
+            def peek(self) -> Any:
+                """Peek at top of stack without removing."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("peek from empty stack")
+                return self._strategy._data[-1]
+            
+            def is_empty(self) -> bool:
+                """Check if stack is empty."""
+                return len(self._strategy._data) == 0
+            
+            def size(self) -> int:
+                """Get stack size."""
+                return len(self._strategy._data)
+        
+        return StackView(self)
     
     def as_queue(self):
         """
-        Provide Queue behavioral view.
+        Provide Queue behavioral view (FIFO).
         
-        Time Complexity: O(1)
+        Array list can be used as a queue by using append/popleft operations.
+        Provides queue interface (enqueue/dequeue) while using array list backend.
+        
+        Time Complexity: O(1) view creation, O(1) enqueue, O(n) dequeue (array shift)
         """
-        # TODO: Implement Queue view
-        return self
+        # Create queue adapter that uses array list
+        class QueueView:
+            """Queue behavioral view adapter for array list."""
+            def __init__(self, array_list_strategy):
+                self._strategy = array_list_strategy
+            
+            def enqueue(self, value: Any) -> None:
+                """Enqueue value (append to end)."""
+                self._strategy.append(value)
+            
+            def dequeue(self) -> Any:
+                """Dequeue value (remove from front)."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("dequeue from empty queue")
+                return self._strategy._data.pop(0)  # O(n) but necessary for FIFO
+            
+            def peek(self) -> Any:
+                """Peek at front of queue without removing."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("peek from empty queue")
+                return self._strategy._data[0]
+            
+            def is_empty(self) -> bool:
+                """Check if queue is empty."""
+                return len(self._strategy._data) == 0
+            
+            def size(self) -> int:
+                """Get queue size."""
+                return len(self._strategy._data)
+        
+        return QueueView(self)
     
     def as_deque(self):
         """
-        Provide Deque behavioral view.
+        Provide Deque behavioral view (double-ended queue).
         
-        Time Complexity: O(1)
+        Array list can be used as a deque by using append/pop and insert/pop operations.
+        Provides deque interface (appendleft/append/popleft/pop) while using array list backend.
+        
+        Time Complexity: O(1) view creation, O(1) append/pop, O(n) appendleft/popleft
         """
-        # TODO: Implement Deque view
-        return self
+        # Create deque adapter that uses array list
+        class DequeView:
+            """Deque behavioral view adapter for array list."""
+            def __init__(self, array_list_strategy):
+                self._strategy = array_list_strategy
+            
+            def append(self, value: Any) -> None:
+                """Append value to right end."""
+                self._strategy.append(value)
+            
+            def appendleft(self, value: Any) -> None:
+                """Append value to left end."""
+                self._strategy._data.insert(0, value)  # O(n) but necessary
+                self._strategy._size += 1
+            
+            def pop(self) -> Any:
+                """Pop value from right end."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("pop from empty deque")
+                self._strategy._size -= 1
+                return self._strategy._data.pop()
+            
+            def popleft(self) -> Any:
+                """Pop value from left end."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("popleft from empty deque")
+                self._strategy._size -= 1
+                return self._strategy._data.pop(0)  # O(n) but necessary
+            
+            def peek(self) -> Any:
+                """Peek at right end."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("peek from empty deque")
+                return self._strategy._data[-1]
+            
+            def peekleft(self) -> Any:
+                """Peek at left end."""
+                if len(self._strategy._data) == 0:
+                    raise IndexError("peekleft from empty deque")
+                return self._strategy._data[0]
+            
+            def is_empty(self) -> bool:
+                """Check if deque is empty."""
+                return len(self._strategy._data) == 0
+            
+            def size(self) -> int:
+                """Get deque size."""
+                return len(self._strategy._data)
+        
+        return DequeView(self)
     
     # ============================================================================
     # ARRAY-SPECIFIC OPERATIONS

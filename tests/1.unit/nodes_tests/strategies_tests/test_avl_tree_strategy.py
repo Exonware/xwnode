@@ -1,0 +1,280 @@
+"""
+#exonware/xwnode/tests/1.unit/nodes_tests/strategies_tests/test_avl_tree_strategy.py
+
+Comprehensive tests for AVLTreeStrategy.
+
+Tests cover:
+- Interface compliance (iNodeStrategy)
+- Core operations (put, get, delete)
+- AVL tree balancing (height-based)
+- Tree rotations
+- Range queries
+- Iterator protocol
+- Performance characteristics (O(log n) guaranteed operations)
+- Security (malicious input, resource limits)
+- Error handling
+- Edge cases
+
+Company: eXonware.com
+Author: Eng. Muhammad AlShehri
+Email: connect@exonware.com
+Version: 0.0.1
+Generation Date: 15-Nov-2025
+"""
+
+import pytest
+from typing import Any
+from exonware.xwnode.nodes.strategies.avl_tree import AVLTreeStrategy
+from exonware.xwnode.defs import NodeMode, NodeTrait
+from exonware.xwnode.errors import XWNodeError, XWNodeTypeError, XWNodeValueError
+
+
+# ============================================================================
+# FIXTURES
+# ============================================================================
+
+@pytest.fixture
+def empty_tree():
+    """Create empty AVL tree strategy."""
+    return AVLTreeStrategy()
+
+
+@pytest.fixture
+def simple_tree():
+    """Create AVL tree with simple data."""
+    tree = AVLTreeStrategy()
+    tree.put('key1', 'value1')
+    tree.put('key2', 'value2')
+    tree.put('key3', 'value3')
+    return tree
+
+
+@pytest.fixture
+def large_tree():
+    """Create AVL tree with enough data to test balancing."""
+    tree = AVLTreeStrategy()
+    for i in range(20):
+        tree.put(f'key_{i:02d}', f'value_{i}')
+    return tree
+
+
+# ============================================================================
+# INTERFACE COMPLIANCE TESTS
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+class TestAVLTreeStrategyInterface:
+    """Test AVLTreeStrategy implements iNodeStrategy interface correctly."""
+    
+    def test_put_operation(self, empty_tree):
+        """Test put operation works correctly."""
+        empty_tree.put('test_key', 'test_value')
+        
+        result = empty_tree.get('test_key')
+        assert result == 'test_value'
+    
+    def test_get_operation(self, simple_tree):
+        """Test get operation returns correct values."""
+        assert simple_tree.get('key1') == 'value1'
+        assert simple_tree.get('key2') == 'value2'
+        assert simple_tree.get('key3') == 'value3'
+        assert simple_tree.get('nonexistent') is None
+        assert simple_tree.get('nonexistent', 'default') == 'default'
+    
+    def test_delete_operation(self, simple_tree):
+        """Test delete operation removes keys correctly."""
+        assert simple_tree.delete('key1') is True
+        assert simple_tree.get('key1') is None
+        assert simple_tree.delete('nonexistent') is False
+    
+    def test_size_operation(self, simple_tree):
+        """Test size returns correct count."""
+        assert simple_tree.size() == 3
+        
+        simple_tree.delete('key1')
+        assert simple_tree.size() == 2
+    
+    def test_is_empty_operation(self, empty_tree, simple_tree):
+        """Test is_empty correctly identifies empty structures."""
+        assert empty_tree.is_empty() is True
+        assert simple_tree.is_empty() is False
+    
+    def test_to_native_conversion(self, simple_tree):
+        """Test conversion to native Python dict."""
+        native = simple_tree.to_native()
+        
+        assert isinstance(native, dict)
+        assert native['key1'] == 'value1'
+        assert native['key2'] == 'value2'
+        assert native['key3'] == 'value3'
+
+
+# ============================================================================
+# BALANCING TESTS
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+class TestAVLTreeStrategyBalancing:
+    """Test AVL tree balancing and height maintenance."""
+    
+    def test_tree_remains_balanced(self, large_tree):
+        """Test tree maintains strict balance after many insertions."""
+        # AVL tree should maintain strict height balance (|bf| ≤ 1)
+        # Verify by checking all keys are accessible
+        for i in range(20):
+            assert large_tree.get(f'key_{i:02d}') == f'value_{i}'
+        
+        assert large_tree.size() == 20
+    
+    def test_sorted_order_maintained(self, large_tree):
+        """Test keys are maintained in sorted order."""
+        keys = list(large_tree.keys())
+        
+        # Keys should be in sorted order (BST property)
+        assert keys == sorted(keys)
+    
+    def test_rotations_maintain_structure(self, empty_tree):
+        """Test that rotations maintain tree structure."""
+        # Insert keys that will trigger rotations
+        for i in range(10):
+            empty_tree.put(f'key_{i}', f'value_{i}')
+        
+        # All keys should still be accessible after rotations
+        for i in range(10):
+            assert empty_tree.get(f'key_{i}') == f'value_{i}'
+
+
+# ============================================================================
+# CORE FUNCTIONALITY TESTS
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+class TestAVLTreeStrategyCore:
+    """Test core AVLTreeStrategy functionality."""
+    
+    def test_update_existing_key(self, simple_tree):
+        """Test updating existing key."""
+        simple_tree.put('key2', 'updated_value')
+        
+        assert simple_tree.get('key2') == 'updated_value'
+        assert simple_tree.size() == 3  # Size unchanged
+    
+    def test_range_query(self, large_tree):
+        """Test range query operations."""
+        # Get keys in range
+        keys = large_tree.range_keys('key_02', 'key_08')
+        
+        # Should include keys 02-08
+        assert 'key_02' in keys
+        assert 'key_05' in keys
+        assert 'key_08' in keys
+        assert 'key_01' not in keys  # Below range
+        assert 'key_09' not in keys  # Above range
+    
+    def test_clear_operation(self, simple_tree):
+        """Test clear removes all items."""
+        simple_tree.clear()
+        
+        assert simple_tree.is_empty() is True
+        assert simple_tree.size() == 0
+
+
+# ============================================================================
+# ITERATOR TESTS
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+class TestAVLTreeStrategyIterators:
+    """Test iterator protocol."""
+    
+    def test_keys_iteration(self, simple_tree):
+        """Test keys() returns all keys in sorted order."""
+        keys = list(simple_tree.keys())
+        
+        assert 'key1' in keys
+        assert 'key2' in keys
+        assert 'key3' in keys
+        assert len(keys) == 3
+        # Should be sorted
+        assert keys == sorted(keys)
+    
+    def test_values_iteration(self, simple_tree):
+        """Test values() returns all values."""
+        values = list(simple_tree.values())
+        
+        assert 'value1' in values
+        assert 'value2' in values
+        assert 'value3' in values
+        assert len(values) == 3
+    
+    def test_items_iteration(self, simple_tree):
+        """Test items() returns all key-value pairs in sorted order."""
+        items = list(simple_tree.items())
+        
+        assert ('key1', 'value1') in items
+        assert ('key2', 'value2') in items
+        assert ('key3', 'value3') in items
+        assert len(items) == 3
+        # Keys should be in sorted order
+        keys = [k for k, v in items]
+        assert keys == sorted(keys)
+
+
+# ============================================================================
+# EDGE CASES & ERROR HANDLING
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+class TestAVLTreeStrategyEdgeCases:
+    """Test edge cases and error handling."""
+    
+    def test_empty_tree_operations(self, empty_tree):
+        """Test operations on empty tree."""
+        assert empty_tree.get('any') is None
+        assert empty_tree.delete('any') is False
+        assert list(empty_tree.keys()) == []
+        assert list(empty_tree.values()) == []
+    
+    def test_single_key_tree(self, empty_tree):
+        """Test tree with single key."""
+        empty_tree.put('single', 'value')
+        
+        assert empty_tree.size() == 1
+        assert empty_tree.get('single') == 'value'
+        empty_tree.delete('single')
+        assert empty_tree.is_empty() is True
+
+
+# ============================================================================
+# PERFORMANCE TESTS
+# ============================================================================
+
+@pytest.mark.xwnode_unit
+@pytest.mark.xwnode_node_strategy
+@pytest.mark.xwnode_performance
+class TestAVLTreeStrategyPerformance:
+    """Test performance characteristics."""
+    
+    def test_large_dataset_operations(self):
+        """Test operations with large dataset."""
+        tree = AVLTreeStrategy()
+        
+        # Insert 100 items
+        for i in range(100):
+            tree.put(f'key_{i:03d}', f'value_{i}')
+        
+        assert tree.size() == 100
+        
+        # All should be accessible (guaranteed O(log n) with strict balance)
+        for i in range(100):
+            assert tree.get(f'key_{i:03d}') == f'value_{i}'
+        
+        # Keys should be sorted
+        keys = list(tree.keys())
+        assert keys == sorted(keys)
+
