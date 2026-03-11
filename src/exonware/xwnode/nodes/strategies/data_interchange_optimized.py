@@ -1,13 +1,10 @@
 """
 #exonware/xwnode/src/exonware/xwnode/nodes/strategies/data_interchange_optimized.py
-
 DATA_INTERCHANGE_OPTIMIZED Node Strategy Implementation
-
 Status: Production Ready ✅
 True Purpose: Ultra-lightweight data interchange with COW and object pooling
 Complexity: O(1) operations with minimal overhead
 Production Features: ✓ COW Semantics, ✓ Object Pooling, ✓ Structural Hashing, ✓ __slots__
-
 Ultra-lightweight strategy specifically optimized for data interchange patterns:
 - Copy-on-write semantics for data interchange
 - Object pooling support for factory patterns  
@@ -15,23 +12,21 @@ Ultra-lightweight strategy specifically optimized for data interchange patterns:
 - Minimal metadata overhead
 - Zero graph features for maximum performance
 - __slots__ optimization for memory efficiency
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 24-Oct-2025
 """
 
+from __future__ import annotations
 import weakref
 from typing import Any, Iterator, Optional, AsyncIterator
-from .base import ANodeStrategy
+from .base import ANodeStrategy, AKeyValueStrategy
 from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
-
 # Import contracts
 from .contracts import NodeType
-
 # Import shared utilities
 from ...common.utils import (
     recursive_to_native, is_sequential_numeric_keys, 
@@ -39,10 +34,9 @@ from ...common.utils import (
 )
 
 
-class DataInterchangeOptimizedStrategy(ANodeStrategy):
+class DataInterchangeOptimizedStrategy(AKeyValueStrategy):
     """
     Ultra-lightweight node strategy optimized for data interchange patterns.
-    
     This strategy provides maximum performance for data interchange patterns:
     - O(1) hash map operations using Python dict
     - COW semantics with lazy copying
@@ -50,21 +44,21 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
     - Object pooling support
     - Minimal memory overhead with __slots__
     - Zero graph/edge overhead
+    Performance Optimization:
+    - Inherits from AKeyValueStrategy to enable fast-path optimization in facade
+    - Fast path bypasses expensive path navigation for simple key-value operations
+    - Expected improvement: Get operations significantly faster (exact multiplier to be measured)
     """
-    
     # Strategy type classification
     STRATEGY_TYPE = NodeType.HYBRID
-
-    
     __slots__ = (
         '_data', '_size', '_hash_cache', '_frozen', '_cow_enabled',
         '_pool_ref', '_creation_time', '_access_count', 'mode', 'traits', 'options'
     )
-    
+
     def __init__(self, traits: NodeTrait = NodeTrait.INDEXED, **options):
         """
         Initialize the xData-optimized strategy.
-        
         Time Complexity: O(1)
         Space Complexity: O(1)
         """
@@ -72,78 +66,64 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
         self.mode = NodeMode.DATA_INTERCHANGE_OPTIMIZED  # Dedicated mode for data interchange
         self.traits = traits
         self.options = options
-        
         # Core data storage (ultra-efficient)
         self._data: dict[str, Any] = {}
         self._size = 0
-        
         # COW optimization flags
         self._hash_cache: Optional[int] = None
         self._frozen = False  # True after first copy
         self._cow_enabled = options.get('enable_cow', True)
-        
         # Object pooling support
         self._pool_ref: Optional[weakref.ref] = None
-        
         # Performance tracking (minimal overhead)
         self._creation_time = options.get('creation_time', 0)
         self._performance_tracker = create_performance_tracker()
-        
         self._validate_traits()
-    
+
     def get_supported_traits(self) -> NodeTrait:
         """
         Get the traits supported by the xData-optimized strategy.
-        
         Time Complexity: O(1)
         """
         return NodeTrait.INDEXED  # Only essential traits for maximum performance
-    
     # ============================================================================
     # ULTRA-OPTIMIZED CORE OPERATIONS
     # ============================================================================
-    
+
     def put(self, key: Any, value: Any = None) -> None:
         """
         Store a key-value pair with COW optimization.
-        
         Time Complexity: O(1) amortized
         """
         self._ensure_mutable()
-        
         str_key = str(key)
         if str_key not in self._data:
             self._size += 1
-        
         self._data[str_key] = value
         self._invalidate_cache()
         self._performance_tracker.record_access()
-    
+
     def get(self, key: Any, default: Any = None) -> Any:
         """
         Retrieve a value by key (zero-overhead success path).
-        
         Time Complexity: O(1)
         """
         self._performance_tracker.record_access()
         return self._data.get(str(key), default)
-    
+
     def has(self, key: Any) -> bool:
         """
         Check if key exists (optimized).
-        
         Time Complexity: O(1)
         """
         return str(key) in self._data
-    
+
     def delete(self, key: Any) -> bool:
         """
         Remove a key-value pair with COW.
-        
         Time Complexity: O(1) amortized
         """
         self._ensure_mutable()
-        
         str_key = str(key)
         if str_key in self._data:
             del self._data[str_key]
@@ -151,206 +131,181 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             self._invalidate_cache()
             return True
         return False
-    
+
     def remove(self, key: Any) -> bool:
         """
         Remove a key-value pair (alias for delete).
-        
         Time Complexity: O(1) amortized
         """
         return self.delete(key)
-    
+
     def clear(self) -> None:
         """
         Clear all data with COW.
-        
         Time Complexity: O(1) amortized
         """
         self._ensure_mutable()
         self._data.clear()
         self._size = 0
         self._invalidate_cache()
-    
+
     def keys(self) -> Iterator[str]:
         """
         Get all keys (zero-copy iterator).
-        
         Time Complexity: O(1) to create, O(n) to iterate
         """
         return iter(self._data.keys())
-    
+
     def values(self) -> Iterator[Any]:
         """
         Get all values (zero-copy iterator).
-        
         Time Complexity: O(1) to create, O(n) to iterate
         """
         return iter(self._data.values())
-    
+
     def items(self) -> Iterator[tuple[str, Any]]:
         """
         Get all key-value pairs (zero-copy iterator).
-        
         Time Complexity: O(1) to create, O(n) to iterate
         """
         return iter(self._data.items())
-    
+
     def __len__(self) -> int:
         """
         Get the number of items (zero overhead).
-        
         Time Complexity: O(1)
         """
         return self._size
-    
+
     def to_native(self) -> dict[str, Any]:
         """
         Convert to native Python dictionary (optimized for xData).
-        
         Time Complexity: O(n)
         """
         # Return a copy with all nested XWNode objects converted to native types
-
-
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
-    
+
     async def insert_async(self, key: Any, value: Any) -> None:
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
-    
+
     async def find_async(self, key: Any) -> Optional[Any]:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
-    
+
     async def delete_async(self, key: Any) -> bool:
         """Lightweight async wrapper for delete (no lock overhead)."""
         return self.delete(key)
-    
+
     async def size_async(self) -> int:
         """Lightweight async wrapper for size (no lock overhead)."""
         return self.size()
-    
+
     async def is_empty_async(self) -> bool:
         """Lightweight async wrapper for is_empty (no lock overhead)."""
         return self.is_empty()
-    
+
     async def to_native_async(self) -> Any:
         """Lightweight async wrapper for to_native (no lock overhead)."""
         return self.to_native()
-    
+
     async def keys_async(self) -> AsyncIterator[Any]:
         """Lightweight async wrapper for keys (no lock overhead)."""
         for key in self.keys():
             yield key
-    
+
     async def values_async(self) -> AsyncIterator[Any]:
         """Lightweight async wrapper for values (no lock overhead)."""
         for value in self.values():
             yield value
-    
+
     async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
         """Lightweight async wrapper for items (no lock overhead)."""
         for item in self.items():
             yield item
-    
-    
     # ============================================================================
     # COPY-ON-WRITE OPTIMIZATIONS (xData Specific)
     # ============================================================================
-    
+
     def _ensure_mutable(self) -> None:
         """
         Ensure this instance is mutable (COW implementation).
-        
         Time Complexity: O(n) when copying, O(1) otherwise
         """
         if not self._cow_enabled:
             return
-            
         if self._frozen:
             # Create a new data dict (copy-on-write)
             self._data = dict(self._data)
             self._frozen = False
             self._invalidate_cache()
-    
+
     def freeze(self) -> None:
         """
         Freeze this instance for COW (called after first copy).
-        
         Time Complexity: O(1)
         """
         if self._cow_enabled:
             self._frozen = True
-    
-    def copy(self) -> 'DataInterchangeOptimizedStrategy':
+
+    def copy(self) -> DataInterchangeOptimizedStrategy:
         """
         Create a COW copy of this strategy.
-        
         Time Complexity: O(1) - shallow copy until mutation
         """
         if self._cow_enabled:
             self.freeze()
-        
         # Create new instance sharing data until mutation
         new_instance = DataInterchangeOptimizedStrategy(self.traits, **self.options)
         new_instance._data = self._data  # Shared until mutation
         new_instance._size = self._size
         new_instance._hash_cache = self._hash_cache
         new_instance._frozen = False  # New instance can be mutated
-        
         return new_instance
-    
     # ============================================================================
     # STRUCTURAL HASH CACHING (xData Performance)
     # ============================================================================
-    
+
     def _invalidate_cache(self) -> None:
         """
         Invalidate cached hash (minimal overhead).
-        
         Time Complexity: O(1)
         """
         self._hash_cache = None
-    
+
     def structural_hash(self) -> int:
         """
         Get structural hash with caching (xData equality optimization).
-        
         Time Complexity: O(n) first call, O(1) with cache
         """
         if self._hash_cache is None:
             # Compute hash based on structure, not values
             # This is optimized for xData's equality checking
             self._hash_cache = calculate_structural_hash(self._data)
-        
         return self._hash_cache
-    
-    def fast_equals(self, other: 'DataInterchangeOptimizedStrategy') -> bool:
+
+    def fast_equals(self, other: DataInterchangeOptimizedStrategy) -> bool:
         """
         Fast equality check using structural hashes.
-        
         Time Complexity: O(n) without cache, O(1) with cache
         """
         if not isinstance(other, DataInterchangeOptimizedStrategy):
             return False
-        
         # Quick size check
         if self._size != other._size:
             return False
-        
         # Structural hash comparison (much faster than deep comparison)
         return self.structural_hash() == other.structural_hash()
-    
     # ============================================================================
     # OBJECT POOLING SUPPORT (Factory Pattern)
     # ============================================================================
-    
+
     def set_pool_reference(self, pool_ref: weakref.ref) -> None:
         """Set reference to object pool for cleanup."""
         self._pool_ref = pool_ref
-    
+
     def return_to_pool(self) -> None:
         """Return this instance to object pool if available."""
         if self._pool_ref is not None:
@@ -363,39 +318,36 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
                 self._frozen = False
                 self._performance_tracker.reset()
                 pool.return_instance(self)
-    
+
     def __del__(self):
         """Destructor with object pool support."""
         self.return_to_pool()
-    
     # ============================================================================
     # XDATA-SPECIFIC OPTIMIZATIONS
     # ============================================================================
-    
     @property
+
     def is_list(self) -> bool:
         """Check if this represents a list (optimized for xData)."""
         return is_sequential_numeric_keys(self._data)
-    
     @property
+
     def is_dict(self) -> bool:
         """Check if this represents a dict (optimized for xData)."""
         return not self.is_list
-    
     @property
+
     def is_leaf(self) -> bool:
         """Check if this is a leaf node (xData pattern)."""
         return len(self._data) == 1 and "value" in self._data
-    
     # ============================================================================
     # PERFORMANCE MONITORING (Minimal Overhead)
     # ============================================================================
-    
     @property
+
     def backend_info(self) -> dict[str, Any]:
         """
         Get backend implementation info.
-        
         Time Complexity: O(1)
         """
         return {
@@ -414,12 +366,11 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
                 'slots_optimization'
             ]
         }
-    
     @property
+
     def metrics(self) -> dict[str, Any]:
         """
         Get performance metrics.
-        
         Time Complexity: O(1)
         """
         metrics = self._performance_tracker.get_metrics()
@@ -432,7 +383,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             'creation_time': self._creation_time
         })
         return metrics
-    
+
     def get_xdata_stats(self) -> dict[str, Any]:
         """Get xData-specific performance statistics."""
         return {
@@ -445,11 +396,10 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             'pooling_support': self._pool_ref is not None,
             'access_pattern': f"{self._performance_tracker.get_metrics()['access_count']} operations"
         }
-    
     # ============================================================================
     # DISABLED FEATURES (Maximum Performance)
     # ============================================================================
-    
+
     def get_ordered(self, start: Any = None, end: Any = None) -> list[tuple[Any, Any]]:
         """Ordered operations not supported in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
@@ -457,7 +407,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             'DATA_INTERCHANGE_OPTIMIZED',
             ['fast_lookup', 'copy_on_write', 'structural_hashing']
         ).suggest("Use preset='ANALYTICS' for ordered operations")
-    
+
     def get_with_prefix(self, prefix: str) -> list[tuple[Any, Any]]:
         """Prefix operations not optimized in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
@@ -465,7 +415,7 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             'DATA_INTERCHANGE_OPTIMIZED', 
             ['fast_lookup', 'copy_on_write']
         ).suggest("Use preset='SEARCH_ENGINE' for prefix operations")
-    
+
     def get_priority(self) -> Optional[tuple[Any, Any]]:
         """Priority operations not supported in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
@@ -473,30 +423,27 @@ class DataInterchangeOptimizedStrategy(ANodeStrategy):
             'DATA_INTERCHANGE_OPTIMIZED',
             ['fast_lookup', 'copy_on_write']
         ).suggest("Use preset='ANALYTICS' with heap structure for priorities")
-    
     # ============================================================================
     # STRING REPRESENTATION (Optimized)
     # ============================================================================
-    
+
     def __str__(self) -> str:
         """Optimized string representation."""
         return f"DataInterchangeOptimized(size={self._size}, cow={self._cow_enabled})"
-    
+
     def __repr__(self) -> str:
         """Detailed string representation."""
         return (f"DataInterchangeOptimizedStrategy(size={self._size}, "
                 f"frozen={self._frozen}, cow={self._cow_enabled}, "
                 f"cached={self._hash_cache is not None})")
-
-
 # ============================================================================
 # FACTORY FUNCTION
 # ============================================================================
 
+
 def create_data_interchange_optimized_strategy(**options) -> DataInterchangeOptimizedStrategy:
     """
     Factory function for creating data interchange optimized strategy instances.
-    
     This function provides the recommended way to create DATA_INTERCHANGE_OPTIMIZED
     strategy instances with proper configuration for data interchange usage.
     """
@@ -511,9 +458,6 @@ def create_data_interchange_optimized_strategy(**options) -> DataInterchangeOpti
         'lazy_loading': False,  # Eager loading for predictability
         'memory_profile': 'ultra_minimal'
     }
-    
     # Merge with user options
     data_interchange_options.update(options)
-    
     return DataInterchangeOptimizedStrategy(NodeTrait.INDEXED, **data_interchange_options)
-

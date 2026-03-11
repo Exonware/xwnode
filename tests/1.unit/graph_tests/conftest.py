@@ -1,10 +1,8 @@
 """
 #exonware/xwnode/tests/1.unit/graph_tests/conftest.py
-
 Fixtures for graph manager unit tests.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
@@ -13,9 +11,8 @@ Generation Date: 11-Oct-2025
 import pytest
 from exonware.xwnode.common.graph import XWGraphManager
 from exonware.xwnode.defs import EdgeMode
-
-
 @pytest.fixture
+
 def graph_manager():
     """Create a basic graph manager for testing."""
     return XWGraphManager(
@@ -23,9 +20,8 @@ def graph_manager():
         enable_caching=True,
         enable_indexing=True
     )
-
-
 @pytest.fixture
+
 def graph_manager_no_cache():
     """Create graph manager without caching."""
     return XWGraphManager(
@@ -33,9 +29,8 @@ def graph_manager_no_cache():
         enable_caching=False,
         enable_indexing=True
     )
-
-
 @pytest.fixture
+
 def graph_manager_no_index():
     """Create graph manager without indexing."""
     return XWGraphManager(
@@ -43,9 +38,8 @@ def graph_manager_no_index():
         enable_caching=True,
         enable_indexing=False
     )
-
-
 @pytest.fixture
+
 def sample_relationships():
     """Sample relationships for testing."""
     return [
@@ -55,4 +49,3 @@ def sample_relationships():
         {'source': 'charlie', 'target': 'alice', 'type': 'follows'},
         {'source': 'alice', 'target': 'bob', 'type': 'likes'},
     ]
-

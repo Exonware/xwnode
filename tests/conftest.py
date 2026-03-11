@@ -1,13 +1,10 @@
 """
 #exonware/xwnode/tests/conftest.py
-
 Pytest configuration and fixtures for xwnode tests.
 Provides reusable test data and setup utilities.
-
 Following GUIDELINES_TEST.md for reusable, production-grade test infrastructure.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 12-Oct-2025
@@ -19,19 +16,16 @@ import sys
 import time
 import tracemalloc
 import math
-from typing import Callable, Any, Tuple, Dict
-
+from typing import Callable, Any
 # Ensure src is in path for imports
 src_path = Path(__file__).parent.parent / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
-
-
 # ============================================================================
 # STANDARD FIXTURES (Per GUIDELINES_TEST.md)
 # ============================================================================
-
 @pytest.fixture
+
 def simple_data():
     """Simple data for basic tests."""
     return {
@@ -40,9 +34,8 @@ def simple_data():
         'city': 'New York',
         'active': True
     }
-
-
 @pytest.fixture
+
 def simple_dict_data():
     """Simple dictionary test data (alias for simple_data)."""
     return {
@@ -51,9 +44,8 @@ def simple_dict_data():
         'city': 'New York',
         'active': True
     }
-
-
 @pytest.fixture
+
 def complex_data():
     """Complex nested data for comprehensive testing."""
     return {
@@ -91,9 +83,8 @@ def complex_data():
             'tags': ['test', 'sample', 'data']
         }
     }
-
-
 @pytest.fixture
+
 def nested_data():
     """Complex nested hierarchical test data (alias for complex_data)."""
     return {
@@ -112,21 +103,18 @@ def nested_data():
             'created': '2024-01-01'
         }
     }
-
-
 @pytest.fixture
+
 def simple_list_data():
     """Simple list test data."""
     return ['apple', 'banana', 'cherry']
-
-
 @pytest.fixture
+
 def large_dataset():
     """Large dataset for performance testing (10,000 items)."""
     return {f'key_{i}': f'value_{i}' for i in range(10000)}
-
-
 @pytest.fixture
+
 def edge_cases():
     """Edge case data (empty, None, etc.)."""
     return {
@@ -137,9 +125,8 @@ def edge_cases():
         'zero': 0,
         'false': False
     }
-
-
 @pytest.fixture
+
 def multilingual_data():
     """Unicode and emoji data for multilingual testing."""
     return {
@@ -151,89 +138,76 @@ def multilingual_data():
         'emoji': '🌍🌎🌏 Hello 👋',
         'mixed': 'Hello مرحبا 你好 🎉'
     }
-
-
 @pytest.fixture
+
 def test_data_dir():
     """Get the test data directory."""
     return Path(__file__).parent / "0.core" / "data"
-
-
 @pytest.fixture
+
 def temp_test_dir(tmp_path):
     """Create a temporary directory for test files."""
     test_dir = tmp_path / "test_data"
     test_dir.mkdir()
     return test_dir
-
-
 # ============================================================================
 # XWNODE-SPECIFIC FIXTURES
 # ============================================================================
-
 @pytest.fixture
+
 def simple_node(simple_dict_data):
     """XWNode instance from simple dictionary."""
     from exonware.xwnode import XWNode
     return XWNode.from_native(simple_dict_data)
-
-
 @pytest.fixture
+
 def list_node(simple_list_data):
     """XWNode instance from simple list."""
     from exonware.xwnode import XWNode
     return XWNode.from_native(simple_list_data)
-
-
 @pytest.fixture
+
 def nested_node(nested_data):
     """XWNode instance from nested data."""
     from exonware.xwnode import XWNode
     return XWNode.from_native(nested_data)
-
-
 @pytest.fixture
+
 def leaf_node():
     """Simple leaf node."""
     from exonware.xwnode import XWNode
     return XWNode.from_native("simple string value")
-
-
 @pytest.fixture
+
 def number_node():
     """Simple number leaf node."""
     from exonware.xwnode import XWNode
     return XWNode.from_native(42)
-
-
 @pytest.fixture
+
 def boolean_node():
     """Simple boolean leaf node."""
     from exonware.xwnode import XWNode
     return XWNode.from_native(True)
-
-
 @pytest.fixture
+
 def empty_dict_node():
     """Empty dictionary node."""
     from exonware.xwnode import XWNode
     return XWNode.from_native({})
-
-
 @pytest.fixture
+
 def empty_list_node():
     """Empty list node."""
     from exonware.xwnode import XWNode
     return XWNode.from_native([])
-
-
 @pytest.fixture
+
 def json_test_string():
     """JSON string for testing JSON parsing."""
     return '{"name": "Test", "value": 42, "items": [1, 2, {"nested": true}]}'
-
-
 @pytest.fixture
+
 def json_test_data():
     """Complex data for JSON testing."""
     return {
@@ -246,9 +220,8 @@ def json_test_data():
             "version": "1.0"
         }
     }
-
-
 @pytest.fixture
+
 def complex_navigation_data():
     """Complex nested data for navigation testing."""
     return {
@@ -296,9 +269,8 @@ def complex_navigation_data():
             }
         }
     }
-
-
 @pytest.fixture
+
 def array_heavy_data():
     """Data with heavy array usage for navigation testing."""
     return {
@@ -312,9 +284,8 @@ def array_heavy_data():
             {"values": [40, 50, 60]}
         ]
     }
-
-
 @pytest.fixture
+
 def edge_case_keys_data():
     """Data with edge case keys for testing."""
     return {
@@ -325,9 +296,8 @@ def edge_case_keys_data():
         "unicode_ключ": "unicode_value",
         "": "empty_key"
     }
-
-
 @pytest.fixture
+
 def mixed_type_data():
     """Data with mixed types for comprehensive testing."""
     return {
@@ -341,9 +311,8 @@ def mixed_type_data():
             "nested": "value"
         }
     }
-
-
 @pytest.fixture
+
 def real_world_config():
     """Real-world configuration data for integration testing."""
     return {
@@ -376,26 +345,21 @@ def real_world_config():
             "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         }
     }
-
-
 # Test data directory
 @pytest.fixture
+
 def test_data_dir():
     """Get the test data directory."""
     return Path(__file__).parent / "data"
-
-
 # ============================================================================
 # PERFORMANCE TESTING FIXTURES (Per Plan - Reusable Across All Strategies)
 # ============================================================================
-
 @pytest.fixture
+
 def measure_time_complexity():
     """
     Reusable fixture to measure and validate time complexity.
-    
     Following GUIDELINES_TEST.md for empirical performance validation.
-    
     Usage:
         def test_hash_map_o1_complexity(measure_time_complexity):
             def operation(size):
@@ -403,31 +367,25 @@ def measure_time_complexity():
                 for i in range(size):
                     strategy.put(f"k{i}", i)
                 strategy.get(f"k{size//2}")
-            
             # Validates O(1) complexity empirically
             measure_time_complexity(operation, [100, 1000, 10000], 'O(1)')
     """
     def _measure(operation: Callable, sizes: list, expected_complexity: str, tolerance: float = 2.5):
         """
         Measure operation time across different input sizes and validate complexity.
-        
         Args:
             operation: Callable that takes size parameter
             sizes: List of sizes to test (e.g., [100, 1000, 10000])
             expected_complexity: 'O(1)', 'O(log n)', 'O(n)', 'O(n log n)'
             tolerance: Maximum acceptable ratio for validation
-        
         Returns:
             Dict with timings for each size
-            
         Raises:
             AssertionError: If empirical complexity doesn't match expected
         """
         timings = {}
-        
         # Warm-up run
         operation(sizes[0])
-        
         # Measure each size
         for size in sizes:
             measurements = []
@@ -437,11 +395,9 @@ def measure_time_complexity():
                 operation(size)
                 elapsed = time.perf_counter() - start
                 measurements.append(elapsed)
-            
             # Use median to reduce noise
             measurements.sort()
             timings[size] = measurements[1]
-        
         # Validate complexity
         if expected_complexity == 'O(1)':
             # Constant time: ratio should be < tolerance
@@ -450,7 +406,6 @@ def measure_time_complexity():
                 f"Expected O(1), but ratio {ratio:.2f} exceeds tolerance {tolerance}. "
                 f"Timings: {timings}"
             )
-        
         elif expected_complexity == 'O(log n)':
             # Logarithmic: time should grow as log(n)
             expected_ratio = math.log(sizes[-1]) / math.log(sizes[0])
@@ -460,7 +415,6 @@ def measure_time_complexity():
                 f"Expected O(log n) with ratio ~{expected_ratio:.2f}, "
                 f"got {actual_ratio:.2f} (max: {max_ratio:.2f})"
             )
-        
         elif expected_complexity == 'O(n)':
             # Linear: time should grow linearly with n
             expected_ratio = sizes[-1] / sizes[0]
@@ -470,7 +424,6 @@ def measure_time_complexity():
                 f"Expected O(n) with ratio ~{expected_ratio:.2f}, "
                 f"got {actual_ratio:.2f} (max: {max_ratio:.2f})"
             )
-        
         elif expected_complexity == 'O(n log n)':
             # Linearithmic: time should grow as n * log(n)
             expected_ratio = (sizes[-1] * math.log(sizes[-1])) / (sizes[0] * math.log(sizes[0]))
@@ -480,19 +433,14 @@ def measure_time_complexity():
                 f"Expected O(n log n) with ratio ~{expected_ratio:.2f}, "
                 f"got {actual_ratio:.2f} (max: {max_ratio:.2f})"
             )
-        
         return timings
-    
     return _measure
-
-
 @pytest.fixture
+
 def measure_memory():
     """
     Reusable fixture to measure memory usage.
-    
     Following GUIDELINES_TEST.md for memory efficiency validation.
-    
     Usage:
         def test_hash_map_memory(measure_memory):
             def operation():
@@ -500,17 +448,14 @@ def measure_memory():
                 for i in range(1000):
                     strategy.put(f"key_{i}", i)
                 return strategy
-            
             result, memory_bytes = measure_memory(operation)
             assert memory_bytes < 200 * 1024  # < 200KB
     """
-    def _measure(operation: Callable) -> Tuple[Any, int]:
+    def _measure(operation: Callable) -> tuple[Any, int]:
         """
         Measure peak memory usage of operation.
-        
         Args:
             operation: Callable that returns result to measure
-            
         Returns:
             Tuple of (result, peak_memory_bytes)
         """
@@ -519,49 +464,40 @@ def measure_memory():
         current, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
         return result, peak
-    
     return _measure
-
-
 @pytest.fixture
+
 def benchmark_vs_stdlib():
     """
     Reusable fixture to compare performance against stdlib.
-    
     Following GUIDELINES_TEST.md for competitive performance validation.
-    
     Usage:
         def test_hash_map_vs_dict(benchmark_vs_stdlib):
             def strategy_op(size):
                 s = HashMapStrategy()
                 for i in range(size):
                     s.put(f"k{i}", i)
-            
             def stdlib_op(size):
                 d = {}
                 for i in range(size):
                     d[f"k{i}"] = i
-            
             results = benchmark_vs_stdlib(strategy_op, stdlib_op)
             assert results['acceptable']  # Within 5x of stdlib
     """
     def _benchmark(strategy_op: Callable, stdlib_op: Callable, size: int = 1000, max_ratio: float = 5.0):
         """
         Compare strategy performance against stdlib equivalent.
-        
         Args:
             strategy_op: Strategy operation (takes size parameter)
             stdlib_op: Standard library equivalent (takes size parameter)
             size: Dataset size to test
             max_ratio: Maximum acceptable ratio (strategy_time / stdlib_time)
-            
         Returns:
             Dict with comparison results
         """
         # Warm-up
         strategy_op(100)
         stdlib_op(100)
-        
         # Measure strategy (3 runs, median)
         strategy_times = []
         for _ in range(3):
@@ -571,7 +507,6 @@ def benchmark_vs_stdlib():
             strategy_times.append(elapsed)
         strategy_times.sort()
         strategy_time = strategy_times[1]
-        
         # Measure stdlib (3 runs, median)
         stdlib_times = []
         for _ in range(3):
@@ -581,9 +516,7 @@ def benchmark_vs_stdlib():
             stdlib_times.append(elapsed)
         stdlib_times.sort()
         stdlib_time = stdlib_times[1]
-        
         ratio = strategy_time / stdlib_time if stdlib_time > 0 else float('inf')
-        
         return {
             'strategy_time': strategy_time,
             'stdlib_time': stdlib_time,
@@ -595,17 +528,13 @@ def benchmark_vs_stdlib():
                 f"Ratio: {ratio:.2f}x (max: {max_ratio}x)"
             )
         }
-    
     return _benchmark
-
-
 @pytest.fixture
+
 def strategy_factory():
     """
     Factory for creating strategy instances with common setup.
-    
     Following GUIDELINES_TEST.md for reusable strategy creation.
-    
     Usage:
         def test_initialization(strategy_factory):
             strategy = strategy_factory(HashMapStrategy, max_size=100)
@@ -614,43 +543,33 @@ def strategy_factory():
     def _create(strategy_class, **options):
         """
         Create strategy instance with options.
-        
         Args:
             strategy_class: Strategy class to instantiate
             **options: Strategy-specific options
-            
         Returns:
             Strategy instance
         """
         return strategy_class(**options)
-    
     return _create
-
-
 @pytest.fixture
+
 def stress_dataset():
     """
     100,000 item dataset for stress testing.
-    
     Following GUIDELINES_TEST.md for stress test validation.
     """
     return {f"key_{i}": f"value_{i}" for i in range(100000)}
-
-
 # ============================================================================
 # EDGE STRATEGY FIXTURES
 # ============================================================================
-
 @pytest.fixture
+
 def graph_factory():
     """
     Create test graphs of various sizes.
-    
     Generates random edges for testing edge strategies with configurable
     graph characteristics (size, directed/undirected, weighted/unweighted).
-    
     Following GUIDELINES_TEST.md for reusable edge test data.
-    
     Usage:
         def test_large_graph(graph_factory):
             edges = graph_factory(100, 500, directed=True, weighted=True)
@@ -659,13 +578,11 @@ def graph_factory():
     def _create(num_vertices, num_edges, directed=True, weighted=False):
         """
         Create random graph with specified characteristics.
-        
         Args:
             num_vertices: Number of vertices in graph
             num_edges: Number of edges to generate
             directed: Whether graph is directed (default: True)
             weighted: Whether edges have weights (default: False)
-            
         Returns:
             List of (source, target, properties) tuples
         """
@@ -679,25 +596,19 @@ def graph_factory():
                 props['weight'] = random.uniform(0.1, 10.0)
             edges.append((src, tgt, props))
         return edges
-    
     return _create
-
-
 @pytest.fixture
+
 def spatial_dataset():
     """
     Spatial edges for R_TREE, QUADTREE, OCTREE testing.
-    
     Generates edges with spatial coordinates for testing spatial indexing
     strategies. Supports both 2D and 3D coordinate spaces.
-    
     Following GUIDELINES_TEST.md for spatial test data.
-    
     Usage:
         def test_2d_spatial(spatial_dataset):
             edges = spatial_dataset(dimensions=2, num_edges=100)
             # Each edge has x1, y1, x2, y2 coordinates
-            
         def test_3d_spatial(spatial_dataset):
             edges = spatial_dataset(dimensions=3, num_edges=100)
             # Each edge has x1, y1, z1, x2, y2, z2 coordinates
@@ -705,11 +616,9 @@ def spatial_dataset():
     def _create(dimensions=2, num_edges=100):
         """
         Create spatial edges with coordinate properties.
-        
         Args:
             dimensions: 2 for 2D coordinates, 3 for 3D coordinates
             num_edges: Number of edges to generate
-            
         Returns:
             List of (source, target, properties) tuples where properties
             contain spatial coordinates (x1, y1, [z1], x2, y2, [z2])
@@ -737,20 +646,15 @@ def spatial_dataset():
                 }
             edges.append((src, tgt, props))
         return edges
-    
     return _create
-
-
 @pytest.fixture
+
 def temporal_dataset():
     """
     Time-series edges for TEMPORAL_EDGESET strategy testing.
-    
     Generates edges with timestamps for testing temporal edge strategies.
     Edges are sorted by timestamp to simulate time-series data.
-    
     Following GUIDELINES_TEST.md for temporal test data.
-    
     Usage:
         def test_temporal_query(temporal_dataset):
             edges = temporal_dataset(num_edges=100, time_range=(0, 1000))
@@ -760,11 +664,9 @@ def temporal_dataset():
     def _create(num_edges=100, time_range=(0, 1000)):
         """
         Create temporal edges with timestamps.
-        
         Args:
             num_edges: Number of edges to generate
             time_range: Tuple of (min_time, max_time) for timestamp range
-            
         Returns:
             List of (source, target, properties) tuples where properties
             contain a 'timestamp' field. List is sorted by timestamp.
@@ -778,5 +680,4 @@ def temporal_dataset():
             edges.append((src, tgt, {'timestamp': timestamp}))
         # Sort by timestamp for temporal queries
         return sorted(edges, key=lambda x: x[2]['timestamp'])
-    
     return _create 

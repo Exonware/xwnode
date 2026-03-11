@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
 """
 #exonware/xwnode/src/exonware/xwnode/common/benchmarking.py
-
 Performance Benchmarking Utilities
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 15-Nov-2025
 """
 
 import time
 import statistics
-from typing import Any, Callable, Optional, Dict, List
+from typing import Any, Callable, Optional
 from dataclasses import dataclass
 from exonware.xwsystem import get_logger
-
 logger = get_logger(__name__)
-
-
 @dataclass
+
 class BenchmarkResult:
     """Result of a single benchmark run."""
     operation: str
@@ -37,8 +33,8 @@ class BenchmarkResult:
 
 class StrategyBenchmark:
     """Benchmark utilities for node strategies."""
-    
     @staticmethod
+
     def benchmark_operation(
         operation: Callable[[], Any],
         operation_name: str,
@@ -48,14 +44,12 @@ class StrategyBenchmark:
     ) -> BenchmarkResult:
         """
         Benchmark a single operation.
-        
         Args:
             operation: Function to benchmark (takes no args, returns result)
             operation_name: Name of the operation
             strategy_name: Name of the strategy
             iterations: Number of iterations to run
             warmup: Number of warmup iterations
-            
         Returns:
             BenchmarkResult with statistics
         """
@@ -65,7 +59,6 @@ class StrategyBenchmark:
                 operation()
             except Exception:
                 pass
-        
         # Actual benchmark
         times = []
         for _ in range(iterations):
@@ -76,7 +69,6 @@ class StrategyBenchmark:
                 logger.warning(f"Operation {operation_name} failed: {e}")
             end = time.perf_counter()
             times.append(end - start)
-        
         total_time = sum(times)
         avg_time = statistics.mean(times)
         min_time = min(times)
@@ -84,7 +76,6 @@ class StrategyBenchmark:
         median_time = statistics.median(times)
         std_dev = statistics.stdev(times) if len(times) > 1 else 0.0
         throughput = iterations / total_time if total_time > 0 else 0.0
-        
         return BenchmarkResult(
             operation=operation_name,
             strategy=strategy_name,
@@ -97,27 +88,24 @@ class StrategyBenchmark:
             std_dev=std_dev,
             throughput=throughput
         )
-    
     @staticmethod
+
     def benchmark_strategy(
         strategy: Any,
-        operations: Dict[str, Callable[[], Any]],
+        operations: dict[str, Callable[[], Any]],
         iterations: int = 1000
-    ) -> List[BenchmarkResult]:
+    ) -> list[BenchmarkResult]:
         """
         Benchmark multiple operations on a strategy.
-        
         Args:
             strategy: Strategy instance to benchmark
             operations: Dict of operation_name -> operation_function
             iterations: Number of iterations per operation
-            
         Returns:
             List of BenchmarkResult objects
         """
         strategy_name = getattr(strategy, '__class__', {}).__name__ if hasattr(strategy, '__class__') else 'Unknown'
         results = []
-        
         for op_name, op_func in operations.items():
             result = StrategyBenchmark.benchmark_operation(
                 op_func,
@@ -126,28 +114,24 @@ class StrategyBenchmark:
                 iterations
             )
             results.append(result)
-        
         return results
-    
     @staticmethod
+
     def compare_strategies(
-        strategies: Dict[str, Any],
-        operations: Dict[str, Callable[[], Any]],
+        strategies: dict[str, Any],
+        operations: dict[str, Callable[[], Any]],
         iterations: int = 1000
-    ) -> Dict[str, List[BenchmarkResult]]:
+    ) -> dict[str, list[BenchmarkResult]]:
         """
         Compare multiple strategies on the same operations.
-        
         Args:
             strategies: Dict of strategy_name -> strategy_instance
             operations: Dict of operation_name -> operation_function
             iterations: Number of iterations per operation
-            
         Returns:
             Dict mapping strategy_name -> list of BenchmarkResult objects
         """
         comparison = {}
-        
         for strategy_name, strategy in strategies.items():
             # Create operation functions bound to this strategy
             bound_operations = {}
@@ -159,14 +143,12 @@ class StrategyBenchmark:
                         return op_func(strat)
                     return wrapped
                 bound_operations[op_name] = make_op(op_name, op_func, strategy)
-            
             results = StrategyBenchmark.benchmark_strategy(
                 strategy,
                 bound_operations,
                 iterations
             )
             comparison[strategy_name] = results
-        
         return comparison
 
 
@@ -179,29 +161,24 @@ def benchmark_node_operation(
 ) -> BenchmarkResult:
     """
     Convenience function to benchmark a node operation.
-    
     Args:
         node: XWNode instance
         operation: Operation name (e.g., 'get', 'set', 'delete')
         *args: Arguments for the operation
         iterations: Number of iterations
         **kwargs: Keyword arguments for the operation
-        
     Returns:
         BenchmarkResult
     """
     strategy_name = getattr(node, '_strategy', {}).__class__.__name__ if hasattr(node, '_strategy') else 'Unknown'
-    
     def op():
         method = getattr(node, operation, None)
         if method:
             return method(*args, **kwargs)
         raise AttributeError(f"Operation {operation} not found")
-    
     return StrategyBenchmark.benchmark_operation(
         op,
         operation,
         strategy_name,
         iterations
     )
-

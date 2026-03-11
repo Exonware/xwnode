@@ -1,7 +1,7 @@
 # xwnode Complete Architecture - FINAL SUMMARY
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Date:** 08-Oct-2025
 

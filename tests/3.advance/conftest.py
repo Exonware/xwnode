@@ -1,19 +1,16 @@
 """
 #exonware/xwnode/tests/3.advance/conftest.py
-
 Advance test fixtures - Production excellence validation.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
 """
 
 import pytest
-
-
 @pytest.fixture
+
 def advance_test_data():
     """Comprehensive test data for advance tests."""
     return {
@@ -37,4 +34,3 @@ def advance_test_data():
             ]
         }
     }
-

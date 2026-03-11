@@ -1,0 +1,560 @@
+{
+  "TREE_GRAPH_BASIC": {
+    "mode": "TREE_GRAPH_BASIC",
+    "name": "Tree Graph Basic",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003603000004659407,
+      "median_ms": 0.0029000002541579306,
+      "min_ms": 0.0026999987312592566,
+      "max_ms": 0.06199999916134402,
+      "ops_per_sec": 277546.48867799
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003358000103617087,
+      "median_ms": 0.0029000002541579306,
+      "min_ms": 0.0025999979698099196,
+      "max_ms": 0.031100000342121348
+    }
+  },
+  "ADJ_LIST": {
+    "mode": "ADJ_LIST",
+    "name": "Adj List",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.005487999987963121,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0030000010156072676,
+      "max_ms": 0.161899999511661,
+      "ops_per_sec": 182215.74383988863
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003040999981749337,
+      "median_ms": 0.0026999987312592566,
+      "min_ms": 0.0024999972083605826,
+      "max_ms": 0.01460000203223899
+    }
+  },
+  "DYNAMIC_ADJ_LIST": {
+    "mode": "DYNAMIC_ADJ_LIST",
+    "name": "Dynamic Adj List",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033579998489585705,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0030999981390777975,
+      "max_ms": 0.006000002031214535,
+      "ops_per_sec": 297796.3207205426
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0029019999419688247,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.012799999240087345
+    }
+  },
+  "ADJ_MATRIX": {
+    "mode": "ADJ_MATRIX",
+    "name": "Adj Matrix",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033350000012433156,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0030999981390777975,
+      "max_ms": 0.004999998054699972,
+      "ops_per_sec": 299850.07485073217
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0028380001094774343,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.008200000593205914
+    }
+  },
+  "BLOCK_ADJ_MATRIX": {
+    "mode": "BLOCK_ADJ_MATRIX",
+    "name": "Block Adj Matrix",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033660000190138817,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0030999981390777975,
+      "max_ms": 0.006399997801054269,
+      "ops_per_sec": 297088.5307044545
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002879999883589335,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.011000000085914508
+    }
+  },
+  "CSR": {
+    "mode": "CSR",
+    "name": "Csr",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003384999799891375,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0030999981390777975,
+      "max_ms": 0.01179999890155159,
+      "ops_per_sec": 295420.9923534087
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0028250000104890205,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0024999972083605826,
+      "max_ms": 0.007300001016119495
+    }
+  },
+  "CSC": {
+    "mode": "CSC",
+    "name": "Csc",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033380000240867957,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.013600001693703234,
+      "ops_per_sec": 299580.5850161964
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002716999988479074,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.006900001608300954
+    }
+  },
+  "COO": {
+    "mode": "COO",
+    "name": "Coo",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0032669999563950114,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.007599999662488699,
+      "ops_per_sec": 306091.21926755557
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027450000925455242,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.006499998562503606
+    }
+  },
+  "BIDIR_WRAPPER": {
+    "mode": "BIDIR_WRAPPER",
+    "name": "Bidir Wrapper",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0032559999817749485,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0030000010156072676,
+      "max_ms": 0.004699999408330768,
+      "ops_per_sec": 307125.3088444025
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027250001585343853,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.006499998562503606
+    }
+  },
+  "TEMPORAL_EDGESET": {
+    "mode": "TEMPORAL_EDGESET",
+    "name": "Temporal Edgeset",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033650000477791764,
+      "median_ms": 0.0032000025385059416,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.009700001101009548,
+      "ops_per_sec": 297176.81598845066
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002824999755830504,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.007499998901039362
+    }
+  },
+  "HYPEREDGE_SET": {
+    "mode": "HYPEREDGE_SET",
+    "name": "Hyperedge Set",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003610000239859801,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0030999981390777975,
+      "max_ms": 0.01729999712551944,
+      "ops_per_sec": 277008.29184400174
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003012999914062675,
+      "median_ms": 0.0025999979698099196,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.01309999788645655
+    }
+  },
+  "EDGE_PROPERTY_STORE": {
+    "mode": "EDGE_PROPERTY_STORE",
+    "name": "Edge Property Store",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0038449999556178227,
+      "median_ms": 0.0032999996619764715,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.03369999831193127,
+      "ops_per_sec": 260078.02640905828
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002880999782064464,
+      "median_ms": 0.0025999979698099196,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.010399999155197293
+    }
+  },
+  "R_TREE": {
+    "mode": "R_TREE",
+    "name": "R Tree",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0034130000494769774,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.011199997970834374,
+      "ops_per_sec": 292997.3587762603
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027930000578635372,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.007700000423938036
+    }
+  },
+  "QUADTREE": {
+    "mode": "QUADTREE",
+    "name": "Quadtree",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0032589998954790644,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.005099998816149309,
+      "ops_per_sec": 306842.5995923521
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0029469999572029337,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0023999964469112456,
+      "max_ms": 0.007400001777568832
+    }
+  },
+  "OCTREE": {
+    "mode": "OCTREE",
+    "name": "Octree",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0033209998946404085,
+      "median_ms": 0.0032000025385059416,
+      "min_ms": 0.0030000010156072676,
+      "max_ms": 0.005300000339047983,
+      "ops_per_sec": 301114.13180525805
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0028650000240304507,
+      "median_ms": 0.0026000016077887267,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.010799998563015833
+    }
+  },
+  "FLOW_NETWORK": {
+    "mode": "FLOW_NETWORK",
+    "name": "Flow Network",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003189000053680502,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.005000001692678779,
+      "ops_per_sec": 313577.9188356789
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027000002592103556,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.00799999907030724
+    }
+  },
+  "NEURAL_GRAPH": {
+    "mode": "NEURAL_GRAPH",
+    "name": "Neural Graph",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003234000032534823,
+      "median_ms": 0.0031500003387918696,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.00540000110049732,
+      "ops_per_sec": 309214.591818107
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027600000248639844,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.011000000085914508
+    }
+  },
+  "WEIGHTED_GRAPH": {
+    "mode": "WEIGHTED_GRAPH",
+    "name": "Weighted Graph",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003119000029982999,
+      "median_ms": 0.0030999981390777975,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.004900000931229442,
+      "ops_per_sec": 320615.5788351983
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0028170000223326497,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.011199997970834374
+    }
+  },
+  "INCIDENCE_MATRIX": {
+    "mode": "INCIDENCE_MATRIX",
+    "name": "Incidence Matrix",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003183999906468671,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.0047000030463095754,
+      "ops_per_sec": 314070.36098474194
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027180001416127197,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.007200000254670158
+    }
+  },
+  "EDGE_LIST": {
+    "mode": "EDGE_LIST",
+    "name": "Edge List",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0035329997990629636,
+      "median_ms": 0.0032000025385059416,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.017399997886968777,
+      "ops_per_sec": 283045.5864348546
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0028720000773319043,
+      "median_ms": 0.0025999979698099196,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.011300002370262519
+    }
+  },
+  "COMPRESSED_GRAPH": {
+    "mode": "COMPRESSED_GRAPH",
+    "name": "Compressed Graph",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003192999938619323,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.004899997293250635,
+      "ops_per_sec": 313185.09841012006
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0027350000164005905,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0023999964469112456,
+      "max_ms": 0.006999998731771484
+    }
+  },
+  "K2_TREE": {
+    "mode": "K2_TREE",
+    "name": "K2 Tree",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0032119998650159687,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.005000001692678779,
+      "ops_per_sec": 311332.51619704795
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002770000028249342,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0023000029614195228,
+      "max_ms": 0.007499998901039362
+    }
+  },
+  "BV_GRAPH": {
+    "mode": "BV_GRAPH",
+    "name": "Bv Graph",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.0032980000105453655,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.014900000678608194,
+      "ops_per_sec": 303214.0681632798
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.002835000013874378,
+      "median_ms": 0.0025999979698099196,
+      "min_ms": 0.0024000000848900527,
+      "max_ms": 0.006900001608300954
+    }
+  },
+  "HNSW": {
+    "mode": "HNSW",
+    "name": "Hnsw",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.004206000194244552,
+      "median_ms": 0.0032000025385059416,
+      "min_ms": 0.0029999973776284605,
+      "max_ms": 0.007300001016119495,
+      "ops_per_sec": 237755.5762760995
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003040000010514632,
+      "median_ms": 0.0025000008463393897,
+      "min_ms": 0.0022999993234407157,
+      "max_ms": 0.02179999864893034
+    }
+  },
+  "EULER_TOUR": {
+    "mode": "EULER_TOUR",
+    "name": "Euler Tour",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003296000068075955,
+      "median_ms": 0.0031999989005271345,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.005800000508315861,
+      "ops_per_sec": 303398.0519860097
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0030909997803973965,
+      "median_ms": 0.0027999994927085936,
+      "min_ms": 0.0026999987312592566,
+      "max_ms": 0.009900002623908222
+    }
+  },
+  "LINK_CUT": {
+    "mode": "LINK_CUT",
+    "name": "Link Cut",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.004456000206118915,
+      "median_ms": 0.004499997885432094,
+      "min_ms": 0.0034000004234258085,
+      "max_ms": 0.007800001185387373,
+      "ops_per_sec": 224416.5066749356
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003995999868493527,
+      "median_ms": 0.0036000019463244826,
+      "min_ms": 0.0033999967854470015,
+      "max_ms": 0.014900000678608194
+    }
+  },
+  "HOP2_LABELS": {
+    "mode": "HOP2_LABELS",
+    "name": "Hop2 Labels",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.004541999987850431,
+      "median_ms": 0.004449999323696829,
+      "min_ms": 0.00419999923906289,
+      "max_ms": 0.006999998731771484,
+      "ops_per_sec": 220167.32775758213
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003784999862546101,
+      "median_ms": 0.0034499989851610735,
+      "min_ms": 0.0031999989005271345,
+      "max_ms": 0.01080000220099464
+    }
+  },
+  "GRAPHBLAS": {
+    "mode": "GRAPHBLAS",
+    "name": "Graphblas",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.004184999925200827,
+      "median_ms": 0.0040000013541430235,
+      "min_ms": 0.0035999983083456755,
+      "max_ms": 0.011399999493733048,
+      "ops_per_sec": 238948.63031616723
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0034129999403376132,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.009999999747378752
+    }
+  },
+  "ROARING_ADJ": {
+    "mode": "ROARING_ADJ",
+    "name": "Roaring Adj",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003999999862571713,
+      "median_ms": 0.0039000005926936865,
+      "min_ms": 0.0036999990697950125,
+      "max_ms": 0.005799996870337054,
+      "ops_per_sec": 250000.00858926825
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.0033989999428740703,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.009399998816661537
+    }
+  },
+  "MULTIPLEX": {
+    "mode": "MULTIPLEX",
+    "name": "Multiplex",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003930000057152938,
+      "median_ms": 0.0037999998312443495,
+      "min_ms": 0.0036999990697950125,
+      "max_ms": 0.006200003554113209,
+      "ops_per_sec": 254452.92250821064
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.00340900009177858,
+      "median_ms": 0.0030999981390777975,
+      "min_ms": 0.0029000002541579306,
+      "max_ms": 0.011600001016631722
+    }
+  },
+  "BITEMPORAL": {
+    "mode": "BITEMPORAL",
+    "name": "Bitemporal",
+    "error": null,
+    "add_edge_performance": {
+      "mean_ms": 0.003930999955628067,
+      "median_ms": 0.003850000211969018,
+      "min_ms": 0.0035999983083456755,
+      "max_ms": 0.006199999916134402,
+      "ops_per_sec": 254388.19925914425
+    },
+    "get_neighbors_performance": {
+      "mean_ms": 0.003383000148460269,
+      "median_ms": 0.0031000017770566046,
+      "min_ms": 0.0028999966161791235,
+      "max_ms": 0.008899998647393659
+    }
+  }
+}

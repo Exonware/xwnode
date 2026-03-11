@@ -1,13 +1,10 @@
 """
 #exonware/xwnode/examples/x5/data_operations/run_tests_unified.py
-
 Unified Test Runner
-
 Runs all data operations tests using pytest following GUIDE_TEST.md standards.
 Ensures all functionalities work and fixes root causes.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
@@ -16,7 +13,6 @@ Generation Date: 11-Oct-2025
 import sys
 import subprocess
 from pathlib import Path
-
 # Configure UTF-8 for Windows console (GUIDE_TEST.md requirement)
 if sys.platform == "win32":
     try:
@@ -26,10 +22,10 @@ if sys.platform == "win32":
     except Exception:
         pass
 
+
 def main():
     """
     Run all tests using pytest following GUIDE_TEST.md standards.
-    
     Following GUIDE_TEST.md:
     - Uses pytest for test execution
     - Stop on first failure (-x, --maxfail=1)
@@ -39,7 +35,6 @@ def main():
     - Fix root causes, not symptoms
     """
     test_dir = Path(__file__).parent
-    
     print("="*80)
     print("UNIFIED TEST RUNNER - Data Operations Test Suite")
     print("Following GUIDE_TEST.md Standards")
@@ -52,7 +47,6 @@ def main():
     print("  - Short tracebacks (--tb=short)")
     print("  - Strict markers (--strict-markers)")
     print()
-    
     # Run pytest with GUIDE_TEST.md compliant options
     # CRITICAL: Following GUIDE_TEST.md - Never hide problems!
     pytest_args = [
@@ -69,14 +63,12 @@ def main():
         # --tb=no                # Hides debugging info!
         # -q / --quiet           # Hides important output!
     ]
-    
     try:
         result = subprocess.run(
             pytest_args,
             cwd=test_dir,
             check=False  # Don't raise, we'll handle exit code
         )
-        
         print()
         print("="*80)
         if result.returncode == 0:
@@ -93,7 +85,6 @@ def main():
             print("  - Never hide errors or warnings")
             print("  - Fix the code, not the test")
             return 1
-            
     except KeyboardInterrupt:
         print("\n\n⚠️ Test execution interrupted by user")
         return 130
@@ -102,8 +93,5 @@ def main():
         import traceback
         traceback.print_exc()
         return 1
-
-
 if __name__ == "__main__":
     sys.exit(main())
-

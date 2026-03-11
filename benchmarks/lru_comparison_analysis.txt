@@ -1,0 +1,115 @@
+================================================================================
+LRU_CACHE Performance Comparison Analysis
+================================================================================
+
+LRU_CACHE Baseline Performance:
+  Put:   0.0013 ms (790889 ops/s)
+  Get:   0.0017 ms (583942 ops/s)
+  Delete: 0.0004 ms
+
+Comparison Statistics:
+  Total strategies compared: 62
+  Faster than LRU (>1.2x): 5
+  Slower than LRU (<0.8x): 29
+  Similar to LRU (0.8-1.2x): 23
+  Failed: 0
+
+================================================================================
+Strategies FASTER than LRU_CACHE (Top 10):
+================================================================================
+1. Queue (QUEUE)
+   Put: 0.0006 ms (2.11x faster)
+   Get: 0.0036 ms (0.48x faster)
+   Avg Speedup: 1.29x
+
+2. Ordered Map (ORDERED_MAP)
+   Put: 0.0006 ms (2.02x faster)
+   Get: 0.0036 ms (0.48x faster)
+   Avg Speedup: 1.25x
+
+3. Patricia (PATRICIA)
+   Put: 0.0006 ms (2.03x faster)
+   Get: 0.0038 ms (0.45x faster)
+   Avg Speedup: 1.24x
+
+4. Trie (TRIE)
+   Put: 0.0006 ms (2.00x faster)
+   Get: 0.0038 ms (0.46x faster)
+   Avg Speedup: 1.23x
+
+5. Stack (STACK)
+   Put: 0.0006 ms (2.01x faster)
+   Get: 0.0038 ms (0.45x faster)
+   Avg Speedup: 1.23x
+
+================================================================================
+Strategies SLOWER than LRU_CACHE (Top 10 Slowest):
+================================================================================
+1. Bw Tree (BW_TREE)
+   Put: 0.0617 ms (0.02x slower)
+   Get: 0.8666 ms (0.00x slower)
+   Avg Speedup: 0.01x
+
+2. Learned Index (LEARNED_INDEX)
+   Put: 0.0340 ms (0.04x slower)
+   Get: 0.3721 ms (0.00x slower)
+   Avg Speedup: 0.02x
+
+3. Art (ART)
+   Put: 0.0131 ms (0.10x slower)
+   Get: 3.3526 ms (0.00x slower)
+   Avg Speedup: 0.05x
+
+4. Count Min Sketch (COUNT_MIN_SKETCH)
+   Put: 0.0262 ms (0.05x slower)
+   Get: 0.0321 ms (0.05x slower)
+   Avg Speedup: 0.05x
+
+5. Hamt (HAMT)
+   Put: 0.0100 ms (0.13x slower)
+   Get: 0.0331 ms (0.05x slower)
+   Avg Speedup: 0.09x
+
+6. Bloom Filter (BLOOM_FILTER)
+   Put: 0.0075 ms (0.17x slower)
+   Get: 0.0242 ms (0.07x slower)
+   Avg Speedup: 0.12x
+
+7. Hyperloglog (HYPERLOGLOG)
+   Put: 0.0045 ms (0.28x slower)
+   Get: 0.0259 ms (0.07x slower)
+   Avg Speedup: 0.17x
+
+8. Aho Corasick (AHO_CORASICK)
+   Put: 0.0035 ms (0.37x slower)
+   Get: 0.0462 ms (0.04x slower)
+   Avg Speedup: 0.20x
+
+9. Cuckoo Hash (CUCKOO_HASH)
+   Put: 0.0022 ms (0.57x slower)
+   Get: 0.5909 ms (0.00x slower)
+   Avg Speedup: 0.29x
+
+10. Ast (AST)
+   Put: 0.0021 ms (0.62x slower)
+   Get: 0.2739 ms (0.01x slower)
+   Avg Speedup: 0.31x
+
+================================================================================
+Key-Value Strategy Comparison (AKeyValueStrategy candidates):
+================================================================================
+Hash Map (HASH_MAP): SLOWER - 0.70x
+  Put: 0.0009 ms vs LRU 0.0013 ms
+  Get: 0.8051 ms vs LRU 0.0017 ms
+
+Ordered Map (ORDERED_MAP): FASTER - 1.25x
+  Put: 0.0006 ms vs LRU 0.0013 ms
+  Get: 0.0036 ms vs LRU 0.0017 ms
+
+Cuckoo Hash (CUCKOO_HASH): SLOWER - 0.29x
+  Put: 0.0022 ms vs LRU 0.0013 ms
+  Get: 0.5909 ms vs LRU 0.0017 ms
+
+Set Hash (SET_HASH): SIMILAR - 0.87x
+  Put: 0.0007 ms vs LRU 0.0013 ms
+  Get: 0.0302 ms vs LRU 0.0017 ms

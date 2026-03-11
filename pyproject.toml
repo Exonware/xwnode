@@ -1,3 +1,5 @@
+# project-src-size=2537098 ; 2.42 MB
+# Source size (src/*): ~2.42 MB
 [build-system]
 requires = [ "hatchling",]
 build-backend = "hatchling.build"
@@ -19,46 +21,50 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "exonware-xwsystem",
+  "exonware-xwsystem",  # file-size=2758230 ; 2.63 MB
+  "numpy>=1.24.0",  # file-size=52803492 ; 50.36 MB
+  "pip",  # file-size=11430259 ; 10.90 MB
+  "scikit-learn>=1.2.0",  # file-size=43016103 ; 41.02 MB
+  "scipy>=1.10.0",  # file-size=140860699 ; 134.34 MB
+  # total = src + deps ; 241.67 MB
 ]
 
 [[project.authors]]
-name = "Eng. Muhammad AlShehri"
+name = "eXonware Backend Team"
 email = "connect@exonware.com"
 
 [project.license]
 text = "MIT"
 
 [project.optional-dependencies]
-dev = [ 
-    "pytest>=7.0.0", 
-    "pytest-asyncio>=0.21.0", 
-    "pytest-cov>=4.0.0", 
-    "black>=23.0.0", 
-    "isort>=5.12.0", 
-    "mypy>=1.0.0",
+dev = [
+  "black>=23.0.0",  # file-size=3914855 ; 3.73 MB
+  "exonware-xwlazy",  # file-size=349706 ; 0.33 MB
+  "exonware-xwsystem[dev]",  # file-size=40632320 ; 38.75 MB
+  "isort>=5.12.0",  # file-size=568232 ; 0.54 MB
+  "mypy>=1.0.0",  # file-size=29775254 ; 28.40 MB
+  "pytest>=7.0.0",  # file-size=3152415 ; 3.01 MB
+  "pytest-asyncio>=0.21.0",  # file-size=46752 ; 0.04 MB
+  "pytest-cov>=4.0.0",  # file-size=71639 ; 0.07 MB
+  # total = src + deps ; 77.29 MB
 ]
 lazy = [
-    "exonware-xwsystem[lazy]",
+  "exonware-xwlazy",  # file-size=349706 ; 0.33 MB
+  "exonware-xwsystem[lazy]",  # file-size=3103784 ; 2.96 MB
+  # total = src + deps ; 5.71 MB
 ]
 full = [
-    # xwnode leverages xwsystem's full capabilities
-    # All serialization, security, monitoring, and performance features
-    # are inherited from xwsystem's full installation
-    "exonware-xwsystem[full]",
-    
-    # xwnode-specific dependencies for advanced strategies
-    "numpy>=1.24.0",  # For learned index and probabilistic strategies
-    "scikit-learn>=1.2.0",  # For learned index strategy (ML-based indexing)
-    
-    # Benchmark and example dependencies
-    "openpyxl>=3.0.0",  # Excel file generation and reading for benchmarks
+  "exonware-xwsystem[full]",  # file-size=83665879 ; 79.79 MB
+  "openpyxl>=3.0.0",  # file-size=1955411 ; 1.86 MB
+  # total = src + deps ; 84.07 MB
 ]
 
 [project.urls]
 Homepage = "https://exonware.com"
 Repository = "https://github.com/exonware/xwnode"
 Documentation = "https://github.com/exonware/xwnode#readme"
+
+# Dependency sizes: run 'commands measure_dependency_sizes xwnode' to refresh # project-src-size and # file-size in this file.
 
 [tool.black]
 line-length = 88
@@ -69,7 +75,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.1.0.1"
+python_version = "0.9.0.1"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

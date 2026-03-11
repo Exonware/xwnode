@@ -1,7 +1,7 @@
 # 50 XWQuery Operations - Implementation Complete
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Version:** 0.0.1  
 **Date:** 08-Oct-2025

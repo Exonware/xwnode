@@ -1,7 +1,7 @@
 # Root Cause Fixes - x5 & x6 File-Backed Database Benchmarks
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Version:** 0.0.2  
 **Fix Date:** 17-Oct-2025

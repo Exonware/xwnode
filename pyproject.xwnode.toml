@@ -1,3 +1,4 @@
+# Source size (src/*): ~2.42 MB
 [build-system]
 requires = [
     "hatchling",
@@ -33,7 +34,7 @@ dependencies = [
     "exonware-xwnode",
 ]
 authors = [
-    { name = "Eng. Muhammad AlShehri", email = "connect@exonware.com" },
+    { name = "eXonware Backend Team", email = "connect@exonware.com" },
 ]
 
 [project.license]
@@ -66,7 +67,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.0.1.31"
+python_version = "3.12"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

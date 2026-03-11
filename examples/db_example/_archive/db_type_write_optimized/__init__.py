@@ -1,2 +1,1 @@
 """Write-Optimized Database"""
-

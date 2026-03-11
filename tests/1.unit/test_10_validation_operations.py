@@ -1,13 +1,10 @@
 """
 #exonware/xwnode/examples/x5/data_operations/test_10_validation_operations.py
-
 VALIDATION Operations Test Suite
-
 Tests all VALIDATION operations (data integrity) for both V1 (Streaming) and V2 (Indexed) implementations.
 All tests are fully implemented at production level with no TODOs.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
@@ -19,8 +16,7 @@ import json
 import time
 import re
 from pathlib import Path
-from typing import List, Dict, Any, Optional
-
+from typing import Any, Optional
 # Import test helpers
 sys.path.insert(0, str(Path(__file__).parent))
 from test_helpers import (
@@ -32,7 +28,6 @@ from test_helpers import (
     get_all_matching_v2,
     stream_read,
 )
-
 # Import from parent
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from json_utils import (
@@ -45,11 +40,10 @@ from json_utils_indexed import (
     indexed_get_by_id,
     indexed_get_by_line,
 )
-
-
 # ============================================================================
 # Validation Helper Functions
 # ============================================================================
+
 
 def validate_email(email: str) -> bool:
     """Validate email format."""
@@ -61,11 +55,10 @@ def validate_date(date_str: str) -> bool:
     """Validate date format (YYYY-MM-DD)."""
     pattern = r'^\d{4}-\d{2}-\d{2}$'
     return bool(re.match(pattern, date_str))
-
-
 # ============================================================================
 # 10.1 Schema Validation
 # ============================================================================
+
 
 def test_10_1_1_validate_schema():
     """
@@ -77,10 +70,8 @@ def test_10_1_1_validate_schema():
         "name": str,
         "age": int
     }
-    
     test_data = [{"id": "1", "name": "Alice", "age": 30}]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_against_schema(record, schema):
             for field, expected_type in schema.items():
@@ -89,24 +80,19 @@ def test_10_1_1_validate_schema():
                 if not isinstance(record[field], expected_type):
                     return False, f"Field {field} has wrong type"
             return True, None
-        
         # V1: Validate schema
         v1_start = time.perf_counter()
         record = stream_read(file_path, match_by_id("id", "1"))
         v1_valid, v1_error = validate_against_schema(record, schema)
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid
-        
         # V2: Validate schema
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
         record_v2 = indexed_get_by_id(file_path, "1", id_field="id", index=index)
         v2_valid, v2_error = validate_against_schema(record_v2, schema)
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -118,18 +104,15 @@ def test_10_1_2_validate_required_fields():
     Test: Ensure required fields present
     """
     required_fields = ["id", "name", "email"]
-    
     test_data = [
         {"id": "1", "name": "Alice", "email": "alice@example.com"},
         {"id": "2", "name": "Bob"}  # Missing email
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_required(record, required):
             missing = [field for field in required if field not in record]
             return len(missing) == 0, missing
-        
         # V1: Validate required fields
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
@@ -139,9 +122,7 @@ def test_10_1_2_validate_required_fields():
             if valid:
                 v1_valid_count += 1
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid_count == 1
-        
         # V2: Validate required fields
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -152,9 +133,7 @@ def test_10_1_2_validate_required_fields():
             if valid:
                 v2_valid_count += 1
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid_count == 1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -170,20 +149,17 @@ def test_10_1_3_validate_field_types():
         "age": int,
         "score": float
     }
-    
     test_data = [
         {"id": "1", "age": 30, "score": 85.5},
         {"id": "2", "age": "25", "score": 90.0}  # age is string, should be int
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_types(record, types):
             for field, expected_type in types.items():
                 if field in record and not isinstance(record[field], expected_type):
                     return False, f"Field {field} has wrong type"
             return True, None
-        
         # V1: Validate field types
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
@@ -193,9 +169,7 @@ def test_10_1_3_validate_field_types():
             if valid:
                 v1_valid_count += 1
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid_count == 1
-        
         # V2: Validate field types
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -206,9 +180,7 @@ def test_10_1_3_validate_field_types():
             if valid:
                 v2_valid_count += 1
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid_count == 1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -225,7 +197,6 @@ def test_10_1_4_validate_field_formats():
         {"id": "3", "email": "bob@example.com", "date": "invalid-date"}
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_formats(record):
             errors = []
@@ -234,7 +205,6 @@ def test_10_1_4_validate_field_formats():
             if "date" in record and not validate_date(record["date"]):
                 errors.append("Invalid date format")
             return len(errors) == 0, errors
-        
         # V1: Validate field formats
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
@@ -244,9 +214,7 @@ def test_10_1_4_validate_field_formats():
             if valid:
                 v1_valid_count += 1
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid_count == 1
-        
         # V2: Validate field formats
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -257,9 +225,7 @@ def test_10_1_4_validate_field_formats():
             if valid:
                 v2_valid_count += 1
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid_count == 1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -274,14 +240,12 @@ def test_10_1_5_validate_constraints():
         "age": {"min": 18, "max": 100},
         "score": {"min": 0, "max": 100}
     }
-    
     test_data = [
         {"id": "1", "age": 30, "score": 85},
         {"id": "2", "age": 15, "score": 85},  # age < min
         {"id": "3", "age": 30, "score": 150}  # score > max
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_constraints(record, constraints):
             errors = []
@@ -293,7 +257,6 @@ def test_10_1_5_validate_constraints():
                     if "max" in constraint and value > constraint["max"]:
                         errors.append(f"{field} above maximum")
             return len(errors) == 0, errors
-        
         # V1: Validate constraints
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
@@ -303,9 +266,7 @@ def test_10_1_5_validate_constraints():
             if valid:
                 v1_valid_count += 1
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid_count == 1
-        
         # V2: Validate constraints
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -316,17 +277,14 @@ def test_10_1_5_validate_constraints():
             if valid:
                 v2_valid_count += 1
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid_count == 1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
-
-
 # ============================================================================
 # 10.2 Data Validation
 # ============================================================================
+
 
 def test_10_2_1_validate_uniqueness():
     """
@@ -339,7 +297,6 @@ def test_10_2_1_validate_uniqueness():
         {"id": "1", "name": "Charlie"}  # Duplicate ID
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_uniqueness(filepath, id_field="id"):
             ids = set()
@@ -351,15 +308,12 @@ def test_10_2_1_validate_uniqueness():
                     duplicates.append(record_id)
                 ids.add(record_id)
             return len(duplicates) == 0, duplicates
-        
         # V1: Validate uniqueness
         v1_start = time.perf_counter()
         v1_valid, v1_duplicates = validate_uniqueness(file_path)
         v1_time = time.perf_counter() - v1_start
-        
         assert not v1_valid
         assert len(v1_duplicates) > 0
-        
         # V2: Validate uniqueness
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -374,10 +328,8 @@ def test_10_2_1_validate_uniqueness():
         v2_duplicates = [rid for rid, lines in id_to_lines.items() if len(lines) > 1]
         v2_valid = len(v2_duplicates) == 0
         v2_time = time.perf_counter() - v2_start
-        
         assert not v2_valid
         assert len(v2_duplicates) > 0
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -395,7 +347,6 @@ def test_10_2_2_validate_references():
     ]
     users_file = create_test_file(users_data)
     orders_file = create_test_file(orders_data)
-    
     try:
         def validate_references(orders_filepath, users_filepath, foreign_key="user_id"):
             user_ids = {r.get("id") for r in get_all_matching_v1(users_filepath, lambda x: True)}
@@ -406,15 +357,12 @@ def test_10_2_2_validate_references():
                 if ref_id not in user_ids:
                     invalid_refs.append(order.get("id"))
             return len(invalid_refs) == 0, invalid_refs
-        
         # V1: Validate references
         v1_start = time.perf_counter()
         v1_valid, v1_invalid = validate_references(orders_file, users_file)
         v1_time = time.perf_counter() - v1_start
-        
         assert not v1_valid
         assert len(v1_invalid) > 0
-        
         # V2: Validate references
         users_index = ensure_index(users_file, id_field="id")
         orders_index = ensure_index(orders_file, id_field="id")
@@ -424,10 +372,8 @@ def test_10_2_2_validate_references():
         v2_invalid = [o.get("id") for o in orders if o.get("user_id") not in user_ids]
         v2_valid = len(v2_invalid) == 0
         v2_time = time.perf_counter() - v2_start
-        
         assert not v2_valid
         assert len(v2_invalid) > 0
-        
         cleanup_test_file(users_file)
         return True, v1_time, v2_time
     finally:
@@ -446,7 +392,6 @@ def test_10_2_3_validate_relationships():
         {"id": "4", "parent_id": "99", "name": "Orphan"}  # Invalid parent
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_relationships(filepath):
             records = get_all_matching_v1(filepath, lambda x: True)
@@ -457,15 +402,12 @@ def test_10_2_3_validate_relationships():
                 if parent_id is not None and parent_id not in ids:
                     invalid.append(record.get("id"))
             return len(invalid) == 0, invalid
-        
         # V1: Validate relationships
         v1_start = time.perf_counter()
         v1_valid, v1_invalid = validate_relationships(file_path)
         v1_time = time.perf_counter() - v1_start
-        
         assert not v1_valid
         assert len(v1_invalid) > 0
-        
         # V2: Validate relationships
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -474,10 +416,8 @@ def test_10_2_3_validate_relationships():
         v2_invalid = [r.get("id") for r in records if r.get("parent_id") is not None and r.get("parent_id") not in ids]
         v2_valid = len(v2_invalid) == 0
         v2_time = time.perf_counter() - v2_start
-        
         assert not v2_valid
         assert len(v2_invalid) > 0
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -494,7 +434,6 @@ def test_10_2_4_validate_business_rules():
         {"id": "3", "type": "order", "amount": 200, "status": "completed"}  # Valid
     ]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_business_rules(record):
             errors = []
@@ -504,7 +443,6 @@ def test_10_2_4_validate_business_rules():
                 if record.get("status") == "completed" and record.get("amount", 0) <= 0:
                     errors.append("Completed order must have amount > 0")
             return len(errors) == 0, errors
-        
         # V1: Validate business rules
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
@@ -514,9 +452,7 @@ def test_10_2_4_validate_business_rules():
             if valid:
                 v1_valid_count += 1
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_valid_count == 2
-        
         # V2: Validate business rules
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -527,9 +463,7 @@ def test_10_2_4_validate_business_rules():
             if valid:
                 v2_valid_count += 1
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_valid_count == 2
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -542,7 +476,6 @@ def test_10_2_5_validate_on_insert():
     """
     test_data = [{"id": "1", "name": "Alice", "age": 30}]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_record(record):
             if not isinstance(record.get("name"), str) or not record.get("name"):
@@ -550,10 +483,8 @@ def test_10_2_5_validate_on_insert():
             if not isinstance(record.get("age"), int) or record.get("age") < 0:
                 return False, "Age must be non-negative integer"
             return True, None
-        
         valid_record = {"id": "2", "name": "Bob", "age": 25}
         invalid_record = {"id": "3", "name": "", "age": -5}
-        
         # V1: Validate on insert
         v1_start = time.perf_counter()
         valid, error = validate_record(valid_record)
@@ -564,15 +495,12 @@ def test_10_2_5_validate_on_insert():
             # Don't insert invalid record
             pass
         v1_time = time.perf_counter() - v1_start
-        
         records = get_all_matching_v1(file_path, lambda x: True)
         assert len(records) == 2
         assert all(r.get("id") != "3" for r in records)
-        
         # V2: Validate on insert
         cleanup_test_file(file_path)
         file_path = create_test_file(test_data)
-        
         v2_start = time.perf_counter()
         valid_v2, error_v2 = validate_record(valid_record)
         if valid_v2:
@@ -581,12 +509,10 @@ def test_10_2_5_validate_on_insert():
         if not valid2_v2:
             pass
         v2_time = time.perf_counter() - v2_start
-        
         index = ensure_index(file_path, id_field="id")
         records_v2 = get_all_matching_v2(file_path, lambda x: True, index=index)
         assert len(records_v2) == 2
         assert all(r.get("id") != "3" for r in records_v2)
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -599,13 +525,11 @@ def test_10_2_6_validate_on_update():
     """
     test_data = [{"id": "1", "name": "Alice", "age": 30}]
     file_path = create_test_file(test_data)
-    
     try:
         def validate_update(record):
             if "age" in record and (not isinstance(record["age"], int) or record["age"] < 0):
                 return False, "Age must be non-negative integer"
             return True, None
-        
         # V1: Validate on update
         v1_start = time.perf_counter()
         update_data = {"age": 31}
@@ -617,14 +541,11 @@ def test_10_2_6_validate_on_update():
                 lambda obj: {**obj, **update_data}
             )
         v1_time = time.perf_counter() - v1_start
-        
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["age"] == 31
-        
         # V2: Validate on update
         cleanup_test_file(file_path)
         file_path = create_test_file(test_data)
-        
         v2_start = time.perf_counter()
         valid_v2, error_v2 = validate_update(update_data)
         if valid_v2:
@@ -635,12 +556,9 @@ def test_10_2_6_validate_on_update():
             )
             build_index(file_path, id_field="id")
         v2_time = time.perf_counter() - v2_start
-        
         index = ensure_index(file_path, id_field="id")
         result_v2 = indexed_get_by_id(file_path, "1", id_field="id", index=index)
         assert result_v2["age"] == 31
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
-

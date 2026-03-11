@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
 Test runner for test_4_delete_operations.py
-
 Runs all tests with edge case handling and proper error reporting.
 """
 
 import sys
 import traceback
 from pathlib import Path
-
 # Configure UTF-8 for Windows console
 if sys.platform == "win32":
     try:
@@ -17,11 +15,9 @@ if sys.platform == "win32":
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
     except Exception:
         pass
-
 # Add paths
 sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 # Import test module
 from test_4_delete_operations import (
     test_4_1_1_delete_by_id,
@@ -90,7 +86,6 @@ def main():
     print("="*80)
     print("DELETE Operations Test Suite")
     print("="*80)
-    
     tests = [
         (test_4_1_1_delete_by_id, "test_4_1_1_delete_by_id"),
         (test_4_1_2_delete_by_line_number, "test_4_1_2_delete_by_line_number"),
@@ -125,32 +120,25 @@ def main():
         (test_4_5_11_delete_with_special_characters, "test_4_5_11_delete_with_special_characters"),
         (test_4_5_12_delete_with_very_large_id, "test_4_5_12_delete_with_very_large_id"),
     ]
-    
     results = []
     for test_func, test_name in tests:
         result = run_test(test_func, test_name)
         results.append((test_name, result))
-    
     # Summary
     print(f"\n{'='*80}")
     print("TEST SUMMARY")
     print(f"{'='*80}")
     passed = sum(1 for _, result in results if result)
     failed = len(results) - passed
-    
     for test_name, result in results:
         status = "✅ PASSED" if result else "❌ FAILED"
         print(f"{status}: {test_name}")
-    
     print(f"\nTotal: {len(results)} | Passed: {passed} | Failed: {failed}")
-    
     if failed > 0:
         print(f"\n❌ {failed} test(s) failed. See errors above.")
         sys.exit(1)
     else:
         print(f"\n✅ All tests passed!")
         sys.exit(0)
-
 if __name__ == "__main__":
     main()
-

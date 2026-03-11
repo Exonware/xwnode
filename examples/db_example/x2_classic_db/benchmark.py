@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """
 #exonware/xwnode/examples/db_example/x2_classic_db/benchmark.py
-
 Classic Database Benchmark - Predefined Configurations (Refactored)
-
 Tests 6 predefined database configurations.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: October 14, 2025
@@ -16,27 +13,21 @@ Generation Date: October 14, 2025
 import sys
 import random
 from pathlib import Path
-from typing import Dict, Any
-
+from typing import Any
 # Add common module to path
 parent_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(parent_dir))
-
 # Add xwnode src to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root / "src"))
-
 from exonware.xwnode.defs import NodeMode, EdgeMode, GraphOptimization
-
 from x0_common import (
     BenchmarkMetrics, BaseDatabase, BaseBenchmarkRunner,
     generate_user, generate_post, generate_comment, generate_relationship
 )
-
 # ==============================================================================
 # BENCHMARK CONFIGURATION
 # ==============================================================================
-
 MODELS = [
     {
         'name': 'Read-Optimized',
@@ -79,7 +70,7 @@ MODELS = [
 
 class DynamicDatabase(BaseDatabase):
     """Dynamically configured database from model configuration"""
-    
+
     def __init__(self, model_config: dict):
         graph_opt = GraphOptimization.FULL if model_config.get('graph_manager') else GraphOptimization.OFF
         super().__init__(
@@ -93,27 +84,24 @@ class DynamicDatabase(BaseDatabase):
 
 class ClassicBenchmark(BaseBenchmarkRunner):
     """Benchmark runner for classic configurations"""
-    
+
     def __init__(self):
         super().__init__(
             benchmark_name="x2 Classic Database Benchmark",
             default_test_sizes=[1, 10, 100]
         )
-    
-    def run_single_benchmark(self, total_entities: int) -> Dict[str, Any]:
+
+    def run_single_benchmark(self, total_entities: int) -> dict[str, Any]:
         """
         Run benchmark for a single test size.
-        
         Root cause fixed: int() truncation caused 0 entities for total_entities=1.
         Solution: Use max(1, ...) to guarantee at least 1 entity of each type.
-        
         Priority: Security #1 - Prevent IndexError on empty lists
         Priority: Usability #2 - Clear, predictable entity distribution
         """
         print(f"\n{'='*80}")
         print(f"x2 CLASSIC DATABASE BENCHMARK - {total_entities:,} ENTITIES")
         print(f"{'='*80}")
-        
         # Entity distribution with minimum guarantees
         # Root cause: int(1 * 0.5) = 0, causing empty lists
         # Fix: Ensure at least 1 of each type for testing
@@ -127,59 +115,48 @@ class ClassicBenchmark(BaseBenchmarkRunner):
             num_users = max(1, int(total_entities * 0.5))
             num_posts = max(1, int(total_entities * 0.3))
             num_comments = max(1, int(total_entities * 0.2))
-            
             # Adjust to match exact total
             actual_total = num_users + num_posts + num_comments
             if actual_total != total_entities:
                 # Add/remove from users (largest group)
                 num_users += (total_entities - actual_total)
-        
         num_relationships = max(2, num_users * 2)
-        
         # Operations
         num_read_ops = max(100, int(num_users * 0.1))
         num_update_users = int(num_users * 0.5)
         num_update_posts = int(num_posts * 0.5)
         num_update_comments = int(num_comments * 0.5)
         num_delete_ops = max(10, int(num_users * 0.05))
-        
         print(f"\nConfiguration:")
         print(f"  Total Entities: {total_entities:,}")
         print(f"  Distribution: {num_users:,} users, {num_posts:,} posts, {num_comments:,} comments")
         print(f"  Relationships: {num_relationships:,}")
         print(f"  Models to test: {len(MODELS)}")
         print(f"  Random execution: {'ENABLED' if self.random_enabled else 'DISABLED'}\n")
-        
         for i, model in enumerate(MODELS, 1):
             edge_name = model['edge_mode'].name if model.get('edge_mode') else 'None'
             node_name = model['node_mode'].name if hasattr(model['node_mode'], 'name') else str(model['node_mode'])
             print(f"  {i}. {model['name']}: {node_name} + {edge_name} (Graph: OFF)")
-        
         # Shuffle models if random execution is enabled
         models_to_test = self.shuffle_if_enabled(MODELS)
-        
         results = {}
-        
         for model in models_to_test:
             print(f"\n{'='*80}")
             print(f"Benchmarking: {model['name']} ({total_entities} entities)")
             print(f"{'='*80}")
             print(model.get('description', ''))
-            
             try:
                 db = DynamicDatabase(model)
                 metrics = BenchmarkMetrics()
                 user_ids = []
                 post_ids = []
                 comment_ids = []
-                
                 # Phase 1: Insert
                 print(f"\n[Phase 1: Insert {num_users + num_posts + num_comments} entities + {num_relationships} relationships]")
                 with metrics.measure("insert"):
                     # Insert users first
                     for i in range(num_users):
                         user_ids.append(db.insert_user(generate_user(i)))
-                    
                     # Insert posts (requires users)
                     for i in range(num_posts):
                         if not user_ids:
@@ -189,7 +166,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                                 f"Check entity distribution calculation."
                             )
                         post_ids.append(db.insert_post(generate_post(i, random.choice(user_ids))))
-                    
                     # Insert comments (requires posts and users)
                     for i in range(num_comments):
                         if not post_ids:
@@ -203,7 +179,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                                 f"Expected {num_users} users but got 0."
                             )
                         comment_ids.append(db.insert_comment(generate_comment(i, random.choice(post_ids), random.choice(user_ids))))
-                    
                     # Add relationships (requires users)
                     for i in range(num_relationships):
                         if not user_ids or len(user_ids) < 2:
@@ -211,7 +186,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                         source, target = random.choice(user_ids), random.choice(user_ids)
                         if source != target:
                             db.add_relationship(generate_relationship(source, target))
-                
                 # Phase 2: Read (validate lists before random.choice)
                 print(f"[Phase 2: Read {num_read_ops * 3} entities]")
                 with metrics.measure("read"):
@@ -223,7 +197,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                             db.get_post(random.choice(post_ids))
                         if comment_ids:
                             db.get_comment(random.choice(comment_ids))
-                
                 # Phase 3: Update
                 print(f"[Phase 3: Update {num_update_users + num_update_posts + num_update_comments} entities]")
                 with metrics.measure("update"):
@@ -233,7 +206,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                         db.update_post(post_ids[i], {'likes_count': i})
                     for i in range(num_update_comments):
                         db.update_comment(comment_ids[i], {'content': f'Updated {i}'})
-                
                 # Phase 4: Delete
                 print(f"[Phase 4: Delete {num_delete_ops} entities]")
                 with metrics.measure("delete"):
@@ -245,7 +217,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                     num_user_deletes = min(num_delete_ops // 3, len(user_ids))
                     for i in range(num_user_deletes):
                         db.delete_user(user_ids[-(i+1)])
-                
                 # Phase 5: Relationship queries (validate before random.choice)
                 print(f"[Phase 5: Query {num_read_ops * 2} relationships]")
                 with metrics.measure("relationships"):
@@ -254,18 +225,13 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                         if user_ids:
                             db.get_followers(random.choice(user_ids))
                             db.get_following(random.choice(user_ids))
-                
                 total_time = metrics.get_total_time()
                 peak_memory = metrics.get_peak_memory()
-                
                 print(f"\n[Results: {total_time:.2f}ms, {peak_memory:.1f}MB]")
-                
                 node_mode_name = db.node_mode if isinstance(db.node_mode, str) else db.node_mode.name
                 edge_mode_name = db.edge_mode.name if db.edge_mode else 'None'
-                
                 # Add x2_ prefix for unique naming across all benchmarks
                 unique_name = f"x2_{model['name']}"
-                
                 results[unique_name] = {
                     'database': unique_name,
                     'node_mode': node_mode_name,
@@ -282,7 +248,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                     'stats': db.get_stats(),
                     'success': True
                 }
-                
             except IndexError as e:
                 # Specific error handling for empty sequence errors
                 # Priority: Usability #2 - Clear error messages
@@ -328,7 +293,6 @@ class ClassicBenchmark(BaseBenchmarkRunner):
                     'success': False,
                     'error': str(e)
                 }
-        
         return results
 
 
@@ -336,8 +300,5 @@ def main():
     """Main entry point"""
     benchmark = ClassicBenchmark()
     benchmark.main()
-
-
 if __name__ == "__main__":
     main()
-

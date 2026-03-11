@@ -1,19 +1,15 @@
 """
 #exonware/xwnode/examples/x5/data_operations/run_all_tests.py
-
 Main Test Runner
-
 Runs all data operations test suites and reports results.
 Tests both V1 (Streaming) and V2 (Indexed) implementations.
-
 Following GUIDE_TEST.md standards:
 - Uses pytest for test execution
 - Proper error handling
 - Root cause fixing
 - No rigged tests
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
@@ -24,8 +20,7 @@ import subprocess
 import time
 import inspect
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
-
+from typing import Any
 # Configure UTF-8 for Windows console (GUIDE_TEST.md requirement)
 if sys.platform == "win32":
     try:
@@ -34,11 +29,9 @@ if sys.platform == "win32":
         sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
     except Exception:
         pass
-
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 sys.path.insert(0, str(Path(__file__).parent))
-
 # Import all test modules
 import test_1_create_operations
 import test_2_read_operations
@@ -58,7 +51,7 @@ import test_15_utility_operations
 import test_16_monitoring_operations
 
 
-def get_test_functions(module) -> List[Tuple[Any, str]]:
+def get_test_functions(module) -> list[tuple[Any, str]]:
     """Get all test functions from a module."""
     tests = []
     for name, obj in inspect.getmembers(module):
@@ -67,13 +60,12 @@ def get_test_functions(module) -> List[Tuple[Any, str]]:
     return sorted(tests, key=lambda x: x[1])
 
 
-def run_test(test_func, test_name: str) -> Tuple[bool, float, float, str]:
+def run_test(test_func, test_name: str) -> tuple[bool, float, float, str]:
     """Run a single test and return (success, v1_time, v2_time, error_msg)."""
     try:
         start_time = time.perf_counter()
         result = test_func()
         elapsed = time.perf_counter() - start_time
-        
         if isinstance(result, tuple) and len(result) >= 3:
             success, v1_time, v2_time = result[0], result[1], result[2]
             if success:
@@ -88,12 +80,11 @@ def run_test(test_func, test_name: str) -> Tuple[bool, float, float, str]:
         return False, 0.0, 0.0, f"Exception: {type(e).__name__}: {str(e)}"
 
 
-def run_test_suite(module, suite_name: str) -> Dict[str, Any]:
+def run_test_suite(module, suite_name: str) -> dict[str, Any]:
     """Run all tests in a test suite."""
     print(f"\n{'='*80}")
     print(f"{suite_name}")
     print(f"{'='*80}")
-    
     tests = get_test_functions(module)
     results = {
         'suite_name': suite_name,
@@ -104,11 +95,9 @@ def run_test_suite(module, suite_name: str) -> Dict[str, Any]:
         'total_v2_time': 0.0,
         'tests': []
     }
-    
     for test_func, test_name in tests:
         print(f"\nRunning {test_name}...", end=" ", flush=True)
         success, v1_time, v2_time, error = run_test(test_func, test_name)
-        
         results['tests'].append({
             'name': test_name,
             'success': success,
@@ -116,7 +105,6 @@ def run_test_suite(module, suite_name: str) -> Dict[str, Any]:
             'v2_time': v2_time,
             'error': error
         })
-        
         if success:
             results['passed'] += 1
             results['total_v1_time'] += v1_time
@@ -125,22 +113,19 @@ def run_test_suite(module, suite_name: str) -> Dict[str, Any]:
         else:
             results['failed'] += 1
             print(f"✗ {error}")
-    
     return results
 
 
-def print_summary(all_results: List[Dict[str, Any]]):
+def print_summary(all_results: list[dict[str, Any]]):
     """Print summary of all test results."""
     print(f"\n{'='*80}")
     print("TEST SUMMARY")
     print(f"{'='*80}")
-    
     total_tests = 0
     total_passed = 0
     total_failed = 0
     total_v1_time = 0.0
     total_v2_time = 0.0
-    
     for result in all_results:
         suite_name = result['suite_name']
         total = result['total']
@@ -148,13 +133,11 @@ def print_summary(all_results: List[Dict[str, Any]]):
         failed = result['failed']
         v1_time = result['total_v1_time']
         v2_time = result['total_v2_time']
-        
         total_tests += total
         total_passed += passed
         total_failed += failed
         total_v1_time += v1_time
         total_v2_time += v2_time
-        
         status = "✓" if failed == 0 else "✗"
         print(f"\n{status} {suite_name}:")
         print(f"  Total: {total}")
@@ -165,7 +148,6 @@ def print_summary(all_results: List[Dict[str, Any]]):
         if v1_time > 0 and v2_time > 0:
             speedup = v1_time / v2_time if v2_time > 0 else 0
             print(f"  Speedup: {speedup:.2f}x")
-    
     print(f"\n{'='*80}")
     print("OVERALL SUMMARY")
     print(f"{'='*80}")
@@ -178,7 +160,6 @@ def print_summary(all_results: List[Dict[str, Any]]):
     if total_v1_time > 0 and total_v2_time > 0:
         overall_speedup = total_v1_time / total_v2_time if total_v2_time > 0 else 0
         print(f"Overall Speedup: {overall_speedup:.2f}x")
-    
     if total_failed > 0:
         print(f"\n{'='*80}")
         print("FAILED TESTS")
@@ -188,7 +169,6 @@ def print_summary(all_results: List[Dict[str, Any]]):
                 if not test['success']:
                     print(f"\n✗ {test['name']}")
                     print(f"  Error: {test['error']}")
-    
     return total_failed == 0
 
 
@@ -198,9 +178,7 @@ def main():
     print("DATA OPERATIONS TEST SUITE")
     print("Testing V1 (Streaming) vs V2 (Indexed) JSON Utils")
     print("="*80)
-    
     all_results = []
-    
     # Run CREATE tests
     try:
         result = run_test_suite(test_1_create_operations, "CREATE Operations")
@@ -216,7 +194,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run READ tests
     try:
         result = run_test_suite(test_2_read_operations, "READ Operations")
@@ -232,7 +209,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run UPDATE tests
     try:
         result = run_test_suite(test_3_update_operations, "UPDATE Operations")
@@ -248,7 +224,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run DELETE tests
     try:
         result = run_test_suite(test_4_delete_operations, "DELETE Operations")
@@ -264,7 +239,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run LIST/QUERY tests
     try:
         result = run_test_suite(test_5_list_query_operations, "LIST/QUERY Operations")
@@ -280,7 +254,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run SEARCH tests
     try:
         result = run_test_suite(test_6_search_operations, "SEARCH Operations")
@@ -296,7 +269,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run BULK tests
     try:
         result = run_test_suite(test_7_bulk_operations, "BULK Operations")
@@ -312,7 +284,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run TRANSACTION tests
     try:
         result = run_test_suite(test_8_transaction_operations, "TRANSACTION Operations")
@@ -328,7 +299,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run INDEX tests
     try:
         result = run_test_suite(test_9_index_operations, "INDEX Operations")
@@ -344,7 +314,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run VALIDATION tests
     try:
         result = run_test_suite(test_10_validation_operations, "VALIDATION Operations")
@@ -360,7 +329,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run AGGREGATION tests
     try:
         result = run_test_suite(test_11_aggregation_operations, "AGGREGATION Operations")
@@ -376,7 +344,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run FILE tests
     try:
         result = run_test_suite(test_12_file_operations, "FILE Operations")
@@ -392,7 +359,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run CONCURRENCY tests
     try:
         result = run_test_suite(test_13_concurrency_operations, "CONCURRENCY Operations")
@@ -408,7 +374,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run ASYNC tests
     try:
         result = run_test_suite(test_14_async_operations, "ASYNC Operations")
@@ -424,7 +389,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run UTILITY tests
     try:
         result = run_test_suite(test_15_utility_operations, "UTILITY Operations")
@@ -440,7 +404,6 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Run MONITORING tests
     try:
         result = run_test_suite(test_16_monitoring_operations, "MONITORING Operations")
@@ -456,14 +419,9 @@ def main():
             'total_v2_time': 0.0,
             'tests': []
         })
-    
     # Print summary
     success = print_summary(all_results)
-    
     # Exit with appropriate code
     sys.exit(0 if success else 1)
-
-
 if __name__ == "__main__":
     main()
-

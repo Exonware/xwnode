@@ -1,13 +1,10 @@
 """
 #exonware/xwnode/examples/x5/data_operations/test_16_monitoring_operations.py
-
 MONITORING Operations Test Suite
-
 Tests all MONITORING operations (observability) for both V1 (Streaming) and V2 (Indexed) implementations.
 All tests are fully implemented at production level with no TODOs.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
@@ -18,9 +15,8 @@ import os
 import json
 import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Optional
 import psutil
-
 # Import test helpers
 sys.path.insert(0, str(Path(__file__).parent))
 from test_helpers import (
@@ -31,7 +27,6 @@ from test_helpers import (
     count_records_v1,
     count_records_v2,
 )
-
 # Import from parent
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from json_utils import (
@@ -44,11 +39,10 @@ from json_utils_indexed import (
     load_index,
     indexed_get_by_id,
 )
-
-
 # ============================================================================
 # 16.1 Performance Monitoring
 # ============================================================================
+
 
 def test_16_1_1_track_operation_time():
     """
@@ -57,25 +51,20 @@ def test_16_1_1_track_operation_time():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(100)]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Track operation time
         v1_start = time.perf_counter()
         result = stream_read(file_path, match_by_id("id", "50"))
         v1_elapsed = time.perf_counter() - v1_start
-        
         assert result is not None
         assert v1_elapsed > 0
-        
         # V2: Track operation time
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
         result_v2 = indexed_get_by_id(file_path, "50", id_field="id", index=index)
         v2_elapsed = time.perf_counter() - v2_start
-        
         assert result_v2 is not None
         assert v2_elapsed > 0
-        
         return True, v1_elapsed, v2_elapsed
     finally:
         cleanup_test_file(file_path)
@@ -88,30 +77,24 @@ def test_16_1_2_track_memory_usage():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(100)]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Track memory usage
         v1_start = time.perf_counter()
         records = get_all_matching_v1(file_path, lambda x: True)
         v1_time = time.perf_counter() - v1_start
-        
         assert len(records) == 100
-        
         # V2: Track memory usage
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
         records_v2 = get_all_matching_v2(file_path, lambda x: True, index=index)
         v2_time = time.perf_counter() - v2_start
-        
         assert len(records_v2) == 100
-        
         # Track memory usage
         process = psutil.Process(os.getpid())
         v1_mem_before = process.memory_info().rss / 1024 / 1024  # MB
         v1_mem_after = process.memory_info().rss / 1024 / 1024  # MB
         v2_mem_before = process.memory_info().rss / 1024 / 1024  # MB
         v2_mem_after = process.memory_info().rss / 1024 / 1024  # MB
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -124,7 +107,6 @@ def test_16_1_3_track_io_operations():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(10)]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Track I/O operations (simulate by counting file opens)
         v1_start = time.perf_counter()
@@ -136,9 +118,7 @@ def test_16_1_3_track_io_operations():
             except Exception:
                 pass
         v1_time = time.perf_counter() - v1_start
-        
         assert io_count == 5
-        
         # V2: Track I/O operations
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -150,9 +130,7 @@ def test_16_1_3_track_io_operations():
             except Exception:
                 pass
         v2_time = time.perf_counter() - v2_start
-        
         assert io_count_v2 == 5
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -165,28 +143,22 @@ def test_16_1_4_track_cache_hits():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(10)]
     file_path = create_test_file(test_data)
-    
     try:
         # V2: Track cache hits (index caching)
         index = ensure_index(file_path, id_field="id")
-        
         v2_start = time.perf_counter()
         # First access (cache miss - index loaded)
         result1 = indexed_get_by_id(file_path, "5", id_field="id", index=index)
         # Second access (cache hit - index reused)
         result2 = indexed_get_by_id(file_path, "5", id_field="id", index=index)
         v2_time = time.perf_counter() - v2_start
-        
         assert result1 == result2
-        
         # V1: No cache (baseline)
         v1_start = time.perf_counter()
         result1_v1 = stream_read(file_path, match_by_id("id", "5"))
         result2_v1 = stream_read(file_path, match_by_id("id", "5"))
         v1_time = time.perf_counter() - v1_start
-        
         assert result1_v1 == result2_v1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -199,7 +171,6 @@ def test_16_1_5_performance_profiling():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(100)]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Performance profiling
         v1_start = time.perf_counter()
@@ -208,19 +179,15 @@ def test_16_1_5_performance_profiling():
             "total_time": 0.0,
             "avg_time": 0.0
         }
-        
         for i in range(10):
             op_start = time.perf_counter()
             stream_read(file_path, match_by_id("id", str(i * 10)))
             op_time = time.perf_counter() - op_start
             v1_profile["operations"] += 1
             v1_profile["total_time"] += op_time
-        
         v1_profile["avg_time"] = v1_profile["total_time"] / v1_profile["operations"]
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_profile["operations"] == 10
-        
         # V2: Performance profiling
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -229,27 +196,22 @@ def test_16_1_5_performance_profiling():
             "total_time": 0.0,
             "avg_time": 0.0
         }
-        
         for i in range(10):
             op_start = time.perf_counter()
             indexed_get_by_id(file_path, str(i * 10), id_field="id", index=index)
             op_time = time.perf_counter() - op_start
             v2_profile["operations"] += 1
             v2_profile["total_time"] += op_time
-        
         v2_profile["avg_time"] = v2_profile["total_time"] / v2_profile["operations"]
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_profile["operations"] == 10
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
-
-
 # ============================================================================
 # 16.2 Health Monitoring
 # ============================================================================
+
 
 def test_16_2_1_health_check():
     """
@@ -258,7 +220,6 @@ def test_16_2_1_health_check():
     """
     test_data = [{"id": "1", "name": "Alice"}]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Health check
         v1_start = time.perf_counter()
@@ -269,9 +230,7 @@ def test_16_2_1_health_check():
         }
         v1_healthy = v1_health["file_exists"] and v1_health["file_readable"] and v1_health["records_count"] > 0
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_healthy
-        
         # V2: Health check
         build_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -283,9 +242,7 @@ def test_16_2_1_health_check():
         }
         v2_healthy = v2_health["file_exists"] and v2_health["index_exists"] and v2_health["records_count"] > 0
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_healthy
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -298,7 +255,6 @@ def test_16_2_2_integrity_check():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(10)]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Integrity check
         v1_start = time.perf_counter()
@@ -311,18 +267,14 @@ def test_16_2_2_integrity_check():
         except (json.JSONDecodeError, Exception):
             v1_integrity = False
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_integrity
-        
         # V2: Integrity check
         build_index(file_path, id_field="id")
         v2_start = time.perf_counter()
         index = load_index(file_path, strict=True)
         v2_integrity = index is not None and len(index.line_offsets) == 10
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_integrity
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -335,7 +287,6 @@ def test_16_2_3_index_health():
     """
     test_data = [{"id": str(i), "name": f"User{i}"} for i in range(10)]
     file_path = create_test_file(test_data)
-    
     try:
         # V2: Index health
         index = build_index(file_path, id_field="id")
@@ -347,16 +298,13 @@ def test_16_2_3_index_health():
             "index_valid": index is not None and len(index.line_offsets) == 10
         }
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_health["index_valid"]
         assert v2_health["line_offsets_count"] == 10
         assert v2_health["id_index_count"] == 10
-        
         # V1: No index (baseline)
         v1_start = time.perf_counter()
         v1_health = {"index_exists": False}
         v1_time = time.perf_counter() - v1_start
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -369,7 +317,6 @@ def test_16_2_4_file_health():
     """
     test_data = [{"id": "1", "name": "Alice"}]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: File health
         v1_start = time.perf_counter()
@@ -381,9 +328,7 @@ def test_16_2_4_file_health():
         }
         v1_healthy = v1_health["exists"] and v1_health["readable"] and v1_health["size"] > 0
         v1_time = time.perf_counter() - v1_start
-        
         assert v1_healthy
-        
         # V2: File health
         build_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -396,9 +341,7 @@ def test_16_2_4_file_health():
         }
         v2_healthy = v2_health["file_exists"] and v2_health["index_exists"] and v2_health["file_size"] > 0
         v2_time = time.perf_counter() - v2_start
-        
         assert v2_healthy
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
@@ -411,7 +354,6 @@ def test_16_2_5_error_tracking():
     """
     test_data = [{"id": "1", "name": "Alice"}]
     file_path = create_test_file(test_data)
-    
     try:
         # V1: Error tracking
         v1_start = time.perf_counter()
@@ -425,9 +367,7 @@ def test_16_2_5_error_tracking():
                 "timestamp": time.time()
             })
         v1_time = time.perf_counter() - v1_start
-        
         assert len(v1_errors) == 1
-        
         # V2: Error tracking
         index = ensure_index(file_path, id_field="id")
         v2_start = time.perf_counter()
@@ -441,10 +381,7 @@ def test_16_2_5_error_tracking():
                 "timestamp": time.time()
             })
         v2_time = time.perf_counter() - v2_start
-        
         assert len(v2_errors) == 1
-        
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
-

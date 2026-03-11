@@ -1,6 +1,6 @@
 # xwnode Requirements
 # Company: eXonware.com
-# Author: Eng. Muhammad AlShehri
+# Author: eXonware Backend Team
 # Email: connect@exonware.com
 # Version: 0.1.0.1
 # Generation Date: February 2, 2025
@@ -15,16 +15,30 @@
 #   Just add this file to your project root and dependencies will be auto-installed
 
 # =============================================================================
-# CORE DEPENDENCIES
+# CORE DEPENDENCIES (REQUIRED)
+# =============================================================================
+# Source size (src/*): ~2.42 MB
+pip                     # Package installer (CI and lazy install)
+
+# eXonware ecosystem dependencies (xwnode requires xwsystem)
+exonware-xwsystem                   # Core utilities, serialization, security, caching
+
+# =============================================================================
+# PERFORMANCE DEPENDENCIES (INSTALLED UPFRONT TO AVOID xwlazy DELAYS)
 # =============================================================================
 
-# Add your core dependencies here
-# Example:
-# requests>=2.25.0                    # HTTP requests library
-# pydantic>=1.8.0                     # Data validation and settings management
+# These are installed upfront to avoid xwlazy auto-install delays during runtime
+# This prevents performance penalties when strategies are first used
+numpy>=1.24.0                        # Required for learned_index, probabilistic strategies, and many graph operations
+scipy>=1.10.0                        # Required for statistical strategies and scientific computations
+scikit-learn>=1.2.0                  # Required for learned_index strategy (ML-based indexing)
 
-# Excel support for benchmarks
-openpyxl>=3.0.0                     # Excel file generation and reading
+# =============================================================================
+# OPTIONAL DEPENDENCIES (For Extended Features)
+# =============================================================================
+
+# Excel support for benchmarks/examples
+openpyxl>=3.0.0                     # Excel file generation and reading for benchmarks
 
 # =============================================================================
 # DEVELOPMENT AND TESTING DEPENDENCIES

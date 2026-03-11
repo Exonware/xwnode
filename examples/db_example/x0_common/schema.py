@@ -1,11 +1,9 @@
 """
 Entity Schemas and Data Generators - Full Social Media Platform
-
 Defines comprehensive data model for benchmarking: Users, Posts, Comments, Relationships,
 Likes, Shares, Messages, Notifications, Groups, Events, and more.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.2
 Generation Date: December 2, 2025
@@ -15,10 +13,9 @@ import uuid
 import random
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional
-
-
+from typing import Any, Optional
 @dataclass
+
 class User:
     """Full social media user profile with comprehensive fields"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -51,18 +48,17 @@ class User:
     notification_email: bool = True
     notification_push: bool = True
     notification_sms: bool = False
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'User':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'User':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Post:
     """Full social media post with media, hashtags, mentions, and engagement"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -71,12 +67,12 @@ class Post:
     title: Optional[str] = None  # Optional title for some post types
     post_type: str = "text"  # text, image, video, link, poll, event
     # Media attachments
-    media_urls: List[str] = field(default_factory=list)  # Images, videos
-    media_types: List[str] = field(default_factory=list)  # image/jpeg, video/mp4, etc.
+    media_urls: list[str] = field(default_factory=list)  # Images, videos
+    media_types: list[str] = field(default_factory=list)  # image/jpeg, video/mp4, etc.
     # Engagement
-    hashtags: List[str] = field(default_factory=list)  # #hashtag1, #hashtag2
-    mentions: List[str] = field(default_factory=list)  # @username1, @username2
-    tagged_users: List[str] = field(default_factory=list)  # User IDs tagged in post
+    hashtags: list[str] = field(default_factory=list)  # #hashtag1, #hashtag2
+    mentions: list[str] = field(default_factory=list)  # @username1, @username2
+    tagged_users: list[str] = field(default_factory=list)  # User IDs tagged in post
     # Location
     location_name: Optional[str] = None
     location_lat: Optional[float] = None
@@ -102,21 +98,20 @@ class Post:
     link_preview_description: Optional[str] = None
     link_preview_image: Optional[str] = None
     poll_question: Optional[str] = None
-    poll_options: List[str] = field(default_factory=list)
-    poll_votes: Dict[str, int] = field(default_factory=dict)
+    poll_options: list[str] = field(default_factory=list)
+    poll_votes: dict[str, int] = field(default_factory=dict)
     poll_ends_at: Optional[str] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Post':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Post':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Comment:
     """Full social media comment with replies, reactions, and mentions"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -128,7 +123,7 @@ class Comment:
     media_url: Optional[str] = None
     media_type: Optional[str] = None
     # Mentions
-    mentions: List[str] = field(default_factory=list)  # @username mentions
+    mentions: list[str] = field(default_factory=list)  # @username mentions
     # Engagement
     likes_count: int = 0
     reply_count: int = 0
@@ -139,18 +134,17 @@ class Comment:
     is_pinned: bool = False  # Pinned by post author
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Comment':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Comment':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Relationship:
     """Comprehensive user relationship with multiple types and metadata"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -167,18 +161,17 @@ class Relationship:
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     updated_at: Optional[str] = None
     expires_at: Optional[str] = None  # For temporary mutes/blocks
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Relationship':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Relationship':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Like:
     """Like/reaction entity for posts and comments"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -187,18 +180,17 @@ class Like:
     target_id: str = ""
     reaction_type: str = "like"  # like, love, laugh, wow, sad, angry
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Like':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Like':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Share:
     """Share/repost entity"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -207,18 +199,17 @@ class Share:
     share_type: str = "repost"  # repost, quote, story, message
     quote_text: Optional[str] = None  # For quote shares
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Share':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Share':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Message:
     """Direct message between users"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -233,18 +224,17 @@ class Message:
     read_at: Optional[str] = None
     is_deleted: bool = False
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Message':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Message':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Notification:
     """User notification for various events"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -260,18 +250,17 @@ class Notification:
     is_read: bool = False
     read_at: Optional[str] = None
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Notification':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Notification':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Group:
     """User group/community"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -284,22 +273,21 @@ class Group:
     member_count: int = 0
     post_count: int = 0
     category: str = ""  # technology, sports, music, etc.
-    rules: List[str] = field(default_factory=list)
-    tags: List[str] = field(default_factory=list)
+    rules: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     is_active: bool = True
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Group':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Group':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Event:
     """Social event"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -321,18 +309,17 @@ class Event:
     not_going_count: int = 0
     event_type: str = "public"  # public, private, invite_only
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Event':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Event':
         """Create from dictionary"""
         return cls(**data)
-
-
 @dataclass
+
 class Hashtag:
     """Hashtag tracking and trending"""
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
@@ -342,21 +329,18 @@ class Hashtag:
     is_trending: bool = False
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     last_used_at: Optional[str] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
         return asdict(self)
-    
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Hashtag':
+
+    def from_dict(cls, data: dict[str, Any]) -> 'Hashtag':
         """Create from dictionary"""
         return cls(**data)
-
-
 # ============================================================================
 # DATA GENERATORS - Full Social Media Platform
 # ============================================================================
-
 # Sample data for realistic generation
 FIRST_NAMES = ["Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn", "Sage", "River",
                "Blake", "Cameron", "Dakota", "Emery", "Finley", "Hayden", "Jamie", "Kendall", "Logan", "Parker"]
@@ -380,13 +364,11 @@ def generate_user(index: int) -> User:
     last_name = random.choice(LAST_NAMES)
     username = f"{first_name.lower()}{last_name.lower()}{index}"
     display_name = f"{first_name} {last_name}"
-    
     # Generate realistic dates
     base_date = datetime.now() - timedelta(days=random.randint(30, 3650))  # 30 days to 10 years ago
     created_at = base_date.isoformat()
     last_login = (datetime.now() - timedelta(days=random.randint(0, 7))).isoformat()
     birth_date = (datetime.now() - timedelta(days=random.randint(18*365, 65*365))).isoformat()
-    
     return User(
         username=username,
         email=f"{username}@example.com",
@@ -418,15 +400,13 @@ def generate_user(index: int) -> User:
     )
 
 
-def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None) -> Post:
+def generate_post(index: int, user_id: str, user_ids: Optional[list[str]] = None) -> Post:
     """
     Generate a comprehensive social media post.
-    
     Root cause fixed: Made user_ids optional for backward compatibility with existing benchmarks.
     Solution: Default to empty list if not provided, allowing old code to work while new code
     can pass user_ids for enhanced features like mentions and tagged users.
     Priority #3: Maintainability - Preserve backward compatibility.
-    
     Args:
         index: Post index
         user_id: ID of user creating the post
@@ -434,10 +414,8 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
     """
     if user_ids is None:
         user_ids = []
-    
     post_type = random.choice(POST_TYPES)
     content = f"This is post #{index}. "
-    
     # Add realistic content based on type
     if post_type == "text":
         content += "Sharing some thoughts on the latest developments in technology and innovation. "
@@ -450,15 +428,12 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
         content += "Found this interesting article: https://example.com/article/{index}"
     elif post_type == "poll":
         content += "Quick poll: What's your favorite programming language?"
-    
     # Generate hashtags (2-5 per post)
     num_hashtags = random.randint(2, 5)
     hashtags = [f"#{random.choice(HASHTAGS)}" for _ in range(num_hashtags)]
-    
     # Generate mentions (0-3 per post) - only if user_ids provided
     num_mentions = random.randint(0, 3) if user_ids else 0
     mentions = [f"@{random.choice(user_ids)}" for _ in range(num_mentions) if user_ids]
-    
     # Generate media if applicable
     media_urls = []
     media_types = []
@@ -467,7 +442,6 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
         for i in range(num_media):
             media_urls.append(f"https://example.com/media/post_{index}_media_{i}.{'jpg' if post_type == 'image' else 'mp4'}")
             media_types.append(f"{'image' if post_type == 'image' else 'video'}/{'jpeg' if post_type == 'image' else 'mp4'}")
-    
     # Generate poll if applicable
     poll_question = None
     poll_options = []
@@ -478,7 +452,6 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
         poll_options = ["Python", "JavaScript", "Java", "Go", "Rust"]
         poll_votes = {opt: random.randint(0, 100) for opt in poll_options}
         poll_ends_at = (datetime.now() + timedelta(days=random.randint(1, 7))).isoformat()
-    
     # Generate location (30% of posts)
     location_name = None
     location_lat = None
@@ -487,9 +460,7 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
         location_name = random.choice(CITIES)
         location_lat = round(random.uniform(-90, 90), 6)
         location_lng = round(random.uniform(-180, 180), 6)
-    
     created_at = (datetime.now() - timedelta(days=random.randint(0, 30))).isoformat()
-    
     return Post(
         user_id=user_id,
         content=content,
@@ -524,15 +495,13 @@ def generate_post(index: int, user_id: str, user_ids: Optional[List[str]] = None
     )
 
 
-def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[List[str]] = None, parent_comment_id: Optional[str] = None) -> Comment:
+def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[list[str]] = None, parent_comment_id: Optional[str] = None) -> Comment:
     """
     Generate a comprehensive social media comment.
-    
     Root cause fixed: Made user_ids optional for backward compatibility with existing benchmarks.
     Solution: Default to empty list if not provided, allowing old code to work while new code
     can pass user_ids for enhanced features like mentions.
     Priority #3: Maintainability - Preserve backward compatibility.
-    
     Args:
         index: Comment index
         post_id: ID of post being commented on
@@ -542,7 +511,6 @@ def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[
     """
     if user_ids is None:
         user_ids = []
-    
     content = f"Great post! This is comment #{index}. "
     content += random.choice([
         "I totally agree!",
@@ -551,22 +519,18 @@ def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[
         "This is really helpful!",
         "Looking forward to more!",
     ])
-    
     # 20% chance of mentions - only if user_ids provided
     mentions = []
     if random.random() < 0.2 and user_ids:
         num_mentions = random.randint(1, 2)
         mentions = [f"@{random.choice(user_ids)}" for _ in range(num_mentions)]
-    
     # 10% chance of media in comment
     media_url = None
     media_type = None
     if random.random() < 0.1:
         media_url = f"https://example.com/comments/{index}.jpg"
         media_type = "image/jpeg"
-    
     created_at = (datetime.now() - timedelta(days=random.randint(0, 7))).isoformat()
-    
     return Comment(
         post_id=post_id,
         user_id=user_id,
@@ -589,9 +553,7 @@ def generate_relationship(source_id: str, target_id: str, rel_type: Optional[str
     """Generate a comprehensive user relationship"""
     if rel_type is None:
         rel_type = random.choice(RELATIONSHIP_TYPES)
-    
     created_at = (datetime.now() - timedelta(days=random.randint(0, 365))).isoformat()
-    
     return Relationship(
         source_user_id=source_id,
         target_user_id=target_id,
@@ -622,7 +584,6 @@ def generate_share(user_id: str, post_id: str) -> Share:
     """Generate a share/repost"""
     share_type = random.choice(["repost", "quote", "story"])
     quote_text = f"Amazing content! 🔥" if share_type == "quote" else None
-    
     return Share(
         user_id=user_id,
         post_id=post_id,
@@ -636,13 +597,11 @@ def generate_message(conversation_id: str, sender_id: str, recipient_id: str) ->
     """Generate a direct message"""
     message_type = random.choice(["text", "image", "video", "file"])
     content = f"Hey! This is message content. How are you doing?"
-    
     media_url = None
     media_type = None
     if message_type != "text":
         media_url = f"https://example.com/messages/{uuid.uuid4()}.{'jpg' if message_type == 'image' else 'mp4' if message_type == 'video' else 'pdf'}"
         media_type = f"{message_type}/{('jpeg' if message_type == 'image' else 'mp4' if message_type == 'video' else 'pdf')}"
-    
     return Message(
         conversation_id=conversation_id,
         sender_id=sender_id,
@@ -668,7 +627,6 @@ def generate_notification(user_id: str, actor_id: str, notification_type: str, t
         "message": "New message",
         "share": "Your post was shared"
     }
-    
     bodies = {
         "like": f"Someone liked your {target_type}",
         "comment": "Someone commented on your post",
@@ -677,7 +635,6 @@ def generate_notification(user_id: str, actor_id: str, notification_type: str, t
         "message": "You have a new message",
         "share": "Someone shared your post"
     }
-    
     return Notification(
         user_id=user_id,
         notification_type=notification_type,
@@ -697,7 +654,6 @@ def generate_notification(user_id: str, actor_id: str, notification_type: str, t
 def generate_group(index: int, owner_id: str) -> Group:
     """Generate a user group/community"""
     group_name = f"{random.choice(['Tech', 'Sports', 'Music', 'Art', 'Science', 'Business'])} Community {index}"
-    
     return Group(
         name=group_name,
         description=f"Welcome to {group_name}! A place for enthusiasts to connect and share.",
@@ -724,7 +680,6 @@ def generate_event(index: int, organizer_id: str) -> Event:
     event_name = f"{random.choice(['Tech', 'Music', 'Business', 'Art'])} Meetup {index}"
     start_time = datetime.now() + timedelta(days=random.randint(1, 90))
     end_time = start_time + timedelta(hours=random.randint(2, 8))
-    
     return Event(
         name=event_name,
         description=f"Join us for {event_name}! An exciting event you won't want to miss.",
@@ -757,4 +712,3 @@ def generate_hashtag(name: str) -> Hashtag:
         created_at=(datetime.now() - timedelta(days=random.randint(0, 365))).isoformat(),
         last_used_at=(datetime.now() - timedelta(hours=random.randint(0, 24))).isoformat()
     )
-

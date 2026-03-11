@@ -1,12 +1,10 @@
 """
 #exonware/xwnode/src/exonware/xwnode/common/caching/__init__.py
-
 Cache system for xwnode components.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: November 4, 2025
 """
 
@@ -27,33 +25,27 @@ from .telemetry import (
     reset_telemetry
 )
 from .path_cache import PathNavigationCache
-
 __all__ = [
     # Controller
     'CacheController',
     'get_cache_controller',
     'reset_cache_controller',
-    
     # Contracts
     'ICacheAdapter',
     'ICacheFactory',
     'CacheStats',
-    
     # Adapters
     'LRUCacheAdapter',
     'LFUCacheAdapter',
     'TTLCacheAdapter',
     'TwoTierCacheAdapter',
     'NoCacheAdapter',
-    
     # Telemetry
     'CacheTelemetryCollector',
     'CachePerformanceMetric',
     'CacheComparisonReport',
     'get_telemetry_collector',
     'reset_telemetry',
-    
     # Path Cache
     'PathNavigationCache',
 ]
-

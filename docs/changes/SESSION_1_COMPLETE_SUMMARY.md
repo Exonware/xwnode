@@ -2,7 +2,7 @@
 **Comprehensive Summary of All Work Completed**
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Date:** 11-Oct-2025  
 **Session Duration:** Single comprehensive session  

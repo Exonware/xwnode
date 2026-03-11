@@ -1,19 +1,15 @@
 """
 Linear data structure facades.
-
 Provides small convenience wrappers around `XWNode` for common linear structures:
 - Queue
 - Stack
 - Deque
-
 These classes primarily select a suitable `NodeMode` by default.
 """
 
 from typing import Optional, TypeVar
-
 from ..facade import XWNode
 from ..defs import NodeMode
-
 T = TypeVar("T")
 
 
@@ -36,8 +32,4 @@ class XWDeque[T](XWNode[list[T]]):
 
     def __init__(self, data: Optional[list[T]] = None, immutable: bool = False, **options):
         super().__init__(data=data or [], mode=NodeMode.DEQUE, immutable=immutable, **options)
-
-
 __all__ = ["XWQueue", "XWStack", "XWDeque"]
-
-

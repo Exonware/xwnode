@@ -1,18 +1,15 @@
 """
 #exonware/xwnode/src/exonware/xwnode/common/utils/__init__.py
-
 Utils module for xwnode.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 """
-
 # Import and export main components
+
 from pathlib import Path
 import importlib
-
 # Import all utilities from utils.py
 from .utils import (
     PathParser, TrieNode, UnionFind, MinHeap,
@@ -24,10 +21,8 @@ from .utils import (
     validate_strategy_options, create_size_tracker, update_size_tracker,
     create_access_tracker, record_access, get_access_metrics
 )
-
 # Import explicitly from simple.py
 from .simple import SimpleNodeStrategy
-
 __all__ = [
     'PathParser', 'TrieNode', 'UnionFind', 'MinHeap',
     'recursive_to_native', 'is_sequential_numeric_keys', 'calculate_structural_hash',

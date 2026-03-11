@@ -2,32 +2,27 @@
 #exonware/xwnode/src/exonware/xwnode/common/monitoring/metrics.py
 """
 Strategy Metrics and Statistics
-
 Comprehensive metrics collection and analysis for strategy performance,
 memory usage, and optimization recommendations.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
-from typing import Any, Optional, Union
+from typing import Any, Optional
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
 from exonware.xwsystem import get_logger
-
 logger = get_logger(__name__)
-
 from ...defs import NodeMode, EdgeMode
 from ..patterns.flyweight import get_flyweight_stats
 from .pattern_detector import get_detector
 from .performance_monitor import get_monitor, get_performance_summary
-
 
 
 class MetricType(Enum):
@@ -37,23 +32,21 @@ class MetricType(Enum):
     USAGE = "usage"
     OPTIMIZATION = "optimization"
     ERROR = "error"
-
-
 @dataclass
+
 class MetricSnapshot:
     """Snapshot of metrics at a point in time."""
     timestamp: float
     metric_type: MetricType
     value: float
     metadata: dict[str, Any] = field(default_factory=dict)
-
-
 @dataclass
+
 class StrategyMetrics:
     """Comprehensive metrics for a strategy."""
     strategy_id: str
     strategy_name: str
-    mode: Union[NodeMode, EdgeMode]
+    mode: NodeMode | EdgeMode
     total_operations: int = 0
     total_time: float = 0.0
     average_time: float = 0.0
@@ -69,11 +62,10 @@ class StrategyMetricsCollector:
     """
     Comprehensive metrics collector for strategy performance analysis.
     """
-    
+
     def __init__(self, history_size: int = 1000):
         """
         Initialize metrics collector.
-        
         Args:
             history_size: Maximum number of metric snapshots to keep
         """
@@ -90,22 +82,19 @@ class StrategyMetricsCollector:
         self._lock = threading.RLock()
         self._collection_interval = 60.0  # 1 minute
         self._last_collection = time.time()
-    
+
     def collect_comprehensive_metrics(self) -> dict[str, Any]:
         """
         Collect comprehensive metrics from all components.
-        
         Returns:
             Complete metrics dictionary
         """
         with self._lock:
             current_time = time.time()
-            
             # Collect from all components
             flyweight_stats = get_flyweight_stats()
             monitor_summary = get_performance_summary()
             detector_stats = get_detector().get_stats()
-            
             # Update global metrics
             self._global_metrics.update({
                 'total_strategies': len(self._strategy_metrics),
@@ -115,9 +104,7 @@ class StrategyMetricsCollector:
                 'last_collection': current_time,
                 'collection_interval': current_time - self._last_collection
             })
-            
             self._last_collection = current_time
-            
             return {
                 'timestamp': current_time,
                 'global_metrics': self._global_metrics.copy(),
@@ -128,19 +115,18 @@ class StrategyMetricsCollector:
                 'optimization_recommendations': self._generate_optimization_recommendations(),
                 'system_health': self._assess_system_health()
             }
-    
+
     def record_strategy_metric(
         self,
         strategy_id: str,
         strategy_name: str,
-        mode: Union[NodeMode, EdgeMode],
+        mode: NodeMode | EdgeMode,
         metric_type: MetricType,
         value: float,
         **metadata: Any
     ) -> None:
         """
         Record a metric for a specific strategy.
-        
         Args:
             strategy_id: Unique strategy identifier
             strategy_name: Human-readable strategy name
@@ -157,9 +143,7 @@ class StrategyMetricsCollector:
                     strategy_name=strategy_name,
                     mode=mode
                 )
-            
             metrics = self._strategy_metrics[strategy_id]
-            
             # Update metrics based on type
             if metric_type == MetricType.PERFORMANCE:
                 metrics.total_operations += 1
@@ -170,7 +154,6 @@ class StrategyMetricsCollector:
             elif metric_type == MetricType.ERROR:
                 metrics.error_count += 1
                 metrics.error_rate = metrics.error_count / max(metrics.total_operations, 1)
-            
             # Add snapshot
             snapshot = MetricSnapshot(
                 timestamp=time.time(),
@@ -179,35 +162,28 @@ class StrategyMetricsCollector:
                 metadata=metadata
             )
             metrics.snapshots.append(snapshot)
-            
             # Trim history
             if len(metrics.snapshots) > self._history_size:
                 metrics.snapshots = metrics.snapshots[-self._history_size:]
-            
             metrics.last_updated = time.time()
-            
             logger.debug(f"📊 Recorded {metric_type.value} metric for {strategy_name}: {value}")
-    
+
     def get_strategy_metrics(self, strategy_id: str) -> Optional[StrategyMetrics]:
         """
         Get metrics for a specific strategy.
-        
         Args:
             strategy_id: Strategy identifier
-            
         Returns:
             Strategy metrics or None if not found
         """
         with self._lock:
             return self._strategy_metrics.get(strategy_id)
-    
+
     def get_top_performing_strategies(self, limit: int = 5) -> list[StrategyMetrics]:
         """
         Get top performing strategies by average operation time.
-        
         Args:
             limit: Maximum number of strategies to return
-            
         Returns:
             List of top performing strategies
         """
@@ -216,23 +192,19 @@ class StrategyMetricsCollector:
                 metrics for metrics in self._strategy_metrics.values()
                 if metrics.total_operations > 0
             ]
-            
             # Sort by average time (lower is better)
             strategies.sort(key=lambda x: x.average_time)
-            
             return strategies[:limit]
-    
+
     def get_memory_usage_summary(self) -> dict[str, Any]:
         """
         Get memory usage summary across all strategies.
-        
         Returns:
             Memory usage summary
         """
         with self._lock:
             total_memory = sum(metrics.memory_usage for metrics in self._strategy_metrics.values())
             strategy_count = len(self._strategy_metrics)
-            
             return {
                 'total_memory_usage': total_memory,
                 'average_memory_per_strategy': total_memory / max(strategy_count, 1),
@@ -242,15 +214,13 @@ class StrategyMetricsCollector:
                     for metrics in self._strategy_metrics.values()
                 }
             }
-    
+
     def get_performance_trends(self, strategy_id: str, hours: int = 24) -> dict[str, Any]:
         """
         Get performance trends for a strategy over time.
-        
         Args:
             strategy_id: Strategy identifier
             hours: Number of hours to analyze
-            
         Returns:
             Performance trends data
         """
@@ -258,34 +228,26 @@ class StrategyMetricsCollector:
             metrics = self._strategy_metrics.get(strategy_id)
             if not metrics:
                 return {}
-            
             cutoff_time = time.time() - (hours * 3600)
             recent_snapshots = [
                 snapshot for snapshot in metrics.snapshots
                 if snapshot.timestamp >= cutoff_time
             ]
-            
             if not recent_snapshots:
                 return {}
-            
             # Analyze trends
             performance_snapshots = [
                 s for s in recent_snapshots if s.metric_type == MetricType.PERFORMANCE
             ]
-            
             if len(performance_snapshots) < 2:
                 return {'trend': 'insufficient_data'}
-            
             # Calculate trend
             first_half = performance_snapshots[:len(performance_snapshots)//2]
             second_half = performance_snapshots[len(performance_snapshots)//2:]
-            
             first_avg = sum(s.value for s in first_half) / len(first_half)
             second_avg = sum(s.value for s in second_half) / len(second_half)
-            
             trend_direction = 'improving' if second_avg < first_avg else 'degrading'
             trend_magnitude = abs(second_avg - first_avg) / first_avg if first_avg > 0 else 0
-            
             return {
                 'trend': trend_direction,
                 'magnitude': trend_magnitude,
@@ -293,17 +255,15 @@ class StrategyMetricsCollector:
                 'second_half_avg': second_avg,
                 'data_points': len(performance_snapshots)
             }
-    
+
     def _get_strategy_metrics_summary(self) -> dict[str, Any]:
         """Get summary of all strategy metrics."""
         with self._lock:
             if not self._strategy_metrics:
                 return {}
-            
             total_operations = sum(m.total_operations for m in self._strategy_metrics.values())
             total_time = sum(m.total_time for m in self._strategy_metrics.values())
             total_memory = sum(m.memory_usage for m in self._strategy_metrics.values())
-            
             return {
                 'total_strategies': len(self._strategy_metrics),
                 'total_operations': total_operations,
@@ -323,11 +283,10 @@ class StrategyMetricsCollector:
                     for sid, metrics in self._strategy_metrics.items()
                 }
             }
-    
+
     def _generate_optimization_recommendations(self) -> list[dict[str, Any]]:
         """Generate optimization recommendations based on metrics."""
         recommendations = []
-        
         with self._lock:
             for strategy_id, metrics in self._strategy_metrics.items():
                 # High error rate recommendation
@@ -340,7 +299,6 @@ class StrategyMetricsCollector:
                         'description': f"High error rate: {metrics.error_rate:.1%}",
                         'recommendation': "Consider switching to a more stable strategy"
                     })
-                
                 # Slow performance recommendation
                 if metrics.average_time > 0.01:  # 10ms
                     recommendations.append({
@@ -351,7 +309,6 @@ class StrategyMetricsCollector:
                         'description': f"Slow average operation time: {metrics.average_time:.3f}s",
                         'recommendation': "Consider optimizing or switching strategies"
                     })
-                
                 # High memory usage recommendation
                 if metrics.memory_usage > 100 * 1024 * 1024:  # 100MB
                     recommendations.append({
@@ -362,25 +319,20 @@ class StrategyMetricsCollector:
                         'description': f"High memory usage: {metrics.memory_usage / 1024 / 1024:.1f}MB",
                         'recommendation': "Consider memory-efficient strategy alternatives"
                     })
-        
         return recommendations
-    
+
     def _assess_system_health(self) -> dict[str, Any]:
         """Assess overall system health based on metrics."""
         with self._lock:
             if not self._strategy_metrics:
                 return {'status': 'unknown', 'score': 0.0}
-            
             # Calculate health score (0-100)
             total_strategies = len(self._strategy_metrics)
             high_error_strategies = sum(1 for m in self._strategy_metrics.values() if m.error_rate > 0.05)
             slow_strategies = sum(1 for m in self._strategy_metrics.values() if m.average_time > 0.01)
-            
             error_penalty = (high_error_strategies / total_strategies) * 50
             performance_penalty = (slow_strategies / total_strategies) * 30
-            
             health_score = max(0, 100 - error_penalty - performance_penalty)
-            
             # Determine status
             if health_score >= 80:
                 status = 'excellent'
@@ -390,7 +342,6 @@ class StrategyMetricsCollector:
                 status = 'fair'
             else:
                 status = 'poor'
-            
             return {
                 'status': status,
                 'score': health_score,
@@ -399,50 +350,42 @@ class StrategyMetricsCollector:
                 'slow_strategies': slow_strategies,
                 'recommendations_count': len(self._generate_optimization_recommendations())
             }
-    
-    def export_metrics(self, format: str = 'json') -> Union[dict[str, Any], str]:
+
+    def export_metrics(self, format: str = 'json') -> dict[str, Any] | str:
         """
         Export metrics in specified format.
-        
         Args:
             format: Export format ('json' or 'summary')
-            
         Returns:
             Exported metrics
         """
         metrics = self.collect_comprehensive_metrics()
-        
         if format == 'summary':
             return self._format_summary(metrics)
         else:
             return metrics
-    
+
     def _format_summary(self, metrics: dict[str, Any]) -> str:
         """Format metrics as a human-readable summary."""
         global_metrics = metrics.get('global_metrics', {})
         system_health = metrics.get('system_health', {})
         recommendations = metrics.get('optimization_recommendations', [])
-        
         summary = f"""
 📊 XWNode Strategy Metrics Summary
 {'=' * 50}
-
 🏥 System Health: {system_health.get('status', 'unknown').upper()} ({system_health.get('score', 0):.1f}/100)
 📈 Total Strategies: {global_metrics.get('total_strategies', 0)}
 ⚡ Total Operations: {global_metrics.get('total_operations', 0)}
 💾 Memory Usage: {global_metrics.get('total_memory_usage', 0):.2f} MB
 ⏱️  Avg Operation Time: {global_metrics.get('average_performance', 0):.3f}s
-
 🔧 Optimization Recommendations: {len(recommendations)}
 """
-        
         if recommendations:
             summary += "\n📋 Top Recommendations:\n"
             for i, rec in enumerate(recommendations[:3], 1):
                 summary += f"  {i}. {rec['strategy_name']}: {rec['description']}\n"
-        
         return summary.strip()
-    
+
     def clear_metrics(self) -> None:
         """Clear all collected metrics."""
         with self._lock:
@@ -456,8 +399,6 @@ class StrategyMetricsCollector:
                 'last_collection': time.time()
             }
             logger.info("🧹 Cleared all strategy metrics")
-
-
 # Global metrics collector instance
 _metrics_collector: Optional[StrategyMetricsCollector] = None
 _metrics_lock = threading.Lock()
@@ -466,25 +407,21 @@ _metrics_lock = threading.Lock()
 def get_metrics_collector() -> StrategyMetricsCollector:
     """
     Get the global metrics collector instance.
-    
     Returns:
         Global StrategyMetricsCollector instance
     """
     global _metrics_collector
-    
     if _metrics_collector is None:
         with _metrics_lock:
             if _metrics_collector is None:
                 _metrics_collector = StrategyMetricsCollector()
                 logger.info("📊 Initialized global strategy metrics collector")
-    
     return _metrics_collector
 
 
 def collect_comprehensive_metrics() -> dict[str, Any]:
     """
     Collect comprehensive metrics using the global collector.
-    
     Returns:
         Complete metrics dictionary
     """
@@ -494,14 +431,13 @@ def collect_comprehensive_metrics() -> dict[str, Any]:
 def record_strategy_metric(
     strategy_id: str,
     strategy_name: str,
-    mode: Union[NodeMode, EdgeMode],
+    mode: NodeMode | EdgeMode,
     metric_type: MetricType,
     value: float,
     **metadata: Any
 ) -> None:
     """
     Record a strategy metric using the global collector.
-    
     Args:
         strategy_id: Strategy identifier
         strategy_name: Strategy name
@@ -518,25 +454,20 @@ def record_strategy_metric(
 def get_metrics_summary() -> str:
     """
     Get a formatted metrics summary.
-    
     Returns:
         Human-readable metrics summary
     """
     return get_metrics_collector().export_metrics('summary')
 
 
-def export_metrics(format: str = 'json') -> Union[dict[str, Any], str]:
+def export_metrics(format: str = 'json') -> dict[str, Any] | str:
     """
     Export metrics in specified format.
-    
     Args:
         format: Export format
-        
     Returns:
         Exported metrics
     """
     return get_metrics_collector().export_metrics(format)
-
-
 # Usability aliases (Priority #2: Clean, intuitive API)
 Metrics = StrategyMetricsCollector

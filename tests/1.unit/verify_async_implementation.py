@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """Quick verification that async-first implementation compiles correctly."""
+
 import sys
 from pathlib import Path
-
 # Add src to path
 src_path = Path(__file__).parent / 'src'
 sys.path.insert(0, str(src_path))
-
 print("="*80)
 print("Verifying Async-First Implementation (v0.0.1.30)")
 print("="*80)
 print()
-
 # Test imports
 print("1. Testing imports...")
 try:
@@ -23,7 +21,6 @@ try:
 except Exception as e:
     print(f"   ❌ Import failed: {e}")
     sys.exit(1)
-
 # Test strategy instantiation
 print("\n2. Testing strategy instantiation...")
 try:
@@ -36,7 +33,6 @@ try:
 except Exception as e:
     print(f"   ❌ Instantiation failed: {e}")
     sys.exit(1)
-
 # Check async methods exist
 print("\n3. Checking async methods exist...")
 required_methods = [
@@ -44,7 +40,6 @@ required_methods = [
     'size_async', 'is_empty_async', 'to_native_async',
     'keys_async', 'values_async', 'items_async'
 ]
-
 all_good = True
 for name, strategy in strategies:
     print(f"   Checking {name}...")
@@ -54,10 +49,8 @@ for name, strategy in strategies:
             all_good = False
     if all_good:
         print(f"      ✅ All 9 async methods present")
-
 if not all_good:
     sys.exit(1)
-
 # Check _lock exists
 print("\n4. Checking async locks exist...")
 for name, strategy in strategies:
@@ -66,10 +59,8 @@ for name, strategy in strategies:
     else:
         print(f"   ❌ {name} missing _lock")
         all_good = False
-
 if not all_good:
     sys.exit(1)
-
 # Test sync methods (backward compatibility)
 print("\n5. Testing backward compatibility (sync methods)...")
 try:
@@ -81,7 +72,6 @@ try:
 except Exception as e:
     print(f"   ❌ Sync methods failed: {e}")
     sys.exit(1)
-
 print()
 print("="*80)
 print("✅ VERIFICATION SUCCESSFUL!")
@@ -96,4 +86,3 @@ print("  - Backward compatibility: ✅ Sync API wraps async")
 print()
 print("🎉 Async-First Architecture (v0.0.1.30) is ready!")
 print()
-

@@ -1,0 +1,9 @@
+projects:
+  xwnode:
+    repo: xwnode
+    package_main: exonware-xwnode
+    package_wrapper: xwnode
+    python_version: "3.12"
+    has_wrapper: true
+    uses_check_versions: true
+

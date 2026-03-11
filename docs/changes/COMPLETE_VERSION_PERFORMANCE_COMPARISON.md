@@ -1,7 +1,7 @@
 # Complete Version Performance Comparison: v0.0.1.25 → v0.0.1.30
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Date:** 24-Oct-2025  
 **Analysis:** Full performance evolution across 5 major versions
 

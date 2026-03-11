@@ -1,7 +1,7 @@
 # Complete Fix Summary - x5 & x6 Benchmarks + XML Serialization
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Date:** 17-Oct-2025
 

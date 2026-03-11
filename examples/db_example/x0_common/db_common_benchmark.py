@@ -1,14 +1,12 @@
 """
 Common Database Benchmark Base Class
-
 Provides reusable functionality for all database benchmarks:
 - Command-line argument parsing
 - Excel output generation with unified format
 - Standard test execution flow
 - Result formatting and aggregation
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: October 16, 2025
@@ -19,9 +17,8 @@ import argparse
 import random
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, List, Optional
+from typing import Any, Optional
 from abc import ABC, abstractmethod
-
 try:
     from openpyxl import Workbook
     from openpyxl.utils import get_column_letter
@@ -33,11 +30,10 @@ except ImportError:
 
 class BaseBenchmarkRunner(ABC):
     """Base class for all database benchmarks"""
-    
-    def __init__(self, benchmark_name: str, default_test_sizes: List[int] = None, random_enabled: bool = True):
+
+    def __init__(self, benchmark_name: str, default_test_sizes: list[int] = None, random_enabled: bool = True):
         """
         Initialize benchmark runner.
-        
         Args:
             benchmark_name: Name of the benchmark (e.g., "Basic Database Benchmark (Node-Only)")
             default_test_sizes: Default test sizes if not provided via command line
@@ -51,21 +47,19 @@ class BaseBenchmarkRunner(ABC):
         self.run_datetime = None
         self.timestamp_str = None
         self.random_seed = None
-    
     @abstractmethod
-    def run_single_benchmark(self, total_entities: int) -> Dict[str, Any]:
+
+    def run_single_benchmark(self, total_entities: int) -> dict[str, Any]:
         """
         Run benchmark for a single test size.
         Must return a dictionary of results keyed by configuration name.
-        
         Args:
             total_entities: Number of entities to test
-            
         Returns:
             Dict mapping configuration name to result data
         """
         pass
-    
+
     def parse_arguments(self):
         """Parse command-line arguments for test sizes and randomization"""
         parser = argparse.ArgumentParser(description=self.benchmark_name)
@@ -77,32 +71,26 @@ class BaseBenchmarkRunner(ABC):
                           help='Random seed for reproducible random ordering')
         parser.set_defaults(random_enabled=True)
         args = parser.parse_args()
-        
         if args.test_sizes:
             # Validate minimum size
             if any(size < 1 for size in args.test_sizes):
                 print(f"Error: Minimum 1 entity required")
                 sys.exit(1)
             self.test_sizes = args.test_sizes
-        
         # Update random settings from command line
         self.random_enabled = args.random_enabled
         self.random_seed = args.seed
-        
         # Set random seed if provided
         if self.random_seed is not None:
             random.seed(self.random_seed)
             print(f"[RANDOM SEED] Using seed: {self.random_seed}")
-        
         return args
-    
-    def shuffle_if_enabled(self, items: List[Any]) -> List[Any]:
+
+    def shuffle_if_enabled(self, items: list[Any]) -> list[Any]:
         """
         Shuffle items if random execution is enabled.
-        
         Args:
             items: List of items to potentially shuffle
-            
         Returns:
             Shuffled list if random_enabled=True, original list otherwise
         """
@@ -111,7 +99,7 @@ class BaseBenchmarkRunner(ABC):
             random.shuffle(shuffled)
             return shuffled
         return items
-    
+
     def run_all_tests(self):
         """Run all tests and generate Excel output"""
         print(f"\n{'='*80}")
@@ -122,76 +110,62 @@ class BaseBenchmarkRunner(ABC):
         if self.random_seed is not None:
             print(f"Random seed: {self.random_seed}")
         print(f"{'='*80}\n")
-        
         # Store timestamp for this entire run
         self.run_datetime = datetime.now()
         self.timestamp_str = self.run_datetime.strftime("%Y-%m-%d %H:%M:%S")
-        
         # Run each test
         for i, entities in enumerate(self.test_sizes, 1):
             print(f"\n{'*'*80}")
             print(f"TEST {i}/{len(self.test_sizes)}: {entities:,} entities")
             print(f"{'*'*80}")
-            
             results = self.run_single_benchmark(entities)
             self.all_results[str(entities)] = results
-        
         # Show overall top performers across all test sizes
         self.show_top_performers()
-        
         # Generate Excel output
         self.generate_excel_output()
-        
         print(f"\n{'='*80}")
         print(f"ALL BENCHMARKS COMPLETE")
         print(f"{'='*80}")
         print(f"\nTotal benchmarks completed: {sum(len(r) for r in self.all_results.values()):,}")
-    
+
     def show_top_performers(self):
         """Show top performers across all test sizes"""
         print(f"\n{'#'*80}")
         print(f"# OVERALL TOP PERFORMERS - ALL TEST SIZES")
         print(f"{'#'*80}\n")
-        
         # Aggregate results across all test sizes
         for entities_str in sorted(self.all_results.keys(), key=lambda x: int(x)):
             results = self.all_results[entities_str]
             successful_results = {k: v for k, v in results.items() if v.get('success', True)}
-            
             if successful_results:
                 sorted_results = sorted(successful_results.items(), 
                                        key=lambda x: x[1].get('total_time_ms', float('inf')))
-                
                 print(f"{'='*80}")
                 print(f"TOP 10 - {entities_str} ENTITIES")
                 print(f"{'='*80}")
-                
                 for rank, (name, data) in enumerate(sorted_results[:10], 1):
                     time_ms = data.get('total_time_ms', 0)
                     memory = data.get('peak_memory_mb', 0)
                     config_info = f"{data.get('node_mode', 'N/A')} + {data.get('edge_mode', 'N/A')}"
-                    
                     # Add special indicators
                     medal = "[1]" if rank == 1 else "[2]" if rank == 2 else "[3]" if rank == 3 else "   "
                     print(f"  {medal} {rank:2}. {name[:60]:60} | {time_ms:8.2f}ms | {memory:6.1f}MB")
-                
                 # Show fastest performer
                 winner_name, winner_data = sorted_results[0]
                 print(f"\n>> FASTEST: {winner_name}")
                 print(f"   Time: {winner_data.get('total_time_ms', 0):.2f}ms")
                 print(f"   Memory: {winner_data.get('peak_memory_mb', 0):.1f}MB\n")
-    
-    def format_result_row(self, entities_str: str, name: str, data: Dict[str, Any],
-                         additional_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def format_result_row(self, entities_str: str, name: str, data: dict[str, Any],
+                         additional_data: Optional[dict[str, Any]] = None) -> dict[str, Any]:
         """
         Format a result row with standard columns.
-        
         Args:
             entities_str: Entity count as string
             name: Configuration name
             data: Result data from benchmark
             additional_data: Additional fields to include (e.g., group classification)
-            
         Returns:
             Dictionary with standardized row format
         """
@@ -200,13 +174,11 @@ class BaseBenchmarkRunner(ABC):
         read_metrics = metrics.get('read', {})
         update_metrics = metrics.get('update', {})
         delete_metrics = metrics.get('delete', {})
-        
         node = data.get('node_mode', 'N/A')
         time_ms = data.get('total_time_ms', 0)
         memory = data.get('peak_memory_mb', 0)
         ops_sec = (50000 / (time_ms / 1000)) if time_ms > 0 else 0
         edge_mode = data.get('edge_mode', 'None')
-        
         row_data = {
             'test_type': self.benchmark_name,
             'operations_size': int(entities_str),
@@ -231,23 +203,19 @@ class BaseBenchmarkRunner(ABC):
             'delete_time': delete_metrics.get("total_time_ms", 0),
             'delete_memory': delete_metrics.get("peak_memory_mb", 0)
         }
-        
         # Merge additional data if provided
         if additional_data:
             row_data.update(additional_data)
-        
         return row_data
-    
+
     def generate_excel_output(self):
         """Generate unified Excel output file"""
         print(f"\n{'='*80}")
         print(f"GENERATING EXCEL OUTPUT")
         print(f"{'='*80}")
-        
         # Excel file in parent folder (unified across all benchmarks)
         output_dir = Path(__file__).parent.parent
         excel_file = output_dir / "results.xlsx"
-        
         try:
             # Define standard headers
             headers = [
@@ -275,19 +243,16 @@ class BaseBenchmarkRunner(ABC):
                 'Delete Time (ms)',
                 'Delete Memory (MB)'
             ]
-            
             # Load existing workbook if file exists, or create new one
             wb = None
             ws = None
             existing_row_count = 0
             is_new_file = False
-            
             if excel_file.exists():
                 try:
                     from openpyxl import load_workbook
                     print(f"  Loading existing results from {excel_file.name}...")
                     wb = load_workbook(excel_file)
-                    
                     # CRITICAL FIX: Explicitly get "Benchmark Results" sheet, not wb.active
                     # Root cause: wb.active gets last active sheet (could be "Modes", "Dashboard", etc.)
                     # Solution: Explicitly select "Benchmark Results" sheet by name
@@ -303,12 +268,10 @@ class BaseBenchmarkRunner(ABC):
                         ws = wb.create_sheet("Benchmark Results", 0)
                         ws.append(headers)  # Add headers to new sheet
                         is_new_file = True
-                    
                 except Exception as e:
                     print(f"  Warning: Could not load existing file ({e}), will create new file")
                     wb = None
                     ws = None
-            
             # Create new workbook if loading failed or file doesn't exist
             if wb is None:
                 wb = Workbook()
@@ -316,16 +279,13 @@ class BaseBenchmarkRunner(ABC):
                 ws.title = "Benchmark Results"
                 ws.append(headers)  # Add headers
                 is_new_file = True
-            
             # Collect new data rows
             all_rows = []
             for entities_str, results in self.all_results.items():
                 successful_results = {k: v for k, v in results.items() if v.get('success', True)}
-                
                 for name, data in successful_results.items():
                     row_data = self.format_result_row(entities_str, name, data)
                     all_rows.append(row_data)
-            
             # APPEND new data rows (don't delete existing ones!)
             # This prevents Excel file corruption
             first_new_row = ws.max_row + 1
@@ -355,24 +315,20 @@ class BaseBenchmarkRunner(ABC):
                     row_data['delete_time'],
                     row_data['delete_memory']
                 ])
-            
             # Add ranking formulas ONLY for new rows
             last_row = ws.max_row
             for row_idx in range(first_new_row, last_row + 1):
                 formula = f'=COUNTIFS($A:$A,$A{row_idx},$B:$B,$B{row_idx},$C:$C,$C{row_idx},$L:$L,"<"&$L{row_idx})+1'
                 ws[f'D{row_idx}'] = formula
-            
             # Update Excel Table (expand to include new rows)
             # Remove existing table and create new one with expanded range
             if ws.tables:
                 ws.tables.clear()
-            
             # Use unique table name to prevent conflicts
             import time
             table_name = f"BenchmarkResults_{int(time.time())}"
             total_rows = ws.max_row - 1  # Exclude header
             table_ref = f"A1:{get_column_letter(len(headers))}{ws.max_row}"
-            
             try:
                 table = Table(displayName=table_name, ref=table_ref)
                 style = TableStyleInfo(
@@ -389,7 +345,6 @@ class BaseBenchmarkRunner(ABC):
                 # Priority: Usability #2 - Don't fail entire export for formatting issue
                 print(f"[WARN] Could not add table formatting: {e}")
                 print(f"[OK] Data saved successfully without table formatting")
-            
             # Auto-adjust column widths
             for column in ws.columns:
                 max_length = 0
@@ -402,14 +357,11 @@ class BaseBenchmarkRunner(ABC):
                         pass
                 adjusted_width = min(max_length + 2, 50)
                 ws.column_dimensions[column_letter].width = adjusted_width
-            
             # Hide columns: Edge Mode (G), Graph Manager (H), Storage Format (I), Storage Smart Format (J)
             for col_letter in ['G', 'H', 'I', 'J']:
                 ws.column_dimensions[col_letter].hidden = True
-            
             # Save workbook
             wb.save(excel_file)
-            
             # Print summary
             if not is_new_file:
                 print(f"[OK] Excel File: {excel_file.name} (APPENDED)")
@@ -423,16 +375,14 @@ class BaseBenchmarkRunner(ABC):
             print(f"  - Excel Table 'BenchmarkResults' with filtering enabled")
             print(f"  - Rank calculated by formula (grouped by Test Type, Operations Size, Date & Time)")
             print(f"\n  All existing data and sheets have been preserved!")
-        
         except PermissionError:
             print(f"[WARNING] Could not write {excel_file.name} - file is open in another program")
         except Exception as e:
             print(f"[ERROR] generating Excel file: {e}")
             import traceback
             traceback.print_exc()
-    
+
     def main(self):
         """Main entry point for benchmark"""
         self.parse_arguments()
         self.run_all_tests()
-

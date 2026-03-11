@@ -1,43 +1,36 @@
 """
 #exonware/xwnode/src/exonware/xwnode/common/graph/contracts.py
-
 Graph manager contracts and enums.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 11-Oct-2025
 """
 
 from enum import Enum
-from abc import ABC, abstractmethod
-from typing import Optional, Any
+from typing import Optional, Any, Protocol, runtime_checkable
 
 
 class GraphOptimization(Enum):
     """
     Graph optimization levels for XWGraphManager.
-    
     Controls indexing and caching behavior for performance tuning.
     """
-    
     OFF = 0           # No optimization - fallback to O(n) iteration
     INDEX_ONLY = 1    # Only indexing - O(1) lookups, no caching
     CACHE_ONLY = 2    # Only caching - benefits from repeated queries
     FULL = 3          # Both indexing + caching - maximum performance
-    
     # Aliases for clarity
     DISABLED = 0
     MINIMAL = 1
     MODERATE = 2
     MAXIMUM = 3
+@runtime_checkable
 
-
-class IGraphManager(ABC):
+class IGraphManager(Protocol):
     """Interface for graph manager implementations."""
-    
-    @abstractmethod
+
     def add_relationship(
         self,
         source: str,
@@ -46,9 +39,8 @@ class IGraphManager(ABC):
         **properties
     ) -> str:
         """Add a relationship between entities."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def remove_relationship(
         self,
         source: str,
@@ -56,9 +48,8 @@ class IGraphManager(ABC):
         relationship_type: Optional[str] = None
     ) -> bool:
         """Remove relationship(s) between entities."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def get_outgoing(
         self,
         entity_id: str,
@@ -66,9 +57,8 @@ class IGraphManager(ABC):
         limit: Optional[int] = None
     ) -> list[dict[str, Any]]:
         """Get outgoing relationships for entity."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def get_incoming(
         self,
         entity_id: str,
@@ -76,9 +66,8 @@ class IGraphManager(ABC):
         limit: Optional[int] = None
     ) -> list[dict[str, Any]]:
         """Get incoming relationships for entity."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def has_relationship(
         self,
         source: str,
@@ -86,15 +75,12 @@ class IGraphManager(ABC):
         relationship_type: Optional[str] = None
     ) -> bool:
         """Check if relationship exists."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def get_stats(self) -> dict[str, Any]:
         """Get graph statistics."""
-        pass
-    
-    @abstractmethod
+        ...
+
     def clear_cache(self) -> None:
         """Clear query cache."""
-        pass
-
+        ...

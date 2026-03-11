@@ -2,7 +2,7 @@
 
 **Project:** eXonware xwnode  
 **Date:** 22-Oct-2025  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Status:** ✅ **FIXED & TESTED**
 

@@ -2,9 +2,8 @@
 """
 XWNode SQL Actions Demo Results
 Demonstrates the results of running the top 4 CRUD operations on XWNode sample data.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: January 2, 2025
@@ -12,17 +11,22 @@ Generation Date: January 2, 2025
 
 import sys
 from pathlib import Path
-
 # Add src to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root / "src"))
-
 try:
-    from exonware.xwnode.strategies.queries.sql import SQLStrategy
+    from exonware.xwquery.compiler.strategies.sql import SQLStrategy
+except ImportError:
+    try:
+        from exonware.xwquery.compiler.strategies.sql_grammar import SQLStrategy
+    except ImportError:
+        SQLStrategy = None
+try:
     from exonware.xwnode.defs import QueryMode, QueryTrait
-except ImportError as e:
-    print(f"❌ Import error: {e}")
-    print("Make sure you're running from the xwnode directory")
+except ImportError:
+    QueryMode = QueryTrait = None
+if SQLStrategy is None or QueryMode is None:
+    print("❌ SQLStrategy or defs not available (install exonware-xwquery and run from xwnode)")
     sys.exit(1)
 
 
@@ -30,9 +34,7 @@ def demo_sql_strategy():
     """Demonstrate SQL strategy capabilities."""
     print("🔍 SQL STRATEGY DEMONSTRATION")
     print("=" * 50)
-    
     sql_strategy = SQLStrategy()
-    
     # Test SQL query validation
     test_queries = [
         "SELECT * FROM users WHERE age > 25",
@@ -41,13 +43,11 @@ def demo_sql_strategy():
         "DELETE FROM users WHERE age < 25",
         "INVALID QUERY SYNTAX"
     ]
-    
     print("📋 Query Validation Results:")
     for query in test_queries:
         is_valid = sql_strategy.validate_query(query)
         status = "✅ Valid" if is_valid else "❌ Invalid"
         print(f"   {status}: {query}")
-    
     # Test query planning
     print(f"\n📊 Query Planning Examples:")
     for query in test_queries[:4]:  # Skip invalid query
@@ -65,7 +65,6 @@ def demo_sample_data_operations():
     """Demonstrate operations on sample data."""
     print("📊 SAMPLE DATA OPERATIONS DEMONSTRATION")
     print("=" * 50)
-    
     # Sample data structure
     sample_data = {
         "users": [
@@ -159,45 +158,36 @@ def demo_sample_data_operations():
             {"user_id": 5, "project_id": 2, "role": "contributor", "joined_at": "2025-01-01T11:45:00Z"}
         ]
     }
-    
     print("✅ Sample Data Structure Created:")
     print(f"   - Users: {len(sample_data['users'])}")
     print(f"   - Projects: {len(sample_data['projects'])}")
     print(f"   - User-Project relationships: {len(sample_data['user_projects'])}")
-    
     # Demonstrate CRUD operations
     print("\n🔨 CREATE Operations:")
     print("   ✅ Would create new user: Frank Miller (Engineering)")
     print("   ✅ Would create new project: API Gateway ($35,000)")
-    
     print("\n📖 READ Operations:")
     print("   ✅ All users:")
     for i, user in enumerate(sample_data['users'], 1):
         print(f"      {i}. {user['name']} ({user['department']})")
-    
     print("\n   ✅ Engineering users:")
     for user in sample_data['users']:
         if user['department'] == 'engineering':
             print(f"      - {user['name']}: {user['skills']}")
-    
     print("\n   ✅ Project details:")
     for project in sample_data['projects']:
         lead_name = next((u['name'] for u in sample_data['users'] if u['id'] == project['lead_user_id']), "Unknown")
         print(f"      - {project['name']}: {project['status']}, Budget: ${project['budget']:,.2f}, Lead: {lead_name}")
-    
     print("\n✏️ UPDATE Operations:")
     print("   ✅ Would update Alice's skills: ['Python', 'Go', 'Rust'] → ['Python', 'Go', 'Rust', 'Leadership', 'Architecture']")
     print("   ✅ Would update XWNode Core: active → completed, Budget: $50,000 → $55,000")
     print("   ✅ Would update Bob's age: 25 → 26")
-    
     print("\n🗑️ DELETE Operations:")
     print("   ✅ Would remove Bob from XWNode Core project")
     print("   ✅ Found 0 completed projects to archive")
     print("   ✅ Found 0 users not assigned to any projects")
-    
     # Advanced analytics
     print("\n📊 ADVANCED ANALYTICS:")
-    
     # Department analysis
     departments = {}
     for user in sample_data['users']:
@@ -207,7 +197,6 @@ def demo_sample_data_operations():
         departments[dept]['count'] += 1
         departments[dept]['ages'].append(user['age'])
         departments[dept]['skills'].update(user['skills'])
-    
     print("   ✅ Department Analysis:")
     for dept, data in departments.items():
         avg_age = sum(data['ages']) / len(data['ages'])
@@ -215,22 +204,18 @@ def demo_sample_data_operations():
         print(f"        Users: {data['count']}")
         print(f"        Avg Age: {avg_age:.1f}")
         print(f"        Skills: {', '.join(sorted(data['skills']))}")
-    
     # Project budget analysis
     total_budget = sum(project['budget'] for project in sample_data['projects'])
     avg_budget = total_budget / len(sample_data['projects'])
-    
     print(f"\n   ✅ Project Budget Analysis:")
     print(f"      Total Budget: ${total_budget:,.2f}")
     print(f"      Average Budget: ${avg_budget:,.2f}")
     print(f"      Projects: {len(sample_data['projects'])}")
-    
     # Skills popularity
     all_skills = {}
     for user in sample_data['users']:
         for skill in user['skills']:
             all_skills[skill] = all_skills.get(skill, 0) + 1
-    
     popular_skills = sorted(all_skills.items(), key=lambda x: x[1], reverse=True)
     print(f"\n   ✅ Most Popular Skills:")
     for skill, count in popular_skills[:5]:
@@ -242,11 +227,9 @@ def main():
     print("🚀 XWNode SQL Actions Demo Results")
     print("Demonstrating Top 4 CRUD Operations on Sample Data")
     print("=" * 80)
-    
     try:
         demo_sql_strategy()
         demo_sample_data_operations()
-        
         print("\n" + "=" * 80)
         print("🎉 DEMONSTRATION COMPLETED SUCCESSFULLY!")
         print("\n📋 Demo Summary:")
@@ -256,13 +239,11 @@ def main():
         print("   ✅ DELETE: Remove assignments and archive projects")
         print("   ✅ SQL Strategy: Query validation and planning")
         print("   ✅ Analytics: Department analysis and skill popularity")
-        
         print("\n🎯 Key Achievements:")
         print("   🔧 XWNode SQL strategy validates and plans queries effectively")
         print("   📊 CRUD operations work with structured data seamlessly")
         print("   🔄 Format-agnostic design supports any data structure")
         print("   📈 Advanced analytics provide business insights")
-        
         print("\n💡 SQL Script Results:")
         print("   📄 The SQL script (xwnode_sql_actions.sql) contains:")
         print("      - 4 CREATE operations (tables + sample data)")
@@ -271,18 +252,14 @@ def main():
         print("      - 4 DELETE operations (remove/archive data)")
         print("      - 3 Advanced analytics queries")
         print("      - Complete CRUD workflow demonstration")
-        
         print("\n🔗 Integration Benefits:")
         print("   🎯 XWNode provides the underlying graph/tree engine")
         print("   📊 SQL strategy handles structured data queries")
         print("   🚀 Together they form a powerful, format-agnostic system")
         print("   🛡️ Enterprise features: monitoring, security, validation")
-        
     except Exception as e:
         print(f"\n❌ Demo failed: {e}")
         import traceback
         traceback.print_exc()
-
-
 if __name__ == "__main__":
     main()

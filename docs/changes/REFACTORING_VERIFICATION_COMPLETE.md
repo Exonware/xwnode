@@ -1,7 +1,7 @@
 # xwnode Refactoring Verification - COMPLETE
 
 **Company:** eXonware.com  
-**Author:** Eng. Muhammad AlShehri  
+**Author:** eXonware Backend Team  
 **Email:** connect@exonware.com  
 **Completion Date:** 08-Oct-2025
 

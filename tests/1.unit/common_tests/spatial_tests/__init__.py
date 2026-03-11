@@ -1,0 +1,3 @@
+"""
+Spatial tests module.
+"""

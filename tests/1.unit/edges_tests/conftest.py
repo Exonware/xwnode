@@ -1,19 +1,16 @@
 """
 #exonware/xwnode/tests/1.unit/edges_tests/conftest.py
-
 Edge module test fixtures.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
 Version: 0.0.1
 Generation Date: 11-Oct-2025
 """
 
 import pytest
-
-
 @pytest.fixture
+
 def edge_test_data():
     """Test data specific to edge testing."""
     return {
@@ -26,4 +23,3 @@ def edge_test_data():
             'vertices': [0, 1, 2, 3]
         }
     }
-

@@ -1,11 +1,21 @@
+#!/usr/bin/env python3
+"""
+#exonware/xwnode/src/exonware/xwnode/nodes/strategies/treap.py
+Treap Node Strategy Implementation
+Company: eXonware.com
+Author: eXonware Backend Team
+Email: connect@exonware.com
+Version: 0.9.0.1
+Generation Date: 16-Jan-2026
+"""
+
+from __future__ import annotations
 #exonware\xnode\strategies\impls\node_treap.py
 """
 Treap Node Strategy Implementation
-
 This module implements the TREAP strategy for randomized balanced trees
 combining binary search tree and heap properties.
 """
-
 import random
 from typing import Any, Iterator, Optional, AsyncIterator
 from .base import ANodeTreeStrategy
@@ -15,30 +25,28 @@ from ...defs import NodeMode, NodeTrait
 
 class TreapNode:
     """Node in the treap."""
-    
+
     def __init__(self, key: str, value: Any = None, priority: int = None):
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
         self.priority = priority if priority is not None else random.randint(1, 1000000)
-        self.left: Optional['TreapNode'] = None
-        self.right: Optional['TreapNode'] = None
+        self.left: Optional[TreapNode] = None
+        self.right: Optional[TreapNode] = None
         self._hash = None
-    
+
     def __hash__(self) -> int:
         """
         Cache hash for performance.
-        
         Time Complexity: O(1) amortized
         """
         if self._hash is None:
             self._hash = hash((self.key, self.value, self.priority))
         return self._hash
-    
+
     def __eq__(self, other) -> bool:
         """
         Structural equality.
-        
         Time Complexity: O(1)
         """
         if not isinstance(other, TreapNode):
@@ -51,30 +59,25 @@ class TreapNode:
 class TreapStrategy(ANodeTreeStrategy):
     """
     Treap strategy for randomized balanced binary search trees.
-    
     WHY Treap (Tree + Heap):
     - Simpler than AVL/Red-Black (only rotations, no complex rules)
     - Probabilistic O(log n) expected height (randomized balancing)
     - Combines BST property (keys) with max-heap property (priorities)
     - No explicit height/color tracking needed (priorities handle balancing)
     - Excellent for dynamic scenarios (frequent insert/delete)
-    
     WHY this implementation:
     - Random priorities assigned at insertion (1 to 1,000,000 range)
     - BST property maintained by keys (sorted order)
     - Max-heap property maintained by priorities (parent > children)
     - Rotations restore heap property after insertions/deletions
     - Parent-free implementation (simpler, less memory)
-    
     Time Complexity:
     - Insert: O(log n) expected, O(n) worst case (probabilistic)
     - Search: O(log n) expected, O(n) worst case (probabilistic)
     - Delete: O(log n) expected, O(n) worst case (probabilistic)
     - Min/Max: O(log n) - leftmost/rightmost traversal
     - Iteration: O(n) in sorted order (BST property)
-    
     Space Complexity: O(n) - one node per key + priority integer
-    
     Trade-offs:
     - Advantage: Simpler than AVL/Red-Black (no complex rebalancing rules)
     - Advantage: Good performance in practice (expected O(log n))
@@ -82,126 +85,108 @@ class TreapStrategy(ANodeTreeStrategy):
     - Limitation: Randomness may complicate debugging/testing
     - Compared to Skip List: More memory efficient, but rotations overhead
     - Compared to AVL: Simpler, but probabilistic vs deterministic
-    
     Best for:
     - When simplicity is valued over worst-case guarantees
     - Dynamic scenarios with frequent insert/delete
     - When deterministic balancing is not required
     - Educational purposes (elegant combination of BST + heap)
     - Randomized algorithms and Monte Carlo simulations
-    
     Not recommended for:
     - Hard real-time systems (probabilistic behavior)
     - When worst-case guarantees are critical (use AVL/Red-Black)
     - Adversarial inputs (can be exploited with known priorities)
     - Deterministic testing environments (randomness complicates tests)
     - Production systems requiring predictable performance
-    
     Following eXonware Priorities:
     1. Usability: Simplest self-balancing tree (no complex rules)
     2. Maintainability: Clean randomized design, easy to understand
     3. Performance: Expected O(log n) with low constant factors
     4. Extensibility: Can support split/merge operations efficiently
     5. Security: Input validation, random priorities prevent some attacks
-    
     Industry Best Practices:
     - Follows Seidel and Aragon original paper (1989)
     - Maintains BST invariant: left < node < right (keys)
     - Maintains max-heap invariant: parent.priority > child.priority
     - Uses rotations to restore heap property after modifications
     - Provides split/merge operations for advanced use cases
-    
     Performance Note:
     Treaps offer EXPECTED O(log n) performance, not worst-case.
     The randomized priorities ensure good balance with high probability.
     For guaranteed O(log n), use AVL_TREE or RED_BLACK_TREE instead.
     Trade-off: Simplicity (Treap) vs Determinism (AVL/Red-Black).
     """
-    
     # Strategy type classification
     STRATEGY_TYPE = NodeType.TREE
-    
+
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
         """Initialize the treap strategy."""
         super().__init__(NodeMode.TREAP, traits, **options)
-        
         self.case_sensitive = options.get('case_sensitive', True)
         self.priority_range = options.get('priority_range', (1, 1000000))
-        
         # Core treap
         self._root: Optional[TreapNode] = None
         self._size = 0
-        
         # Statistics
         self._total_insertions = 0
         self._total_deletions = 0
         self._total_rotations = 0
         self._max_height = 0
-    
+
     def get_supported_traits(self) -> NodeTrait:
         """Get the traits supported by the treap strategy."""
         return (NodeTrait.ORDERED | NodeTrait.INDEXED)
-    
+
     def _normalize_key(self, key: str) -> str:
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
-    
+
     def _get_height(self, node: Optional[TreapNode]) -> int:
         """Get height of node."""
         if not node:
             return 0
-        
         left_height = self._get_height(node.left)
         right_height = self._get_height(node.right)
         return 1 + max(left_height, right_height)
-    
+
     def _rotate_right(self, node: TreapNode) -> TreapNode:
         """Right rotation around node."""
         left_child = node.left
         if not left_child:
             return node
-        
         # Perform rotation
         node.left = left_child.right
         left_child.right = node
-        
         self._total_rotations += 1
         return left_child
-    
+
     def _rotate_left(self, node: TreapNode) -> TreapNode:
         """Left rotation around node."""
         right_child = node.right
         if not right_child:
             return node
-        
         # Perform rotation
         node.right = right_child.left
         right_child.left = node
-        
         self._total_rotations += 1
         return right_child
-    
+
     def _balance_treap(self, node: TreapNode) -> TreapNode:
         """Balance treap using heap property."""
         # Rotate right if left child has higher priority
         if node.left and node.left.priority > node.priority:
             return self._rotate_right(node)
-        
         # Rotate left if right child has higher priority
         if node.right and node.right.priority > node.priority:
             return self._rotate_left(node)
-        
         return node
-    
+
     def _insert_node(self, node: Optional[TreapNode], key: str, value: Any, priority: int = None) -> tuple[TreapNode, bool]:
         """Insert node with given key and value."""
         if not node:
             new_node = TreapNode(key, value, priority)
             return new_node, True
-        
         normalized_key = self._normalize_key(key)
         node_key = self._normalize_key(node.key)
-        
         if normalized_key < node_key:
             node.left, inserted = self._insert_node(node.left, key, value, priority)
         elif normalized_key > node_key:
@@ -210,49 +195,43 @@ class TreapStrategy(ANodeTreeStrategy):
             # Key already exists, update value
             node.value = value
             return node, False
-        
         if not inserted:
             return node, False
-        
         # Balance treap using heap property
         balanced_node = self._balance_treap(node)
         return balanced_node, True
-    
+
     def _find_node(self, node: Optional[TreapNode], key: str) -> Optional[TreapNode]:
         """Find node with given key."""
         if not node:
             return None
-        
         normalized_key = self._normalize_key(key)
         node_key = self._normalize_key(node.key)
-        
         if normalized_key < node_key:
             return self._find_node(node.left, key)
         elif normalized_key > node_key:
             return self._find_node(node.right, key)
         else:
             return node
-    
+
     def _find_min(self, node: TreapNode) -> TreapNode:
         """Find minimum node in subtree."""
         while node.left:
             node = node.left
         return node
-    
+
     def _find_max(self, node: TreapNode) -> TreapNode:
         """Find maximum node in subtree."""
         while node.right:
             node = node.right
         return node
-    
+
     def _delete_node(self, node: Optional[TreapNode], key: str) -> tuple[Optional[TreapNode], bool]:
         """Delete node with given key."""
         if not node:
             return None, False
-        
         normalized_key = self._normalize_key(key)
         node_key = self._normalize_key(node.key)
-        
         if normalized_key < node_key:
             node.left, deleted = self._delete_node(node.left, key)
         elif normalized_key > node_key:
@@ -272,28 +251,24 @@ class TreapStrategy(ANodeTreeStrategy):
                     node = self._rotate_left(node)
                     node.left, _ = self._delete_node(node.left, key)
                 deleted = True
-        
         if not deleted:
             return node, False
-        
         return node, True
-    
+
     def _inorder_traversal(self, node: Optional[TreapNode]) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
             yield (node.key, node.value)
             yield from self._inorder_traversal(node.right)
-    
     # ============================================================================
     # CORE OPERATIONS
     # ============================================================================
-    
+
     def put(self, key: Any, value: Any = None) -> None:
         """Store a key-value pair."""
         if not isinstance(key, str):
             key = str(key)
-        
         # Generate random priority
         priority = random.randint(self.priority_range[0], self.priority_range[1])
         self._root, inserted = self._insert_node(self._root, key, value, priority)
@@ -301,165 +276,154 @@ class TreapStrategy(ANodeTreeStrategy):
             self._size += 1
             self._total_insertions += 1
             self._max_height = max(self._max_height, self._get_height(self._root))
-    
+
     def get(self, key: Any, default: Any = None) -> Any:
         """Retrieve a value by key."""
         if not isinstance(key, str):
             key = str(key)
-        
         node = self._find_node(self._root, key)
         return node.value if node else default
-    
+
     def delete(self, key: Any) -> bool:
         """Remove a key-value pair."""
         if not isinstance(key, str):
             key = str(key)
-        
         self._root, deleted = self._delete_node(self._root, key)
         if deleted:
             self._size -= 1
             self._total_deletions += 1
         return deleted
-    
+
     def has(self, key: Any) -> bool:
         """Check if key exists."""
         if not isinstance(key, str):
             key = str(key)
-        
         return self._find_node(self._root, key) is not None
-    
+
     def clear(self) -> None:
         """Clear all data."""
         self._root = None
         self._size = 0
-    
+
     def size(self) -> int:
         """Get number of key-value pairs."""
         return self._size
-    
+
     def __len__(self) -> int:
         """Get number of key-value pairs."""
         return self._size
-    
+
     def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         return dict(self.items())
-
-
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
-    
+
     async def insert_async(self, key: Any, value: Any) -> None:
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
-    
+
     async def find_async(self, key: Any) -> Optional[Any]:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
-    
+
     async def delete_async(self, key: Any) -> bool:
         """Lightweight async wrapper for delete (no lock overhead)."""
         return self.delete(key)
-    
+
     async def size_async(self) -> int:
         """Lightweight async wrapper for size (no lock overhead)."""
         return self.size()
-    
+
     async def is_empty_async(self) -> bool:
         """Lightweight async wrapper for is_empty (no lock overhead)."""
         return self.is_empty()
-    
+
     async def to_native_async(self) -> Any:
         """Lightweight async wrapper for to_native (no lock overhead)."""
         return self.to_native()
-    
+
     async def keys_async(self) -> AsyncIterator[Any]:
         """Lightweight async wrapper for keys (no lock overhead)."""
         for key in self.keys():
             yield key
-    
+
     async def values_async(self) -> AsyncIterator[Any]:
         """Lightweight async wrapper for values (no lock overhead)."""
         for value in self.values():
             yield value
-    
+
     async def items_async(self) -> AsyncIterator[tuple[Any, Any]]:
         """Lightweight async wrapper for items (no lock overhead)."""
         for item in self.items():
             yield item
-    
+
     def is_empty(self) -> bool:
         """Check if tree is empty."""
         return self._root is None
-    
     # ============================================================================
     # ITERATION
     # ============================================================================
-    
+
     def keys(self) -> Iterator[str]:
         """Iterate over keys in sorted order."""
         for key, _ in self._inorder_traversal(self._root):
             yield key
-    
+
     def values(self) -> Iterator[Any]:
         """Iterate over values in key order."""
         for _, value in self._inorder_traversal(self._root):
             yield value
-    
+
     def items(self) -> Iterator[tuple[str, Any]]:
         """Iterate over key-value pairs in sorted order."""
         yield from self._inorder_traversal(self._root)
-    
+
     def __iter__(self) -> Iterator[str]:
         """Iterate over keys."""
         yield from self.keys()
-    
     # ============================================================================
     # TREAP SPECIFIC OPERATIONS
     # ============================================================================
-    
+
     def get_min(self) -> Optional[tuple[str, Any]]:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
-        
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
-    
+
     def get_max(self) -> Optional[tuple[str, Any]]:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
-        
         max_node = self._find_max(self._root)
         return (max_node.key, max_node.value)
-    
+
     def get_height(self) -> int:
         """Get the height of the tree."""
         return self._get_height(self._root)
-    
+
     def get_priority(self, key: str) -> Optional[int]:
         """Get priority of node with given key."""
         node = self._find_node(self._root, key)
         return node.priority if node else None
-    
+
     def set_priority(self, key: str, priority: int) -> bool:
         """Set priority of node with given key."""
         node = self._find_node(self._root, key)
         if not node:
             return False
-        
         node.priority = priority
         # Rebalance if necessary
         self._root = self._balance_treap(self._root)
         return True
-    
+
     def get_max_priority(self) -> Optional[tuple[str, Any, int]]:
         """Get node with maximum priority."""
         if not self._root:
             return None
-        
         def find_max_priority(node: TreapNode) -> TreapNode:
             max_node = node
             if node.left:
@@ -471,32 +435,27 @@ class TreapStrategy(ANodeTreeStrategy):
                 if right_max.priority > max_node.priority:
                     max_node = right_max
             return max_node
-        
         max_node = find_max_priority(self._root)
         return (max_node.key, max_node.value, max_node.priority)
-    
+
     def is_treap_valid(self) -> bool:
         """Check if tree satisfies treap properties."""
         def check_treap(node: Optional[TreapNode]) -> bool:
             if not node:
                 return True
-            
             # Check heap property
             if node.left and node.left.priority > node.priority:
                 return False
             if node.right and node.right.priority > node.priority:
                 return False
-            
             # Check BST property
             if node.left and self._normalize_key(node.left.key) >= self._normalize_key(node.key):
                 return False
             if node.right and self._normalize_key(node.right.key) <= self._normalize_key(node.key):
                 return False
-            
             return check_treap(node.left) and check_treap(node.right)
-        
         return check_treap(self._root)
-    
+
     def get_stats(self) -> dict[str, Any]:
         """Get performance statistics."""
         return {

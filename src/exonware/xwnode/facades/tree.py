@@ -1,26 +1,22 @@
 """
 Tree Facade - XWTree[NT, ET]
-
 Specialized facade for tree data structures with optional edge properties
 and type-safe generic parameters.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 22-Oct-2025
 """
 
+from __future__ import annotations
 import logging
 from typing import Any, Optional, TypeVar
-
 from ..facade import XWNode
 from ..common.graph.manager import XWGraphManager
 from ..defs import NodeMode, EdgeMode
 from . import TREE_MODES
-
 logger = logging.getLogger(__name__)
-
 # Type variables for tree facade
 NT = TypeVar('NT')  # Node type - the type of data stored in nodes
 ET = TypeVar('ET')  # Edge type - the type of edge properties (optional for trees)
@@ -29,15 +25,12 @@ ET = TypeVar('ET')  # Edge type - the type of edge properties (optional for tree
 class XWTree[NT, ET](XWNode[dict[str, NT]]):
     """
     Specialized facade for tree data structures with generic type parameters.
-    
     Generic type parameters:
         NT: The type of data stored in nodes (Node Type)
         ET: The type of values in edge property dictionaries (Edge Type) - optional
-    
     Trees are acyclic connected graphs, so this facade extends XWNode with
     tree-specific operations while maintaining the flexibility to add edge
     properties for tree edges (parent-child relationships).
-    
     Example:
         >>> from exonware.xwnode.facades import XWTree
         >>> 
@@ -54,7 +47,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         >>> # Traverse tree
         >>> children = tree.get_children('root')
     """
-    
+
     def __init__(
         self,
         data: Optional[dict[str, NT]] = None,
@@ -67,7 +60,6 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
     ):
         """
         Initialize XWTree with node and optional edge configuration.
-        
         Args:
             data: Initial tree data dictionary mapping node IDs to node values of type NT
             mode: Tree node storage strategy (default: TREE_GRAPH_HYBRID)
@@ -80,60 +72,50 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         # Initialize node storage
         if isinstance(mode, str):
             mode = NodeMode[mode]
-        
         # Initialize the underlying XWNode for tree node storage
         tree_data = data or {}
         super().__init__(data=tree_data, mode=mode, immutable=immutable, **options)
-        
         # Initialize graph manager for parent-child edge operations (optional)
         if isinstance(edge_mode, str):
             edge_mode = EdgeMode[edge_mode]
-        
         self._graph_manager = XWGraphManager(
             edge_mode=edge_mode,
             enable_caching=enable_caching,
             enable_indexing=enable_indexing,
             **options
         )
-        
         self._tree_mode = mode
         self._edge_mode = edge_mode
-    
     # ============================================================================
     # TREE NODE OPERATIONS (delegated to XWNode)
     # ============================================================================
-    
+
     def add_node(self, node_id: str, data: NT, **options) -> None:
         """
         Add a node to the tree with typed data.
-        
         Args:
             node_id: Unique identifier for the node
             data: Node data of type NT
             **options: Additional node configuration options
         """
         self.put(node_id, data)
-    
+
     def get_node(self, node_id: str) -> Optional[NT]:
         """
         Get node data by ID.
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             Node data of type NT, or None if not found
         """
         node = self.get(node_id)
         return node.value if node else None  # type: ignore[return-value]
-    
+
     def remove_node(self, node_id: str) -> bool:
         """
         Remove a node from the tree and all its parent-child relationships.
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             True if removed, False if not found
         """
@@ -141,18 +123,15 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         children = self.get_children(node_id)
         for child_id in children:
             self._graph_manager.remove_relationship(node_id, child_id)
-        
         parent = self.get_parent(node_id)
         if parent:
             self._graph_manager.remove_relationship(parent, node_id)
-        
         # Remove the node itself
         return self.delete(node_id) is not None
-    
     # ============================================================================
     # TREE-SPECIFIC EDGE OPERATIONS (parent-child relationships)
     # ============================================================================
-    
+
     def add_edge(
         self,
         parent: str,
@@ -163,14 +142,12 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
     ) -> str:
         """
         Add a parent-child edge with typed properties.
-        
         Args:
             parent: Parent node ID
             child: Child node ID
             edge_type: Type of relationship (default: "child")
             properties: Edge properties dictionary with values of type ET
             **options: Additional edge configuration
-            
         Returns:
             Edge/relationship ID
         """
@@ -178,27 +155,23 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         return self._graph_manager.add_relationship(
             parent, child, edge_type, **props_dict
         )
-    
+
     def remove_edge(self, parent: str, child: str) -> bool:
         """
         Remove a parent-child edge.
-        
         Args:
             parent: Parent node ID
             child: Child node ID
-            
         Returns:
             True if removed, False if not found
         """
         return self._graph_manager.remove_relationship(parent, child, 'child')
-    
+
     def get_parent(self, node_id: str) -> Optional[str]:
         """
         Get the parent node ID.
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             Parent node ID, or None if root node
         """
@@ -206,7 +179,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         if incoming:
             return incoming[0].get('source')  # type: ignore[return-value]
         return None
-    
+
     def get_children(
         self,
         node_id: str,
@@ -215,66 +188,55 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
     ) -> list[str]:
         """
         Get child node IDs.
-        
         Args:
             node_id: Parent node identifier
             edge_type: Edge type filter (default: 'child')
             limit: Optional result limit
-            
         Returns:
             List of child node IDs
         """
         outgoing = self._graph_manager.get_outgoing(node_id, edge_type, limit)
         return [rel.get('target') for rel in outgoing if rel.get('target')]  # type: ignore[misc,return-value]
-    
+
     def get_siblings(self, node_id: str) -> list[str]:
         """
         Get sibling node IDs (nodes with the same parent).
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             List of sibling node IDs
         """
         parent = self.get_parent(node_id)
         if not parent:
             return []
-        
         siblings = self.get_children(parent)
         return [sib for sib in siblings if sib != node_id]
-    
+
     def is_root(self, node_id: str) -> bool:
         """
         Check if node is the root (has no parent).
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             True if root, False otherwise
         """
         return self.get_parent(node_id) is None
-    
+
     def is_leaf(self, node_id: str) -> bool:
         """
         Check if node is a leaf (has no children).
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             True if leaf, False otherwise
         """
         return len(self.get_children(node_id)) == 0
-    
+
     def get_depth(self, node_id: str) -> int:
         """
         Get the depth of a node in the tree (distance from root).
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             Depth of the node (0 for root)
         """
@@ -287,14 +249,12 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
             depth += 1
             current = parent
         return depth
-    
+
     def get_path_to_root(self, node_id: str) -> list[str]:
         """
         Get the path from node to root.
-        
         Args:
             node_id: Node identifier
-            
         Returns:
             List of node IDs from node to root (inclusive)
         """
@@ -307,7 +267,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
             path.append(parent)
             current = parent
         return path
-    
+
     def traverse(
         self,
         start_node: Optional[str] = None,
@@ -315,11 +275,9 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
     ) -> list[str]:
         """
         Traverse the tree in specified order.
-        
         Args:
             start_node: Starting node (default: root)
             order: Traversal order ('preorder', 'postorder', 'level')
-            
         Returns:
             List of node IDs in traversal order
         """
@@ -330,9 +288,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
             if not roots:
                 return []
             start_node = roots[0]
-        
         result = []
-        
         if order == 'preorder':
             result.append(start_node)
             for child in self.get_children(start_node):
@@ -348,56 +304,47 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
                 node = queue.pop(0)
                 result.append(node)
                 queue.extend(self.get_children(node))
-        
         return result
-    
     # ============================================================================
     # FACTORY METHODS
     # ============================================================================
-    
     @classmethod
+
     def from_native(
         cls,
         nodes: dict[str, NT],
         edges: Optional[list[tuple[str, str, Optional[dict[str, ET]]]]] = None,
         mode: NodeMode | str = NodeMode.TREE_GRAPH_HYBRID,
         **options
-    ) -> 'XWTree[NT, ET]':
+    ) -> XWTree[NT, ET]:
         """
         Create XWTree from native Python data.
-        
         Args:
             nodes: Dictionary mapping node IDs to node data of type NT
             edges: Optional list of parent-child edge tuples (parent, child, properties)
             mode: Tree storage strategy
             **options: Additional configuration options
-            
         Returns:
             XWTree[NT, ET] instance
         """
         tree = cls(data=nodes, mode=mode, **options)
-        
         # Add parent-child edges if provided
         if edges:
             for edge in edges:
                 parent, child, properties = edge
                 tree.add_edge(parent, child, properties=properties)
-        
         return tree
-    
     # ============================================================================
     # UTILITY METHODS
     # ============================================================================
-    
+
     def to_native(self) -> dict[str, Any]:
         """
         Convert tree to native Python representation.
-        
         Returns:
             Dictionary with 'nodes' and 'edges' keys
         """
         nodes = super().to_native()
-        
         # Collect all parent-child edges
         edges = []
         for node_id in nodes.keys():
@@ -410,13 +357,11 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
                         props = {k: v for k, v in rel.items() 
                                if k not in ('source', 'target', 'relationship_type')}
                         break
-                
                 edges.append({
                     'parent': node_id,
                     'child': child_id,
                     'properties': props
                 })
-        
         return {
             'nodes': nodes,
             'edges': edges

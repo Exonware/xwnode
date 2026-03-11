@@ -1,14 +1,11 @@
 """
 #exonware/xwnode/src/exonware/xwnode/common/graph/__init__.py
-
 Graph optimization module for XWNode.
-
 Provides O(1) relationship queries with multi-tenant security isolation.
-
 Company: eXonware.com
-Author: Eng. Muhammad AlShehri
+Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.1.0.1
+Version: 0.9.0.1
 Generation Date: 11-Oct-2025
 """
 
@@ -19,7 +16,6 @@ from .errors import (
     XWGraphEntityNotFoundError,
     XWGraphRelationshipNotFoundError
 )
-
 __all__ = [
     'XWGraphManager',
     'XWGraphError',
@@ -27,4 +23,3 @@ __all__ = [
     'XWGraphEntityNotFoundError',
     'XWGraphRelationshipNotFoundError'
 ]
-
