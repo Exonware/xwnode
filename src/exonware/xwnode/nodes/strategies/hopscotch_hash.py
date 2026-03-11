@@ -6,7 +6,7 @@ open addressing with bounded neighborhood search.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.1
+Version: 0.9.0.2
 Generation Date: 24-Oct-2025
 """
 

@@ -5,7 +5,7 @@ Optimizes relationship queries from O(n) to O(1).
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.1
+Version: 0.9.0.2
 Generation Date: 11-Oct-2025
 """
 
