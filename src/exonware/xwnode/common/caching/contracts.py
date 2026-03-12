@@ -4,7 +4,7 @@ Cache adapter interface and contracts.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.2
+Version: 0.9.0.3
 Generation Date: November 4, 2025
 """
 
