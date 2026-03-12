@@ -4,7 +4,7 @@ Management module for xwnode.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.3
+Version: 0.9.0.4
 """
 # Import and export main components
 

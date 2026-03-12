@@ -4,7 +4,7 @@ Cache adapters wrapping xwsystem.caching implementations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.3
+Version: 0.9.0.4
 Generation Date: November 4, 2025
 """
 
