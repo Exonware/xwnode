@@ -4,7 +4,7 @@ Cache controller implementing 4-level caching hierarchy.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.5
+Version: 0.9.0.6
 Generation Date: November 4, 2025
 """
 

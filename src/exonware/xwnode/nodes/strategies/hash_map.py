@@ -10,7 +10,7 @@ using Python's built-in dictionary.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.5
+Version: 0.9.0.6
 Generation Date: 24-Oct-2025
 """
 
@@ -92,8 +92,11 @@ class HashMapStrategy(AKeyValueStrategy):
         """
         super().__init__(mode=mode or NodeMode.HASH_MAP, traits=traits or NodeTrait.NONE, **options)
         self._data: dict[str, Any] = {}
-        self._size_tracker = create_size_tracker()
-        self._access_tracker = create_access_tracker()
+        self._size_count = 0
+        self._get_count = 0
+        self._put_count = 0
+        self._delete_count = 0
+        self._access_count = 0
 
     def get_supported_traits(self) -> NodeTrait:
         """
@@ -110,7 +113,7 @@ class HashMapStrategy(AKeyValueStrategy):
         Retrieve a value by path.
         Time Complexity: O(1) for simple keys, O(depth) for nested paths
         """
-        record_access(self._access_tracker, 'get_count')
+        self._get_count += 1
         # Handle simple key lookup
         if '.' not in path:
             return self._data.get(path, default)
@@ -146,8 +149,8 @@ class HashMapStrategy(AKeyValueStrategy):
         str_key = str(key)
         if str_key in self._data:
             del self._data[str_key]
-            update_size_tracker(self._size_tracker, -1)
-            record_access(self._access_tracker, 'delete_count')
+            self._size_count -= 1
+            self._delete_count += 1
             return True
         return False
 
@@ -167,9 +170,9 @@ class HashMapStrategy(AKeyValueStrategy):
         if not isinstance(path, str) or '.' not in path:
             str_key = str(path)
             if str_key not in self._data:
-                update_size_tracker(self._size_tracker, 1)
+                self._size_count += 1
             self._data[str_key] = value
-            record_access(self._access_tracker, 'put_count')
+            self._put_count += 1
             return self
         # Handle path setting
         parts = path.split('.')
@@ -196,9 +199,9 @@ class HashMapStrategy(AKeyValueStrategy):
         """
         str_key = str(key)
         if str_key not in self._data:
-            update_size_tracker(self._size_tracker, 1)
+            self._size_count += 1
         self._data[str_key] = value
-        record_access(self._access_tracker, 'put_count')
+        self._put_count += 1
 
     def find(self, key: Any) -> Any | None:
         """
@@ -219,7 +222,7 @@ class HashMapStrategy(AKeyValueStrategy):
         Returns:
             Count of key-value pairs
         """
-        return self._size_tracker['size']
+        return self._size_count
 
     def is_empty(self) -> bool:
         """
@@ -228,7 +231,7 @@ class HashMapStrategy(AKeyValueStrategy):
         Returns:
             True if no items, False otherwise
         """
-        return self._size_tracker['size'] == 0
+        return self._size_count == 0
 
     def get_mode(self) -> NodeMode:
         """
@@ -280,7 +283,7 @@ class HashMapStrategy(AKeyValueStrategy):
         Time Complexity: O(1)
         """
         self._data.clear()
-        self._size_tracker['size'] = 0
+        self._size_count = 0
 
     def keys(self) -> Iterator[str]:
         """
@@ -308,7 +311,7 @@ class HashMapStrategy(AKeyValueStrategy):
         Get the number of items.
         Time Complexity: O(1)
         """
-        return self._size_tracker['size']
+        return self._size_count
 
     def __getitem__(self, key: str | int) -> Any:
         """
@@ -484,7 +487,11 @@ class HashMapStrategy(AKeyValueStrategy):
 
     def metrics(self) -> dict[str, Any]:
         """Get performance metrics."""
-        base_metrics = create_basic_metrics('HASH_MAP', self._size_tracker['size'])
-        access_metrics = get_access_metrics(self._access_tracker)
-        base_metrics.update(access_metrics)
+        base_metrics = create_basic_metrics('HASH_MAP', self._size_count)
+        base_metrics.update({
+            'get_count': self._get_count,
+            'put_count': self._put_count,
+            'delete_count': self._delete_count,
+            'access_count': self._get_count + self._put_count + self._delete_count,
+        })
         return base_metrics

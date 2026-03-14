@@ -68,7 +68,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.9.0.4"
+python_version = "0.9.0.5"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

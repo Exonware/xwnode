@@ -308,28 +308,32 @@ class RTreeStrategy(AEdgeStrategy):
                     node2.add_entry(rect, data)
         return node1, node2
 
-    def _find_parent(self, target, current=None):
-        """Find the parent of a target node by traversing from root."""
-        if current is None:
-            current = self._root
-        if current is None or current.is_leaf:
-            return None
-        for _, child in current.entries:
-            if child is target:
-                return current
-            if isinstance(child, RTreeNode) and not child.is_leaf:
-                result = self._find_parent(target, child)
-                if result is not None:
-                    return result
-        return None
-
     def _insert_with_split(self, edge: SpatialEdge) -> None:
         """Insert edge with node splitting and upward propagation."""
-        leaf = self._choose_leaf(edge.bounding_rect)
-        leaf.add_entry(edge.bounding_rect, edge)
+        # Build path from root to leaf for split propagation
+        path = []
+        if self._root is None:
+            self._root = RTreeNode(is_leaf=True, max_entries=self.max_entries)
+        current = self._root
+        while not current.is_leaf:
+            path.append(current)
+            best_child = None
+            best_enlargement = float('inf')
+            best_area = float('inf')
+            for child_rect, child_node in current.entries:
+                enlargement = child_rect.enlargement_needed(edge.bounding_rect)
+                area = child_rect.area()
+                if (enlargement < best_enlargement or
+                    (enlargement == best_enlargement and area < best_area)):
+                    best_enlargement = enlargement
+                    best_area = area
+                    best_child = child_node
+            current = best_child
+        # Insert into leaf
+        current.add_entry(edge.bounding_rect, edge)
         # Handle overflow - propagate splits up the tree
-        node = leaf
-        while node is not None and len(node.entries) > self.max_entries:
+        node = current
+        while len(node.entries) > self.max_entries:
             node1, node2 = self._split_node(node)
             if node is self._root:
                 new_root = RTreeNode(is_leaf=False, max_entries=self.max_entries)
@@ -339,7 +343,7 @@ class RTreeStrategy(AEdgeStrategy):
                 self._tree_height += 1
                 break
             else:
-                parent = self._find_parent(node)
+                parent = path.pop() if path else None
                 if parent is None:
                     break
                 # Remove old entry and add two new ones

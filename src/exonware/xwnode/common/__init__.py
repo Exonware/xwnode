@@ -4,7 +4,7 @@ Common utilities and patterns shared across xwnode.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.5
+Version: 0.9.0.6
 """
 # Explicit imports - no wildcards (per GUIDELINES_DEV.md)
 
