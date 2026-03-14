@@ -53,7 +53,7 @@ class TestGraphBLASStrategy:
 
     def test_delete_edge_operation(self, simple_graphblas):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_graphblas.delete_edge('A', 'B') is True
+        assert simple_graphblas.remove_edge('A', 'B') is True
         assert simple_graphblas.has_edge('A', 'B') is False
 
     def test_get_neighbors_operation(self, simple_graphblas):

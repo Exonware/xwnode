@@ -5,7 +5,7 @@ B-Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.7
+Version: 0.9.0.8
 Generation Date: 16-Jan-2026
 """
 
@@ -334,7 +334,6 @@ class BTreeStrategy(ANodeTreeStrategy):
         Time Complexity: O(1)
         """
         return self._size
-    @property
 
     def is_empty(self) -> bool:
         """

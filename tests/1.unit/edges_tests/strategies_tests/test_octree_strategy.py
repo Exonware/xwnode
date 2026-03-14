@@ -52,5 +52,5 @@ class TestOctreeStrategy:
 
     def test_delete_edge_operation(self, simple_octree):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_octree.delete_edge('A', 'B') is True
+        assert simple_octree.remove_edge('A', 'B') is True
         assert simple_octree.has_edge('A', 'B') is False

@@ -62,7 +62,7 @@ class TestPriorityQueueStrategyInterface:
         """Test push operation works correctly."""
         empty_pq.push('test_value', priority=5)
         assert empty_pq.size() == 1
-        assert empty_pq.peek() == 'test_value'
+        assert empty_pq.front() == 'test_value'
 
     def test_pop_operation_min_heap(self, min_heap):
         """Test pop operation follows priority order (min-heap)."""
@@ -70,7 +70,7 @@ class TestPriorityQueueStrategyInterface:
         assert min_heap.pop() == 'value1'
         assert min_heap.pop() == 'value2'
         assert min_heap.pop() == 'value3'
-        assert min_heap.is_empty is True
+        assert min_heap.is_empty() is True
 
     def test_pop_operation_max_heap(self, max_heap):
         """Test pop operation follows priority order (max-heap)."""
@@ -78,13 +78,13 @@ class TestPriorityQueueStrategyInterface:
         assert max_heap.pop() == 'value3'
         assert max_heap.pop() == 'value2'
         assert max_heap.pop() == 'value1'
-        assert max_heap.is_empty is True
+        assert max_heap.is_empty() is True
 
     def test_peek_operation(self, min_heap):
         """Test peek returns highest priority without removing."""
-        assert min_heap.peek() == 'value1'  # Lowest priority value
+        assert min_heap.front() == 'value1'  # Lowest priority value
         assert min_heap.size() == 3  # Size unchanged
-        assert min_heap.peek() == 'value1'  # Still there
+        assert min_heap.front() == 'value1'  # Still there
 
     def test_size_operation(self, min_heap):
         """Test size returns correct count."""
@@ -94,8 +94,8 @@ class TestPriorityQueueStrategyInterface:
 
     def test_is_empty_operation(self, empty_pq, min_heap):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_pq.is_empty is True
-        assert min_heap.is_empty is False
+        assert empty_pq.is_empty() is True
+        assert min_heap.is_empty() is False
 # ============================================================================
 # PRIORITY ORDERING TESTS
 # ============================================================================
@@ -148,7 +148,7 @@ class TestPriorityQueueStrategyCore:
     def test_clear_operation(self, min_heap):
         """Test clear removes all items."""
         min_heap.clear()
-        assert min_heap.is_empty is True
+        assert min_heap.is_empty() is True
         assert min_heap.size() == 0
 
     def test_initial_items(self):
@@ -169,17 +169,18 @@ class TestPriorityQueueStrategyEdgeCases:
 
     def test_empty_pq_operations(self, empty_pq):
         """Test operations on empty priority queue."""
-        assert empty_pq.pop() is None
-        assert empty_pq.peek() is None
+        with pytest.raises(IndexError):
+            empty_pq.pop()
+        assert empty_pq.front() is None
         assert empty_pq.size() == 0
 
     def test_single_item_pq(self, empty_pq):
         """Test priority queue with single item."""
         empty_pq.push('single', priority=1)
         assert empty_pq.size() == 1
-        assert empty_pq.peek() == 'single'
+        assert empty_pq.front() == 'single'
         assert empty_pq.pop() == 'single'
-        assert empty_pq.is_empty is True
+        assert empty_pq.is_empty() is True
 
     def test_negative_priorities(self, empty_pq):
         """Test handling of negative priorities."""
@@ -208,4 +209,4 @@ class TestPriorityQueueStrategyPerformance:
         # Pop all items - should be in priority order
         for i in range(100):
             assert pq.pop() == f'item_{i}'
-        assert pq.is_empty is True
+        assert pq.is_empty() is True

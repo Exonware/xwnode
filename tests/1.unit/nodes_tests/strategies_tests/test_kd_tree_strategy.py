@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.nodes.strategies.kd_tree import KdTreeStrategy
 from exonware.xwnode.defs import NodeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_kd_tree():
     """Create empty KD-tree."""
-    return XWNode(mode=NodeMode.KD_TREE)
+    return KdTreeStrategy()
 @pytest.fixture
 
 def simple_kd_tree():
     """Create KD-tree with 2D points."""
-    tree = XWNode(mode=NodeMode.KD_TREE)
+    tree = KdTreeStrategy()
     tree.put((1.0, 2.0), {'id': 'point1', 'data': 'value1'})
     tree.put((3.0, 4.0), {'id': 'point2', 'data': 'value2'})
     tree.put((5.0, 6.0), {'id': 'point3', 'data': 'value3'})
@@ -66,5 +66,5 @@ class TestKDTreeStrategy:
 
     def test_is_empty_operation(self, empty_kd_tree, simple_kd_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_kd_tree.is_empty is True
-        assert simple_kd_tree.is_empty is False
+        assert empty_kd_tree.is_empty() is True
+        assert simple_kd_tree.is_empty() is False

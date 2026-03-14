@@ -52,5 +52,5 @@ class TestEulerTourStrategy:
 
     def test_delete_edge_operation(self, simple_euler_tour):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_euler_tour.delete_edge('A', 'B') is True
+        assert simple_euler_tour.remove_edge('A', 'B') is True
         assert simple_euler_tour.has_edge('A', 'B') is False

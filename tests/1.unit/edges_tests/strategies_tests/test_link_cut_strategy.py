@@ -52,5 +52,5 @@ class TestLinkCutStrategy:
 
     def test_delete_edge_operation(self, simple_link_cut):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_link_cut.delete_edge('A', 'B') is True
+        assert simple_link_cut.remove_edge('A', 'B') is True
         assert simple_link_cut.has_edge('A', 'B') is False

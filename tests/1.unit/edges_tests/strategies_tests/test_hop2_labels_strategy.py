@@ -52,5 +52,5 @@ class TestHop2LabelsStrategy:
 
     def test_delete_edge_operation(self, simple_hop2):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_hop2.delete_edge('A', 'B') is True
+        assert simple_hop2.remove_edge('A', 'B') is True
         assert simple_hop2.has_edge('A', 'B') is False

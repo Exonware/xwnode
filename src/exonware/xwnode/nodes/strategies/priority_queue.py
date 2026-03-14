@@ -11,7 +11,7 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.7
+Version: 0.9.0.8
 Generation Date: 24-Oct-2025
 """
 
@@ -278,7 +278,6 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """Clear all items from the priority queue."""
         self._heap.clear()
         self._counter = 0
-        self._record_access("clear")
 
     def to_list(self) -> list[tuple[float, Any]]:
         """Convert to sorted list of (priority, value) tuples."""
@@ -493,7 +492,6 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """Clear all items from the priority queue."""
         self._heap.clear()
         self._counter = 0
-        self._record_access("clear")
     # ============================================================================
     # PERFORMANCE METADATA
     # ============================================================================

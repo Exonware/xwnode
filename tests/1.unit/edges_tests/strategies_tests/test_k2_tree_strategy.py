@@ -52,5 +52,5 @@ class TestK2TreeStrategy:
 
     def test_delete_edge_operation(self, simple_k2_tree):
         """Test delete_edge operation removes edges correctly."""
-        assert simple_k2_tree.delete_edge('A', 'B') is True
+        assert simple_k2_tree.remove_edge('A', 'B') is True
         assert simple_k2_tree.has_edge('A', 'B') is False

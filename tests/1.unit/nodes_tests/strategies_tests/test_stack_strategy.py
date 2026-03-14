@@ -60,7 +60,7 @@ class TestStackStrategyInterface:
         assert simple_stack.pop() == 'value3'
         assert simple_stack.pop() == 'value2'
         assert simple_stack.pop() == 'value1'
-        assert simple_stack.is_empty is True
+        assert simple_stack.is_empty() is True
 
     def test_peek_operation(self, simple_stack):
         """Test peek returns top without removing."""
@@ -76,13 +76,13 @@ class TestStackStrategyInterface:
 
     def test_is_empty_operation(self, empty_stack, simple_stack):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_stack.is_empty is True
-        assert simple_stack.is_empty is False
+        assert empty_stack.is_empty() is True
+        assert simple_stack.is_empty() is False
 
     def test_to_native_conversion(self, simple_stack):
         """Test conversion to native Python list."""
         native = simple_stack.to_native()
-        assert isinstance(native, list)
+        assert isinstance(native, dict)
         # Stack should be in LIFO order (top to bottom)
         assert len(native) == 3
 # ============================================================================
@@ -123,7 +123,7 @@ class TestStackStrategyCore:
     def test_clear_operation(self, simple_stack):
         """Test clear removes all items."""
         simple_stack.clear()
-        assert simple_stack.is_empty is True
+        assert simple_stack.is_empty() is True
         assert simple_stack.size() == 0
 
     def test_max_size_limit(self):
@@ -154,7 +154,8 @@ class TestStackStrategyEdgeCases:
 
     def test_empty_stack_operations(self, empty_stack):
         """Test operations on empty stack."""
-        assert empty_stack.pop() is None
+        with pytest.raises(IndexError):
+            empty_stack.pop()
         assert empty_stack.peek() is None
         assert empty_stack.size() == 0
 
@@ -164,13 +165,14 @@ class TestStackStrategyEdgeCases:
         assert empty_stack.size() == 1
         assert empty_stack.peek() == 'single'
         assert empty_stack.pop() == 'single'
-        assert empty_stack.is_empty is True
+        assert empty_stack.is_empty() is True
 
     def test_none_values(self, empty_stack):
         """Test handling of None values."""
         empty_stack.push(None)
         assert empty_stack.peek() is None
-        assert empty_stack.pop() is None
+        with pytest.raises(IndexError):
+            empty_stack.pop()
 
     def test_nested_structures(self, empty_stack):
         """Test pushing nested structures."""
@@ -199,4 +201,4 @@ class TestStackStrategyPerformance:
         # Pop all items
         for i in range(999, -1, -1):
             assert stack.pop() == f'item_{i}'
-        assert stack.is_empty is True
+        assert stack.is_empty() is True

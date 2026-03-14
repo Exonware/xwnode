@@ -30,8 +30,8 @@ def empty_multiplex():
 def simple_multiplex():
     """Create multiplex graph with edges."""
     graph = MultiplexStrategy()
-    graph.add_edge('A', 'B', layer='layer1')
-    graph.add_edge('B', 'C', layer='layer2')
+    graph.add_edge('A', 'B', edge_type='layer1')
+    graph.add_edge('B', 'C', edge_type='layer2')
     return graph
 @pytest.mark.xwnode_unit
 @pytest.mark.xwnode_edge_strategy
@@ -41,7 +41,7 @@ class TestMultiplexStrategy:
 
     def test_add_edge_operation(self, empty_multiplex):
         """Test add_edge operation works correctly."""
-        edge_id = empty_multiplex.add_edge('A', 'B', layer='layer1')
+        edge_id = empty_multiplex.add_edge('A', 'B', edge_type='layer1')
         assert edge_id is not None
         assert empty_multiplex.has_edge('A', 'B') is True
 
@@ -51,6 +51,6 @@ class TestMultiplexStrategy:
         assert simple_multiplex.has_edge('B', 'C') is True
 
     def test_delete_edge_operation(self, simple_multiplex):
-        """Test delete_edge operation removes edges correctly."""
-        assert simple_multiplex.delete_edge('A', 'B') is True
+        """Test remove_edge operation removes edges correctly."""
+        assert simple_multiplex.remove_edge('A', 'B') is True
         assert simple_multiplex.has_edge('A', 'B') is False

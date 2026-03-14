@@ -76,8 +76,8 @@ class TestCuckooHashStrategyInterface:
 
     def test_is_empty_operation(self, empty_hash, simple_hash):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_hash.is_empty is True
-        assert simple_hash.is_empty is False
+        assert empty_hash.is_empty() is True
+        assert simple_hash.is_empty() is False
 # ============================================================================
 # CUCKOO HASHING TESTS
 # ============================================================================
@@ -114,7 +114,7 @@ class TestCuckooHashStrategyCore:
     def test_clear_operation(self, simple_hash):
         """Test clear removes all items."""
         simple_hash.clear()
-        assert simple_hash.is_empty is True
+        assert simple_hash.is_empty() is True
         assert simple_hash.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

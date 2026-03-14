@@ -6,7 +6,7 @@ on fixed-universe integer keys.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.7
+Version: 0.9.0.8
 Generation Date: 24-Oct-2025
 """
 

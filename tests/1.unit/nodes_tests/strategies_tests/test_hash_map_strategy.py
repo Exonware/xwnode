@@ -81,8 +81,8 @@ class TestHashMapStrategyInterface:
 
     def test_is_empty_operation(self, empty_strategy, simple_strategy):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_strategy.is_empty is True
-        assert simple_strategy.is_empty is False
+        assert empty_strategy.is_empty() is True
+        assert simple_strategy.is_empty() is False
 
     def test_to_native_conversion(self, simple_strategy):
         """Test conversion to native Python dict."""
@@ -145,7 +145,7 @@ class TestHashMapStrategyCore:
     def test_clear_operation(self, simple_strategy):
         """Test clear() removes all items."""
         simple_strategy.clear()
-        assert simple_strategy.is_empty is True
+        assert simple_strategy.is_empty() is True
         assert simple_strategy.size() == 0
 
     def test_contains_operation(self, simple_strategy):
@@ -295,7 +295,7 @@ class TestHashMapStrategyEdgeCases:
     def test_empty_data_handling(self):
         """Test handling of empty data."""
         strategy = HashMapStrategy()
-        assert strategy.is_empty is True
+        assert strategy.is_empty() is True
         assert strategy.size() == 0
         assert list(strategy.keys()) == []
 

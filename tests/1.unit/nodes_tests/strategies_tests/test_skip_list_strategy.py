@@ -85,8 +85,8 @@ class TestSkipListStrategyInterface:
 
     def test_is_empty_operation(self, empty_skip_list, simple_skip_list):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_skip_list.is_empty is True
-        assert simple_skip_list.is_empty is False
+        assert empty_skip_list.is_empty() is True
+        assert simple_skip_list.is_empty() is False
 
     def test_to_native_conversion(self, simple_skip_list):
         """Test conversion to native Python dict."""
@@ -146,7 +146,7 @@ class TestSkipListStrategyCore:
     def test_clear_operation(self, simple_skip_list):
         """Test clear removes all items."""
         simple_skip_list.clear()
-        assert simple_skip_list.is_empty is True
+        assert simple_skip_list.is_empty() is True
         assert simple_skip_list.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -207,7 +207,7 @@ class TestSkipListStrategyEdgeCases:
         assert empty_skip_list.size() == 1
         assert empty_skip_list.get('single') == 'value'
         empty_skip_list.delete('single')
-        assert empty_skip_list.is_empty is True
+        assert empty_skip_list.is_empty() is True
 # ============================================================================
 # PERFORMANCE TESTS
 # ============================================================================

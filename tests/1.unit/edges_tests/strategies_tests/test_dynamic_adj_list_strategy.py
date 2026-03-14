@@ -98,7 +98,7 @@ class TestDynamicAdjListStrategyCore:
 
     def test_vertex_count(self, simple_strategy):
         """Test vertex count tracking."""
-        vertices = simple_strategy.vertices()
+        vertices = list(simple_strategy.vertices())
         assert 'A' in vertices
         assert 'B' in vertices
         assert 'C' in vertices

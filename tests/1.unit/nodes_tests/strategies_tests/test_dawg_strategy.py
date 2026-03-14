@@ -18,19 +18,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.nodes.strategies.dawg import DawgStrategy
 from exonware.xwnode.defs import NodeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_dawg():
     """Create empty DAWG."""
-    return XWNode(mode=NodeMode.DAWG)
+    return DawgStrategy()
 @pytest.fixture
 
 def simple_dawg():
     """Create DAWG with simple words."""
-    dawg = XWNode(mode=NodeMode.DAWG)
+    dawg = DawgStrategy()
     dawg.put('hello', True)
     dawg.put('help', True)
     dawg.put('world', True)
@@ -67,5 +67,5 @@ class TestDAWGStrategy:
 
     def test_is_empty_operation(self, empty_dawg, simple_dawg):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_dawg.is_empty is True
-        assert simple_dawg.is_empty is False
+        assert empty_dawg.is_empty() is True
+        assert simple_dawg.is_empty() is False

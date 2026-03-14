@@ -75,8 +75,8 @@ class TestSetTreeStrategyInterface:
 
     def test_is_empty_operation(self, empty_set, simple_set):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_set.is_empty is True
-        assert simple_set.is_empty is False
+        assert empty_set.is_empty() is True
+        assert simple_set.is_empty() is False
 # ============================================================================
 # SET OPERATIONS TESTS
 # ============================================================================
@@ -134,7 +134,7 @@ class TestSetTreeStrategyCore:
     def test_clear_operation(self, simple_set):
         """Test clear removes all items."""
         simple_set.clear()
-        assert simple_set.is_empty is True
+        assert simple_set.is_empty() is True
         assert simple_set.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

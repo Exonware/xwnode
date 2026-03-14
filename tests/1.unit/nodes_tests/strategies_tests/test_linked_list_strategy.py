@@ -74,8 +74,8 @@ class TestLinkedListStrategyInterface:
 
     def test_is_empty_operation(self, empty_strategy, simple_strategy):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_strategy.is_empty is True
-        assert simple_strategy.is_empty is False
+        assert empty_strategy.is_empty() is True
+        assert simple_strategy.is_empty() is False
 
     def test_to_native_conversion(self, simple_strategy):
         """Test conversion to native Python dict."""
@@ -141,7 +141,7 @@ class TestLinkedListStrategyCore:
     def test_clear_operation(self, simple_strategy):
         """Test clear removes all items."""
         simple_strategy.clear()
-        assert simple_strategy.is_empty is True
+        assert simple_strategy.is_empty() is True
         assert simple_strategy.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -197,7 +197,7 @@ class TestLinkedListStrategyEdgeCases:
         assert empty_strategy.size() == 1
         assert empty_strategy.find('single') == 'value'
         empty_strategy.delete('single')
-        assert empty_strategy.is_empty is True
+        assert empty_strategy.is_empty() is True
 
     def test_index_bounds(self, simple_strategy):
         """Test index bounds checking."""

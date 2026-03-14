@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.nodes.strategies.interval_tree import IntervalTreeStrategy
 from exonware.xwnode.defs import NodeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_interval_tree():
     """Create empty interval tree."""
-    return XWNode(mode=NodeMode.INTERVAL_TREE)
+    return IntervalTreeStrategy()
 @pytest.fixture
 
 def simple_interval_tree():
     """Create interval tree with intervals."""
-    tree = XWNode(mode=NodeMode.INTERVAL_TREE)
+    tree = IntervalTreeStrategy()
     tree.put((10, 20), {'id': 'interval1', 'data': 'value1'})
     tree.put((15, 25), {'id': 'interval2', 'data': 'value2'})
     tree.put((30, 40), {'id': 'interval3', 'data': 'value3'})
@@ -66,5 +66,5 @@ class TestIntervalTreeStrategy:
 
     def test_is_empty_operation(self, empty_interval_tree, simple_interval_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_interval_tree.is_empty is True
-        assert simple_interval_tree.is_empty is False
+        assert empty_interval_tree.is_empty() is True
+        assert simple_interval_tree.is_empty() is False

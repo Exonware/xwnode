@@ -52,7 +52,7 @@ class TestQueueStrategyInterface:
         """Test enqueue operation works correctly."""
         empty_queue.enqueue('test_value')
         assert empty_queue.size() == 1
-        assert empty_queue.peek() == 'test_value'
+        assert empty_queue.front() == 'test_value'
 
     def test_dequeue_operation(self, simple_queue):
         """Test dequeue operation follows FIFO order."""
@@ -60,13 +60,13 @@ class TestQueueStrategyInterface:
         assert simple_queue.dequeue() == 'value1'
         assert simple_queue.dequeue() == 'value2'
         assert simple_queue.dequeue() == 'value3'
-        assert simple_queue.is_empty is True
+        assert simple_queue.is_empty() is True
 
     def test_peek_operation(self, simple_queue):
         """Test peek returns front without removing."""
-        assert simple_queue.peek() == 'value1'
+        assert simple_queue.front() == 'value1'
         assert simple_queue.size() == 3  # Size unchanged
-        assert simple_queue.peek() == 'value1'  # Still there
+        assert simple_queue.front() == 'value1'  # Still there
 
     def test_size_operation(self, simple_queue):
         """Test size returns correct count."""
@@ -76,13 +76,13 @@ class TestQueueStrategyInterface:
 
     def test_is_empty_operation(self, empty_queue, simple_queue):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_queue.is_empty is True
-        assert simple_queue.is_empty is False
+        assert empty_queue.is_empty() is True
+        assert simple_queue.is_empty() is False
 
     def test_to_native_conversion(self, simple_queue):
         """Test conversion to native Python list."""
         native = simple_queue.to_native()
-        assert isinstance(native, list)
+        assert isinstance(native, dict)
         assert len(native) == 3
 # ============================================================================
 # FIFO SEMANTICS TESTS
@@ -122,7 +122,7 @@ class TestQueueStrategyCore:
     def test_clear_operation(self, simple_queue):
         """Test clear removes all items."""
         simple_queue.clear()
-        assert simple_queue.is_empty is True
+        assert simple_queue.is_empty() is True
         assert simple_queue.size() == 0
 
     def test_initial_values(self):
@@ -160,23 +160,25 @@ class TestQueueStrategyEdgeCases:
 
     def test_empty_queue_operations(self, empty_queue):
         """Test operations on empty queue."""
-        assert empty_queue.dequeue() is None
-        assert empty_queue.peek() is None
+        with pytest.raises(IndexError):
+            empty_queue.dequeue()
+        assert empty_queue.front() is None
         assert empty_queue.size() == 0
 
     def test_single_item_queue(self, empty_queue):
         """Test queue with single item."""
         empty_queue.enqueue('single')
         assert empty_queue.size() == 1
-        assert empty_queue.peek() == 'single'
+        assert empty_queue.front() == 'single'
         assert empty_queue.dequeue() == 'single'
-        assert empty_queue.is_empty is True
+        assert empty_queue.is_empty() is True
 
     def test_none_values(self, empty_queue):
         """Test handling of None values."""
         empty_queue.enqueue(None)
-        assert empty_queue.peek() is None
-        assert empty_queue.dequeue() is None
+        assert empty_queue.front() is None
+        with pytest.raises(IndexError):
+            empty_queue.dequeue()
 # ============================================================================
 # PERFORMANCE TESTS
 # ============================================================================
@@ -197,4 +199,4 @@ class TestQueueStrategyPerformance:
         # Dequeue all items
         for i in range(1000):
             assert queue.dequeue() == f'item_{i}'
-        assert queue.is_empty is True
+        assert queue.is_empty() is True

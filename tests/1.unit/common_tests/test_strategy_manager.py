@@ -70,15 +70,15 @@ class TestStrategyManagerCreation:
         empty_list = manager.create_node_strategy([])
         assert empty_dict is not None
         assert empty_list is not None
-        assert empty_dict.is_empty is True
-        assert empty_list.is_empty is True
+        assert empty_dict.is_empty() is True
+        assert empty_list.is_empty() is True
 
     def test_create_with_none_data(self, manager):
         """Test creating strategy from None."""
         strategy = manager.create_node_strategy(None)
         assert strategy is not None
         # Should create empty strategy
-        assert strategy.is_empty is True or strategy.size() == 0
+        assert strategy.is_empty() is True or strategy.size() == 0
 # ============================================================================
 # STRATEGY SELECTION TESTS
 # ============================================================================

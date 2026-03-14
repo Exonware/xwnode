@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.nodes.strategies.rope import RopeStrategy
 from exonware.xwnode.defs import NodeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_rope():
     """Create empty rope."""
-    return XWNode(mode=NodeMode.ROPE)
+    return RopeStrategy()
 @pytest.fixture
 
 def simple_rope():
     """Create rope with text."""
-    rope = XWNode(mode=NodeMode.ROPE)
+    rope = RopeStrategy()
     rope.put(0, 'Hello')
     rope.put(5, ' World')
     return rope
@@ -53,7 +53,7 @@ class TestRopeStrategy:
     def test_delete_operation(self, simple_rope):
         """Test delete operation removes text correctly."""
         assert simple_rope.delete(0) is True
-        assert simple_rope.get(0) is None
+        assert simple_rope.get(0) == ''
 
     def test_size_operation(self, simple_rope):
         """Test size returns correct count."""
@@ -61,5 +61,5 @@ class TestRopeStrategy:
 
     def test_is_empty_operation(self, empty_rope, simple_rope):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_rope.is_empty is True
-        assert simple_rope.is_empty is False
+        assert empty_rope.is_empty() is True
+        assert simple_rope.is_empty() is False

@@ -77,8 +77,8 @@ class TestOrderedMapBalancedStrategyInterface:
 
     def test_is_empty_operation(self, empty_map, simple_map):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_map.is_empty is True
-        assert simple_map.is_empty is False
+        assert empty_map.is_empty() is True
+        assert simple_map.is_empty() is False
 # ============================================================================
 # BALANCED TREE TESTS
 # ============================================================================
@@ -118,7 +118,7 @@ class TestOrderedMapBalancedStrategyCore:
     def test_clear_operation(self, simple_map):
         """Test clear removes all items."""
         simple_map.clear()
-        assert simple_map.is_empty is True
+        assert simple_map.is_empty() is True
         assert simple_map.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

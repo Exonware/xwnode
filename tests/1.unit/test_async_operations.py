@@ -7,7 +7,7 @@ import asyncio
 import time
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'examples' / 'x5'))
 from json_utils import async_stream_read, match_by_id
 from json_utils_indexed import async_indexed_get_by_id, async_ensure_index
 async def test_concurrent_reads(file_path: str, num_concurrent: int = 10):

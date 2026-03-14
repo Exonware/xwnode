@@ -76,8 +76,8 @@ class TestHAMTStrategyInterface:
 
     def test_is_empty_operation(self, empty_hamt, simple_hamt):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_hamt.is_empty is True
-        assert simple_hamt.is_empty is False
+        assert empty_hamt.is_empty() is True
+        assert simple_hamt.is_empty() is False
 # ============================================================================
 # CORE FUNCTIONALITY TESTS
 # ============================================================================
@@ -96,7 +96,7 @@ class TestHAMTStrategyCore:
     def test_clear_operation(self, simple_hamt):
         """Test clear removes all items."""
         simple_hamt.clear()
-        assert simple_hamt.is_empty is True
+        assert simple_hamt.is_empty() is True
         assert simple_hamt.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

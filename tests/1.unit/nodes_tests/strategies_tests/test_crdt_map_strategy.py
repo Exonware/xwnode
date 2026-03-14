@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.nodes.strategies.crdt_map import CRDTMapStrategy
 from exonware.xwnode.defs import NodeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_crdt():
     """Create empty CRDT map."""
-    return XWNode(mode=NodeMode.CRDT_MAP)
+    return CRDTMapStrategy()
 @pytest.fixture
 
 def simple_crdt():
     """Create CRDT map with data."""
-    crdt = XWNode(mode=NodeMode.CRDT_MAP)
+    crdt = CRDTMapStrategy()
     crdt.put('key1', {'value': 'value1', 'timestamp': 1000})
     crdt.put('key2', {'value': 'value2', 'timestamp': 1001})
     return crdt
@@ -65,5 +65,5 @@ class TestCRDTMapStrategy:
 
     def test_is_empty_operation(self, empty_crdt, simple_crdt):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_crdt.is_empty is True
-        assert simple_crdt.is_empty is False
+        assert empty_crdt.is_empty() is True
+        assert simple_crdt.is_empty() is False
