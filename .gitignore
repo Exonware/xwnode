@@ -295,3 +295,10 @@ tests/*/*/runner_out.md
 # xwlazy generated files (should be in ~/.xwlazy/ but ignore in case of old behavior)
 xwlazy.lock.toml
 xwlazy_sbom.toml
+
+# ========================================
+# Large example data (exceed GitHub 100MB limit; generate locally or use LFS)
+# ========================================
+examples/x5/data/*.jsonl
+examples/x5/data/*.jsonl.idx.json
+examples/x5/data/*.jsonl.ids.json
