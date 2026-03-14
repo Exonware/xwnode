@@ -6,16 +6,17 @@ compression for power-law graphs.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
 
+from collections.abc import Iterator
 class CompressedGraphStrategy(AEdgeStrategy):
     """
     Compressed Graph - WebGraph/LLP compression for power-law graphs.
@@ -83,7 +84,7 @@ class CompressedGraphStrategy(AEdgeStrategy):
         edge_id = f"edge_{source}_{target}_{self._edge_count}"
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from compressed structure."""
         if source in self._adjacency and target in self._adjacency[source]:
             self._adjacency[source].remove(target)

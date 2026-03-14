@@ -6,12 +6,13 @@ operations using semiring algebra.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, Callable
+from collections.abc import Callable, Iterator
+from typing import Any
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -120,7 +121,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     """
 
     def __init__(self, traits: EdgeTrait = EdgeTrait.NONE,
-                 semiring: Optional[Semiring] = None, **options):
+                 semiring: Semiring | None = None, **options):
         """
         Initialize GraphBLAS strategy.
         Args:
@@ -191,7 +192,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     # GRAPHBLAS OPERATIONS
     # ============================================================================
 
-    def mxm(self, other: GraphBLASStrategy, semiring: Optional[Semiring] = None) -> GraphBLASStrategy:
+    def mxm(self, other: GraphBLASStrategy, semiring: Semiring | None = None) -> GraphBLASStrategy:
         """
         Matrix-matrix multiplication.
         Args:
@@ -215,8 +216,8 @@ class GraphBLASStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """Add edge."""
         self._adjacency[source][target] = weight
         if is_bidirectional:
@@ -227,7 +228,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge."""
         if source not in self._adjacency or target not in self._adjacency[source]:
             return False
@@ -240,7 +241,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return source in self._adjacency and target in self._adjacency[source]
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """Get neighbors."""
         return list(self._adjacency.get(node, {}).keys())
@@ -262,7 +263,7 @@ class GraphBLASStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         for source, targets in self._adjacency.items():
@@ -275,7 +276,7 @@ class GraphBLASStrategy(AEdgeStrategy):
                 })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {
@@ -288,7 +289,7 @@ class GraphBLASStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -310,12 +311,12 @@ class GraphBLASStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return
@@ -330,7 +331,7 @@ class GraphBLASStrategy(AEdgeStrategy):
                     visited.add(neighbor)
                     queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected."""
         return len(self.shortest_path(source, target)) > 0
     # ============================================================================

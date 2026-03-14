@@ -11,17 +11,19 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
+from collections.abc import AsyncIterator, Iterator
 class QueueStrategy(ANodeLinearStrategy):
     """
     Production-grade Queue (FIFO) node strategy.
@@ -68,7 +70,7 @@ class QueueStrategy(ANodeLinearStrategy):
             traits | NodeTrait.FIFO | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
             **options
         )
-        self._max_size: Optional[int] = options.get('max_size')
+        self._max_size: int | None = options.get('max_size')
         self._queue: deque = deque(options.get('initial_values', []))
 
     def get_supported_traits(self) -> NodeTrait:
@@ -205,7 +207,7 @@ class QueueStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -302,3 +304,58 @@ class QueueStrategy(ANodeLinearStrategy):
             'max_size': self._max_size,
             'memory_usage': f"{len(self._queue) * 8} bytes (estimated)"
         }
+    # ============================================================================
+    # ABSTRACT METHOD IMPLEMENTATIONS (from ANodeLinearStrategy)
+    # ============================================================================
+
+    def push_front(self, value: Any) -> None:
+        """Add element to front of the queue."""
+        if self._max_size and len(self._queue) >= self._max_size:
+            raise OverflowError(f"Queue overflow: max size {self._max_size} reached")
+        self._queue.appendleft(value)
+
+    def push_back(self, value: Any) -> None:
+        """Add element to back of the queue."""
+        if self._max_size and len(self._queue) >= self._max_size:
+            raise OverflowError(f"Queue overflow: max size {self._max_size} reached")
+        self._queue.append(value)
+
+    def pop_front(self) -> Any:
+        """Remove and return element from front of the queue."""
+        if self.is_empty():
+            raise IndexError("pop from empty queue")
+        return self._queue.popleft()
+
+    def pop_back(self) -> Any:
+        """Remove and return element from back of the queue."""
+        if self.is_empty():
+            raise IndexError("pop from empty queue")
+        return self._queue.pop()
+
+    def get_at_index(self, index: int) -> Any:
+        """Get element at index."""
+        if index < 0 or index >= len(self._queue):
+            raise IndexError(f"queue index {index} out of range")
+        return self._queue[index]
+
+    def set_at_index(self, index: int, value: Any) -> None:
+        """Set element at index."""
+        if index < 0 or index >= len(self._queue):
+            raise IndexError(f"queue index {index} out of range")
+        self._queue[index] = value
+
+    def as_linked_list(self):
+        """Provide LinkedList behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("QueueStrategy does not support LinkedList view")
+
+    def as_stack(self):
+        """Provide Stack behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("QueueStrategy does not support Stack view")
+
+    def as_queue(self):
+        """Provide Queue behavioral view."""
+        return self
+
+    def as_deque(self):
+        """Provide Deque behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("QueueStrategy does not support Deque view")

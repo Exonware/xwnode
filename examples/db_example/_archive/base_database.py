@@ -12,7 +12,7 @@ Generation Date: October 11, 2025
 import sys
 from pathlib import Path
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 # Add xwnode src to path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root / "src"))
@@ -24,7 +24,7 @@ from shared_schema import User, Post, Comment, Relationship
 class BaseDatabase(ABC):
     """Abstract base class for all database types"""
 
-    def __init__(self, name: str, node_mode: NodeMode, edge_mode: Optional[EdgeMode] = None,
+    def __init__(self, name: str, node_mode: NodeMode, edge_mode: EdgeMode | None = None,
                  graph_optimization: GraphOptimization = GraphOptimization.OFF):
         """
         Initialize the database.
@@ -76,7 +76,7 @@ class BaseDatabase(ABC):
         self.users_by_username[user_dict['username']] = user_id
         return user_id
 
-    def get_user(self, user_id: str) -> Optional[dict[str, Any]]:
+    def get_user(self, user_id: str) -> dict[str, Any] | None:
         """Get user by ID"""
         return self.users.get(user_id)
 
@@ -122,7 +122,7 @@ class BaseDatabase(ABC):
         self.posts_by_user[user_id].append(post_id)
         return post_id
 
-    def get_post(self, post_id: str) -> Optional[dict[str, Any]]:
+    def get_post(self, post_id: str) -> dict[str, Any] | None:
         """Get post by ID"""
         return self.posts.get(post_id)
 
@@ -164,7 +164,7 @@ class BaseDatabase(ABC):
         self.comments_by_post[post_id].append(comment_id)
         return comment_id
 
-    def get_comment(self, comment_id: str) -> Optional[dict[str, Any]]:
+    def get_comment(self, comment_id: str) -> dict[str, Any] | None:
         """Get comment by ID"""
         return self.comments.get(comment_id)
 

@@ -5,20 +5,22 @@ Segment Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Callable, Iterator
 """
 Segment Tree Node Strategy Implementation
 This module implements the SEGMENT_TREE strategy for range queries
 and updates with O(log n) complexity.
 """
-from typing import Any, Iterator, Optional, Callable, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class SegmentTreeStrategy(ANodeTreeStrategy):
@@ -205,7 +207,7 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -324,3 +326,69 @@ class SegmentTreeStrategy(ANodeTreeStrategy):
             'memory_usage': f"{len(self._tree) * 8 + len(self._values) * 24} bytes (estimated)",
             'utilization': f"{len(self._values) / max(1, len(self._tree) // 4) * 100:.1f}%"
         }
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return min(keys)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return max(keys)
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

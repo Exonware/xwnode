@@ -4,13 +4,13 @@ Cache performance telemetry and proof-of-superiority tracking.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: November 4, 2025
 """
 
 import time
 import threading
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field
 from collections import defaultdict
 from exonware.xwsystem import get_logger
@@ -147,8 +147,8 @@ class CacheTelemetryCollector:
 
     def get_comparison_report(
         self,
-        component: Optional[str] = None,
-        operation: Optional[str] = None
+        component: str | None = None,
+        operation: str | None = None
     ) -> list[CacheComparisonReport]:
         """
         Get performance comparison report.
@@ -270,7 +270,7 @@ class CacheTelemetryCollector:
                 )
         return recommendations[:10]  # Limit to top 10
 
-    def print_report(self, component: Optional[str] = None) -> None:
+    def print_report(self, component: str | None = None) -> None:
         """
         Print formatted performance report.
         Args:
@@ -305,7 +305,7 @@ class CacheTelemetryCollector:
                 print(f"  {i}. {rec}")
         print("\n" + "="*80 + "\n")
 # Global telemetry collector instance
-_telemetry_collector: Optional[CacheTelemetryCollector] = None
+_telemetry_collector: CacheTelemetryCollector | None = None
 _telemetry_lock = threading.Lock()
 
 

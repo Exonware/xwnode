@@ -22,7 +22,9 @@ class TestSpatialIndexManager:
         assert manager is not None
         assert manager._rtree is None
         assert manager._quadtree is None
-        assert manager._location_data == {}
+        # _location_data is a cache (e.g. PylruCache), not a dict; assert it is empty
+        assert manager._location_data is not None
+        assert manager._location_data.size() == 0
 
     def test_add_location_rtree(self):
         """Test adding location to R-tree."""

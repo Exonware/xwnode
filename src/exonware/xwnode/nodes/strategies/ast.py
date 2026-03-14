@@ -10,12 +10,12 @@ This strategy provides optimized operations for Abstract Syntax Trees (ASTs):
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Date: October 29, 2025
 """
 
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any
 from .tree_graph_hybrid import TreeGraphHybridStrategy
 from .contracts import NodeType
 from exonware.xwsystem import get_logger
@@ -82,7 +82,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
             'indexed': True,
         }
         # Store original data for indexing
-        self._original_data: Optional[Any] = None
+        self._original_data: Any | None = None
 
     def create_from_data(self, data: Any) -> ASTStrategy:
         """
@@ -173,7 +173,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
         results = self._type_index.get(node_type, [])
         return [node for path, node in results]
 
-    def find_first_by_type(self, node_type: str) -> Optional[Any]:
+    def find_first_by_type(self, node_type: str) -> Any | None:
         """
         Find first node of a given type in O(1) time.
         Args:
@@ -228,7 +228,7 @@ class ASTStrategy(TreeGraphHybridStrategy):
         """
         return self._metrics.copy()
 
-    def get_node_by_path(self, path: str) -> Optional[Any]:
+    def get_node_by_path(self, path: str) -> Any | None:
         """
         Get node by its path in O(1) time.
         Args:

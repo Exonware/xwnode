@@ -4,11 +4,10 @@ Geofence index implementation for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Optional
 from .contracts import IGeofenceIndex
 from .index_manager import SpatialIndexManager
 
@@ -19,7 +18,7 @@ class GeofenceIndex:
     Uses spatial indices for efficient geofence queries.
     """
 
-    def __init__(self, index_manager: Optional[SpatialIndexManager] = None):
+    def __init__(self, index_manager: SpatialIndexManager | None = None):
         """
         Initialize geofence index.
         Args:
@@ -92,7 +91,7 @@ class GeofenceIndex:
                         results.append(geofence_id)
         return results
 
-    def remove_geofence(self, id: str, index_type: Optional[str] = None) -> bool:
+    def remove_geofence(self, id: str, index_type: str | None = None) -> bool:
         """Remove geofence from index."""
         removed = False
         if id in self._geofence_bounds:

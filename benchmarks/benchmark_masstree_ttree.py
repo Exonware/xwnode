@@ -12,12 +12,12 @@ import time
 import statistics
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any
 from exonware.xwnode import XWNode
 from exonware.xwnode.defs import NodeMode
 
 
-def benchmark_strategy(mode: NodeMode, name: str, iterations: int = 1000) -> Dict[str, Any]:
+def benchmark_strategy(mode: NodeMode, name: str, iterations: int = 1000) -> dict[str, Any]:
     """Benchmark a single strategy."""
     print(f"\n{'='*80}")
     print(f"Benchmarking: {name} ({mode.name})")
@@ -111,7 +111,7 @@ def benchmark_strategy(mode: NodeMode, name: str, iterations: int = 1000) -> Dic
         }
 
 
-def compare_results(baseline: Dict[str, Any], current: Dict[str, Any], strategy_name: str):
+def compare_results(baseline: dict[str, Any], current: dict[str, Any], strategy_name: str):
     """Compare baseline and current results."""
     print(f"\n{'='*80}")
     print(f"Comparison: {strategy_name}")

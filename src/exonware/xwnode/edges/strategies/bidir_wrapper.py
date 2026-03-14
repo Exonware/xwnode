@@ -4,10 +4,11 @@ This module implements the BIDIR_WRAPPER strategy for efficient
 undirected graph operations using dual directed edges.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class BidirWrapperStrategy(AEdgeStrategy):
@@ -129,7 +130,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
             self._edge_count += 1
         return f"{canonical[0]}<->{canonical[1]}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove undirected edge (removes both directed edges)."""
         canonical = self._canonical_edge(source, target)
         if canonical in self._undirected_edges:
@@ -145,7 +146,7 @@ class BidirWrapperStrategy(AEdgeStrategy):
         canonical = self._canonical_edge(source, target)
         return canonical in self._undirected_edges
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         if not self.has_edge(source, target):
             return None
@@ -256,11 +257,19 @@ class BidirWrapperStrategy(AEdgeStrategy):
         neighbors.update(self._incoming.get(vertex, {}))
         return neighbors
 
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
+        """Get neighbors of a node (iEdgeStrategy contract). Returns list of neighbor ids."""
+        return list(self.get_all_neighbors(node))
+
+    def get_vertices(self) -> list[str]:
+        """Get all vertices in the graph (iEdgeStrategy contract)."""
+        return list(self._vertices)
+
     def is_connected_to(self, vertex1: str, vertex2: str) -> bool:
         """Check if two vertices are connected."""
         return self.has_edge(vertex1, vertex2)
 
-    def get_edge_weight(self, vertex1: str, vertex2: str) -> Optional[float]:
+    def get_edge_weight(self, vertex1: str, vertex2: str) -> float | None:
         """Get weight of undirected edge."""
         if not self.has_edge(vertex1, vertex2):
             return None

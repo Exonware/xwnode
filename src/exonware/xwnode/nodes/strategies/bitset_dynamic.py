@@ -5,20 +5,22 @@ Dynamic Bitset Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Dynamic Bitset Node Strategy Implementation
 This module implements the BITSET_DYNAMIC strategy for dynamic bitset
 operations with automatic resizing and bit manipulation capabilities.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class BitsetDynamicStrategy(ANodeMatrixStrategy):
@@ -305,6 +307,61 @@ boolean data processing.
         """
         return {str(i): True for i in range(self._highest_bit + 1) if self._get_bit(i)}
     # ============================================================================
+    # ANodeMatrixStrategy abstract methods (bitset as 1-row matrix)
+    # ============================================================================
+
+    def get_dimensions(self) -> tuple[int, int]:
+        """Get matrix dimensions (rows, cols). Bitset is 1 x capacity."""
+        return (1, self._capacity)
+
+    def get_at_position(self, row: int, col: int) -> Any:
+        """Get element at matrix position. Only row 0 is valid."""
+        if row != 0 or col < 0 or col >= self._capacity:
+            return False
+        return self._get_bit(col)
+
+    def set_at_position(self, row: int, col: int, value: Any) -> None:
+        """Set element at matrix position. Only row 0 is valid."""
+        if row == 0 and 0 <= col < self._capacity:
+            self._set_bit(col, bool(value))
+
+    def get_row(self, row: int) -> list[Any]:
+        """Get entire row. Only row 0 is valid."""
+        if row != 0:
+            return []
+        return [self._get_bit(i) for i in range(self._capacity)]
+
+    def get_column(self, col: int) -> list[Any]:
+        """Get entire column."""
+        if col < 0 or col >= self._capacity:
+            return [False]
+        return [self._get_bit(col)]
+
+    def transpose(self) -> ANodeMatrixStrategy:
+        """Transpose: 1xN bitset -> same (identity for 1-row)."""
+        return self
+
+    def multiply(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix multiplication not supported for bitset."""
+        raise XWNodeUnsupportedCapabilityError("BitsetDynamic does not support matrix multiply")
+
+    def add(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix addition not supported for bitset."""
+        raise XWNodeUnsupportedCapabilityError("BitsetDynamic does not support matrix add")
+
+    def as_adjacency_matrix(self):
+        """Provide Adjacency Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("BitsetDynamic cannot behave as adjacency matrix")
+
+    def as_incidence_matrix(self):
+        """Provide Incidence Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("BitsetDynamic cannot behave as incidence matrix")
+
+    def as_sparse_matrix(self):
+        """Provide Sparse Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("BitsetDynamic cannot behave as sparse matrix")
+
+    # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
 
@@ -312,7 +369,7 @@ boolean data processing.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -390,7 +447,7 @@ boolean data processing.
                 result.append(i)
         return result
 
-    def get_clear_bits(self, max_index: Optional[int] = None) -> list[int]:
+    def get_clear_bits(self, max_index: int | None = None) -> list[int]:
         """Get list of clear bit indices up to max_index."""
         if max_index is None:
             max_index = self._highest_bit + 10  # Some reasonable limit
@@ -400,7 +457,7 @@ boolean data processing.
                 result.append(i)
         return result
 
-    def count_bits(self, start: int = 0, end: Optional[int] = None) -> int:
+    def count_bits(self, start: int = 0, end: int | None = None) -> int:
         """Count set bits in range [start, end)."""
         if end is None:
             end = self._highest_bit + 1
@@ -466,7 +523,7 @@ boolean data processing.
                 result._set_bit(i, True)
         return result
 
-    def logical_not(self, max_index: Optional[int] = None) -> BitsetDynamicStrategy:
+    def logical_not(self, max_index: int | None = None) -> BitsetDynamicStrategy:
         """Perform logical NOT (up to max_index)."""
         if max_index is None:
             max_index = self._highest_bit + 64  # Reasonable extension

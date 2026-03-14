@@ -4,12 +4,13 @@ Linear Hash Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, AsyncIterator, Iterator, Optional
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeStrategy, AKeyValueStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -108,7 +109,7 @@ class LinearHashStrategy(AKeyValueStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

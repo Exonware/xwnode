@@ -7,12 +7,13 @@ Copy-on-Write semantics using HAMT for optimal performance.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Optional, Iterator
+from collections.abc import Iterator
+from typing import Any
 import copy
 from .base import ACOWNode
 from .hamt_engine import HAMTEngine

@@ -16,8 +16,9 @@ import sys
 import time
 import tracemalloc
 import math
-from typing import Callable, Any
+from typing import Any
 # Ensure src is in path for imports
+from collections.abc import Callable
 src_path = Path(__file__).parent.parent / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))

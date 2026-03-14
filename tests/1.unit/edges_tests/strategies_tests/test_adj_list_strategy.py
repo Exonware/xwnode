@@ -78,10 +78,10 @@ class TestAdjListStrategyInterface:
         assert simple_strategy.has_edge('C', 'A') is False  # Directed
 
     def test_delete_edge_operation(self, simple_strategy):
-        """Test delete_edge operation removes edges correctly."""
-        assert simple_strategy.delete_edge('A', 'B') is True
+        """Test remove_edge operation removes edges correctly (interface uses remove_edge)."""
+        assert simple_strategy.remove_edge('A', 'B') is True
         assert simple_strategy.has_edge('A', 'B') is False
-        assert simple_strategy.delete_edge('nonexistent', 'edge') is False
+        assert simple_strategy.remove_edge('nonexistent', 'edge') is False
 
     def test_get_neighbors_operation(self, simple_strategy):
         """Test get_neighbors returns correct neighbors."""
@@ -166,7 +166,7 @@ class TestAdjListStrategyEdgeCases:
     def test_empty_graph_operations(self, empty_strategy):
         """Test operations on empty graph."""
         assert empty_strategy.has_edge('A', 'B') is False
-        assert empty_strategy.delete_edge('A', 'B') is False
+        assert empty_strategy.remove_edge('A', 'B') is False
         assert list(empty_strategy.get_neighbors('A')) == []
         assert empty_strategy.edge_count() == 0
 

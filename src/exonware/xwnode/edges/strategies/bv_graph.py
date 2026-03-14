@@ -6,17 +6,18 @@ compression including Elias-Gamma/Delta coding and reference lists.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Iterator
 class EliasGamma:
     """
     Elias Gamma coding for gap encoding.
@@ -259,7 +260,7 @@ class BVGraphStrategy(AEdgeStrategy):
                     byte_array[byte_idx] |= (1 << (7 - bit_idx))
             self._compressed_lists[vertex] = bytes(byte_array)
 
-    def _find_reference(self, vertex: str, neighbors: list[str]) -> Optional[str]:
+    def _find_reference(self, vertex: str, neighbors: list[str]) -> str | None:
         """
         Find similar adjacency list for reference encoding.
         Args:
@@ -295,8 +296,8 @@ class BVGraphStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge to graph (buffer mode).
         Args:
@@ -344,7 +345,7 @@ class BVGraphStrategy(AEdgeStrategy):
             self._compress_adjacency_list(vertex, neighbors)
         self._is_finalized = True
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """
         Remove edge (requires decompression).
         Args:
@@ -372,7 +373,7 @@ class BVGraphStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return source in self._adjacency and target in self._adjacency[source]
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """
         Get neighbors (with decompression if needed).
@@ -409,7 +410,7 @@ class BVGraphStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         for source, targets in self._adjacency.items():
@@ -421,7 +422,7 @@ class BVGraphStrategy(AEdgeStrategy):
                 })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target}
@@ -430,7 +431,7 @@ class BVGraphStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (Simplified)
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path using BFS."""
         from collections import deque
         if source not in self._vertices or target not in self._vertices:
@@ -453,12 +454,12 @@ class BVGraphStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return
@@ -474,7 +475,7 @@ class BVGraphStrategy(AEdgeStrategy):
                     visited.add(neighbor)
                     queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected."""
         return len(self.shortest_path(source, target)) > 0
     # ============================================================================

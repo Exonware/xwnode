@@ -5,15 +5,16 @@ Performance Benchmarking Utilities
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 15-Nov-2025
 """
 
 import time
 import statistics
-from typing import Any, Callable, Optional
+from typing import Any
 from dataclasses import dataclass
 from exonware.xwsystem import get_logger
+from collections.abc import Callable
 logger = get_logger(__name__)
 @dataclass
 

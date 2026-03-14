@@ -7,7 +7,7 @@ performance monitoring, and optimization recommendations in the strategy system.
 
 import time
 import threading
-from typing import Optional, Any, NamedTuple
+from typing import Any, NamedTuple
 from dataclasses import dataclass
 from collections import defaultdict, deque
 from exonware.xwsystem import get_logger
@@ -156,7 +156,7 @@ class StrategyAdvisor:
             return profile
 
     def suggest_node_strategy(self, data_profile: dict[str, Any], 
-                            current_mode: Optional[NodeMode] = None) -> StrategyRecommendation:
+                            current_mode: NodeMode | None = None) -> StrategyRecommendation:
         """
         Suggest optimal node strategy based on data profile.
         Args:
@@ -261,7 +261,7 @@ class StrategyAdvisor:
         )
 
     def suggest_edge_strategy(self, graph_profile: dict[str, Any],
-                            current_mode: Optional[EdgeMode] = None) -> StrategyRecommendation:
+                            current_mode: EdgeMode | None = None) -> StrategyRecommendation:
         """
         Suggest optimal edge strategy based on graph profile.
         Args:
@@ -334,7 +334,7 @@ class StrategyAdvisor:
             data_loss_risk=data_loss_risk
         )
 
-    def _calculate_migration_cost(self, from_mode: Optional[NodeMode | EdgeMode], 
+    def _calculate_migration_cost(self, from_mode: NodeMode | EdgeMode | None, 
                                 to_mode: NodeMode | EdgeMode, is_node: bool) -> str:
         """Calculate the cost of migrating between strategies."""
         if from_mode is None:
@@ -368,7 +368,7 @@ class StrategyAdvisor:
         else:
             return "high"
 
-    def _assess_data_loss_risk(self, from_mode: Optional[NodeMode | EdgeMode],
+    def _assess_data_loss_risk(self, from_mode: NodeMode | EdgeMode | None,
                               to_mode: NodeMode | EdgeMode, is_node: bool) -> bool:
         """Assess risk of data loss during migration."""
         if from_mode is None:

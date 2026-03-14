@@ -6,12 +6,12 @@ Implements Ted Dunning's T-Digest algorithm for accurate percentiles.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 27-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any
 from threading import RLock
 import math
 from .base import ANodeStrategy
@@ -97,7 +97,7 @@ class TDigestStrategy(ANodeStrategy):
             if len(self._centroids) > self._compression * 2:
                 self._compress()
 
-    def quantile(self, q: float) -> Optional[float]:
+    def quantile(self, q: float) -> float | None:
         """
         Get q-th quantile
         O(log δ) time complexity where δ is compression parameter

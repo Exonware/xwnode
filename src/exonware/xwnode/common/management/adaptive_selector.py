@@ -15,12 +15,12 @@ Priority alignment:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import threading
-from typing import Optional, Any
+from typing import Any
 from exonware.xwsystem import get_logger
 from ...defs import NodeMode, EdgeMode
 from ..monitoring.performance_monitor import (
@@ -57,7 +57,7 @@ class AdaptiveStrategySelector:
     Space Complexity: O(1) per selector instance
     """
 
-    def __init__(self, monitor: Optional[StrategyPerformanceMonitor] = None):
+    def __init__(self, monitor: StrategyPerformanceMonitor | None = None):
         """
         Initialize adaptive strategy selector.
         Args:
@@ -77,8 +77,8 @@ class AdaptiveStrategySelector:
     def recommend_strategy(
         self,
         current_mode: NodeMode,
-        workload_profile: Optional[dict[str, Any]] = None
-    ) -> Optional[PerformanceRecommendation]:
+        workload_profile: dict[str, Any] | None = None
+    ) -> PerformanceRecommendation | None:
         """
         Get strategy recommendation based on performance data.
         Args:
@@ -113,7 +113,7 @@ class AdaptiveStrategySelector:
     def should_switch(
         self,
         current_mode: NodeMode,
-        recommendation: Optional[PerformanceRecommendation] = None
+        recommendation: PerformanceRecommendation | None = None
     ) -> bool:
         """
         Determine if strategy should be switched.
@@ -153,8 +153,8 @@ class AdaptiveStrategySelector:
     def get_recommended_mode(
         self,
         current_mode: NodeMode,
-        workload_profile: Optional[dict[str, Any]] = None
-    ) -> Optional[NodeMode]:
+        workload_profile: dict[str, Any] | None = None
+    ) -> NodeMode | None:
         """
         Get recommended strategy mode.
         Args:
@@ -208,8 +208,8 @@ class AdaptiveStrategySelector:
 
     def configure(
         self,
-        switch_threshold: Optional[float] = None,
-        min_operations: Optional[int] = None
+        switch_threshold: float | None = None,
+        min_operations: int | None = None
     ) -> None:
         """
         Configure selector parameters.
@@ -228,7 +228,7 @@ class AdaptiveStrategySelector:
                     raise ValueError("min_operations must be non-negative")
                 self._min_operations = min_operations
 # Global instance
-_global_selector: Optional[AdaptiveStrategySelector] = None
+_global_selector: AdaptiveStrategySelector | None = None
 _selector_lock = threading.Lock()
 
 

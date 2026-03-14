@@ -4,15 +4,16 @@ Edge List Edge Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
 
+from collections.abc import Iterator
 class EdgeListStrategy(AEdgeStrategy):
     """
     Edge List - Simple list of (source, target) pairs.
@@ -80,7 +81,7 @@ class EdgeListStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from list (O(n) operation)."""
         removed = False
         if edge_id:

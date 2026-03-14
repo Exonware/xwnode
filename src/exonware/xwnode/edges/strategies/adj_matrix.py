@@ -4,9 +4,10 @@ This module implements the ADJ_MATRIX strategy for dense graph representation
 with O(1) edge operations and efficient matrix-based algorithms.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class AdjMatrixStrategy(AEdgeStrategy):
@@ -57,7 +58,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         self.allow_self_loops = options.get('self_loops', True)
         self.default_weight = options.get('default_weight', 1.0)
         # Core storage: 2D matrix of edge weights/properties
-        self._matrix: list[list[Optional[dict[str, Any]]]] = []
+        self._matrix: list[list[dict[str, Any] | None]] = []
         self._capacity = 0
         # Vertex management
         self._vertex_to_index: dict[str, int] = {}
@@ -99,7 +100,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         self._vertex_count += 1
         return index
 
-    def _get_vertex_by_index(self, index: int) -> Optional[str]:
+    def _get_vertex_by_index(self, index: int) -> str | None:
         """Get vertex name by index."""
         return self._index_to_vertex.get(index)
     # ============================================================================
@@ -140,7 +141,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
                 # Don't increment edge count for undirected (it's the same edge)
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge between source and target."""
         if source not in self._vertex_to_index or target not in self._vertex_to_index:
             return False
@@ -168,7 +169,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         target_idx = self._vertex_to_index[target]
         return self._matrix[source_idx][target_idx] is not None
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data between source and target."""
         if source not in self._vertex_to_index or target not in self._vertex_to_index:
             return None
@@ -176,7 +177,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
         target_idx = self._vertex_to_index[target]
         return self._matrix[source_idx][target_idx]
 
-    def get_edge_weight(self, source: str, target: str) -> Optional[float]:
+    def get_edge_weight(self, source: str, target: str) -> float | None:
         """Get edge weight between source and target."""
         edge_data = self.get_edge_data(source, target)
         return edge_data['weight'] if edge_data else None
@@ -301,7 +302,7 @@ class AdjMatrixStrategy(AEdgeStrategy):
     # MATRIX-SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_matrix(self) -> list[list[Optional[float]]]:
+    def get_matrix(self) -> list[list[float | None]]:
         """Get the adjacency matrix as weights."""
         matrix = []
         for source_idx in range(self._vertex_count):

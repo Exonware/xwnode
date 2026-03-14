@@ -6,17 +6,18 @@ on fixed-universe integer keys.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 import math
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
-from ...errors import XWNodeError, XWNodeValueError
+from ...errors import XWNodeError, XWNodeValueError, XWNodeUnsupportedCapabilityError
 
 
 class VebNode:
@@ -297,7 +298,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
             return False
         return self._veb_member(node.clusters[high], low)
 
-    def _veb_successor(self, node: VebNode, x: int) -> Optional[int]:
+    def _veb_successor(self, node: VebNode, x: int) -> int | None:
         """
         Find successor of x (smallest element > x).
         Args:
@@ -334,7 +335,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         offset = node.clusters[succ_cluster].min
         return node.index(succ_cluster, offset)
 
-    def _veb_predecessor(self, node: VebNode, x: int) -> Optional[int]:
+    def _veb_predecessor(self, node: VebNode, x: int) -> int | None:
         """
         Find predecessor of x (largest element < x).
         Args:
@@ -509,7 +510,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -547,7 +548,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
     # VEB-SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min(self) -> Optional[int]:
+    def get_min(self) -> int | None:
         """
         Get minimum key in O(1) time.
         Returns:
@@ -555,7 +556,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         """
         return self._root.min
 
-    def get_max(self) -> Optional[int]:
+    def get_max(self) -> int | None:
         """
         Get maximum key in O(1) time.
         Returns:
@@ -563,7 +564,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
         """
         return self._root.max
 
-    def successor(self, key: int) -> Optional[int]:
+    def successor(self, key: int) -> int | None:
         """
         Find successor of key (smallest key > given key).
         Args:
@@ -581,7 +582,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
             )
         return self._veb_successor(self._root, key)
 
-    def predecessor(self, key: int) -> Optional[int]:
+    def predecessor(self, key: int) -> int | None:
         """
         Find predecessor of key (largest key < given key).
         Args:
@@ -700,7 +701,7 @@ class VebTreeStrategy(ANodeTreeStrategy):
     # COMPATIBILITY METHODS
     # ============================================================================
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """
         Find value by key (alias for get).
         Args:
@@ -758,3 +759,55 @@ class VebTreeStrategy(ANodeTreeStrategy):
             # Store scalar as single element
             instance.put(0, data)
         return instance
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

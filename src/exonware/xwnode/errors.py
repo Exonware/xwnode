@@ -8,7 +8,7 @@ actionable suggestions, and performance optimization for critical paths.
 from __future__ import annotations
 import time
 import difflib
-from typing import Any, Optional
+from typing import Any
 from exonware.xwsystem import get_logger
 logger = get_logger(__name__)
 # ============================================================================

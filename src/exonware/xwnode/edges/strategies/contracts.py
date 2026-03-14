@@ -7,18 +7,19 @@ Moved from root contracts.py to follow GUIDELINES_DEV.md structure.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from enum import Enum
-from typing import Any, Optional, Iterator, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 # Import EdgeMode and EdgeTrait from defs
 from ...defs import EdgeMode, EdgeTrait
 # ==============================================================================
 # EDGE STRATEGY ENUMS AND OPTIMIZATIONS
 # ==============================================================================
 # Pre-computed common edge operations
+from collections.abc import Iterator
 EDGE_COMMON_OPERATIONS = frozenset([
     "add_edge", "remove_edge", "has_edge", "get_edge",
     "get_neighbors", "get_edges"
@@ -77,12 +78,12 @@ class IEdgeStrategy(Protocol):
     # =========================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """Add an edge between source and target with advanced properties."""
         ...
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove an edge between source and target."""
         ...
 
@@ -90,32 +91,32 @@ class IEdgeStrategy(Protocol):
         """Check if edge exists between source and target."""
         ...
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         ...
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         ...
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data/properties."""
         ...
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path between nodes."""
         ...
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         ...
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs", max_depth: int = 100, 
-                      edge_type: Optional[str] = None) -> Iterator[str]:
+                      edge_type: str | None = None) -> Iterator[str]:
         """Traverse the graph with cycle detection."""
         ...
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if nodes are connected."""
         ...
 

@@ -18,8 +18,9 @@ import time
 import asyncio
 import threading
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator, AsyncIterator
+from typing import Any
 # Handle Windows encoding
+from collections.abc import AsyncIterator, Iterator
 if sys.platform == 'win32':
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')

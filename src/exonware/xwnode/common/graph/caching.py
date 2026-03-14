@@ -5,12 +5,12 @@ Now powered by xwsystem.caching via CacheController.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: November 4, 2025
 """
 
 import threading
-from typing import Any, Optional
+from typing import Any
 from ..caching import get_cache_controller, ICacheAdapter
 
 
@@ -54,7 +54,7 @@ class CacheManager[K, V]:
             import logging
             logging.warning(f"Failed to initialize cache, using NoCacheAdapter: {e}")
 
-    def get(self, key: K) -> Optional[V]:
+    def get(self, key: K) -> V | None:
         """
         Get cached result.
         Args:

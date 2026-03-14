@@ -10,17 +10,19 @@ bitmap operations with excellent performance for sparse data.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from collections import defaultdict
 import struct
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class Container:
@@ -349,7 +351,7 @@ ormance characteristics.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -488,7 +490,7 @@ ormance characteristics.
                 break
         return rank
 
-    def select(self, rank: int) -> Optional[int]:
+    def select(self, rank: int) -> int | None:
         """Get value at rank (0-indexed)."""
         if rank < 0 or rank >= self._size:
             return None
@@ -563,3 +565,120 @@ ormance characteristics.
             'memory_per_bit': f"{memory_used / max(1, self._size):.1f} bytes/bit",
             'sparsity': f"{(1 - (self._size / max(1, self._next_value))) * 100:.1f}%"
         }
+
+    # ============================================================================
+    # ABSTRACT MATRIX METHODS (from ANodeMatrixStrategy)
+    # ============================================================================
+
+    def get_dimensions(self) -> tuple:
+        """Get bitmap dimensions as (1, max_value).
+
+        Returns a 1-row representation where the column count is the
+        highest value stored plus one, or (1, 0) when the bitmap is empty.
+        """
+        if self._size == 0:
+            return (1, 0)
+        all_values = self.to_array()
+        max_value = max(all_values) if all_values else 0
+        return (1, max_value + 1)
+
+    def get_at_position(self, row: int, col: int) -> Any:
+        """Check if the bit at the given position is set.
+
+        For a roaring bitmap the row is always 0; *col* is the bit index.
+        Returns ``True`` if the bit is set, ``False`` otherwise.
+        """
+        if row != 0:
+            return False
+        return self._contains_value(col)
+
+    def set_at_position(self, row: int, col: int, value: Any) -> None:
+        """Set or unset the bit at the given position.
+
+        *row* must be 0.  If *value* is truthy the bit at *col* is set,
+        otherwise it is cleared.
+        """
+        if row != 0:
+            raise XWNodeUnsupportedCapabilityError(
+                "RoaringBitmapStrategy only supports row index 0"
+            )
+        if value:
+            self._add_value(col)
+        else:
+            self._remove_value(col)
+
+    def get_row(self, row: int) -> list[Any]:
+        """Get a row of the bitmap.
+
+        Only row 0 is valid and returns the sorted list of all set bit
+        positions.  Any other row raises
+        ``XWNodeUnsupportedCapabilityError``.
+        """
+        if row != 0:
+            raise XWNodeUnsupportedCapabilityError(
+                "RoaringBitmapStrategy only supports row index 0"
+            )
+        return self.to_array()
+
+    def get_column(self, col: int) -> list[Any]:
+        """Get a column of the bitmap.
+
+        Not meaningful for a 1-row bitmap structure.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "get_column is not supported by RoaringBitmapStrategy"
+        )
+
+    def transpose(self) -> ANodeMatrixStrategy:
+        """Transpose the matrix.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "transpose is not supported by RoaringBitmapStrategy"
+        )
+
+    def multiply(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix multiplication.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "multiply is not supported by RoaringBitmapStrategy"
+        )
+
+    def add(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix addition.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "add (matrix addition) is not supported by RoaringBitmapStrategy"
+        )
+
+    def as_adjacency_matrix(self) -> Any:
+        """Provide Adjacency Matrix behavioral view.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "as_adjacency_matrix is not supported by RoaringBitmapStrategy"
+        )
+
+    def as_incidence_matrix(self) -> Any:
+        """Provide Incidence Matrix behavioral view.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "as_incidence_matrix is not supported by RoaringBitmapStrategy"
+        )
+
+    def as_sparse_matrix(self) -> Any:
+        """Provide Sparse Matrix behavioral view.
+
+        Not meaningful for a roaring bitmap.
+        """
+        raise XWNodeUnsupportedCapabilityError(
+            "as_sparse_matrix is not supported by RoaringBitmapStrategy"
+        )

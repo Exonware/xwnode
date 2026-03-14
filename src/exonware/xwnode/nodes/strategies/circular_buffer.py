@@ -5,11 +5,11 @@ Fixed-size ring buffer with automatic overwrite of oldest entries.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Optional
+from typing import Any
 from threading import RLock
 from .base import ANodeStrategy
 from ...defs import NodeMode
@@ -49,7 +49,7 @@ class CircularBufferStrategy(ANodeStrategy):
             **kwargs
         )
         self._capacity = final_capacity
-        self._buffer: list[Optional[Any]] = [None] * final_capacity
+        self._buffer: list[Any | None] = [None] * final_capacity
         self._head = 0  # Next write position
         self._size = 0  # Current number of elements
         # Thread safety
@@ -68,7 +68,7 @@ class CircularBufferStrategy(ANodeStrategy):
             if self._size < self._capacity:
                 self._size += 1
 
-    def get(self, index: int) -> Optional[Any]:
+    def get(self, index: int) -> Any | None:
         """
         Get value at index (O(1))
         Index 0 is the oldest value, index (size-1) is the newest

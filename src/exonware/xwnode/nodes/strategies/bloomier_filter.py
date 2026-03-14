@@ -6,17 +6,18 @@ approximate key→value mapping with controlled false positive rates.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 import hashlib
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
-from ...errors import XWNodeError, XWNodeValueError
+from ...errors import XWNodeError, XWNodeValueError, XWNodeUnsupportedCapabilityError
 
 
 class BloomierFilterStrategy(ANodeTreeStrategy):
@@ -109,7 +110,7 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
         self.size = self._calculate_size(expected_items, false_positive_rate)
         self.num_hashes = self._calculate_hashes(false_positive_rate)
         # Storage arrays
-        self._table: list[Optional[int]] = [None] * self.size  # Encoded values
+        self._table: list[int | None] = [None] * self.size  # Encoded values
         self._keys: set[Any] = set()  # Track inserted keys
         self._key_to_value: dict[Any, Any] = {}  # For exact retrieval
         # Construction state
@@ -331,7 +332,7 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -437,7 +438,7 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
     # COMPATIBILITY METHODS
     # ============================================================================
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """Find value by key (probabilistic)."""
         return self.get(key)
 
@@ -486,3 +487,69 @@ class BloomierFilterStrategy(ANodeTreeStrategy):
         # Finalize for queries
         instance.finalize()
         return instance
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return min(keys)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return max(keys)
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

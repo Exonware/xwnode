@@ -5,11 +5,12 @@ with geometric coordinates and efficient spatial queries.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, NamedTuple
+from typing import Any, NamedTuple
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class Rectangle(NamedTuple):
@@ -158,7 +159,7 @@ class RTreeNode:
         self.is_leaf = is_leaf
         self.max_entries = max_entries
         self.entries: list[tuple[Rectangle, Any]] = []  # (bounding_rect, child_or_edge)
-        self.bounding_rect: Optional[Rectangle] = None
+        self.bounding_rect: Rectangle | None = None
 
     def is_full(self) -> bool:
         """Check if node is full."""
@@ -231,7 +232,7 @@ class RTreeStrategy(AEdgeStrategy):
         self._vertex_coords: dict[str, tuple[float, float]] = {}
         self._vertices: set[str] = set()
         # R-Tree structure
-        self._root: Optional[RTreeNode] = None
+        self._root: RTreeNode | None = None
         self._edge_count = 0
         self._edge_id_counter = 0
         # Statistics
@@ -307,23 +308,45 @@ class RTreeStrategy(AEdgeStrategy):
                     node2.add_entry(rect, data)
         return node1, node2
 
+    def _find_parent(self, target, current=None):
+        """Find the parent of a target node by traversing from root."""
+        if current is None:
+            current = self._root
+        if current is None or current.is_leaf:
+            return None
+        for _, child in current.entries:
+            if child is target:
+                return current
+            if isinstance(child, RTreeNode) and not child.is_leaf:
+                result = self._find_parent(target, child)
+                if result is not None:
+                    return result
+        return None
+
     def _insert_with_split(self, edge: SpatialEdge) -> None:
-        """Insert edge with node splitting if necessary."""
+        """Insert edge with node splitting and upward propagation."""
         leaf = self._choose_leaf(edge.bounding_rect)
         leaf.add_entry(edge.bounding_rect, edge)
-        # Handle overflow
-        if leaf.is_full() and len(leaf.entries) > self.max_entries:
-            node1, node2 = self._split_node(leaf)
-            if leaf == self._root:
-                # Create new root
+        # Handle overflow - propagate splits up the tree
+        node = leaf
+        while node is not None and len(node.entries) > self.max_entries:
+            node1, node2 = self._split_node(node)
+            if node is self._root:
                 new_root = RTreeNode(is_leaf=False, max_entries=self.max_entries)
                 new_root.add_entry(node1.bounding_rect, node1)
                 new_root.add_entry(node2.bounding_rect, node2)
                 self._root = new_root
                 self._tree_height += 1
+                break
             else:
-                # Replace leaf with split nodes (simplified - full implementation would propagate splits)
-                pass
+                parent = self._find_parent(node)
+                if parent is None:
+                    break
+                # Remove old entry and add two new ones
+                parent.entries = [(r, c) for r, c in parent.entries if c is not node]
+                parent.add_entry(node1.bounding_rect, node1)
+                parent.add_entry(node2.bounding_rect, node2)
+                node = parent
     # ============================================================================
     # CORE EDGE OPERATIONS
     # ============================================================================
@@ -354,7 +377,7 @@ class RTreeStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove spatial edge with proper R-Tree cleanup."""
         edge_to_remove = None
         edge_id_to_remove = None
@@ -410,7 +433,7 @@ class RTreeStrategy(AEdgeStrategy):
             self._rebuild_tree()
         return True
 
-    def _find_leaf_containing_edge(self, node: RTreeNode, edge: SpatialEdge) -> Optional[RTreeNode]:
+    def _find_leaf_containing_edge(self, node: RTreeNode, edge: SpatialEdge) -> RTreeNode | None:
         """Find the leaf node containing the specified edge."""
         if node.is_leaf:
             # Check if this leaf contains the edge
@@ -461,7 +484,7 @@ class RTreeStrategy(AEdgeStrategy):
             parent.update_bounding_rect()
             self._propagate_changes_up(parent)
 
-    def _find_parent(self, current: RTreeNode, target: RTreeNode) -> Optional[RTreeNode]:
+    def _find_parent(self, current: RTreeNode, target: RTreeNode) -> RTreeNode | None:
         """Find the parent of a target node."""
         if current.is_leaf:
             return None
@@ -548,7 +571,7 @@ class RTreeStrategy(AEdgeStrategy):
                 return True
         return False
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         for edge in self._edges.values():
             if edge.source == source and edge.target == target:
@@ -688,7 +711,7 @@ class RTreeStrategy(AEdgeStrategy):
                 result.append(edge)
         return result
 
-    def get_bounding_box(self) -> Optional[Rectangle]:
+    def get_bounding_box(self) -> Rectangle | None:
         """Get bounding box of all edges."""
         if self._root and self._root.bounding_rect:
             return self._root.bounding_rect

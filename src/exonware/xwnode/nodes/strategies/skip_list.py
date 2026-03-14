@@ -5,11 +5,12 @@ Skip List Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 #exonware\xnode\strategies\impls\node_skip_list.py
 """
 Skip List Node Strategy Implementation
@@ -17,10 +18,11 @@ This module implements the SKIP_LIST strategy for probabilistic data structures
 with O(log n) expected performance for search, insertion, and deletion.
 """
 import random
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class SkipListNode:
@@ -31,7 +33,7 @@ class SkipListNode:
         self.key = key
         self.value = value
         self.level = level
-        self.forward: list[Optional[SkipListNode]] = [None] * (level + 1)
+        self.forward: list[SkipListNode | None] = [None] * (level + 1)
         self._hash = None
 
     def __hash__(self) -> int:
@@ -159,7 +161,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         self._max_level_reached = max(self._max_level_reached, level)
         return level
 
-    def _search_path(self, key: str) -> list[Optional[SkipListNode]]:
+    def _search_path(self, key: str) -> list[SkipListNode | None]:
         """Find the path to the node with given key."""
         normalized_key = self._normalize_key(key)
         current = self._header
@@ -172,7 +174,7 @@ class SkipListStrategy(ANodeTreeStrategy):
             path[i] = current
         return path
 
-    def _find_node(self, key: str) -> Optional[SkipListNode]:
+    def _find_node(self, key: str) -> SkipListNode | None:
         """Find node with given key."""
         normalized_key = self._normalize_key(key)
         current = self._header
@@ -297,7 +299,7 @@ class SkipListStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -360,14 +362,14 @@ class SkipListStrategy(ANodeTreeStrategy):
     # SKIP LIST SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min(self) -> Optional[tuple[str, Any]]:
+    def get_min(self) -> tuple[str, Any] | None:
         """Get the minimum key-value pair."""
         if self._size == 0:
             return None
         current = self._header.forward[0]
         return (current.key, current.value) if current else None
 
-    def get_max(self) -> Optional[tuple[str, Any]]:
+    def get_max(self) -> tuple[str, Any] | None:
         """Get the maximum key-value pair."""
         if self._size == 0:
             return None
@@ -416,3 +418,55 @@ class SkipListStrategy(ANodeTreeStrategy):
             'backend': 'Probabilistic skip list with O(log n) expected performance',
             'traits': [trait.name for trait in NodeTrait if self.has_trait(trait)]
         }
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

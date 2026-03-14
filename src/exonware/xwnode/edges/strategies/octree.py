@@ -5,11 +5,12 @@ graph partitioning and efficient 3D spatial queries.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class OctreeNode:
@@ -24,7 +25,7 @@ class OctreeNode:
         # Points stored in this node
         self.points: list[tuple[float, float, float, str]] = []  # (x, y, z, vertex_id)
         # Child nodes (8 octants)
-        self.children: list[Optional[OctreeNode]] = [None] * 8
+        self.children: list[OctreeNode | None] = [None] * 8
         self.is_leaf = True
 
     def contains_point(self, x: float, y: float, z: float) -> bool:
@@ -292,7 +293,7 @@ class OctreeStrategy(AEdgeStrategy):
             self._edge_count += 1
         return f"{source}<->{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge between vertices."""
         edge_key = (min(source, target), max(source, target))
         if edge_key in self._edges:
@@ -307,7 +308,7 @@ class OctreeStrategy(AEdgeStrategy):
         edge_key = (min(source, target), max(source, target))
         return edge_key in self._edges
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         edge_key = (min(source, target), max(source, target))
         return self._edges.get(edge_key)
@@ -397,7 +398,7 @@ class OctreeStrategy(AEdgeStrategy):
         # Auto-connect to nearby vertices
         self._auto_connect_spatial(vertex, x, y, z)
 
-    def get_vertex_position(self, vertex: str) -> Optional[tuple[float, float, float]]:
+    def get_vertex_position(self, vertex: str) -> tuple[float, float, float] | None:
         """Get vertex 3D position."""
         return self._vertices.get(vertex)
 

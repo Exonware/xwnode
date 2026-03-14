@@ -12,20 +12,19 @@ Generation Date: 26-Jan-2025
 
 import sys
 from pathlib import Path
-from typing import Set, List, Tuple
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from exonware.xwnode.defs import NodeMode, EdgeMode
 
 
-def get_defined_strategies() -> Tuple[List[str], List[str]]:
+def get_defined_strategies() -> tuple[list[str], list[str]]:
     """Get all defined node and edge strategies from defs.py."""
     node_strategies = [mode.name for mode in NodeMode]
     edge_strategies = [mode.name for mode in EdgeMode]
     return node_strategies, edge_strategies
 
 
-def get_existing_test_files() -> Tuple[Set[str], Set[str]]:
+def get_existing_test_files() -> tuple[set[str], set[str]]:
     """Get existing strategy test files."""
     tests_dir = Path(__file__).parent.parent / "tests"
     node_tests = set()
@@ -50,7 +49,7 @@ def normalize_strategy_name(name: str) -> str:
     return name
 
 
-def find_missing_tests() -> Tuple[List[str], List[str]]:
+def find_missing_tests() -> tuple[list[str], list[str]]:
     """Find missing strategy test files."""
     defined_nodes, defined_edges = get_defined_strategies()
     existing_nodes, existing_edges = get_existing_test_files()

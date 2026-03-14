@@ -4,12 +4,12 @@ Multi-index manager for O(1) relationship lookups.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
 import threading
-from typing import Optional, Any
+from typing import Any
 from collections import defaultdict
 
 
@@ -79,7 +79,7 @@ class IndexManager:
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """
         Remove relationship(s) between entities.
@@ -118,7 +118,7 @@ class IndexManager:
     def query_outgoing(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> list[dict[str, Any]]:
         """
         Query outgoing relationships for entity.
@@ -144,7 +144,7 @@ class IndexManager:
     def query_incoming(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> list[dict[str, Any]]:
         """
         Query incoming relationships for entity.
@@ -171,7 +171,7 @@ class IndexManager:
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """
         Check if relationship exists.

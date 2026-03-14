@@ -4,10 +4,11 @@ This module implements the BLOCK_ADJ_MATRIX strategy for cache-friendly
 dense graph operations using block-based matrix partitioning.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class MatrixBlock:
@@ -151,7 +152,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         """Get local coordinates for edge within block."""
         return (u_id % self.block_size, v_id % self.block_size)
 
-    def _get_block(self, block_coords: tuple[int, int], create: bool = True) -> Optional[MatrixBlock]:
+    def _get_block(self, block_coords: tuple[int, int], create: bool = True) -> MatrixBlock | None:
         """Get block, optionally creating it."""
         # Check cache first
         if self.cache_blocks and block_coords in self._block_cache:
@@ -260,7 +261,7 @@ class BlockAdjMatrixStrategy(AEdgeStrategy):
         self._matrix_accesses += 1
         return block.get_edge(local_u, local_v) if block else None
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """
         Get edge data between source and target vertices.
         Root cause fixed: Missing method caused test failures.

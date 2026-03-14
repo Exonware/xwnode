@@ -11,17 +11,18 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from collections import deque
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
 
 
+from collections.abc import AsyncIterator, Iterator
 class DequeStrategy(ANodeLinearStrategy):
     """
     Production-grade Deque (Double-Ended Queue) node strategy.
@@ -75,7 +76,7 @@ class DequeStrategy(ANodeLinearStrategy):
             traits | NodeTrait.DOUBLE_ENDED | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
             **options
         )
-        self._max_size: Optional[int] = options.get('max_size')
+        self._max_size: int | None = options.get('max_size')
         initial_values = options.get('initial_values', [])
         self._deque: deque = deque(initial_values, maxlen=self._max_size)
 
@@ -261,7 +262,7 @@ class DequeStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -328,6 +329,52 @@ class DequeStrategy(ANodeLinearStrategy):
     def __setitem__(self, index: int, value: Any) -> None:
         """Set item at index."""
         self._deque[index] = value
+
+    # ============================================================================
+    # ANodeLinearStrategy abstract methods
+    # ============================================================================
+
+    def push_front(self, value: Any) -> None:
+        """Add element to front (alias for appendleft)."""
+        self.appendleft(value)
+
+    def push_back(self, value: Any) -> None:
+        """Add element to back (alias for append)."""
+        self.append(value)
+
+    def pop_front(self) -> Any:
+        """Remove element from front (alias for popleft)."""
+        return self.popleft()
+
+    def pop_back(self) -> Any:
+        """Remove element from back (alias for pop)."""
+        return self.pop()
+
+    def get_at_index(self, index: int) -> Any:
+        """Get element at index."""
+        return self._deque[index]
+
+    def set_at_index(self, index: int, value: Any) -> None:
+        """Set element at index."""
+        self._deque[index] = value
+
+    def as_linked_list(self):
+        """Provide LinkedList behavioral view."""
+        raise NotImplementedError(
+            "Deque cannot behave as LinkedList - use LinkedListStrategy for linked list operations"
+        )
+
+    def as_stack(self):
+        """Provide Stack behavioral view (deque supports stack operations via append/pop)."""
+        return self
+
+    def as_queue(self):
+        """Provide Queue behavioral view (deque supports queue operations via append/popleft)."""
+        return self
+
+    def as_deque(self):
+        """Provide Deque behavioral view."""
+        return self
 
     def __repr__(self) -> str:
         """Professional string representation."""

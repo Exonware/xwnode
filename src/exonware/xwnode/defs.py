@@ -9,7 +9,7 @@ Note: Query-related enums (QueryMode, QueryTrait) are defined below; xwquery.def
 """
 
 from enum import Enum, Flag, auto as _auto
-from typing import Any, Optional
+from typing import Any
 # ============================================================================
 # QUERY MODES AND TRAITS
 # ============================================================================
@@ -970,13 +970,13 @@ class PresetConfig:
 
     def __init__(self, 
                  node_mode: NodeMode,
-                 edge_mode: Optional[EdgeMode] = None,
+                 edge_mode: EdgeMode | None = None,
                  node_traits: NodeTrait = NodeTrait.NONE,
                  edge_traits: EdgeTrait = EdgeTrait.NONE,
                  description: str = "",
                  performance_class: str = "balanced",
-                 disabled_features: list[str] = None,
-                 internal_config: dict[str, Any] = None):
+                 disabled_features: list[str] | None = None,
+                 internal_config: dict[str, Any] | None = None):
         self.node_mode = node_mode
         self.edge_mode = edge_mode
         self.node_traits = node_traits

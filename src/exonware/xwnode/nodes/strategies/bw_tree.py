@@ -10,12 +10,13 @@ with delta updates and atomic operations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import threading
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -44,7 +45,7 @@ class BwTreeDelta:
         self.delta_type = delta_type  # 'insert', 'update', 'delete', 'split', 'merge'
         self.key = key
         self.value = value
-        self.next: Optional[BwTreeDelta] = None  # Link to next delta in chain
+        self.next: BwTreeDelta | None = None  # Link to next delta in chain
 
 
 class BwTreeNode:
@@ -55,7 +56,7 @@ class BwTreeNode:
         self.keys: list[Any] = []
         self.values: list[Any] = []  # For leaf nodes
         self.children: list[BwTreeNode] = []  # For internal nodes
-        self.delta_chain: Optional[BwTreeDelta] = None  # Head of delta chain
+        self.delta_chain: BwTreeDelta | None = None  # Head of delta chain
         self.base_node: bool = True  # True if this is a consolidated base node
 
     def consolidate(self) -> BwTreeNode:
@@ -188,7 +189,7 @@ class BwTreeStrategy(ANodeStrategy):
                 return True
             return False  # CAS failed, retry needed
 
-    def _get_node(self, pid: int) -> Optional[BwTreeNode]:
+    def _get_node(self, pid: int) -> BwTreeNode | None:
         """Get node from mapping table (lock-free read)."""
         return self._mapping_table.get(pid)
 
@@ -259,7 +260,7 @@ class BwTreeStrategy(ANodeStrategy):
             # CAS failed, retry with new snapshot
         return False  # Failed after max retries
 
-    def _search_in_node(self, node: BwTreeNode, key: Any) -> Optional[Any]:
+    def _search_in_node(self, node: BwTreeNode, key: Any) -> Any | None:
         """
         Search for key in node (applying deltas).
         Lock-free read traverses delta chain to find most recent value.
@@ -476,7 +477,7 @@ class BwTreeStrategy(ANodeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

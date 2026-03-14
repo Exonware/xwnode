@@ -9,14 +9,14 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 from __future__ import annotations
 import time
 import threading
-from typing import Optional, Any
+from typing import Any
 from exonware.xwsystem import get_logger
 logger = get_logger(__name__)
 from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
@@ -184,6 +184,9 @@ class StrategyManager:
         """
         # Analyze data if available
         initial_data = self._options.get('initial_data')
+        # List/tuple data always use ARRAY_LIST for correct integer indexing
+        if isinstance(initial_data, (list, tuple)):
+            return NodeMode.ARRAY_LIST
         if initial_data is not None:
             try:
                 # Create data profile
@@ -364,7 +367,7 @@ class StrategyManager:
             logger.info(f"🔄 Rebuilt edge strategy to {mode.name}")
             return self
 
-    def _get_current_node_mode(self) -> Optional[NodeMode]:
+    def _get_current_node_mode(self) -> NodeMode | None:
         """Get current node mode if materialized."""
         if self._node_strategy is None:
             return None
@@ -374,7 +377,7 @@ class StrategyManager:
         except AttributeError:
             return self._node_mode_requested
 
-    def _get_current_edge_mode(self) -> Optional[EdgeMode]:
+    def _get_current_edge_mode(self) -> EdgeMode | None:
         """Get current edge mode if materialized."""
         if self._edge_strategy is None:
             return None
@@ -627,8 +630,18 @@ class StrategyManager:
 
     def create_node_strategy(self, data: Any) -> Any:
         """Create a node strategy from data and return the internal representation."""
+        # So that AUTO mode can select list/dict-appropriate strategy, expose data shape in options
+        self._options['initial_data'] = data
+        self._options['is_list'] = isinstance(data, (list, tuple))
+        self._options['is_dict'] = isinstance(data, dict)
+        self._options['initial_size'] = len(data) if hasattr(data, '__len__') else 0
+        self._options['is_string_keys'] = isinstance(data, dict) and all(isinstance(k, str) for k in data.keys()) if data else False
+        self._options['has_numeric_indices'] = isinstance(data, (list, tuple))
         self._materialize_node_strategy()
         if self._node_strategy is not None:
+            # Clear shared flyweight strategy so len/size reflect only this node's data
+            if hasattr(self._node_strategy, 'clear'):
+                self._node_strategy.clear()
             # Populate existing strategy with data instead of creating new instance
             if isinstance(data, dict):
                 for key, value in data.items():
@@ -643,7 +656,7 @@ class StrategyManager:
                 message="Node strategy materialization failed but no exception was raised"
             )
 
-    def create_reference_strategy(self, uri: str, reference_type: str = "generic", metadata: Optional[dict[str, Any]] = None) -> Any:
+    def create_reference_strategy(self, uri: str, reference_type: str = "generic", metadata: dict[str, Any] | None = None) -> Any:
         """Create a reference strategy."""
         self._materialize_node_strategy()
         if self._node_strategy is not None:
@@ -665,7 +678,7 @@ class StrategyManager:
                 message="Node strategy materialization failed but no exception was raised"
             )
 
-    def create_object_strategy(self, uri: str, object_type: str, mime_type: Optional[str] = None, size: Optional[int] = None, metadata: Optional[dict[str, Any]] = None) -> Any:
+    def create_object_strategy(self, uri: str, object_type: str, mime_type: str | None = None, size: int | None = None, metadata: dict[str, Any] | None = None) -> Any:
         """Create an object strategy."""
         self._materialize_node_strategy()
         if self._node_strategy is not None:

@@ -5,17 +5,18 @@ Ordered Map Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Ordered Map Node Strategy Implementation
 This module implements the ORDERED_MAP strategy for sorted key-value
 operations with efficient range queries and ordered iteration.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import bisect
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
@@ -200,7 +201,7 @@ class OrderedMapStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -248,11 +249,11 @@ class OrderedMapStrategy(ANodeTreeStrategy):
     # ORDERED MAP SPECIFIC OPERATIONS
     # ============================================================================
 
-    def first_key(self) -> Optional[str]:
+    def first_key(self) -> str | None:
         """Get first (smallest) key."""
         return self._keys[0] if self._size > 0 else None
 
-    def last_key(self) -> Optional[str]:
+    def last_key(self) -> str | None:
         """Get last (largest) key."""
         return self._keys[-1] if self._size > 0 else None
 
@@ -288,29 +289,29 @@ class OrderedMapStrategy(ANodeTreeStrategy):
         range_items = self.get_range(start_key, end_key, inclusive)
         return [value for _, value in range_items]
 
-    def lower_bound(self, key: str) -> Optional[str]:
+    def lower_bound(self, key: str) -> str | None:
         """Find first key >= given key."""
         normalized_key = self._normalize_key(key)
         position = bisect.bisect_left(self._keys, normalized_key)
         return self._keys[position] if position < self._size else None
 
-    def upper_bound(self, key: str) -> Optional[str]:
+    def upper_bound(self, key: str) -> str | None:
         """Find first key > given key."""
         normalized_key = self._normalize_key(key)
         position = bisect.bisect_right(self._keys, normalized_key)
         return self._keys[position] if position < self._size else None
 
-    def floor(self, key: str) -> Optional[str]:
+    def floor(self, key: str) -> str | None:
         """Find largest key <= given key."""
         normalized_key = self._normalize_key(key)
         position = bisect.bisect_right(self._keys, normalized_key) - 1
         return self._keys[position] if position >= 0 else None
 
-    def ceiling(self, key: str) -> Optional[str]:
+    def ceiling(self, key: str) -> str | None:
         """Find smallest key >= given key."""
         return self.lower_bound(key)
 
-    def get_at_index(self, index: int) -> Optional[tuple[str, Any]]:
+    def get_at_index(self, index: int) -> tuple[str, Any] | None:
         """Get key-value pair at specific index."""
         if 0 <= index < self._size:
             return (self._keys[index], self._values[index])
@@ -325,7 +326,7 @@ class OrderedMapStrategy(ANodeTreeStrategy):
             return position
         return -1
 
-    def pop_first(self) -> Optional[tuple[str, Any]]:
+    def pop_first(self) -> tuple[str, Any] | None:
         """Remove and return first key-value pair."""
         if self._size > 0:
             key = self._keys[0]
@@ -333,7 +334,7 @@ class OrderedMapStrategy(ANodeTreeStrategy):
             return (key, value)
         return None
 
-    def pop_last(self) -> Optional[tuple[str, Any]]:
+    def pop_last(self) -> tuple[str, Any] | None:
         """Remove and return last key-value pair."""
         if self._size > 0:
             key = self._keys[-1]

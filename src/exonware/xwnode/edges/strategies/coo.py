@@ -4,11 +4,12 @@ This module implements the COO strategy for sparse graph representation
 using coordinate format for efficient sparse matrix operations and conversions.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 import bisect
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class COOStrategy(AEdgeStrategy):
@@ -175,7 +176,7 @@ class COOStrategy(AEdgeStrategy):
         self._edge_count += 1
         return f"{source}->{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from COO matrix."""
         if source not in self._vertex_to_id or target not in self._vertex_to_id:
             return False
@@ -197,7 +198,7 @@ class COOStrategy(AEdgeStrategy):
         col_id = self._vertex_to_id[target]
         return len(self._find_coordinate_positions(row_id, col_id)) > 0
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         if not self.has_edge(source, target):
             return None
@@ -215,6 +216,15 @@ class COOStrategy(AEdgeStrategy):
                 'duplicates': len(positions) - 1
             }
         return None
+
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
+        """Get neighbors of a node (iEdgeStrategy contract)."""
+        out = 'out' if direction == 'outgoing' else ('in' if direction == 'incoming' else 'both')
+        return list(self.neighbors(node, out))
+
+    def get_vertices(self) -> list[str]:
+        """Get all vertices in the graph (iEdgeStrategy contract)."""
+        return list(self.vertices())
 
     def neighbors(self, vertex: str, direction: str = 'out') -> Iterator[str]:
         """Get neighbors of vertex."""

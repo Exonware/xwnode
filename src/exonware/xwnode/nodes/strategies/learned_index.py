@@ -10,7 +10,7 @@ to predict key positions instead of traditional tree traversal.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 ==============================================================================
 RESEARCH OVERVIEW: Learned Indexes
@@ -126,7 +126,8 @@ For now, this strategy:
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import bisect
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -194,7 +195,7 @@ class LearnedIndexStrategy(ANodeStrategy):
         self._reverse_map: dict[int, str] = {}  # Numeric index -> string key
         self._next_numeric_key = 0
         # ML model components
-        self._model: Optional[Any] = None  # LinearRegression model
+        self._model: Any | None = None  # LinearRegression model
         self._trained = False
         self._error_bound = options.get('error_bound', 100)
         # Auto-training configuration
@@ -227,7 +228,7 @@ class LearnedIndexStrategy(ANodeStrategy):
         self._reverse_map[numeric_key] = key_str
         return numeric_key
 
-    def _binary_search(self, numeric_key: int, start: int = 0, end: Optional[int] = None) -> int:
+    def _binary_search(self, numeric_key: int, start: int = 0, end: int | None = None) -> int:
         """Binary search for key position."""
         if end is None:
             end = len(self._keys)
@@ -346,7 +347,7 @@ class LearnedIndexStrategy(ANodeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

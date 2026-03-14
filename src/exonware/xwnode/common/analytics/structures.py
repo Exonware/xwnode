@@ -4,11 +4,11 @@ Analytics data structures facade for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional
+from typing import Any
 from .contracts import IAnalyticsStructures
 from ...facade import XWNode
 from ...facades.graph import XWNodeGraph
@@ -24,10 +24,10 @@ class AnalyticsDataStructures:
 
     def __init__(self):
         """Initialize analytics data structures."""
-        self._count_min_sketch: Optional[XWNode] = None
-        self._hyperloglog: Optional[XWNode] = None
+        self._count_min_sketch: XWNode | None = None
+        self._hyperloglog: XWNode | None = None
         # Use XWNodeGraph with GRAPHBLAS edge mode (reuse existing facade)
-        self._graphblas: Optional[XWNodeGraph] = None
+        self._graphblas: XWNodeGraph | None = None
 
     def get_count_min_sketch(
         self,

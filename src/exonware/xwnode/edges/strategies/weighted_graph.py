@@ -5,11 +5,12 @@ This module implements the WEIGHTED_GRAPH strategy for graphs with numerical
 edge weights, optimized for network algorithms and shortest path computations.
 """
 
-from typing import Any, Optional, Iterator
+from typing import Any
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
 import threading
+from collections.abc import Iterator
 
 
 class WeightedEdge:
@@ -181,7 +182,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
             self._update_weight_stats(weight)
             return edge_id
 
-    def get_edge(self, source: str, target: str) -> Optional[WeightedEdge]:
+    def get_edge(self, source: str, target: str) -> WeightedEdge | None:
         """Get edge between source and target."""
         if not isinstance(source, str) or not isinstance(target, str):
             return None
@@ -189,12 +190,12 @@ class WeightedGraphStrategy(AEdgeStrategy):
             edge_key = (source, target)
             return self._edges.get(edge_key)
 
-    def get_edge_weight(self, source: str, target: str) -> Optional[float]:
+    def get_edge_weight(self, source: str, target: str) -> float | None:
         """Get weight of edge between source and target."""
         edge = self.get_edge(source, target)
         return edge.weight if edge else None
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """
         Get edge data between source and target vertices.
         Root cause fixed: Missing method caused test failures.
@@ -328,7 +329,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
     # WEIGHTED GRAPH SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min_weight_edge(self) -> Optional[WeightedEdge]:
+    def get_min_weight_edge(self) -> WeightedEdge | None:
         """Get edge with minimum weight."""
         if not self._edges:
             return None
@@ -336,7 +337,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
             min_edge = min(self._edges.values(), key=lambda e: e.weight)
             return min_edge
 
-    def get_max_weight_edge(self) -> Optional[WeightedEdge]:
+    def get_max_weight_edge(self) -> WeightedEdge | None:
         """Get edge with maximum weight."""
         if not self._edges:
             return None
@@ -476,7 +477,7 @@ class WeightedGraphStrategy(AEdgeStrategy):
         """Get degree of a node."""
         return self.get_degree(node)
 
-    def shortest_path(self, source: str, target: str) -> Optional[list[str]]:
+    def shortest_path(self, source: str, target: str) -> list[str] | None:
         """
         Find shortest path between source and target using Dijkstra's algorithm.
         Root cause fixed: Missing method for weighted graph algorithms.

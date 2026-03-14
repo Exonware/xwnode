@@ -5,17 +5,18 @@ Ordered Map Balanced Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Balanced Ordered Map Node Strategy Implementation
 This module implements the ORDERED_MAP_BALANCED strategy for self-balancing
 ordered operations with guaranteed O(log n) performance.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -28,8 +29,8 @@ class AVLNode:
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
-        self.left: Optional[AVLNode] = None
-        self.right: Optional[AVLNode] = None
+        self.left: AVLNode | None = None
+        self.right: AVLNode | None = None
         self.height = 1
         self.size = 1  # Size of subtree
 
@@ -71,7 +72,7 @@ rmance in all scenarios.
         self.case_sensitive = options.get('case_sensitive', True)
         self.allow_duplicates = options.get('allow_duplicates', False)
         # Core AVL tree
-        self._root: Optional[AVLNode] = None
+        self._root: AVLNode | None = None
         self._size = 0
         # Statistics
         self._rotations = 0
@@ -112,7 +113,7 @@ rmance in all scenarios.
         self._rotations += 1
         return y
 
-    def _insert_node(self, node: Optional[AVLNode], key: str, value: Any) -> AVLNode:
+    def _insert_node(self, node: AVLNode | None, key: str, value: Any) -> AVLNode:
         """Insert key-value pair into AVL tree."""
         normalized_key = self._normalize_key(key)
         # 1. Perform normal BST insertion
@@ -161,7 +162,7 @@ rmance in all scenarios.
                 return self._rotate_left(node)
         return node
 
-    def _find_node(self, node: Optional[AVLNode], key: str) -> Optional[AVLNode]:
+    def _find_node(self, node: AVLNode | None, key: str) -> AVLNode | None:
         """Find node with given key."""
         if not node:
             return None
@@ -180,7 +181,7 @@ rmance in all scenarios.
             node = node.left
         return node
 
-    def _delete_node(self, node: Optional[AVLNode], key: str) -> Optional[AVLNode]:
+    def _delete_node(self, node: AVLNode | None, key: str) -> AVLNode | None:
         """Delete node with given key."""
         if not node:
             return None
@@ -237,14 +238,14 @@ rmance in all scenarios.
                 return self._rotate_left(node)
         return node
 
-    def _inorder_traversal(self, node: Optional[AVLNode], result: list[tuple[str, Any]]) -> None:
+    def _inorder_traversal(self, node: AVLNode | None, result: list[tuple[str, Any]]) -> None:
         """Inorder traversal to collect key-value pairs."""
         if node:
             self._inorder_traversal(node.left, result)
             result.append((node.key, node.value))
             self._inorder_traversal(node.right, result)
 
-    def _range_query(self, node: Optional[AVLNode], start: str, end: str, inclusive: bool, result: list[tuple[str, Any]]) -> None:
+    def _range_query(self, node: AVLNode | None, start: str, end: str, inclusive: bool, result: list[tuple[str, Any]]) -> None:
         """Collect nodes in range."""
         if not node:
             return
@@ -364,7 +365,7 @@ rmance in all scenarios.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -412,7 +413,7 @@ rmance in all scenarios.
     # BALANCED TREE SPECIFIC OPERATIONS
     # ============================================================================
 
-    def first_key(self) -> Optional[str]:
+    def first_key(self) -> str | None:
         """Get first (smallest) key."""
         if not self._root:
             return None
@@ -421,7 +422,7 @@ rmance in all scenarios.
             node = node.left
         return node.key
 
-    def last_key(self) -> Optional[str]:
+    def last_key(self) -> str | None:
         """Get last (largest) key."""
         if not self._root:
             return None
@@ -436,11 +437,11 @@ rmance in all scenarios.
         self._range_query(self._root, start_key, end_key, inclusive, result)
         return result
 
-    def get_at_index(self, index: int) -> Optional[Any]:
+    def get_at_index(self, index: int) -> Any | None:
         """Get value at specific index with O(log n) complexity."""
         if index < 0 or index >= self._size:
             return None
-        def _find_by_index(node: Optional[AVLNode], target_index: int) -> Optional[Any]:
+        def _find_by_index(node: AVLNode | None, target_index: int) -> Any | None:
             if not node:
                 return None
             left_size = node.left.size if node.left else 0
@@ -454,7 +455,7 @@ rmance in all scenarios.
 
     def index_of(self, key: str) -> int:
         """Get index of key with O(log n) complexity."""
-        def _find_index(node: Optional[AVLNode], target_key: str, current_index: int = 0) -> int:
+        def _find_index(node: AVLNode | None, target_key: str, current_index: int = 0) -> int:
             if not node:
                 return -1
             normalized_target = self._normalize_key(target_key)
@@ -473,7 +474,7 @@ rmance in all scenarios.
         if index < 0 or index >= self._size:
             return False
         # Find key at index first
-        def _key_at_index(node: Optional[AVLNode], target_index: int) -> Optional[str]:
+        def _key_at_index(node: AVLNode | None, target_index: int) -> str | None:
             if not node:
                 return None
             left_size = node.left.size if node.left else 0
@@ -490,7 +491,7 @@ rmance in all scenarios.
 
     def get_balance_statistics(self) -> dict[str, Any]:
         """Get comprehensive balance statistics."""
-        def _analyze_balance(node: Optional[AVLNode]) -> dict[str, Any]:
+        def _analyze_balance(node: AVLNode | None) -> dict[str, Any]:
             if not node:
                 return {
                     'nodes': 0,
@@ -578,14 +579,14 @@ rmance in all scenarios.
         if order == 'inorder':
             self._inorder_traversal(self._root, result)
         elif order == 'preorder':
-            def _preorder(node: Optional[AVLNode], res: list) -> None:
+            def _preorder(node: AVLNode | None, res: list) -> None:
                 if node:
                     res.append(node.key)
                     _preorder(node.left, res)
                     _preorder(node.right, res)
             _preorder(self._root, result)
         elif order == 'postorder':
-            def _postorder(node: Optional[AVLNode], res: list) -> None:
+            def _postorder(node: AVLNode | None, res: list) -> None:
                 if node:
                     _postorder(node.left, res)
                     _postorder(node.right, res)

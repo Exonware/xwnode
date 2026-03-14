@@ -1,4 +1,4 @@
-# Source size (src/*): ~2.42 MB
+# Source size (src/*): ~2.51 MB
 [build-system]
 requires = [
     "hatchling",
@@ -55,6 +55,7 @@ full = [
 Homepage = "https://exonware.com"
 Repository = "https://github.com/exonware/xwnode"
 Documentation = "https://github.com/exonware/xwnode#readme"
+Subtree = "https://github.com/exonware/xwnode.git"
 
 [tool.black]
 line-length = 88
@@ -67,7 +68,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.9.0.3"
+python_version = "0.9.0.4"
 strict = true
 warn_return_any = true
 warn_unused_configs = true

@@ -5,16 +5,17 @@ Union-Find Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Union-Find Node Strategy Implementation
 This module implements the UNION_FIND strategy for efficient set operations.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -200,7 +201,7 @@ ations on disjoint sets.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

@@ -11,7 +11,7 @@ Generation Date: October 11, 2025
 
 import uuid
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field, asdict
 @dataclass
 

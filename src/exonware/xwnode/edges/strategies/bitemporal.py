@@ -6,18 +6,19 @@ valid-time and transaction-time dimensions for audit and time-travel queries.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
 import time
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Iterator
 class BitemporalEdge:
     """
     Edge with bitemporal properties.
@@ -29,8 +30,8 @@ class BitemporalEdge:
 
     def __init__(self, source: str, target: str,
                  valid_start: float, valid_end: float,
-                 tx_start: float, tx_end: Optional[float] = None,
-                 properties: Optional[dict[str, Any]] = None):
+                 tx_start: float, tx_end: float | None = None,
+                 properties: dict[str, Any] | None = None):
         """
         Initialize bitemporal edge.
         Args:
@@ -152,8 +153,8 @@ class BitemporalStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge with temporal metadata.
         Args:
@@ -190,7 +191,7 @@ class BitemporalStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}_{tx_start}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """
         Remove edge (creates tombstone with transaction time).
         Args:
@@ -294,7 +295,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # STANDARD GRAPH OPERATIONS
     # ============================================================================
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """Get current neighbors."""
         neighbors = set()
@@ -320,7 +321,7 @@ class BitemporalStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get current edges."""
         edges = []
         for source, target in self._current_edges:
@@ -331,7 +332,7 @@ class BitemporalStrategy(AEdgeStrategy):
             })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get current edge data."""
         for edge in self._edges:
             if edge.source == source and edge.target == target and edge.tx_end is None:
@@ -348,7 +349,7 @@ class BitemporalStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (on current snapshot)
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path in current snapshot."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -370,12 +371,12 @@ class BitemporalStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in current snapshot."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse current snapshot."""
         if start_node not in self._vertices:
             return
@@ -390,7 +391,7 @@ class BitemporalStrategy(AEdgeStrategy):
                     visited.add(neighbor)
                     queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected in current snapshot."""
         return len(self.shortest_path(source, target)) > 0
     # ============================================================================

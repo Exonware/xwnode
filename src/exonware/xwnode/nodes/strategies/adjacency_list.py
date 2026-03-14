@@ -11,17 +11,18 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, Callable, AsyncIterator
+from typing import Any
 from collections import defaultdict, deque
 from .base import ANodeGraphStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
 
 
+from collections.abc import AsyncIterator, Callable, Iterator
 class AdjacencyListStrategy(ANodeGraphStrategy):
     """
     Production-grade Adjacency List graph strategy.
@@ -231,7 +232,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
                 return True
         return False
 
-    def get_edge_weight(self, from_vertex: str, to_vertex: str) -> Optional[float]:
+    def get_edge_weight(self, from_vertex: str, to_vertex: str) -> float | None:
         """
         Get the weight of an edge.
         Time: O(degree(from_vertex))
@@ -281,7 +282,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
     # GRAPH TRAVERSAL ALGORITHMS (Production-Grade)
     # ============================================================================
 
-    def dfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> list[str]:
+    def dfs(self, start: str, visit_fn: Callable[[str], None] | None = None) -> list[str]:
         """
         Depth-First Search from start vertex.
         Time: O(V + E)
@@ -307,7 +308,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         dfs_recursive(start)
         return result
 
-    def bfs(self, start: str, visit_fn: Optional[Callable[[str], None]] = None) -> list[str]:
+    def bfs(self, start: str, visit_fn: Callable[[str], None] | None = None) -> list[str]:
         """
         Breadth-First Search from start vertex.
         Time: O(V + E)
@@ -371,7 +372,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         if not self._is_directed:
             # Undirected graph cycle detection
             visited = set()
-            def has_cycle_undirected(vertex: str, parent: Optional[str]) -> bool:
+            def has_cycle_undirected(vertex: str, parent: str | None) -> bool:
                 visited.add(vertex)
                 for neighbor, _ in self._adj_list.get(vertex, []):
                     if neighbor not in visited:
@@ -405,7 +406,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
                         return True
             return False
 
-    def topological_sort(self) -> Optional[list[str]]:
+    def topological_sort(self) -> list[str] | None:
         """
         Perform topological sort on the graph.
         Time: O(V + E)
@@ -599,7 +600,7 @@ class AdjacencyListStrategy(ANodeGraphStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

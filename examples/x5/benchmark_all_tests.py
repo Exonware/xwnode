@@ -15,7 +15,7 @@ import traceback
 import shutil
 import threading
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 from collections import defaultdict
 import json
 import argparse
@@ -192,7 +192,7 @@ SUBCATEGORY_NAMES = {
 }
 
 
-def parse_test_name(test_name: str) -> Optional[tuple[int, int, int, str]]:
+def parse_test_name(test_name: str) -> tuple[int, int, int, str] | None:
     """
     Parse test name like 'test_1_1_1_append_single_record' 
     Returns (category, subcategory, test_num, test_title) or None
@@ -272,7 +272,7 @@ def get_iteration_counts_for_test(category: int, test_title: str = "", test_name
     return ITERATION_COUNTS
 
 
-def run_test_with_iterations(test_func: callable, iterations: int, test_name: str = "") -> Optional[tuple[float, float]]:
+def run_test_with_iterations(test_func: callable, iterations: int, test_name: str = "") -> tuple[float, float] | None:
     """
     Run a test function multiple times and return average (v1_time, v2_time).
     Returns None if test fails or V1 exceeds MAX_V1_TIME_SECONDS.
@@ -740,7 +740,7 @@ async def run_all_test_groups_async(
     return results
 
 
-def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse command-line arguments for modular benchmarking configuration.
     Following GUIDE_TEST.md: Provide flexible, explicit configuration instead of
@@ -862,7 +862,7 @@ def configure_dataset(dataset_option: str) -> None:
         SHARED_TEST_FILE_V2 = None
 
 
-def main(argv: Optional[list[str]] = None):
+def main(argv: list[str] | None = None):
     """Main benchmarking function."""
     # Parse CLI arguments and configure iteration strategy
     args = parse_args(argv)

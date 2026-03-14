@@ -4,10 +4,11 @@ This module implements the ADJ_LIST strategy for sparse graph representation
 with efficient edge addition and neighbor queries.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class AdjListStrategy(AEdgeStrategy):
@@ -105,7 +106,7 @@ class AdjListStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge(s) between source and target."""
         if source not in self._outgoing:
             return False
@@ -160,7 +161,7 @@ class AdjListStrategy(AEdgeStrategy):
             return False
         return any(neighbor == target for neighbor, _ in self._outgoing[source])
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data between source and target."""
         if source not in self._outgoing:
             return None
@@ -168,6 +169,19 @@ class AdjListStrategy(AEdgeStrategy):
             if neighbor == target:
                 return data
         return None
+
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
+        """Get neighbors of a node (iEdgeStrategy contract)."""
+        out = 'out' if direction == 'outgoing' else ('in' if direction == 'incoming' else 'both')
+        return list(self.neighbors(node, out))
+
+    def get_incoming_neighbors(self, node: str) -> list[str]:
+        """Get incoming neighbors of a node (for directed graphs)."""
+        return list(self.neighbors(node, 'in'))
+
+    def get_vertices(self) -> list[str]:
+        """Get all vertices in the graph."""
+        return list(self.vertices())
 
     def neighbors(self, vertex: str, direction: str = 'out') -> Iterator[str]:
         """Get neighbors of a vertex."""

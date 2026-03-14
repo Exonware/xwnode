@@ -6,12 +6,13 @@ without creating cross-dependencies between strategies.
 
 from __future__ import annotations
 import threading
-from typing import Any, Optional, Iterator
+from typing import Any
 import weakref
 import time
 # Use xSystem logging
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.caching import create_cache
+from collections.abc import Iterator
 logger = get_logger('xnode.strategies.utils')
 # ============================================================================
 # PATH PARSING UTILITIES

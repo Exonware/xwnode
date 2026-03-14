@@ -6,16 +6,17 @@ graph representation and queries.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 
 
+from collections.abc import Iterator
 class IncidenceMatrixStrategy(AEdgeStrategy):
     """
     Incidence Matrix - Edge-centric graph representation.
@@ -103,7 +104,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge between source and target."""
         if edge_id:
             # Remove specific edge by ID
@@ -183,7 +184,7 @@ class IncidenceMatrixStrategy(AEdgeStrategy):
     # EDGE-CENTRIC OPERATIONS
     # ============================================================================
 
-    def get_edge_by_id(self, edge_id: str) -> Optional[dict[str, Any]]:
+    def get_edge_by_id(self, edge_id: str) -> dict[str, Any] | None:
         """Get edge data by edge ID (O(1) operation)."""
         return self._edges.get(edge_id)
 

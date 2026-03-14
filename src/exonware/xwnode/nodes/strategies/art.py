@@ -6,12 +6,13 @@ with O(k) complexity where k = key length.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -64,7 +65,7 @@ class ARTNode4(ARTNode):
         self.keys: list[int] = []  # Byte values (0-255)
         self.children: list[Any] = []  # Child nodes or leaf values
 
-    def find_child(self, byte: int) -> Optional[Any]:
+    def find_child(self, byte: int) -> Any | None:
         """
         Find child by byte value.
         Time Complexity: O(1) - at most 4 elements
@@ -112,7 +113,7 @@ class ARTNode16(ARTNode):
         self.keys: list[int] = []
         self.children: list[Any] = []
 
-    def find_child(self, byte: int) -> Optional[Any]:
+    def find_child(self, byte: int) -> Any | None:
         """
         Find child by byte value.
         Time Complexity: O(1) - at most 16 elements
@@ -149,7 +150,7 @@ class ARTNode48(ARTNode):
         self.index: list[int] = [255] * 256  # 255 = empty
         self.children: list[Any] = []
 
-    def find_child(self, byte: int) -> Optional[Any]:
+    def find_child(self, byte: int) -> Any | None:
         """
         Find child by byte value.
         Time Complexity: O(1) - direct array access
@@ -181,9 +182,9 @@ class ARTNode256(ARTNode):
         Space Complexity: O(1) - fixed 256-element array
         """
         super().__init__()
-        self.children: list[Optional[Any]] = [None] * 256
+        self.children: list[Any | None] = [None] * 256
 
-    def find_child(self, byte: int) -> Optional[Any]:
+    def find_child(self, byte: int) -> Any | None:
         """
         Find child by byte value.
         Time Complexity: O(1) - direct array access
@@ -225,7 +226,7 @@ class ARTStrategy(ANodeStrategy):
         Space Complexity: O(1)
         """
         super().__init__(NodeMode.ART, traits, **options)
-        self._root: Optional[ARTNode] = None
+        self._root: ARTNode | None = None
         self._size = 0
         self._size_tracker = create_size_tracker()
         self._access_tracker = create_access_tracker()
@@ -252,7 +253,7 @@ class ARTStrategy(ANodeStrategy):
         else:
             return str(key).encode('utf-8')
 
-    def _search(self, node: Optional[ARTNode], key: bytes, depth: int) -> Optional[Any]:
+    def _search(self, node: ARTNode | None, key: bytes, depth: int) -> Any | None:
         """
         Recursively search for key in tree.
         Time Complexity: O(k) where k is key length
@@ -305,7 +306,7 @@ class ARTStrategy(ANodeStrategy):
         result = self._search(self._root, key_bytes, 0)
         return result if result is not None else default
 
-    def _insert(self, node: Optional[ARTNode], key: bytes, value: Any, depth: int) -> ARTNode:
+    def _insert(self, node: ARTNode | None, key: bytes, value: Any, depth: int) -> ARTNode:
         """
         Recursively insert key-value pair into tree.
         Time Complexity: O(k) where k is key length
@@ -521,7 +522,7 @@ class ARTStrategy(ANodeStrategy):
     # ITERATION METHODS
     # ============================================================================
 
-    def _collect_all(self, node: Optional[ARTNode], prefix: bytes) -> list[tuple[bytes, Any]]:
+    def _collect_all(self, node: ARTNode | None, prefix: bytes) -> list[tuple[bytes, Any]]:
         """
         Collect all key-value pairs from tree.
         Time Complexity: O(n) where n is number of nodes
@@ -650,7 +651,7 @@ class ARTStrategy(ANodeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

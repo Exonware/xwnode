@@ -4,12 +4,13 @@ This module implements the DYNAMIC_ADJ_LIST strategy for efficiently handling
 graphs with frequent structural changes and dynamic edge properties.
 """
 
-from typing import Any, Iterator, Optional, DefaultDict
+from typing import Any, DefaultDict
 from collections import defaultdict, deque
 import time
 import threading
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class VersionedEdge:
@@ -171,7 +172,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
             return edge_id
         return self._with_lock(_add)
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge with change tracking."""
         def _remove():
             if source not in self._outgoing or target not in self._outgoing[source]:
@@ -217,7 +218,7 @@ class DynamicAdjListStrategy(AEdgeStrategy):
             return edge.is_active
         return self._with_lock(_has)
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data with version information."""
         def _get():
             if source not in self._outgoing or target not in self._outgoing[source]:

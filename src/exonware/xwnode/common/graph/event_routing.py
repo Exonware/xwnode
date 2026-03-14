@@ -4,11 +4,11 @@ Event routing implementation for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional
+from typing import Any
 from collections import defaultdict, deque
 from collections.abc import Sequence
 from .event_routing_contracts import IEventChannelGraph, IChannelRouter
@@ -40,10 +40,10 @@ class EventChannelGraph:
         )
         # Channel metadata
         self._channel_metadata: dict[str, dict[str, Any]] = {}
-        self._parent_channels: dict[str, Optional[str]] = {}
+        self._parent_channels: dict[str, str | None] = {}
         self._use_multiplex = use_multiplex
 
-    def add_channel(self, channel: str, parent: Optional[str] = None) -> None:
+    def add_channel(self, channel: str, parent: str | None = None) -> None:
         """Add a channel to the event graph."""
         if not channel:
             raise ValueError("Channel identifier cannot be empty")
@@ -81,7 +81,7 @@ class EventChannelGraph:
         self._parent_channels.pop(channel, None)
         return True
 
-    def get_channels(self, pattern: Optional[str] = None) -> list[str]:
+    def get_channels(self, pattern: str | None = None) -> list[str]:
         """Get channels matching pattern."""
         # Get all channels from metadata (channels are tracked in metadata)
         all_channels = set(self._channel_metadata.keys())
@@ -98,7 +98,7 @@ class EventChannelGraph:
         self,
         source: str,
         event: Any,
-        target_channels: Optional[Sequence[str]] = None
+        target_channels: Sequence[str] | None = None
     ) -> dict[str, Any]:
         """Route event to target channels."""
         if source not in self._channel_metadata:
@@ -175,7 +175,7 @@ class EventChannelGraph:
                     queue.append(neighbor)
         return False
 
-    def _get_path(self, source: str, target: str) -> Optional[list[str]]:
+    def _get_path(self, source: str, target: str) -> list[str] | None:
         """Get path between channels using BFS."""
         if source == target:
             return [source]
@@ -213,7 +213,7 @@ class ChannelRouter:
         self,
         source: str,
         event: Any,
-        target_channels: Optional[Sequence[str]] = None
+        target_channels: Sequence[str] | None = None
     ) -> dict[str, Any]:
         """Route event from source to target channels."""
         return self._graph.route_event(source, event, target_channels)
@@ -226,7 +226,7 @@ class ChannelRouter:
         result = self._graph.route_event(source, {}, None)
         return list(result.keys())
 
-    def get_shortest_path(self, source: str, target: str) -> Optional[list[str]]:
+    def get_shortest_path(self, source: str, target: str) -> list[str] | None:
         """Get shortest path between channels."""
         if hasattr(self._graph, '_get_path'):
             return self._graph._get_path(source, target)

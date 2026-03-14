@@ -6,17 +6,18 @@ with O(log n) link and cut operations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import deque, defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Iterator
 class TourElement:
     """
     Element in Euler tour sequence.
@@ -26,7 +27,7 @@ class TourElement:
     - Enables O(log n) updates with balanced BST
     """
 
-    def __init__(self, vertex: str, edge: Optional[tuple[str, str]] = None):
+    def __init__(self, vertex: str, edge: tuple[str, str] | None = None):
         """
         Initialize tour element.
         Args:
@@ -126,7 +127,7 @@ class EulerTourStrategy(AEdgeStrategy):
     # TOUR OPERATIONS
     # ============================================================================
 
-    def _find_tour_root(self, vertex: str) -> Optional[str]:
+    def _find_tour_root(self, vertex: str) -> str | None:
         """
         Find root of tour containing vertex.
         Args:
@@ -232,8 +233,8 @@ class EulerTourStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Link two vertices.
         Args:
@@ -264,7 +265,7 @@ class EulerTourStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """
         Cut edge.
         Args:
@@ -288,7 +289,7 @@ class EulerTourStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return (source, target) in self._edges
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """
         Check if vertices are connected.
         Args:
@@ -308,7 +309,7 @@ class EulerTourStrategy(AEdgeStrategy):
             return False
         return root_u == root_v
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """
         Get neighbors of vertex.
@@ -344,7 +345,7 @@ class EulerTourStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         seen = set()
         edges = []
@@ -359,7 +360,7 @@ class EulerTourStrategy(AEdgeStrategy):
                 })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target, 'type': 'tree'}
@@ -368,7 +369,7 @@ class EulerTourStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """
         Find path in tree (unique path exists).
         Args:
@@ -399,12 +400,12 @@ class EulerTourStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (trees have no cycles)."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse tree."""
         if start_node not in self._vertices:
             return

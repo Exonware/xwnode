@@ -5,21 +5,23 @@ AVL Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 #exonware\xnode\strategies\impls\node_avl_tree.py
 """
 AVL Tree Node Strategy Implementation
 This module implements the AVL_TREE strategy for strictly balanced binary
 search trees with guaranteed O(log n) height and operations.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class AVLTreeNode:
@@ -33,8 +35,8 @@ class AVLTreeNode:
         self.key = key
         self.value = value
         self.height = height
-        self.left: Optional[AVLTreeNode] = None
-        self.right: Optional[AVLTreeNode] = None
+        self.left: AVLTreeNode | None = None
+        self.right: AVLTreeNode | None = None
         self._hash = None
 
     def __hash__(self) -> int:
@@ -131,7 +133,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         super().__init__(NodeMode.AVL_TREE, traits, **options)
         self.case_sensitive = options.get('case_sensitive', True)
         # Core AVL tree
-        self._root: Optional[AVLTreeNode] = None
+        self._root: AVLTreeNode | None = None
         self._size = 0
         # Statistics
         self._total_insertions = 0
@@ -153,14 +155,14 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         """
         return key if self.case_sensitive else key.lower()
 
-    def _get_height(self, node: Optional[AVLTreeNode]) -> int:
+    def _get_height(self, node: AVLTreeNode | None) -> int:
         """
         Get height of node.
         Time Complexity: O(1)
         """
         return node.height if node else 0
 
-    def _get_balance(self, node: Optional[AVLTreeNode]) -> int:
+    def _get_balance(self, node: AVLTreeNode | None) -> int:
         """
         Get balance factor of node.
         Time Complexity: O(1)
@@ -239,7 +241,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
                 return self._rotate_left(node)
         return node
 
-    def _insert_node(self, node: Optional[AVLTreeNode], key: str, value: Any) -> tuple[AVLTreeNode, bool]:
+    def _insert_node(self, node: AVLTreeNode | None, key: str, value: Any) -> tuple[AVLTreeNode, bool]:
         """
         Insert node with given key and value.
         Time Complexity: O(log n) - height-balanced tree
@@ -261,7 +263,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         balanced_node = self._balance_node(node)
         return balanced_node, inserted
 
-    def _find_node(self, node: Optional[AVLTreeNode], key: str) -> Optional[AVLTreeNode]:
+    def _find_node(self, node: AVLTreeNode | None, key: str) -> AVLTreeNode | None:
         """
         Find node with given key.
         Time Complexity: O(log n) - height-balanced tree
@@ -295,7 +297,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
             node = node.right
         return node
 
-    def _delete_node(self, node: Optional[AVLTreeNode], key: str) -> tuple[Optional[AVLTreeNode], bool]:
+    def _delete_node(self, node: AVLTreeNode | None, key: str) -> tuple[AVLTreeNode | None, bool]:
         """
         Delete node with given key.
         Time Complexity: O(log n) - height-balanced tree
@@ -327,7 +329,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         balanced_node = self._balance_node(node)
         return balanced_node, True
 
-    def _inorder_traversal(self, node: Optional[AVLTreeNode]) -> Iterator[tuple[str, Any]]:
+    def _inorder_traversal(self, node: AVLTreeNode | None) -> Iterator[tuple[str, Any]]:
         """
         In-order traversal of tree.
         Time Complexity: O(n) - visits every node once
@@ -421,7 +423,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -499,7 +501,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
     # AVL TREE SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min(self) -> Optional[tuple[str, Any]]:
+    def get_min(self) -> tuple[str, Any] | None:
         """
         Get the minimum key-value pair.
         Time Complexity: O(log n)
@@ -509,7 +511,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
 
-    def get_max(self) -> Optional[tuple[str, Any]]:
+    def get_max(self) -> tuple[str, Any] | None:
         """
         Get the maximum key-value pair.
         Time Complexity: O(log n)
@@ -531,7 +533,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
         Check if tree is AVL balanced.
         Time Complexity: O(n) - validates every node
         """
-        def check_balance(node: Optional[AVLTreeNode]) -> bool:
+        def check_balance(node: AVLTreeNode | None) -> bool:
             if not node:
                 return True
             balance = self._get_balance(node)
@@ -540,7 +542,7 @@ class AVLTreeStrategy(ANodeTreeStrategy):
             return check_balance(node.left) and check_balance(node.right)
         return check_balance(self._root)
 
-    def get_balance_factor(self, key: str) -> Optional[int]:
+    def get_balance_factor(self, key: str) -> int | None:
         """
         Get balance factor of node with given key.
         Time Complexity: O(log n)
@@ -565,3 +567,64 @@ class AVLTreeStrategy(ANodeTreeStrategy):
             'backend': 'Strictly balanced AVL tree with guaranteed O(log n) height',
             'traits': [trait.name for trait in NodeTrait if self.has_trait(trait)]
         }
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods (tree is not a graph)
+    # ============================================================================
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse tree in specified order (inorder, preorder, postorder)."""
+        if order == 'inorder':
+            return [kv for kv in self._inorder_traversal(self._root)]
+        if order == 'preorder':
+            return list(self._preorder_traversal(self._root))
+        if order == 'postorder':
+            return list(self._postorder_traversal(self._root))
+        return [kv for kv in self._inorder_traversal(self._root)]
+
+    def _preorder_traversal(self, node: AVLTreeNode | None) -> Iterator[tuple[str, Any]]:
+        if node:
+            yield (node.key, node.value)
+            yield from self._preorder_traversal(node.left)
+            yield from self._preorder_traversal(node.right)
+
+    def _postorder_traversal(self, node: AVLTreeNode | None) -> Iterator[tuple[str, Any]]:
+        if node:
+            yield from self._postorder_traversal(node.left)
+            yield from self._postorder_traversal(node.right)
+            yield (node.key, node.value)
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("AVL tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("AVL tree cannot behave as Flow Network")

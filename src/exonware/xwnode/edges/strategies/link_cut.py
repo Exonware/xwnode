@@ -6,12 +6,13 @@ path queries and updates using splay-based structure.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any
 from collections import deque, defaultdict
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -34,9 +35,9 @@ class LCNode:
             vertex: Vertex identifier
         """
         self.vertex = vertex
-        self.parent: Optional[LCNode] = None
-        self.left: Optional[LCNode] = None
-        self.right: Optional[LCNode] = None
+        self.parent: LCNode | None = None
+        self.left: LCNode | None = None
+        self.right: LCNode | None = None
         # Path aggregate values (for path queries)
         self.value: float = 0.0
         self.path_min: float = 0.0
@@ -349,8 +350,8 @@ class LinkCutStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Link vertices.
         Args:
@@ -371,7 +372,7 @@ class LinkCutStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Cut edge."""
         if self._cut(source, target):
             self._edges.discard((source, target))
@@ -384,13 +385,13 @@ class LinkCutStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return (source, target) in self._edges
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected."""
         if source not in self._nodes or target not in self._nodes:
             return False
         return self._find_root(self._nodes[source]) == self._find_root(self._nodes[target])
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """Get neighbors."""
         neighbors = set()
@@ -418,7 +419,7 @@ class LinkCutStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         seen = set()
         edges = []
@@ -432,7 +433,7 @@ class LinkCutStrategy(AEdgeStrategy):
                 })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target}
@@ -441,7 +442,7 @@ class LinkCutStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find path (unique in tree)."""
         if not self.is_connected(source, target):
             return []
@@ -464,12 +465,12 @@ class LinkCutStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (trees have no cycles)."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse tree."""
         if start_node not in self._vertices:
             return

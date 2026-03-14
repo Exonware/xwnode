@@ -12,10 +12,11 @@ import os
 import tempfile
 import asyncio
 from dataclasses import dataclass, asdict
-from typing import Any, Optional, Callable
+from typing import Any
 from asyncio import Lock
 # Import interface for implementation
 from data_utils_indexed_interface import DataUtilsIndexedInterface
+from collections.abc import Callable
 JsonValue = Any
 JsonPath = list[Any]
 MatchFn = Callable[[JsonValue], bool]
@@ -39,7 +40,7 @@ class JsonIndex:
     # byte offsets for each line (record) start
     line_offsets: list[int]
     # optional id index: id_value -> line_number (0-based)
-    id_index: Optional[dict[str, int]] = None
+    id_index: dict[str, int] | None = None
 
 
 def _index_path(file_path: str) -> str:
@@ -55,9 +56,9 @@ def build_index(
     file_path: str,
     *,
     encoding: str = "utf-8",
-    id_field: Optional[str] = None,
-    max_id_index: Optional[int] = None,
-    progress_callback: Optional[Callable[[int, int], None]] = None,
+    id_field: str | None = None,
+    max_id_index: int | None = None,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> JsonIndex:
     """
     One-time full scan to build an index:
@@ -120,7 +121,7 @@ def build_index(
     return index
 
 
-def load_index(file_path: str, *, strict: bool = True) -> Optional[JsonIndex]:
+def load_index(file_path: str, *, strict: bool = True) -> JsonIndex | None:
     """
     Load and validate index if present.
     If strict=True and file changed -> returns None.
@@ -171,8 +172,8 @@ def ensure_index(
     file_path: str,
     *,
     encoding: str = "utf-8",
-    id_field: Optional[str] = None,
-    max_id_index: Optional[int] = None,
+    id_field: str | None = None,
+    max_id_index: int | None = None,
 ) -> JsonIndex:
     """
     Load existing index if valid; otherwise rebuild.
@@ -194,7 +195,7 @@ def indexed_get_by_line(
     line_number: int,
     *,
     encoding: str = "utf-8",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> JsonValue:
     """
     Random-access a specific record by line_number (0-based)
@@ -217,7 +218,7 @@ def indexed_get_by_id(
     *,
     encoding: str = "utf-8",
     id_field: str = "id",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> JsonValue:
     """
     Random-access a record by logical id using id_index if available.
@@ -246,7 +247,7 @@ def get_page(
     page_size: int,
     *,
     encoding: str = "utf-8",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> list[JsonValue]:
     """
     Paging helper using index:
@@ -283,7 +284,7 @@ async def async_indexed_get_by_line(
     line_number: int,
     *,
     encoding: str = "utf-8",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> JsonValue:
     """
     Async version of indexed_get_by_line - allows concurrent reads.
@@ -309,7 +310,7 @@ async def async_indexed_get_by_id(
     *,
     encoding: str = "utf-8",
     id_field: str = "id",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> JsonValue:
     """
     Async version of indexed_get_by_id - allows concurrent reads.
@@ -339,7 +340,7 @@ async def async_get_page(
     page_size: int,
     *,
     encoding: str = "utf-8",
-    index: Optional[JsonIndex] = None,
+    index: JsonIndex | None = None,
 ) -> list[JsonValue]:
     """
     Async version of get_page - allows concurrent reads.
@@ -377,9 +378,9 @@ async def async_build_index(
     file_path: str,
     *,
     encoding: str = "utf-8",
-    id_field: Optional[str] = None,
-    max_id_index: Optional[int] = None,
-    progress_callback: Optional[Callable[[int, int], None]] = None,
+    id_field: str | None = None,
+    max_id_index: int | None = None,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> JsonIndex:
     """
     Async version of build_index - runs in thread pool to avoid blocking.
@@ -398,8 +399,8 @@ async def async_ensure_index(
     file_path: str,
     *,
     encoding: str = "utf-8",
-    id_field: Optional[str] = None,
-    max_id_index: Optional[int] = None,
+    id_field: str | None = None,
+    max_id_index: int | None = None,
 ) -> JsonIndex:
     """
     Async version of ensure_index - runs in thread pool to avoid blocking.
@@ -427,9 +428,9 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
-        progress_callback: Optional[Callable[[int, int], None]] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
+        progress_callback: Callable[[int, int], None] | None = None,
     ) -> JsonIndex:
         """Implementation of DataUtilsIndexedInterface.build_index."""
         return build_index(file_path, encoding=encoding, id_field=id_field, max_id_index=max_id_index, progress_callback=progress_callback)
@@ -439,7 +440,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         file_path: str,
         *,
         strict: bool = True,
-    ) -> Optional[JsonIndex]:
+    ) -> JsonIndex | None:
         """Implementation of DataUtilsIndexedInterface.load_index."""
         return load_index(file_path, strict=strict)
 
@@ -448,8 +449,8 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
     ) -> JsonIndex:
         """Implementation of DataUtilsIndexedInterface.ensure_index."""
         return ensure_index(file_path, encoding=encoding, id_field=id_field, max_id_index=max_id_index)
@@ -459,9 +460,9 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
-        progress_callback: Optional[Callable[[int, int], None]] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
+        progress_callback: Callable[[int, int], None] | None = None,
     ) -> JsonIndex:
         """Implementation of DataUtilsIndexedInterface.async_build_index."""
         return await async_build_index(file_path, encoding=encoding, id_field=id_field, max_id_index=max_id_index, progress_callback=progress_callback)
@@ -471,8 +472,8 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
     ) -> JsonIndex:
         """Implementation of DataUtilsIndexedInterface.async_ensure_index."""
         return await async_ensure_index(file_path, encoding=encoding, id_field=id_field, max_id_index=max_id_index)
@@ -483,7 +484,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         line_number: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """Implementation of DataUtilsIndexedInterface.indexed_get_by_line."""
         return indexed_get_by_line(file_path, line_number, encoding=encoding, index=index)
@@ -494,7 +495,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         line_number: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """Implementation of DataUtilsIndexedInterface.async_indexed_get_by_line."""
         return await async_indexed_get_by_line(file_path, line_number, encoding=encoding, index=index)
@@ -506,7 +507,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         *,
         encoding: str = "utf-8",
         id_field: str = "id",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """Implementation of DataUtilsIndexedInterface.indexed_get_by_id."""
         return indexed_get_by_id(file_path, id_value, encoding=encoding, id_field=id_field, index=index)
@@ -518,7 +519,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         *,
         encoding: str = "utf-8",
         id_field: str = "id",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """Implementation of DataUtilsIndexedInterface.async_indexed_get_by_id."""
         return await async_indexed_get_by_id(file_path, id_value, encoding=encoding, id_field=id_field, index=index)
@@ -530,7 +531,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         page_size: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> list[Any]:
         """Implementation of DataUtilsIndexedInterface.get_page."""
         return get_page(file_path, page_number, page_size, encoding=encoding, index=index)
@@ -542,7 +543,7 @@ class JsonUtilsIndexed(DataUtilsIndexedInterface):
         page_size: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> list[Any]:
         """Implementation of DataUtilsIndexedInterface.async_get_page."""
         return await async_get_page(file_path, page_number, page_size, encoding=encoding, index=index)

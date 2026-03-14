@@ -6,11 +6,11 @@ Uses xwsystem's optimized cache (PylruCache when pylru installed, else Functools
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Optional
+from typing import Any
 from .base import ACachedStrategy, AKeyValueStrategy
 from ...defs import NodeMode
 
@@ -68,7 +68,7 @@ class LRUCacheStrategy(ACachedStrategy, AKeyValueStrategy):
     # Facade calls: strategy.get(path) - expects None on miss
     # Facade also calls: strategy.get(path, default) - expects default on miss
 
-    def get(self, key: str, default: Any = None) -> Optional[Any]:
+    def get(self, key: str, default: Any = None) -> Any | None:
         """
         Get value from cache (O(1)).
         Uses xwsystem's optimized cache which automatically handles LRU ordering.

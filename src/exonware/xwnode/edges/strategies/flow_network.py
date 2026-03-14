@@ -5,11 +5,12 @@ capacity constraints, flow algorithms, and network flow optimization.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, DefaultDict
+from typing import Any, DefaultDict
 from collections import defaultdict, deque
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class FlowEdge:
@@ -153,7 +154,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         self._update_flow_statistics()
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove flow edge."""
         if edge_id and edge_id in self._edges:
             edge = self._edges[edge_id]
@@ -176,7 +177,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return target in self._outgoing.get(source, {})
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         if target in self._outgoing.get(source, {}):
             edge_id = self._outgoing[source][target]
@@ -184,7 +185,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
             return edge.to_dict()
         return None
 
-    def get_flow_edge(self, source: str, target: str) -> Optional[FlowEdge]:
+    def get_flow_edge(self, source: str, target: str) -> FlowEdge | None:
         """Get flow edge object."""
         if target in self._outgoing.get(source, {}):
             edge_id = self._outgoing[source][target]
@@ -346,7 +347,7 @@ class FlowNetworkStrategy(AEdgeStrategy):
                     )
         return residual
 
-    def find_augmenting_path(self, source: str, sink: str) -> Optional[list[str]]:
+    def find_augmenting_path(self, source: str, sink: str) -> list[str] | None:
         """Find augmenting path using BFS (Ford-Fulkerson algorithm)."""
         if source not in self._vertices or sink not in self._vertices:
             return None

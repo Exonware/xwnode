@@ -5,21 +5,23 @@ Bitmap Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Bitmap Node Strategy Implementation
 This module implements the BITMAP strategy for efficient bit manipulation
 and boolean operations with compressed storage.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import array
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class BitmapStrategy(ANodeMatrixStrategy):
@@ -257,7 +259,64 @@ mpressed representation.
         Convert to native Python dict of boolean values.
         Time Complexity: O(m) where m is total keys
         """
-        result = {}
+        return dict(self.items())
+    # ============================================================================
+    # ANodeMatrixStrategy abstract methods (bitmap as 1-row matrix)
+    # ============================================================================
+
+    def get_dimensions(self) -> tuple[int, int]:
+        """Get matrix dimensions (rows, cols). Bitmap is 1 x capacity_bits."""
+        return (1, self._capacity_bits)
+
+    def get_at_position(self, row: int, col: int) -> Any:
+        """Get element at matrix position. Only row 0 is valid."""
+        if row != 0 or col < 0 or col >= self._capacity_bits:
+            return False
+        return self._get_bit(col)
+
+    def set_at_position(self, row: int, col: int, value: Any) -> None:
+        """Set element at matrix position. Only row 0 is valid."""
+        if row == 0 and 0 <= col < self._capacity_bits:
+            self._set_bit(col, bool(value))
+
+    def get_row(self, row: int) -> list[Any]:
+        """Get entire row. Only row 0 is valid."""
+        if row != 0:
+            return []
+        return [self._get_bit(i) for i in range(self._capacity_bits)]
+
+    def get_column(self, col: int) -> list[Any]:
+        """Get entire column."""
+        if col < 0 or col >= self._capacity_bits:
+            return [False]
+        return [self._get_bit(col)]
+
+    def transpose(self) -> ANodeMatrixStrategy:
+        """Transpose: 1xN bitmap -> same (identity for 1-row)."""
+        return self
+
+    def multiply(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix multiplication not supported for bitmap."""
+        raise XWNodeUnsupportedCapabilityError("Bitmap does not support matrix multiply")
+
+    def add(self, other: ANodeMatrixStrategy) -> ANodeMatrixStrategy:
+        """Matrix addition: bitwise OR when other is BitmapStrategy."""
+        if isinstance(other, BitmapStrategy):
+            return self.bitwise_or(other)
+        raise XWNodeUnsupportedCapabilityError("Bitmap.add requires another BitmapStrategy")
+
+    def as_adjacency_matrix(self):
+        """Provide Adjacency Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("Bitmap cannot behave as adjacency matrix")
+
+    def as_incidence_matrix(self):
+        """Provide Incidence Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("Bitmap cannot behave as incidence matrix")
+
+    def as_sparse_matrix(self):
+        """Provide Sparse Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("Bitmap cannot behave as sparse matrix")
+
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
@@ -266,7 +325,7 @@ mpressed representation.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -346,7 +405,7 @@ mpressed representation.
         self._set_bit(index, new_value)
         return new_value
 
-    def count_set_bits(self, start: int = 0, end: Optional[int] = None) -> int:
+    def count_set_bits(self, start: int = 0, end: int | None = None) -> int:
         """
         Count set bits in range [start, end).
         Time Complexity: O(end - start)
@@ -359,7 +418,7 @@ mpressed representation.
                 count += 1
         return count
 
-    def find_first_set(self, start: int = 0) -> Optional[int]:
+    def find_first_set(self, start: int = 0) -> int | None:
         """
         Find first set bit starting from index.
         Time Complexity: O(capacity) worst case
@@ -369,7 +428,7 @@ mpressed representation.
                 return i
         return None
 
-    def find_first_clear(self, start: int = 0) -> Optional[int]:
+    def find_first_clear(self, start: int = 0) -> int | None:
         """
         Find first clear bit starting from index.
         Time Complexity: O(capacity) worst case

@@ -4,12 +4,12 @@ Cache controller implementing 4-level caching hierarchy.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: November 4, 2025
 """
 
 import threading
-from typing import Optional, Any
+from typing import Any
 from contextlib import contextmanager
 from exonware.xwsystem import get_logger
 from ...config import get_config, XWNodeConfig
@@ -41,7 +41,7 @@ class CacheController:
     - Graceful degradation on cache failures
     """
 
-    def __init__(self, config: Optional[XWNodeConfig] = None):
+    def __init__(self, config: XWNodeConfig | None = None):
         """
         Initialize cache controller.
         Args:
@@ -82,7 +82,7 @@ class CacheController:
     def get_cache(
         self,
         component: str,
-        operation: Optional[str] = None,
+        operation: str | None = None,
         **runtime_options
     ) -> ICacheAdapter:
         """
@@ -211,9 +211,9 @@ class CacheController:
     def set_component_config(
         self,
         component: str,
-        enabled: Optional[bool] = None,
-        strategy: Optional[str] = None,
-        size: Optional[int] = None,
+        enabled: bool | None = None,
+        strategy: str | None = None,
+        size: int | None = None,
         **kwargs
     ) -> None:
         """
@@ -280,7 +280,7 @@ class CacheController:
                 stats[key] = cache.get_stats()
             return stats
 
-    def get_component_stats(self, component: str) -> Optional[CacheStats]:
+    def get_component_stats(self, component: str) -> CacheStats | None:
         """
         Get statistics for specific component.
         Args:
@@ -367,11 +367,11 @@ class CacheController:
                     )
             return report
 # Global controller instance (singleton pattern)
-_controller: Optional[CacheController] = None
+_controller: CacheController | None = None
 _controller_lock = threading.Lock()
 
 
-def get_cache_controller(config: Optional[XWNodeConfig] = None) -> CacheController:
+def get_cache_controller(config: XWNodeConfig | None = None) -> CacheController:
     """
     Get global cache controller instance.
     Args:

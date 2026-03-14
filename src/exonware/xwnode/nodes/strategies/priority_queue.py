@@ -11,12 +11,13 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import heapq
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
@@ -75,7 +76,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
             traits | NodeTrait.PRIORITY | NodeTrait.FAST_INSERT | NodeTrait.HEAP_OPERATIONS,
             **options
         )
-        self._max_size: Optional[int] = options.get('max_size')
+        self._max_size: int | None = options.get('max_size')
         self._is_max_heap: bool = options.get('is_max_heap', False)
         self._heap: list[tuple[float, int, Any]] = []  # (priority, counter, value)
         self._counter = 0
@@ -301,7 +302,7 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

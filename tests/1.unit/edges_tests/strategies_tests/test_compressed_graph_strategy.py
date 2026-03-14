@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.facades.graph import XWNodeGraph
 from exonware.xwnode.defs import NodeMode, EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_compressed():
-    """Create empty compressed graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.COMPRESSED_GRAPH)
+    """Create empty compressed graph (use XWNodeGraph for edge operations)."""
+    return XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.COMPRESSED_GRAPH)
 @pytest.fixture
 
 def simple_compressed():
     """Create compressed graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.COMPRESSED_GRAPH)
+    graph = XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.COMPRESSED_GRAPH)
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     graph.add_edge('A', 'C')
@@ -53,10 +53,10 @@ class TestCompressedGraphStrategy:
         assert simple_compressed.has_edge('C', 'A') is False
 
     def test_delete_edge_operation(self, simple_compressed):
-        """Test delete_edge operation removes edges correctly."""
-        assert simple_compressed.delete_edge('A', 'B') is True
+        """Test remove_edge operation removes edges correctly (XWNodeGraph uses remove_edge)."""
+        assert simple_compressed.remove_edge('A', 'B') is True
         assert simple_compressed.has_edge('A', 'B') is False
-        assert simple_compressed.delete_edge('nonexistent', 'edge') is False
+        assert simple_compressed.remove_edge('nonexistent', 'edge') is False
 
     def test_get_neighbors_operation(self, simple_compressed):
         """Test get_neighbors returns correct neighbors."""

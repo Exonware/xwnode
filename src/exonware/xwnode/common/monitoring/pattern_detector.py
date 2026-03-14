@@ -8,14 +8,14 @@ selection with sophisticated heuristics.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import re
 import time
 import threading
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 from enum import Enum
 from exonware.xwsystem import get_logger
@@ -484,7 +484,7 @@ class DataPatternDetector:
         """Get detector statistics."""
         return self._stats.copy()
 # Global detector instance
-_detector_instance: Optional[DataPatternDetector] = None
+_detector_instance: DataPatternDetector | None = None
 _detector_lock = threading.Lock()
 
 

@@ -15,15 +15,15 @@ Provides xwnode-specific security event logging for:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Jan-2025
 """
 
 import time
-from typing import Any, Optional, Dict, List
 from dataclasses import dataclass, field
 from enum import Enum
 from collections import deque
+from typing import Any
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.security.monitor import SecurityMonitor as XWSystemSecurityMonitor
 from exonware.xwsystem.monitoring.metrics import GenericMetrics
@@ -49,13 +49,13 @@ class SecurityEvent:
     event_type: SecurityEventType
     message: str
     timestamp: float = field(default_factory=time.time)
-    context: Dict[str, Any] = field(default_factory=dict)
+    context: dict[str, Any] = field(default_factory=dict)
     severity: str = "medium"  # low, medium, high, critical
-    source: Optional[str] = None
-    user_id: Optional[str] = None
-    ip_address: Optional[str] = None
+    source: str | None = None
+    user_id: str | None = None
+    ip_address: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert event to dictionary."""
         return {
             'event_type': self.event_type.value,
@@ -105,7 +105,7 @@ class SecurityLogger:
         # Event storage (circular buffer) - xwnode-specific events
         self._events: deque = deque(maxlen=max_events)
         # Event counters by type
-        self._event_counts: Dict[SecurityEventType, int] = {}
+        self._event_counts: dict[SecurityEventType, int] = {}
         logger.info("SecurityLogger initialized (using xwsystem SecurityMonitor and Metrics)")
 
     def log_event(
@@ -113,10 +113,10 @@ class SecurityLogger:
         event_type: SecurityEventType,
         message: str,
         severity: str = "medium",
-        context: Optional[Dict[str, Any]] = None,
-        source: Optional[str] = None,
-        user_id: Optional[str] = None,
-        ip_address: Optional[str] = None
+        context: dict[str, Any] | None = None,
+        source: str | None = None,
+        user_id: str | None = None,
+        ip_address: str | None = None
     ) -> None:
         """
         Log a security event.
@@ -171,8 +171,8 @@ class SecurityLogger:
     def log_path_traversal(
         self,
         path: str,
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log path traversal attempt."""
         self.log_event(
@@ -187,8 +187,8 @@ class SecurityLogger:
         self,
         input_data: str,
         injection_type: str = "unknown",
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log injection attempt."""
         self.log_event(
@@ -204,8 +204,8 @@ class SecurityLogger:
         resource_type: str,
         limit: int,
         actual: int,
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log resource limit violation."""
         self.log_event(
@@ -219,8 +219,8 @@ class SecurityLogger:
     def log_suspicious_activity(
         self,
         activity: str,
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log suspicious activity."""
         self.log_event(
@@ -235,8 +235,8 @@ class SecurityLogger:
         self,
         policy: str,
         violation: str,
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log security policy violation."""
         self.log_event(
@@ -251,8 +251,8 @@ class SecurityLogger:
         self,
         operation: str,
         limit: int,
-        source: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None
+        source: str | None = None,
+        context: dict[str, Any] | None = None
     ) -> None:
         """Log rate limit exceeded."""
         self.log_event(
@@ -278,7 +278,7 @@ class SecurityLogger:
         )
         getattr(logger, log_level)(log_message)
 
-    def get_security_metrics(self) -> Dict[str, Any]:
+    def get_security_metrics(self) -> dict[str, Any]:
         """
         Get security metrics from xwsystem.
         Returns:
@@ -313,10 +313,10 @@ class SecurityLogger:
 
     def get_events(
         self,
-        event_type: Optional[SecurityEventType] = None,
-        severity: Optional[str] = None,
-        limit: Optional[int] = None
-    ) -> List[SecurityEvent]:
+        event_type: SecurityEventType | None = None,
+        severity: str | None = None,
+        limit: int | None = None,
+    ) -> list[SecurityEvent]:
         """
         Get logged events with optional filtering.
         Args:
@@ -340,11 +340,11 @@ class SecurityLogger:
             events = events[:limit]
         return events
 
-    def get_event_counts(self) -> Dict[str, int]:
+    def get_event_counts(self) -> dict[str, int]:
         """Get event counts by type."""
         return {k.value: v for k, v in self._event_counts.items()}
 
-    def get_recent_events(self, seconds: int = 60) -> List[SecurityEvent]:
+    def get_recent_events(self, seconds: int = 60) -> list[SecurityEvent]:
         """Get events from the last N seconds."""
         cutoff = time.time() - seconds
         return [e for e in self._events if e.timestamp >= cutoff]
@@ -355,7 +355,7 @@ class SecurityLogger:
         self._event_counts.clear()
         logger.info("Security events cleared")
 # Global security logger instance
-_security_logger: Optional[SecurityLogger] = None
+_security_logger: SecurityLogger | None = None
 
 
 def get_security_logger() -> SecurityLogger:

@@ -5,11 +5,12 @@ graph partitioning and efficient spatial queries.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 import math
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class QuadTreeNode:
@@ -24,7 +25,7 @@ class QuadTreeNode:
         # Points stored in this node
         self.points: list[tuple[float, float, str]] = []  # (x, y, vertex_id)
         # Child nodes (NW, NE, SW, SE)
-        self.children: list[Optional[QuadTreeNode]] = [None, None, None, None]
+        self.children: list[QuadTreeNode | None] = [None, None, None, None]
         self.is_leaf = True
 
     def contains_point(self, x: float, y: float) -> bool:
@@ -255,7 +256,7 @@ class QuadTreeStrategy(AEdgeStrategy):
             self._edge_count += 1
         return f"{source}<->{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge between vertices."""
         edge_key = (min(source, target), max(source, target))
         if edge_key in self._edges:
@@ -270,7 +271,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         edge_key = (min(source, target), max(source, target))
         return edge_key in self._edges
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         edge_key = (min(source, target), max(source, target))
         return self._edges.get(edge_key)
@@ -360,7 +361,7 @@ class QuadTreeStrategy(AEdgeStrategy):
         # Auto-connect to nearby vertices
         self._auto_connect_spatial(vertex, x, y)
 
-    def get_vertex_position(self, vertex: str) -> Optional[tuple[float, float]]:
+    def get_vertex_position(self, vertex: str) -> tuple[float, float] | None:
         """Get vertex position."""
         return self._vertices.get(vertex)
 

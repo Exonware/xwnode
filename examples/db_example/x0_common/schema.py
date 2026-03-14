@@ -13,7 +13,7 @@ import uuid
 import random
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any
 @dataclass
 
 class User:
@@ -27,7 +27,7 @@ class User:
     cover_photo_url: str = ""
     location: str = ""
     website: str = ""
-    birth_date: Optional[str] = None
+    birth_date: str | None = None
     phone_number: str = ""
     is_verified: bool = False
     is_private: bool = False
@@ -35,7 +35,7 @@ class User:
     language: str = "en"
     timezone: str = "UTC"
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    last_login_at: Optional[str] = None
+    last_login_at: str | None = None
     follower_count: int = 0
     following_count: int = 0
     post_count: int = 0
@@ -64,7 +64,7 @@ class Post:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str = ""
     content: str = ""
-    title: Optional[str] = None  # Optional title for some post types
+    title: str | None = None  # Optional title for some post types
     post_type: str = "text"  # text, image, video, link, poll, event
     # Media attachments
     media_urls: list[str] = field(default_factory=list)  # Images, videos
@@ -74,16 +74,16 @@ class Post:
     mentions: list[str] = field(default_factory=list)  # @username1, @username2
     tagged_users: list[str] = field(default_factory=list)  # User IDs tagged in post
     # Location
-    location_name: Optional[str] = None
-    location_lat: Optional[float] = None
-    location_lng: Optional[float] = None
+    location_name: str | None = None
+    location_lat: float | None = None
+    location_lng: float | None = None
     # Visibility and settings
     visibility: str = "public"  # public, friends, private, unlisted
     allow_comments: bool = True
     allow_shares: bool = True
     is_pinned: bool = False
     is_edited: bool = False
-    edited_at: Optional[str] = None
+    edited_at: str | None = None
     # Engagement metrics
     likes_count: int = 0
     comment_count: int = 0
@@ -91,16 +91,16 @@ class Post:
     view_count: int = 0
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    scheduled_at: Optional[str] = None
+    scheduled_at: str | None = None
     # Additional metadata
-    link_preview_url: Optional[str] = None
-    link_preview_title: Optional[str] = None
-    link_preview_description: Optional[str] = None
-    link_preview_image: Optional[str] = None
-    poll_question: Optional[str] = None
+    link_preview_url: str | None = None
+    link_preview_title: str | None = None
+    link_preview_description: str | None = None
+    link_preview_image: str | None = None
+    poll_question: str | None = None
     poll_options: list[str] = field(default_factory=list)
     poll_votes: dict[str, int] = field(default_factory=dict)
-    poll_ends_at: Optional[str] = None
+    poll_ends_at: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
@@ -117,11 +117,11 @@ class Comment:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     post_id: str = ""
     user_id: str = ""
-    parent_comment_id: Optional[str] = None  # For nested replies
+    parent_comment_id: str | None = None  # For nested replies
     content: str = ""
     # Media in comments
-    media_url: Optional[str] = None
-    media_type: Optional[str] = None
+    media_url: str | None = None
+    media_type: str | None = None
     # Mentions
     mentions: list[str] = field(default_factory=list)  # @username mentions
     # Engagement
@@ -130,7 +130,7 @@ class Comment:
     # Status
     is_deleted: bool = False
     is_edited: bool = False
-    edited_at: Optional[str] = None
+    edited_at: str | None = None
     is_pinned: bool = False  # Pinned by post author
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
@@ -159,8 +159,8 @@ class Relationship:
     notify_on_live: bool = True
     # Timestamps
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    updated_at: Optional[str] = None
-    expires_at: Optional[str] = None  # For temporary mutes/blocks
+    updated_at: str | None = None
+    expires_at: str | None = None  # For temporary mutes/blocks
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
@@ -197,7 +197,7 @@ class Share:
     user_id: str = ""
     post_id: str = ""
     share_type: str = "repost"  # repost, quote, story, message
-    quote_text: Optional[str] = None  # For quote shares
+    quote_text: str | None = None  # For quote shares
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def to_dict(self) -> dict[str, Any]:
@@ -218,10 +218,10 @@ class Message:
     recipient_id: str = ""
     content: str = ""
     message_type: str = "text"  # text, image, video, file, voice, location
-    media_url: Optional[str] = None
-    media_type: Optional[str] = None
+    media_url: str | None = None
+    media_type: str | None = None
     is_read: bool = False
-    read_at: Optional[str] = None
+    read_at: str | None = None
     is_deleted: bool = False
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
 
@@ -245,10 +245,10 @@ class Notification:
     target_id: str = ""
     title: str = ""
     body: str = ""
-    image_url: Optional[str] = None
-    link_url: Optional[str] = None
+    image_url: str | None = None
+    link_url: str | None = None
     is_read: bool = False
-    read_at: Optional[str] = None
+    read_at: str | None = None
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
 
     def to_dict(self) -> dict[str, Any]:
@@ -267,8 +267,8 @@ class Group:
     name: str = ""
     description: str = ""
     owner_id: str = ""
-    cover_image_url: Optional[str] = None
-    profile_image_url: Optional[str] = None
+    cover_image_url: str | None = None
+    profile_image_url: str | None = None
     group_type: str = "public"  # public, private, secret
     member_count: int = 0
     post_count: int = 0
@@ -296,14 +296,14 @@ class Event:
     organizer_id: str = ""
     location_name: str = ""
     location_address: str = ""
-    location_lat: Optional[float] = None
-    location_lng: Optional[float] = None
+    location_lat: float | None = None
+    location_lng: float | None = None
     start_time: str = ""
-    end_time: Optional[str] = None
+    end_time: str | None = None
     timezone: str = "UTC"
     is_online: bool = False
-    online_url: Optional[str] = None
-    cover_image_url: Optional[str] = None
+    online_url: str | None = None
+    cover_image_url: str | None = None
     attendee_count: int = 0
     maybe_count: int = 0
     not_going_count: int = 0
@@ -328,7 +328,7 @@ class Hashtag:
     trend_score: float = 0.0
     is_trending: bool = False
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
-    last_used_at: Optional[str] = None
+    last_used_at: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for storage"""
@@ -400,7 +400,7 @@ def generate_user(index: int) -> User:
     )
 
 
-def generate_post(index: int, user_id: str, user_ids: Optional[list[str]] = None) -> Post:
+def generate_post(index: int, user_id: str, user_ids: list[str] | None = None) -> Post:
     """
     Generate a comprehensive social media post.
     Root cause fixed: Made user_ids optional for backward compatibility with existing benchmarks.
@@ -495,7 +495,7 @@ def generate_post(index: int, user_id: str, user_ids: Optional[list[str]] = None
     )
 
 
-def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[list[str]] = None, parent_comment_id: Optional[str] = None) -> Comment:
+def generate_comment(index: int, post_id: str, user_id: str, user_ids: list[str] | None = None, parent_comment_id: str | None = None) -> Comment:
     """
     Generate a comprehensive social media comment.
     Root cause fixed: Made user_ids optional for backward compatibility with existing benchmarks.
@@ -549,7 +549,7 @@ def generate_comment(index: int, post_id: str, user_id: str, user_ids: Optional[
     )
 
 
-def generate_relationship(source_id: str, target_id: str, rel_type: Optional[str] = None) -> Relationship:
+def generate_relationship(source_id: str, target_id: str, rel_type: str | None = None) -> Relationship:
     """Generate a comprehensive user relationship"""
     if rel_type is None:
         rel_type = random.choice(RELATIONSHIP_TYPES)

@@ -4,12 +4,13 @@ This module implements the NEURAL_GRAPH strategy for neural network
 computation graphs with automatic differentiation and gradient tracking.
 """
 
-from typing import Any, Iterator, Optional, Callable
+from typing import Any
 from collections import defaultdict, deque
 import math
 from enum import Enum
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Callable, Iterator
 
 
 class ActivationFunction(Enum):
@@ -61,7 +62,7 @@ class NeuralEdge:
         self.last_backward_value = gradient * self.weight
         return self.last_backward_value
 
-    def update_weight(self, optimizer_func: Optional[Callable] = None) -> None:
+    def update_weight(self, optimizer_func: Callable | None = None) -> None:
         """Update weight based on accumulated gradients."""
         if self.is_frozen:
             return
@@ -285,7 +286,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         self._compute_topological_order()
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove neural edge."""
         if edge_id and edge_id in self._edges:
             edge = self._edges[edge_id]
@@ -313,7 +314,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
                 return True
         return False
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data."""
         for edge_id in self._outgoing.get(source, []):
             edge = self._edges[edge_id]
@@ -489,7 +490,7 @@ class NeuralGraphStrategy(AEdgeStrategy):
         self._total_loss += total_loss
         return total_loss
 
-    def update_weights(self, optimizer_func: Optional[Callable] = None) -> None:
+    def update_weights(self, optimizer_func: Callable | None = None) -> None:
         """Update all edge weights based on gradients."""
         for edge in self._edges.values():
             edge.update_weight(optimizer_func)

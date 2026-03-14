@@ -5,20 +5,22 @@ Heap Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Heap Node Strategy Implementation
 This module implements the HEAP strategy for priority queue operations.
 """
 import heapq
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class MinHeap:
@@ -160,7 +162,7 @@ urable min/max behavior.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -438,6 +440,38 @@ urable min/max behavior.
     def __contains__(self, key: Any) -> bool:
         """Check if key exists (not efficient for heaps)."""
         return False
+
+    # ============================================================================
+    # ANodeGraphStrategy abstract methods (heap is not a graph)
+    # ============================================================================
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("Heap does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("Heap cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("Heap cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("Heap cannot behave as Flow Network")
+
     # Type checking properties
     @property
 

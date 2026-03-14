@@ -12,10 +12,11 @@ Generation Date: October 11, 2025
 import time
 import psutil
 import os
-from typing import Any, Callable
+from typing import Any
 from contextlib import contextmanager
 
 
+from collections.abc import Callable
 class BenchmarkMetrics:
     """Stores and manages benchmark metrics"""
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 import os
 import threading
 from dataclasses import dataclass, fields
-from typing import Optional
 # Direct import - xwsystem is a required dependency
 from exonware.xwsystem import get_logger
 logger = get_logger('xwnode.config')
@@ -17,7 +16,7 @@ from .errors import XWNodeValueError
 # A lock to ensure thread-safe modification of the global config object
 _config_lock = threading.Lock()
 # The global configuration instance
-_config: Optional[XWNodeConfig] = None
+_config: XWNodeConfig | None = None
 
 
 def _get_env_var(key: str, default: str, target_type: type):
@@ -94,7 +93,7 @@ class XWNodeConfig:
     # Two-tier cache settings (memory + disk)
     enable_disk_cache: bool = False
     disk_cache_size: int = 10000
-    disk_cache_dir: Optional[str] = None
+    disk_cache_dir: str | None = None
     # TTL cache settings
     cache_ttl_seconds: int = 300  # 5 minutes default
     # Performance tuning

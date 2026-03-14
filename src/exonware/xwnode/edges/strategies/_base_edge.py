@@ -5,8 +5,9 @@ in the strategy system.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator
+from typing import Any
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class AEdgeStrategy(ABC):

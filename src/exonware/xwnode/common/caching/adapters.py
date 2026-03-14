@@ -4,13 +4,13 @@ Cache adapters wrapping xwsystem.caching implementations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: November 4, 2025
 """
 
 import fnmatch
 import threading
-from typing import Any, Optional
+from typing import Any
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.caching import (
     create_cache,
@@ -27,7 +27,7 @@ class NoCacheAdapter(ICacheAdapter):
         """Initialize no-cache adapter."""
         self._stats = CacheStats()
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Always returns None (cache miss)."""
         self._stats.misses += 1
         return None
@@ -76,7 +76,7 @@ class LRUCacheAdapter(ICacheAdapter):
         self._namespace = namespace
         logger.debug(f"Initialized LRUCacheAdapter: capacity={size}, namespace={namespace}")
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from LRU cache."""
         with self._lock:
             return self._cache.get(key)
@@ -149,7 +149,7 @@ class LFUCacheAdapter(ICacheAdapter):
         self._namespace = namespace
         logger.debug(f"Initialized LFUCacheAdapter: capacity={size}, namespace={namespace}")
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from LFU cache."""
         with self._lock:
             return self._cache.get(key)
@@ -227,7 +227,7 @@ class TTLCacheAdapter(ICacheAdapter):
         self._namespace = namespace
         logger.debug(f"Initialized TTLCacheAdapter: capacity={size}, ttl={ttl}, namespace={namespace}")
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from TTL cache."""
         with self._lock:
             return self._cache.get(key)
@@ -287,7 +287,7 @@ class TwoTierCacheAdapter(ICacheAdapter):
         self,
         size: int,
         disk_size: int = 10000,
-        disk_cache_dir: Optional[str] = None,
+        disk_cache_dir: str | None = None,
         namespace: str = "default",
         **kwargs
     ):
@@ -311,7 +311,7 @@ class TwoTierCacheAdapter(ICacheAdapter):
         logger.debug(f"Initialized TwoTierCacheAdapter: memory_size={size}, "
                     f"disk_size={disk_size}, namespace={namespace}")
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get value from two-tier cache."""
         with self._lock:
             return self._cache.get(key)

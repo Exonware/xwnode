@@ -17,7 +17,7 @@ import time
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 # Import test helpers
 sys.path.insert(0, str(Path(__file__).parent))
 from test_helpers import (

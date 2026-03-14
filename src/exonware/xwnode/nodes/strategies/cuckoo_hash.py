@@ -5,17 +5,18 @@ Cuckoo Hash Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Cuckoo Hash Node Strategy Implementation
 This module implements the CUCKOO_HASH strategy for guaranteed O(1)
 worst-case lookup time with efficient space utilization.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import hashlib
 import random
 from .base import ANodeStrategy, AKeyValueStrategy
@@ -46,8 +47,8 @@ class CuckooHashStrategy(AKeyValueStrategy):
         self.max_evictions = options.get('max_evictions', 8)
         # Two hash tables
         self.capacity = self.initial_capacity
-        self._table1: list[Optional[tuple[str, Any]]] = [None] * self.capacity
-        self._table2: list[Optional[tuple[str, Any]]] = [None] * self.capacity
+        self._table1: list[tuple[str, Any] | None] = [None] * self.capacity
+        self._table2: list[tuple[str, Any] | None] = [None] * self.capacity
         # Hash function parameters
         self._hash1_a = random.randint(1, 1000000)
         self._hash1_b = random.randint(0, 1000000)
@@ -294,7 +295,7 @@ class CuckooHashStrategy(AKeyValueStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

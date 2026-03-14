@@ -6,17 +6,18 @@ with per-layer edge semantics and cross-layer analysis.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Iterator
 class MultiplexStrategy(AEdgeStrategy):
     """
     Multiplex/Layered edges strategy for multi-layer graph networks.
@@ -76,7 +77,7 @@ class MultiplexStrategy(AEdgeStrategy):
     """
 
     def __init__(self, traits: EdgeTrait = EdgeTrait.NONE,
-                 default_layers: Optional[list[str]] = None, **options):
+                 default_layers: list[str] | None = None, **options):
         """
         Initialize multiplex strategy.
         Args:
@@ -143,8 +144,8 @@ class MultiplexStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge to layer.
         Args:
@@ -174,7 +175,7 @@ class MultiplexStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{layer}_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """
         Remove edge from all layers.
         Args:
@@ -226,7 +227,7 @@ class MultiplexStrategy(AEdgeStrategy):
             return False
         return source in self._layers[layer_name] and target in self._layers[layer_name][source]
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """
         Get neighbors from specific layer or all layers.
@@ -269,7 +270,7 @@ class MultiplexStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """
         Get edges from specific layer or all layers.
         Args:
@@ -294,7 +295,7 @@ class MultiplexStrategy(AEdgeStrategy):
                     })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data from all layers."""
         for layer_name, layer in self._layers.items():
             if source in layer and target in layer[source]:
@@ -348,7 +349,7 @@ class MultiplexStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path in layer or aggregate."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -370,12 +371,12 @@ class MultiplexStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return
@@ -390,7 +391,7 @@ class MultiplexStrategy(AEdgeStrategy):
                     visited.add(neighbor)
                     queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected in layer or aggregate."""
         return len(self.shortest_path(source, target, edge_type)) > 0
     # ============================================================================

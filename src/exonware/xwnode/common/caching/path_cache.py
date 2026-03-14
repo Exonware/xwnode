@@ -17,12 +17,12 @@ Priority alignment:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import threading
-from typing import Any, Optional
+from typing import Any
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.caching import create_cache
 logger = get_logger(__name__)
@@ -78,7 +78,7 @@ class PathNavigationCache:
             'invalidations': 0
         }
 
-    def get(self, path: str) -> Optional[Any]:
+    def get(self, path: str) -> Any | None:
         """
         Get cached value for path.
         Args:
@@ -122,7 +122,7 @@ class PathNavigationCache:
                 if xwsystem_evictions > 0:
                     self._stats['evictions'] = max(self._stats['evictions'], xwsystem_evictions)
 
-    def invalidate(self, path: Optional[str] = None) -> int:
+    def invalidate(self, path: str | None = None) -> int:
         """
         Invalidate cache entries.
         Args:

@@ -6,19 +6,20 @@ search using proximity graphs with hierarchical navigation.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
 import math
 import random
-from typing import Any, Iterator, Optional, Callable
+from typing import Any
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Callable, Iterator
 class HNSWStrategy(AEdgeStrategy):
     """
     HNSW (Hierarchical Navigable Small World) strategy for ANN search.
@@ -106,7 +107,7 @@ class HNSWStrategy(AEdgeStrategy):
         # Vector storage
         self._vectors: dict[str, tuple[float, ...]] = {}
         # Entry point (highest layer vertex)
-        self._entry_point: Optional[str] = None
+        self._entry_point: str | None = None
         self._entry_layer = -1
         # Track vertices
         self._vertices: set[str] = set()
@@ -295,8 +296,8 @@ class HNSWStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge (requires vectors).
         Note: For HNSW, use add_vector() instead.
@@ -314,7 +315,7 @@ class HNSWStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def search_knn(self, query: tuple[float, ...], k: int, ef: Optional[int] = None) -> list[tuple[str, float]]:
+    def search_knn(self, query: tuple[float, ...], k: int, ef: int | None = None) -> list[tuple[str, float]]:
         """
         Search for k nearest neighbors.
         Args:
@@ -349,7 +350,7 @@ class HNSWStrategy(AEdgeStrategy):
         candidates.sort()
         return [(v, d) for d, v in candidates[:k]]
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from all layers."""
         removed = False
         for layer in self._layers[source]:
@@ -367,7 +368,7 @@ class HNSWStrategy(AEdgeStrategy):
                 return True
         return False
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """Get neighbors from layer 0."""
         return list(self._layers.get(node, {}).get(0, set()))
@@ -389,7 +390,7 @@ class HNSWStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges from all layers."""
         edges = []
         seen = set()
@@ -407,7 +408,7 @@ class HNSWStrategy(AEdgeStrategy):
                         })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target, 'type': 'proximity'}
@@ -416,7 +417,7 @@ class HNSWStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path (using layer 0)."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -438,12 +439,12 @@ class HNSWStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return
@@ -458,7 +459,7 @@ class HNSWStrategy(AEdgeStrategy):
                     visited.add(neighbor)
                     queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected."""
         return len(self.shortest_path(source, target)) > 0
     # ============================================================================

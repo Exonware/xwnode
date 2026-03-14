@@ -4,18 +4,19 @@ This module implements the TEMPORAL_EDGESET strategy for time-aware graphs
 with temporal queries and time-based edge evolution.
 """
 
-from typing import Any, Iterator, Optional, NamedTuple
+from typing import Any, NamedTuple
 from collections import defaultdict
 import time
 import bisect
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class TimeInterval(NamedTuple):
     """Represents a time interval."""
     start: float
-    end: Optional[float]  # None means ongoing
+    end: float | None  # None means ongoing
 
     def contains(self, timestamp: float) -> bool:
         """Check if timestamp is within this interval."""
@@ -32,7 +33,7 @@ class TemporalEdge:
     """Represents an edge with temporal validity periods."""
 
     def __init__(self, edge_id: str, source: str, target: str, 
-                 start_time: float, end_time: Optional[float] = None, **properties):
+                 start_time: float, end_time: float | None = None, **properties):
         self.edge_id = edge_id
         self.source = source
         self.target = target
@@ -178,7 +179,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         self._current_time_cache = None
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove a temporal edge (mark as ended)."""
         # Find edge to remove
         target_edge_id = None
@@ -212,7 +213,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         self._current_time_cache = None
         return True
 
-    def has_edge(self, source: str, target: str, timestamp: Optional[float] = None) -> bool:
+    def has_edge(self, source: str, target: str, timestamp: float | None = None) -> bool:
         """Check if edge exists at specific time (default: current time)."""
         if timestamp is None:
             timestamp = time.time()
@@ -224,7 +225,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         return False
 
     def get_edge_data(self, source: str, target: str, 
-                     timestamp: Optional[float] = None) -> Optional[dict[str, Any]]:
+                     timestamp: float | None = None) -> dict[str, Any] | None:
         """Get edge data at specific time."""
         if timestamp is None:
             timestamp = time.time()
@@ -236,7 +237,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         return None
 
     def neighbors(self, vertex: str, direction: str = 'out', 
-                 timestamp: Optional[float] = None) -> Iterator[str]:
+                 timestamp: float | None = None) -> Iterator[str]:
         """Get neighbors at specific time."""
         if timestamp is None:
             timestamp = time.time()
@@ -258,11 +259,11 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
                         yield edge.source
 
     def degree(self, vertex: str, direction: str = 'out', 
-              timestamp: Optional[float] = None) -> int:
+              timestamp: float | None = None) -> int:
         """Get degree at specific time."""
         return sum(1 for _ in self.neighbors(vertex, direction, timestamp))
 
-    def edges(self, data: bool = False, timestamp: Optional[float] = None) -> Iterator[tuple]:
+    def edges(self, data: bool = False, timestamp: float | None = None) -> Iterator[tuple]:
         """Get all edges at specific time."""
         if timestamp is None:
             timestamp = time.time()
@@ -384,7 +385,7 @@ class TemporalEdgeSetStrategy(AEdgeStrategy):
         return result
 
     def get_temporal_path(self, source: str, target: str, 
-                         start_time: float, max_duration: float) -> Optional[list[str]]:
+                         start_time: float, max_duration: float) -> list[str] | None:
         """Find temporal path respecting edge timing constraints."""
         # Simple temporal BFS
         queue = [(source, start_time, [source])]

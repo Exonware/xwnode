@@ -5,13 +5,13 @@ with type-safe generic parameters.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 22-Oct-2025
 """
 
 from __future__ import annotations
 import logging
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 from ..facade import XWNode
 from ..base import ANode
 from ..common.graph.manager import XWGraphManager
@@ -51,13 +51,13 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
 
     def __init__(
         self,
-        data: Optional[dict[str, NT]] = None,
+        data: dict[str, NT] | None = None,
         node_mode: NodeMode | str = NodeMode.ADJACENCY_LIST,
         edge_mode: EdgeMode | str = EdgeMode.ADJ_LIST,
         immutable: bool = False,
         enable_caching: bool = True,
         enable_indexing: bool = True,
-        isolation_key: Optional[str] = None,
+        isolation_key: str | None = None,
         **options
     ):
         """
@@ -104,7 +104,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
         """
         self.put(node_id, data)
 
-    def get_node(self, node_id: str) -> Optional[NT]:
+    def get_node(self, node_id: str) -> NT | None:
         """
         Get node data by ID.
         Args:
@@ -143,7 +143,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
         target: str,
         edge_type: str = "default",
         weight: float = 1.0,
-        properties: Optional[dict[str, ET]] = None,
+        properties: dict[str, ET] | None = None,
         **options
     ) -> str:
         """
@@ -169,7 +169,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
         self,
         source: str,
         target: str,
-        edge_type: Optional[str] = None
+        edge_type: str | None = None
     ) -> bool:
         """
         Remove an edge between nodes.
@@ -186,7 +186,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
         self,
         source: str,
         target: str,
-        edge_type: Optional[str] = None
+        edge_type: str | None = None
     ) -> bool:
         """
         Check if an edge exists between nodes.
@@ -202,8 +202,8 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
     def get_outgoing(
         self,
         node_id: str,
-        edge_type: Optional[str] = None,
-        limit: Optional[int] = None
+        edge_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """
         Get outgoing edges/relationships from a node.
@@ -219,8 +219,8 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
     def get_incoming(
         self,
         node_id: str,
-        edge_type: Optional[str] = None,
-        limit: Optional[int] = None
+        edge_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """
         Get incoming edges/relationships to a node.
@@ -236,7 +236,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
     def get_neighbors(
         self,
         node_id: str,
-        edge_type: Optional[str] = None,
+        edge_type: str | None = None,
         direction: str = "both"
     ) -> list[str]:
         """
@@ -263,8 +263,8 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
         self,
         source: str,
         target: str,
-        edge_type: Optional[str] = None
-    ) -> Optional[dict[str, ET]]:
+        edge_type: str | None = None
+    ) -> dict[str, ET] | None:
         """
         Get edge data/properties.
         Args:
@@ -290,7 +290,7 @@ class XWNodeGraph[NT, ET](XWNode[dict[str, NT]]):
     def from_native(
         cls,
         nodes: dict[str, NT],
-        edges: Optional[list[tuple[str, str, str, Optional[dict[str, ET]]]]] = None,
+        edges: list[tuple[str, str, str, dict[str, ET] | None]] | None = None,
         node_mode: NodeMode | str = NodeMode.ADJACENCY_LIST,
         edge_mode: EdgeMode | str = EdgeMode.ADJ_LIST,
         **options

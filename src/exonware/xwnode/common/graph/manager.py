@@ -5,12 +5,12 @@ Optimizes relationship queries from O(n) to O(1).
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
 import threading
-from typing import Optional, Any
+from typing import Any
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.security import get_resource_limits
 from exonware.xwsystem.validation import validate_untrusted_data
@@ -45,7 +45,7 @@ class XWGraphManager(IGraphManager):
         enable_caching: bool = True,
         enable_indexing: bool = True,
         cache_size: int = 1000,
-        isolation_key: Optional[str] = None,
+        isolation_key: str | None = None,
         **options
     ):
         """
@@ -207,7 +207,7 @@ class XWGraphManager(IGraphManager):
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """
         Remove relationship(s) between entities.
@@ -238,8 +238,8 @@ class XWGraphManager(IGraphManager):
     def get_outgoing(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None,
-        limit: Optional[int] = None
+        relationship_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """
         Get outgoing relationships (O(1) with indexing).
@@ -276,8 +276,8 @@ class XWGraphManager(IGraphManager):
     def get_incoming(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None,
-        limit: Optional[int] = None
+        relationship_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """
         Get incoming relationships (O(1) with indexing).
@@ -314,7 +314,7 @@ class XWGraphManager(IGraphManager):
     def get_bidirectional(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> dict[str, list[dict[str, Any]]]:
         """
         Get both incoming and outgoing relationships.
@@ -334,7 +334,7 @@ class XWGraphManager(IGraphManager):
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """
         Check if relationship exists.
@@ -445,7 +445,7 @@ class XWGraphManager(IGraphManager):
         self,
         entity_id: str,
         direction: str = 'both',
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> int:
         """
         Get degree (number of connections) for entity.
@@ -470,7 +470,7 @@ class XWGraphManager(IGraphManager):
         self,
         entity_id1: str,
         entity_id2: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> list[str]:
         """
         Get entities connected to both entities.
@@ -492,7 +492,7 @@ class XWGraphManager(IGraphManager):
         self,
         entity_id1: str,
         entity_id2: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> list[dict[str, Any]]:
         """
         Get bidirectional relationships between two entities.

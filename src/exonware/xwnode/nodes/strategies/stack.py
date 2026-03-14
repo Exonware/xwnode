@@ -15,16 +15,17 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
 
 
+from collections.abc import AsyncIterator, Iterator
 class StackStrategy(ANodeLinearStrategy):
     """
     Production-grade Stack (LIFO) node strategy.
@@ -68,7 +69,7 @@ class StackStrategy(ANodeLinearStrategy):
             traits | NodeTrait.LIFO | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE,
             **options
         )
-        self._max_size: Optional[int] = options.get('max_size')
+        self._max_size: int | None = options.get('max_size')
         self._stack: list[Any] = []
         # Pre-allocate if capacity hint provided
         initial_capacity = options.get('initial_capacity', 0)
@@ -200,7 +201,7 @@ class StackStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

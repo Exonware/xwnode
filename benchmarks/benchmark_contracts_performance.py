@@ -14,8 +14,9 @@ import sys
 from pathlib import Path
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator
+from typing import Any
 # Add src to path
+from collections.abc import Iterator
 src_path = Path(__file__).parent / "src"
 sys.path.insert(0, str(src_path))
 # Handle Windows encoding for emojis

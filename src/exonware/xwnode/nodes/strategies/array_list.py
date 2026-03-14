@@ -5,7 +5,7 @@ Array List Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
@@ -15,7 +15,8 @@ Array List Node Strategy Implementation
 This module implements the ARRAY_LIST strategy for sequential data
 with fast indexed access.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeLinearStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
@@ -115,7 +116,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
         Time Complexity: O(n)
         Space Complexity: O(n)
         """
-        # Return only non-None values in order
+        return list(self._data)
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
@@ -124,7 +125,7 @@ class ArrayListStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

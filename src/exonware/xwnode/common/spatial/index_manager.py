@@ -4,12 +4,11 @@ Spatial index manager implementation for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
 import math
-from typing import Optional
 from .contracts import ISpatialIndexManager
 from ...facades.graph import XWNodeGraph
 from ...defs import EdgeMode, NodeMode
@@ -36,8 +35,8 @@ class SpatialIndexManager:
             max_locations: Maximum number of locations to track (default: 10,000)
         """
         # Use XWNodeGraph with spatial edge modes (reuse existing facade)
-        self._rtree: Optional[XWNodeGraph] = None
-        self._quadtree: Optional[XWNodeGraph] = None
+        self._rtree: XWNodeGraph | None = None
+        self._quadtree: XWNodeGraph | None = None
         # Use xwsystem optimized cache for location data (automatic eviction)
         # Better memory management for large datasets with automatic LRU eviction
         self._location_data = create_cache(
@@ -106,7 +105,7 @@ class SpatialIndexManager:
         else:
             raise ValueError(f"Unknown index type: {index_type}")
 
-    def remove_location(self, id: str, index_type: Optional[str] = None) -> bool:
+    def remove_location(self, id: str, index_type: str | None = None) -> bool:
         """Remove location from spatial index."""
         removed = False
         # Remove from location data (using xwsystem cache delete method)

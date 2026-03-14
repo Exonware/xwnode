@@ -5,21 +5,23 @@ Splay Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 #exonware\xnode\strategies\impls\node_splay_tree.py
 """
 Splay Tree Node Strategy Implementation
 This module implements the SPLAY_TREE strategy for self-adjusting binary
 search trees with amortized O(log n) performance.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class SplayTreeNode:
@@ -29,9 +31,9 @@ class SplayTreeNode:
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
-        self.left: Optional[SplayTreeNode] = None
-        self.right: Optional[SplayTreeNode] = None
-        self.parent: Optional[SplayTreeNode] = None
+        self.left: SplayTreeNode | None = None
+        self.right: SplayTreeNode | None = None
+        self.parent: SplayTreeNode | None = None
         self._hash = None
 
     def __hash__(self) -> int:
@@ -102,7 +104,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         super().__init__(NodeMode.SPLAY_TREE, traits, **options)
         self.case_sensitive = options.get('case_sensitive', True)
         # Core splay tree
-        self._root: Optional[SplayTreeNode] = None
+        self._root: SplayTreeNode | None = None
         self._size = 0
         # Statistics
         self._total_insertions = 0
@@ -118,7 +120,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
 
-    def _get_height(self, node: Optional[SplayTreeNode]) -> int:
+    def _get_height(self, node: SplayTreeNode | None) -> int:
         """Get height of node."""
         if not node:
             return 0
@@ -195,7 +197,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
                 self._rotate_left(grandparent)
             self._total_splays += 1
 
-    def _find_node(self, key: str) -> Optional[SplayTreeNode]:
+    def _find_node(self, key: str) -> SplayTreeNode | None:
         """Find node with given key and splay it to root."""
         normalized_key = self._normalize_key(key)
         current = self._root
@@ -283,7 +285,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         self._total_deletions += 1
         return True
 
-    def _inorder_traversal(self, node: Optional[SplayTreeNode]) -> Iterator[tuple[str, Any]]:
+    def _inorder_traversal(self, node: SplayTreeNode | None) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -342,7 +344,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -405,7 +407,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
     # SPLAY TREE SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min(self) -> Optional[tuple[str, Any]]:
+    def get_min(self) -> tuple[str, Any] | None:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
@@ -416,7 +418,7 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         self._splay(current)
         return (current.key, current.value)
 
-    def get_max(self) -> Optional[tuple[str, Any]]:
+    def get_max(self) -> tuple[str, Any] | None:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
@@ -436,11 +438,11 @@ class SplayTreeStrategy(ANodeTreeStrategy):
         node = self._find_node(key)
         return node is not None
 
-    def get_root_key(self) -> Optional[str]:
+    def get_root_key(self) -> str | None:
         """Get the key of the root node."""
         return self._root.key if self._root else None
 
-    def get_root_value(self) -> Optional[Any]:
+    def get_root_value(self) -> Any | None:
         """Get the value of the root node."""
         return self._root.value if self._root else None
 
@@ -458,3 +460,55 @@ class SplayTreeStrategy(ANodeTreeStrategy):
             'backend': 'Self-adjusting splay tree with amortized O(log n) performance',
             'traits': [trait.name for trait in NodeTrait if self.has_trait(trait)]
         }
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

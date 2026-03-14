@@ -17,7 +17,6 @@ import inspect
 import asyncio
 import traceback
 from pathlib import Path
-from typing import Optional
 from collections import defaultdict
 import json
 import argparse
@@ -174,7 +173,7 @@ SUBCATEGORY_NAMES = {
 }
 
 
-def parse_test_name(test_name: str) -> Optional[tuple[int, int, int, str]]:
+def parse_test_name(test_name: str) -> tuple[int, int, int, str] | None:
     """
     Parse test name like 'test_1_1_1_append_single_record' 
     Returns (category, subcategory, test_num, test_title) or None
@@ -263,7 +262,7 @@ def run_test_with_version(
     module_name: str,
     version: str,
     test_name: str = ""
-) -> Optional[tuple[bool, float]]:
+) -> tuple[bool, float] | None:
     """
     Run a test function with a specific version implementation.
     Returns (success, time) or None if test fails.
@@ -377,7 +376,7 @@ def run_test_with_iterations(
     module_name: str,
     iterations: int,
     test_name: str = ""
-) -> Optional[tuple[float, float, float, float]]:
+) -> tuple[float, float, float, float] | None:
     """
     Run a test function multiple times with all 4 versions and return average times.
     Returns (v1_time, v2_time, v3_time, v4_time) or None if test fails.
@@ -723,7 +722,7 @@ async def run_all_test_groups_async(
     return results
 
 
-def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse command-line arguments for modular benchmarking configuration.
     """
@@ -787,7 +786,7 @@ def configure_iteration_counts(args: argparse.Namespace) -> None:
         BULK_OPERATIONS_ITERATIONS = DEFAULT_BULK_OPERATIONS_ITERATIONS
 
 
-def main(argv: Optional[list[str]] = None):
+def main(argv: list[str] | None = None):
     """Main benchmarking function."""
     # Parse CLI arguments and configure iteration strategy
     args = parse_args(argv)

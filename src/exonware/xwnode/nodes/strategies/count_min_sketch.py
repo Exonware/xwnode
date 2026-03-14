@@ -5,17 +5,18 @@ Count Min Sketch Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Count-Min Sketch Node Strategy Implementation
 This module implements the COUNT_MIN_SKETCH strategy for probabilistic
 frequency estimation in data streams with bounded error guarantees.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -285,7 +286,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -354,7 +355,7 @@ class CountMinSketchStrategy(ANodeStrategy):
         """Increment count for item."""
         self.put(item, count)
 
-    def get_frequent_items(self, threshold: Optional[int] = None) -> list[tuple[str, int]]:
+    def get_frequent_items(self, threshold: int | None = None) -> list[tuple[str, int]]:
         """Get items above frequency threshold."""
         if threshold is None:
             threshold = max(1, int(self._total_count * self.heavy_hitter_threshold))

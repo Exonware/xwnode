@@ -7,14 +7,14 @@ This enables data-driven strategy selection and performance tuning.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
 import os
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
@@ -88,7 +88,7 @@ class PerformanceRecommendation:
     confidence: float
     reasoning: str
     estimated_improvement: float
-    alternative_strategy: Optional[str] = None
+    alternative_strategy: str | None = None
 
 
 class StrategyPerformanceMonitor:
@@ -180,7 +180,7 @@ class StrategyPerformanceMonitor:
             self._stats['total_operations'] += 1
             logger.debug(f"📊 Recorded {operation.value} operation for {strategy_id}: {duration:.3f}s")
 
-    def get_strategy_profile(self, strategy_id: str) -> Optional[StrategyProfile]:
+    def get_strategy_profile(self, strategy_id: str) -> StrategyProfile | None:
         """
         Get performance profile for a strategy.
         Args:
@@ -390,7 +390,7 @@ class StrategyPerformanceMonitor:
         }
         return memory_efficient.get(current_mode, "Consider data structure optimization")
 # Global monitor instance
-_monitor_instance: Optional[StrategyPerformanceMonitor] = None
+_monitor_instance: StrategyPerformanceMonitor | None = None
 _monitor_lock = threading.Lock()
 
 

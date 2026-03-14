@@ -18,7 +18,7 @@ import sys
 import json
 import random
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 # Add paths
 project_root = Path(__file__).parent.parent.parent
@@ -70,7 +70,7 @@ PREDICTIONS_10X = {
 class StrategyCombo:
     """Represents a node+edge strategy combination"""
     node_mode: NodeMode
-    edge_mode: Optional[EdgeMode]
+    edge_mode: EdgeMode | None
     name: str
 
     def __str__(self):

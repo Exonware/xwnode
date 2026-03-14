@@ -15,7 +15,7 @@ import os
 import json
 import time
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 import psutil
 # Import test helpers
 sys.path.insert(0, str(Path(__file__).parent))

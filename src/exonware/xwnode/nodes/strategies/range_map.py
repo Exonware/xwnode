@@ -6,11 +6,11 @@ Simpler than INTERVAL_TREE when ranges don't overlap.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Optional
+from typing import Any
 from threading import RLock
 import bisect
 from .base import ANodeStrategy
@@ -90,7 +90,7 @@ class RangeMapStrategy(ANodeStrategy):
                 insert_pos = bisect.bisect_left([r.start for r in self._ranges], start)
                 self._ranges.insert(insert_pos, new_range)
 
-    def get(self, point: float) -> Optional[Any]:
+    def get(self, point: float) -> Any | None:
         """
         Get value for point
         O(log n) lookup using binary search
@@ -115,7 +115,7 @@ class RangeMapStrategy(ANodeStrategy):
                     left = mid + 1
             return None
 
-    def get_range_for_point(self, point: float) -> Optional[tuple[float, float, Any]]:
+    def get_range_for_point(self, point: float) -> tuple[float, float, Any] | None:
         """
         Get complete range information for point
         Args:

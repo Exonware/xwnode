@@ -3,9 +3,10 @@ Simple node strategy implementation.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional
+from typing import Any
 from ...nodes.strategies.contracts import INodeStrategy
 from ...defs import NodeTrait
+from collections.abc import Iterator
 
 
 class SimpleNodeStrategy(INodeStrategy):
@@ -91,7 +92,7 @@ class SimpleNodeStrategy(INodeStrategy):
         else:
             return False
 
-    def get(self, path: str, default: Any = None) -> Optional[SimpleNodeStrategy]:
+    def get(self, path: str, default: Any = None) -> SimpleNodeStrategy | None:
         """Get a child node by path."""
         try:
             parts = path.split('.')

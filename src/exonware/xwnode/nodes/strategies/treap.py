@@ -5,11 +5,12 @@ Treap Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 #exonware\xnode\strategies\impls\node_treap.py
 """
 Treap Node Strategy Implementation
@@ -17,10 +18,11 @@ This module implements the TREAP strategy for randomized balanced trees
 combining binary search tree and heap properties.
 """
 import random
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class TreapNode:
@@ -31,8 +33,8 @@ class TreapNode:
         self.key = key
         self.value = value
         self.priority = priority if priority is not None else random.randint(1, 1000000)
-        self.left: Optional[TreapNode] = None
-        self.right: Optional[TreapNode] = None
+        self.left: TreapNode | None = None
+        self.right: TreapNode | None = None
         self._hash = None
 
     def __hash__(self) -> int:
@@ -124,7 +126,7 @@ class TreapStrategy(ANodeTreeStrategy):
         self.case_sensitive = options.get('case_sensitive', True)
         self.priority_range = options.get('priority_range', (1, 1000000))
         # Core treap
-        self._root: Optional[TreapNode] = None
+        self._root: TreapNode | None = None
         self._size = 0
         # Statistics
         self._total_insertions = 0
@@ -140,7 +142,7 @@ class TreapStrategy(ANodeTreeStrategy):
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
 
-    def _get_height(self, node: Optional[TreapNode]) -> int:
+    def _get_height(self, node: TreapNode | None) -> int:
         """Get height of node."""
         if not node:
             return 0
@@ -180,7 +182,7 @@ class TreapStrategy(ANodeTreeStrategy):
             return self._rotate_left(node)
         return node
 
-    def _insert_node(self, node: Optional[TreapNode], key: str, value: Any, priority: int = None) -> tuple[TreapNode, bool]:
+    def _insert_node(self, node: TreapNode | None, key: str, value: Any, priority: int = None) -> tuple[TreapNode, bool]:
         """Insert node with given key and value."""
         if not node:
             new_node = TreapNode(key, value, priority)
@@ -201,7 +203,7 @@ class TreapStrategy(ANodeTreeStrategy):
         balanced_node = self._balance_treap(node)
         return balanced_node, True
 
-    def _find_node(self, node: Optional[TreapNode], key: str) -> Optional[TreapNode]:
+    def _find_node(self, node: TreapNode | None, key: str) -> TreapNode | None:
         """Find node with given key."""
         if not node:
             return None
@@ -226,7 +228,7 @@ class TreapStrategy(ANodeTreeStrategy):
             node = node.right
         return node
 
-    def _delete_node(self, node: Optional[TreapNode], key: str) -> tuple[Optional[TreapNode], bool]:
+    def _delete_node(self, node: TreapNode | None, key: str) -> tuple[TreapNode | None, bool]:
         """Delete node with given key."""
         if not node:
             return None, False
@@ -255,7 +257,7 @@ class TreapStrategy(ANodeTreeStrategy):
             return node, False
         return node, True
 
-    def _inorder_traversal(self, node: Optional[TreapNode]) -> Iterator[tuple[str, Any]]:
+    def _inorder_traversal(self, node: TreapNode | None) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -324,7 +326,7 @@ class TreapStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -387,14 +389,14 @@ class TreapStrategy(ANodeTreeStrategy):
     # TREAP SPECIFIC OPERATIONS
     # ============================================================================
 
-    def get_min(self) -> Optional[tuple[str, Any]]:
+    def get_min(self) -> tuple[str, Any] | None:
         """Get the minimum key-value pair."""
         if not self._root:
             return None
         min_node = self._find_min(self._root)
         return (min_node.key, min_node.value)
 
-    def get_max(self) -> Optional[tuple[str, Any]]:
+    def get_max(self) -> tuple[str, Any] | None:
         """Get the maximum key-value pair."""
         if not self._root:
             return None
@@ -405,7 +407,7 @@ class TreapStrategy(ANodeTreeStrategy):
         """Get the height of the tree."""
         return self._get_height(self._root)
 
-    def get_priority(self, key: str) -> Optional[int]:
+    def get_priority(self, key: str) -> int | None:
         """Get priority of node with given key."""
         node = self._find_node(self._root, key)
         return node.priority if node else None
@@ -420,7 +422,7 @@ class TreapStrategy(ANodeTreeStrategy):
         self._root = self._balance_treap(self._root)
         return True
 
-    def get_max_priority(self) -> Optional[tuple[str, Any, int]]:
+    def get_max_priority(self) -> tuple[str, Any, int] | None:
         """Get node with maximum priority."""
         if not self._root:
             return None
@@ -440,7 +442,7 @@ class TreapStrategy(ANodeTreeStrategy):
 
     def is_treap_valid(self) -> bool:
         """Check if tree satisfies treap properties."""
-        def check_treap(node: Optional[TreapNode]) -> bool:
+        def check_treap(node: TreapNode | None) -> bool:
             if not node:
                 return True
             # Check heap property
@@ -471,3 +473,55 @@ class TreapStrategy(ANodeTreeStrategy):
             'backend': 'Randomized treap with heap and BST properties',
             'traits': [trait.name for trait in NodeTrait if self.has_trait(trait)]
         }
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

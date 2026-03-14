@@ -24,7 +24,7 @@ import shutil
 import uuid
 import signal
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from contextlib import contextmanager
 # Add common module to path
 parent_dir = Path(__file__).parent.parent

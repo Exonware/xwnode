@@ -15,13 +15,12 @@ Priority alignment:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import asyncio
 import threading
-from typing import Optional
 from exonware.xwsystem import get_logger
 logger = get_logger(__name__)
 
@@ -54,9 +53,9 @@ class EventLoopManager:
         Initialize event loop manager.
         Time Complexity: O(1)
         """
-        self._loop: Optional[asyncio.AbstractEventLoop] = None
+        self._loop: asyncio.AbstractEventLoop | None = None
         self._lock = threading.Lock()
-        self._thread_id: Optional[int] = None
+        self._thread_id: int | None = None
 
     def get_event_loop(self) -> asyncio.AbstractEventLoop:
         """
@@ -151,7 +150,7 @@ class EventLoopManager:
         """Context manager exit - cleanup."""
         self.cleanup()
 # Global instance
-_global_manager: Optional[EventLoopManager] = None
+_global_manager: EventLoopManager | None = None
 _manager_lock = threading.Lock()
 
 

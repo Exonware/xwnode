@@ -6,16 +6,17 @@ using a binary tree structure.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
-from ...errors import XWNodeError, XWNodeValueError
+from ...errors import XWNodeError, XWNodeValueError, XWNodeUnsupportedCapabilityError
 
 
 class RopeNode:
@@ -38,9 +39,9 @@ class RopeNode:
         self.is_leaf = is_leaf
         self.text = text if is_leaf else ""
         self.weight = len(text) if is_leaf else 0  # Left subtree length
-        self.left: Optional[RopeNode] = None
-        self.right: Optional[RopeNode] = None
-        self.parent: Optional[RopeNode] = None
+        self.left: RopeNode | None = None
+        self.right: RopeNode | None = None
+        self.parent: RopeNode | None = None
         self.height = 1
 
     def get_total_length(self) -> int:
@@ -147,7 +148,7 @@ class RopeStrategy(ANodeTreeStrategy):
         """
         super().__init__(mode, traits, **options)
         self.chunk_size = max(chunk_size, 1)
-        self._root: Optional[RopeNode] = None
+        self._root: RopeNode | None = None
         self._total_length = 0
 
     def get_supported_traits(self) -> NodeTrait:
@@ -335,7 +336,7 @@ class RopeStrategy(ANodeTreeStrategy):
         self._collect_substring(self._root, 0, start, end, result)
         return ''.join(result)
 
-    def _collect_substring(self, node: Optional[RopeNode], offset: int,
+    def _collect_substring(self, node: RopeNode | None, offset: int,
                           start: int, end: int, result: list[str]) -> None:
         """Recursively collect substring."""
         if node is None or offset >= end:
@@ -385,7 +386,7 @@ class RopeStrategy(ANodeTreeStrategy):
             self._root = self._concat_nodes(self._root, right_rope)
         self._total_length += len(text)
 
-    def _split_at(self, index: int) -> tuple[Optional[RopeNode], Optional[RopeNode]]:
+    def _split_at(self, index: int) -> tuple[RopeNode | None, RopeNode | None]:
         """
         Split rope at index.
         Args:
@@ -453,7 +454,7 @@ class RopeStrategy(ANodeTreeStrategy):
         self._collect_text(self._root, result)
         return ''.join(result)
 
-    def _collect_text(self, node: Optional[RopeNode], result: list[str]) -> None:
+    def _collect_text(self, node: RopeNode | None, result: list[str]) -> None:
         """Recursively collect text from leaves."""
         if node is None:
             return
@@ -527,7 +528,7 @@ class RopeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -591,7 +592,7 @@ class RopeStrategy(ANodeTreeStrategy):
 
     def get_statistics(self) -> dict[str, Any]:
         """Get rope statistics."""
-        def count_nodes(node: Optional[RopeNode]) -> tuple[int, int]:
+        def count_nodes(node: RopeNode | None) -> tuple[int, int]:
             """Count leaves and internal nodes."""
             if node is None:
                 return (0, 0)
@@ -614,7 +615,7 @@ class RopeStrategy(ANodeTreeStrategy):
     # COMPATIBILITY METHODS
     # ============================================================================
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """Find text."""
         return self.to_string() if self._total_length > 0 else None
 
@@ -654,3 +655,69 @@ class RopeStrategy(ANodeTreeStrategy):
         else:
             instance.put('text', str(data))
         return instance
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return min(keys)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return max(keys)
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

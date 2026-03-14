@@ -17,7 +17,7 @@ import argparse
 import random
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 from abc import ABC, abstractmethod
 try:
     from openpyxl import Workbook
@@ -158,7 +158,7 @@ class BaseBenchmarkRunner(ABC):
                 print(f"   Memory: {winner_data.get('peak_memory_mb', 0):.1f}MB\n")
 
     def format_result_row(self, entities_str: str, name: str, data: dict[str, Any],
-                         additional_data: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+                         additional_data: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Format a result row with standard columns.
         Args:

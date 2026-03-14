@@ -5,17 +5,18 @@ Aho Corasick Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Aho-Corasick Node Strategy Implementation
 This module implements the AHO_CORASICK strategy for efficient multi-pattern
 string matching using the Aho-Corasick automaton algorithm.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from collections import deque, defaultdict
 from collections.abc import Callable
 from .base import ANodeTreeStrategy
@@ -32,7 +33,7 @@ class ACNode:
         Time Complexity: O(1)
         """
         self.children: dict[str, ACNode] = {}
-        self.failure: Optional[ACNode] = None
+        self.failure: ACNode | None = None
         self.output: set[str] = set()  # Patterns that end at this node
         self.pattern_indices: set[int] = set()  # Indices of patterns
         self.depth = 0
@@ -333,7 +334,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -583,7 +584,7 @@ class AhoCorasickStrategy(ANodeTreeStrategy):
                 return True
         return False
 
-    def find_longest_match(self, text: str) -> Optional[tuple[str, int, int]]:
+    def find_longest_match(self, text: str) -> tuple[str, int, int] | None:
         """
         Find the longest pattern match in text.
         Time Complexity: O(|text| + |matches|)

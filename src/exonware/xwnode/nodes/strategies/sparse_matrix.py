@@ -11,16 +11,18 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from collections import defaultdict
 from .base import ANodeMatrixStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class SparseMatrixStrategy(ANodeMatrixStrategy):
@@ -379,7 +381,7 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -473,3 +475,34 @@ class SparseMatrixStrategy(ANodeMatrixStrategy):
             'memory_usage': f"{memory_bytes} bytes (estimated)",
             'compression_ratio': f"{total_elements / self.nnz if self.nnz > 0 else 0:.1f}x"
         }
+    # ============================================================================
+    # ABSTRACT METHOD IMPLEMENTATIONS (from ANodeMatrixStrategy)
+    # ============================================================================
+
+    def get_dimensions(self) -> tuple:
+        """Get matrix dimensions (rows, cols)."""
+        return (self._rows, self._cols)
+
+    def get_at_position(self, row: int, col: int) -> Any:
+        """Get element at matrix position."""
+        return self.get(row, col, self._default_value)
+
+    def set_at_position(self, row: int, col: int, value: Any) -> None:
+        """Set element at matrix position."""
+        self.set(row, col, value)
+
+    def get_column(self, col: int) -> list[Any]:
+        """Get entire column."""
+        return self.get_col(col)
+
+    def as_adjacency_matrix(self):
+        """Provide Adjacency Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("SparseMatrixStrategy does not support adjacency matrix view")
+
+    def as_incidence_matrix(self):
+        """Provide Incidence Matrix behavioral view."""
+        raise XWNodeUnsupportedCapabilityError("SparseMatrixStrategy does not support incidence matrix view")
+
+    def as_sparse_matrix(self):
+        """Provide Sparse Matrix behavioral view."""
+        return self

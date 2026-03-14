@@ -4,11 +4,11 @@ Event routing contracts for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from collections.abc import Sequence
 @runtime_checkable
 
@@ -18,7 +18,7 @@ class IEventChannelGraph(Protocol):
     Provides event routing capabilities for real-time/WebSocket and Hub/Event Bus.
     """
 
-    def add_channel(self, channel: str, parent: Optional[str] = None) -> None:
+    def add_channel(self, channel: str, parent: str | None = None) -> None:
         """
         Add a channel to the event graph.
         Args:
@@ -37,7 +37,7 @@ class IEventChannelGraph(Protocol):
         """
         ...
 
-    def get_channels(self, pattern: Optional[str] = None) -> list[str]:
+    def get_channels(self, pattern: str | None = None) -> list[str]:
         """
         Get channels matching pattern.
         Args:
@@ -51,7 +51,7 @@ class IEventChannelGraph(Protocol):
         self,
         source: str,
         event: Any,
-        target_channels: Optional[Sequence[str]] = None
+        target_channels: Sequence[str] | None = None
     ) -> dict[str, Any]:
         """
         Route event to target channels.
@@ -93,7 +93,7 @@ class IChannelRouter(Protocol):
         self,
         source: str,
         event: Any,
-        target_channels: Optional[Sequence[str]] = None
+        target_channels: Sequence[str] | None = None
     ) -> dict[str, Any]:
         """
         Route event from source to target channels.
@@ -116,7 +116,7 @@ class IChannelRouter(Protocol):
         """
         ...
 
-    def get_shortest_path(self, source: str, target: str) -> Optional[list[str]]:
+    def get_shortest_path(self, source: str, target: str) -> list[str] | None:
         """
         Get shortest path between channels.
         Args:

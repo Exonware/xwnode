@@ -11,13 +11,14 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 22-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator, AsyncIterator
+from typing import Any
 import asyncio
 from .contracts import NodeType, INodeStrategy
 from ...defs import NodeMode, NodeTrait
@@ -219,7 +220,7 @@ class ANodeStrategy(INodeStrategy):
                 self._validate_input(value, strategy_name, "insert")
         self.put(key, value)
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """
         Find value by key (INodeStrategy interface method).
         Delegates to get() for compatibility.
@@ -382,27 +383,27 @@ class ANodeStrategy(INodeStrategy):
     # Optional properties with default implementations
     @property
 
-    def uri(self) -> Optional[str]:
+    def uri(self) -> str | None:
         """Get URI (for reference/object nodes)."""
         return None
     @property
 
-    def reference_type(self) -> Optional[str]:
+    def reference_type(self) -> str | None:
         """Get reference type (for reference nodes)."""
         return None
     @property
 
-    def object_type(self) -> Optional[str]:
+    def object_type(self) -> str | None:
         """Get object type (for object nodes)."""
         return None
     @property
 
-    def mime_type(self) -> Optional[str]:
+    def mime_type(self) -> str | None:
         """Get MIME type (for object nodes)."""
         return None
     @property
 
-    def metadata(self) -> Optional[dict[str, Any]]:
+    def metadata(self) -> dict[str, Any] | None:
         """Get metadata (for reference/object nodes)."""
         return None
     # Strategy information
@@ -448,7 +449,7 @@ class ANodeStrategy(INodeStrategy):
         # Default implementation for hierarchical strategies
         return [(k, v) for k, v in self.items() if str(k).startswith(prefix)]
 
-    def get_priority(self) -> Optional[tuple[Any, Any]]:
+    def get_priority(self) -> tuple[Any, Any] | None:
         """
         Get highest priority item (requires PRIORITY trait).
         Raises:
@@ -801,7 +802,7 @@ class ACachedStrategy(ANodeStrategy):
             name=cache_name
         )
 
-    def get(self, key: str, default: Any = None) -> Optional[Any]:
+    def get(self, key: str, default: Any = None) -> Any | None:
         """
         Get value from cache (O(1)).
         Args:

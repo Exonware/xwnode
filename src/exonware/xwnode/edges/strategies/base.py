@@ -9,12 +9,12 @@ This module defines the abstract base classes for all edge strategy implementati
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: January 2, 2025
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 from .contracts import IEdgeStrategy
 from ...errors import XWNodeTypeError, XWNodeValueError
 
@@ -66,22 +66,22 @@ class ALinearEdgeStrategy(AEdgeStrategy):
     """Linear edge capabilities (sequential connections)."""
     @abstractmethod
 
-    def get_next(self, node: Any) -> Optional[Any]:
+    def get_next(self, node: Any) -> Any | None:
         """Get next node in sequence."""
         pass
     @abstractmethod
 
-    def get_previous(self, node: Any) -> Optional[Any]:
+    def get_previous(self, node: Any) -> Any | None:
         """Get previous node in sequence."""
         pass
     @abstractmethod
 
-    def get_first(self) -> Optional[Any]:
+    def get_first(self) -> Any | None:
         """Get first node in sequence."""
         pass
     @abstractmethod
 
-    def get_last(self) -> Optional[Any]:
+    def get_last(self) -> Any | None:
         """Get last node in sequence."""
         pass
     @abstractmethod
@@ -100,7 +100,7 @@ class ATreeEdgeStrategy(AEdgeStrategy):
     """Tree edge capabilities (hierarchical connections)."""
     @abstractmethod
 
-    def get_parent(self, node: Any) -> Optional[Any]:
+    def get_parent(self, node: Any) -> Any | None:
         """Get parent node."""
         pass
     @abstractmethod
@@ -115,7 +115,7 @@ class ATreeEdgeStrategy(AEdgeStrategy):
         pass
     @abstractmethod
 
-    def get_root(self) -> Optional[Any]:
+    def get_root(self) -> Any | None:
         """Get root node."""
         pass
     @abstractmethod

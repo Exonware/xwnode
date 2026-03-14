@@ -7,7 +7,7 @@ including the NodeType classification system for operation routing.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 Version History:
 - v0.0.1.25: Original list-based implementation (O(n) lookups)
@@ -24,11 +24,12 @@ Enhancements (v0.0.1.28b):
 """
 
 from enum import Enum
-from typing import Any, Optional, Iterator, AsyncIterator, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 import asyncio
 import threading
 # Pre-computed common operations (shared frozenset instance)
 # Priority: Performance #4 - Memory savings, faster imports
+from collections.abc import AsyncIterator, Iterator
 COMMON_OPERATIONS = frozenset([
     "insert", "find", "delete", "size", "is_empty",
     "keys", "values", "items", "to_native"
@@ -109,7 +110,7 @@ class INodeStrategy(Protocol):
         """Insert key-value pair (concrete strategies must implement)."""
         ...
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """Find value by key (concrete strategies must implement)."""
         ...
 
@@ -148,7 +149,7 @@ class INodeStrategy(Protocol):
         """Async insert (wraps sync insert)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Async find (wraps sync find)."""
         return self.find(key)
 

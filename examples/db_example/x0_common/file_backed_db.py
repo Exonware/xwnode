@@ -11,7 +11,7 @@ Generation Date: October 17, 2025
 
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 # Add xwnode src to path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root / "src"))
@@ -26,7 +26,7 @@ class FileBackedDatabase:
     All operations read/write directly to file storage.
     """
 
-    def __init__(self, name: str, storage, node_mode, edge_mode: Optional[EdgeMode] = None):
+    def __init__(self, name: str, storage, node_mode, edge_mode: EdgeMode | None = None):
         """
         Initialize file-backed database.
         Args:
@@ -68,7 +68,7 @@ class FileBackedDatabase:
         self.storage.set_all_data(data)
         return user_id
 
-    def get_user(self, user_id: str) -> Optional[dict[str, Any]]:
+    def get_user(self, user_id: str) -> dict[str, Any] | None:
         """Get user by ID (reads from file)"""
         return self.storage.get_entity('users', user_id)
 
@@ -124,7 +124,7 @@ class FileBackedDatabase:
         self.storage.set_all_data(data)
         return post_id
 
-    def get_post(self, post_id: str) -> Optional[dict[str, Any]]:
+    def get_post(self, post_id: str) -> dict[str, Any] | None:
         """Get post by ID (reads from file)"""
         return self.storage.get_entity('posts', post_id)
 
@@ -183,7 +183,7 @@ class FileBackedDatabase:
         self.storage.set_all_data(data)
         return comment_id
 
-    def get_comment(self, comment_id: str) -> Optional[dict[str, Any]]:
+    def get_comment(self, comment_id: str) -> dict[str, Any] | None:
         """Get comment by ID (reads from file)"""
         return self.storage.get_entity('comments', comment_id)
 
@@ -272,7 +272,7 @@ class TransactionalFileBackedDatabase(FileBackedDatabase):
     Supports batch operations within transactions.
     """
 
-    def __init__(self, name: str, storage: TransactionalFileStorage, node_mode, edge_mode: Optional[EdgeMode] = None):
+    def __init__(self, name: str, storage: TransactionalFileStorage, node_mode, edge_mode: EdgeMode | None = None):
         """Initialize transactional file-backed database"""
         super().__init__(name, storage, node_mode, edge_mode)
 

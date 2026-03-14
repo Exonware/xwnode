@@ -5,13 +5,13 @@ and type-safe generic parameters.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 22-Oct-2025
 """
 
 from __future__ import annotations
 import logging
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 from ..facade import XWNode
 from ..common.graph.manager import XWGraphManager
 from ..defs import NodeMode, EdgeMode
@@ -50,7 +50,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
 
     def __init__(
         self,
-        data: Optional[dict[str, NT]] = None,
+        data: dict[str, NT] | None = None,
         mode: NodeMode | str = NodeMode.TREE_GRAPH_HYBRID,
         edge_mode: EdgeMode | str = EdgeMode.TREE_GRAPH_BASIC,
         immutable: bool = False,
@@ -100,7 +100,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         """
         self.put(node_id, data)
 
-    def get_node(self, node_id: str) -> Optional[NT]:
+    def get_node(self, node_id: str) -> NT | None:
         """
         Get node data by ID.
         Args:
@@ -137,7 +137,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         parent: str,
         child: str,
         edge_type: str = "child",
-        properties: Optional[dict[str, ET]] = None,
+        properties: dict[str, ET] | None = None,
         **options
     ) -> str:
         """
@@ -167,7 +167,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         """
         return self._graph_manager.remove_relationship(parent, child, 'child')
 
-    def get_parent(self, node_id: str) -> Optional[str]:
+    def get_parent(self, node_id: str) -> str | None:
         """
         Get the parent node ID.
         Args:
@@ -184,7 +184,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
         self,
         node_id: str,
         edge_type: str = 'child',
-        limit: Optional[int] = None
+        limit: int | None = None
     ) -> list[str]:
         """
         Get child node IDs.
@@ -270,7 +270,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
 
     def traverse(
         self,
-        start_node: Optional[str] = None,
+        start_node: str | None = None,
         order: str = 'preorder'
     ) -> list[str]:
         """
@@ -313,7 +313,7 @@ class XWTree[NT, ET](XWNode[dict[str, NT]]):
     def from_native(
         cls,
         nodes: dict[str, NT],
-        edges: Optional[list[tuple[str, str, Optional[dict[str, ET]]]]] = None,
+        edges: list[tuple[str, str, dict[str, ET] | None]] | None = None,
         mode: NodeMode | str = NodeMode.TREE_GRAPH_HYBRID,
         **options
     ) -> XWTree[NT, ET]:

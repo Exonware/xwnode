@@ -13,7 +13,7 @@ Generation Date: October 17, 2025
 import sys
 from pathlib import Path
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 from contextlib import contextmanager
 # Add xwsystem to path
 project_root = Path(__file__).parent.parent.parent.parent
@@ -65,7 +65,7 @@ class FileBackedStorage(ABC):
         pass
     @abstractmethod
 
-    def get_entity(self, collection: str, entity_id: str) -> Optional[dict[str, Any]]:
+    def get_entity(self, collection: str, entity_id: str) -> dict[str, Any] | None:
         """Get a single entity by ID"""
         pass
     @abstractmethod
@@ -132,7 +132,7 @@ class SimpleFileStorage(FileBackedStorage):
         self.file_path.parent.mkdir(parents=True, exist_ok=True)
         self.serializer.save_file(data, self.file_path)
 
-    def get_entity(self, collection: str, entity_id: str) -> Optional[dict[str, Any]]:
+    def get_entity(self, collection: str, entity_id: str) -> dict[str, Any] | None:
         """Get a single entity by ID"""
         data = self._read_data()
         return data.get('data', {}).get(collection, {}).get(entity_id)
@@ -252,7 +252,7 @@ class TransactionalFileStorage(FileBackedStorage):
             self._in_transaction = False
             self._transaction_data = None
 
-    def get_entity(self, collection: str, entity_id: str) -> Optional[dict[str, Any]]:
+    def get_entity(self, collection: str, entity_id: str) -> dict[str, Any] | None:
         """Get a single entity by ID (transaction-aware)"""
         data = self._read_data()
         return data.get('data', {}).get(collection, {}).get(entity_id)

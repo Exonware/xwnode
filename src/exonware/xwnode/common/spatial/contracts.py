@@ -4,11 +4,11 @@ Spatial indexing contracts for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from collections.abc import Sequence
 @runtime_checkable
 
@@ -35,7 +35,7 @@ class ISpatialIndexManager(Protocol):
         """
         ...
 
-    def remove_location(self, id: str, index_type: Optional[str] = None) -> bool:
+    def remove_location(self, id: str, index_type: str | None = None) -> bool:
         """
         Remove location from spatial index.
         Args:
@@ -125,7 +125,7 @@ class IGeofenceIndex(Protocol):
         """
         ...
 
-    def remove_geofence(self, id: str, index_type: Optional[str] = None) -> bool:
+    def remove_geofence(self, id: str, index_type: str | None = None) -> bool:
         """
         Remove geofence from index.
         Args:

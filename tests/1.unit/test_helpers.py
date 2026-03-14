@@ -15,8 +15,9 @@ import time
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Any, Optional, Callable
+from typing import Any
 # Import both versions: resolve path to examples/x5 so json_utils and json_utils_indexed are found
+from collections.abc import Callable
 _xwnode_root = Path(__file__).resolve().parent.parent.parent
 _examples_x5 = _xwnode_root / "examples" / "x5"
 if _examples_x5.is_dir():
@@ -42,7 +43,7 @@ from json_utils_indexed import (
 )
 
 
-def safe_ensure_index(file_path: str, id_field: Optional[str] = "id") -> JsonIndex:
+def safe_ensure_index(file_path: str, id_field: str | None = "id") -> JsonIndex:
     """
     Safely ensure index exists, handling all edge cases.
     Root cause fix: Properly handle empty files, missing files, and all edge cases.
@@ -362,7 +363,7 @@ def get_all_matching_v1(file_path: str, match: MatchFn) -> list[dict[str, Any]]:
     return results
 
 
-def get_all_matching_v2(file_path: str, match: MatchFn, index: Optional[JsonIndex] = None) -> list[dict[str, Any]]:
+def get_all_matching_v2(file_path: str, match: MatchFn, index: JsonIndex | None = None) -> list[dict[str, Any]]:
     """
     V2: Get all records matching criteria using index for faster access.
     Root cause fix: Properly handle empty files, missing indices, and all edge cases.
@@ -436,7 +437,7 @@ def count_records_v1(file_path: str) -> int:
     return count
 
 
-def count_records_v2(file_path: str, index: Optional[JsonIndex] = None) -> int:
+def count_records_v2(file_path: str, index: JsonIndex | None = None) -> int:
     """
     V2: Count total records using index.
     Root cause fix: Properly handle empty files and edge cases.

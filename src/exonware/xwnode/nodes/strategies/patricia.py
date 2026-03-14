@@ -5,20 +5,22 @@ Patricia Trie Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 PATRICIA Trie Node Strategy Implementation
 This module implements the PATRICIA strategy (Practical Algorithm to
 Retrieve Information Coded in Alphanumeric) for binary trie compression.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class PatriciaNode:
@@ -29,8 +31,8 @@ class PatriciaNode:
         self.bit_position = bit_position  # Which bit to test (-1 for leaves)
         self.key = key  # Full key (for leaves)
         self.value = value  # Value (for leaves)
-        self.left: Optional[PatriciaNode] = None   # 0 bit
-        self.right: Optional[PatriciaNode] = None  # 1 bit
+        self.left: PatriciaNode | None = None   # 0 bit
+        self.right: PatriciaNode | None = None  # 1 bit
         self.is_leaf = bit_position == -1
 
     def is_internal(self) -> bool:
@@ -61,7 +63,7 @@ d binary trie structure.
         self.case_sensitive = options.get('case_sensitive', True)
         self.use_bit_strings = options.get('use_bit_strings', False)  # Convert to binary
         # Core PATRICIA trie
-        self._root: Optional[PatriciaNode] = None
+        self._root: PatriciaNode | None = None
         self._size = 0
         # Statistics
         self._total_nodes = 0
@@ -107,7 +109,7 @@ d binary trie structure.
                 return i
         return max_len  # Keys are identical up to the shorter length
 
-    def _search_node(self, key: str) -> Optional[PatriciaNode]:
+    def _search_node(self, key: str) -> PatriciaNode | None:
         """Search for node containing key."""
         if not self._root:
             return None
@@ -193,7 +195,7 @@ d binary trie structure.
         # Update statistics
         self._total_bits_saved += 1  # Compression achieved
 
-    def _collect_all_pairs(self, node: Optional[PatriciaNode]) -> list[tuple[str, Any]]:
+    def _collect_all_pairs(self, node: PatriciaNode | None) -> list[tuple[str, Any]]:
         """Collect all key-value pairs from subtree."""
         if not node:
             return []
@@ -204,7 +206,7 @@ d binary trie structure.
         result.extend(self._collect_all_pairs(node.right))
         return result
 
-    def _collect_with_prefix(self, node: Optional[PatriciaNode], prefix: str) -> list[tuple[str, Any]]:
+    def _collect_with_prefix(self, node: PatriciaNode | None, prefix: str) -> list[tuple[str, Any]]:
         """Collect all keys with given prefix."""
         if not node:
             return []
@@ -304,6 +306,9 @@ d binary trie structure.
     def to_native(self) -> dict[str, Any]:
         """Convert to native Python dict."""
         all_pairs = self._collect_all_pairs(self._root)
+        valid_pairs = [(k, v) for k, v in all_pairs if k]
+        return dict(valid_pairs)
+
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================
@@ -312,7 +317,7 @@ d binary trie structure.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -346,6 +351,61 @@ d binary trie structure.
         """Lightweight async wrapper for items (no lock overhead)."""
         for item in self.items():
             yield item
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods
+    # ============================================================================
+
+    def get_min(self) -> tuple[str, Any] | None:
+        """Get the minimum key-value pair (lexicographically first)."""
+        items_list = list(self.items())
+        return items_list[0] if items_list else None
+
+    def get_max(self) -> tuple[str, Any] | None:
+        """Get the maximum key-value pair (lexicographically last)."""
+        items_list = list(self.items())
+        return items_list[-1] if items_list else None
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse key-value pairs in key order."""
+        return list(self.items())
+
+    def as_trie(self):
+        """PATRICIA is a trie; return self."""
+        return self
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("PATRICIA cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("PATRICIA cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("PATRICIA does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("PATRICIA cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("PATRICIA cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("PATRICIA cannot behave as Flow Network")
+
     @property
 
     def is_list(self) -> bool:
@@ -403,7 +463,7 @@ d binary trie structure.
 
     def get_tree_depth(self) -> int:
         """Calculate maximum depth of the trie."""
-        def _calculate_depth(node: Optional[PatriciaNode], depth: int = 0) -> int:
+        def _calculate_depth(node: PatriciaNode | None, depth: int = 0) -> int:
             if not node:
                 return depth
             if node.is_leaf:
@@ -415,7 +475,7 @@ d binary trie structure.
 
     def get_compression_statistics(self) -> dict[str, Any]:
         """Get detailed compression statistics."""
-        def _analyze_tree(node: Optional[PatriciaNode]) -> dict[str, int]:
+        def _analyze_tree(node: PatriciaNode | None) -> dict[str, int]:
             if not node:
                 return {'internal_nodes': 0, 'leaf_nodes': 0, 'total_nodes': 0}
             if node.is_leaf:
@@ -457,7 +517,7 @@ d binary trie structure.
 
     def export_tree_structure(self) -> dict[str, Any]:
         """Export tree structure for analysis."""
-        def _export_node(node: Optional[PatriciaNode], node_id: int = 0) -> tuple[dict[str, Any], int]:
+        def _export_node(node: PatriciaNode | None, node_id: int = 0) -> tuple[dict[str, Any], int]:
             if not node:
                 return {}, node_id
             if node.is_leaf:

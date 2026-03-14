@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.facades.graph import XWNodeGraph
 from exonware.xwnode.defs import NodeMode, EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_bitemporal():
-    """Create empty bitemporal graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BITEMPORAL)
+    """Create empty bitemporal graph (use XWNodeGraph for edge operations)."""
+    return XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BITEMPORAL)
 @pytest.fixture
 
 def simple_bitemporal():
     """Create bitemporal graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BITEMPORAL)
+    graph = XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BITEMPORAL)
     graph.add_edge('A', 'B', valid_time=(0, 100), transaction_time=1000)
     graph.add_edge('B', 'C', valid_time=(0, 100), transaction_time=1001)
     return graph
@@ -51,6 +51,6 @@ class TestBitemporalStrategy:
         assert simple_bitemporal.has_edge('B', 'C') is True
 
     def test_delete_edge_operation(self, simple_bitemporal):
-        """Test delete_edge operation removes edges correctly."""
-        assert simple_bitemporal.delete_edge('A', 'B') is True
+        """Test remove_edge operation removes edges correctly (XWNodeGraph uses remove_edge)."""
+        assert simple_bitemporal.remove_edge('A', 'B') is True
         assert simple_bitemporal.has_edge('A', 'B') is False

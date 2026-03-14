@@ -10,12 +10,13 @@ using Python's built-in dictionary.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeStrategy, AKeyValueStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -199,7 +200,7 @@ class HashMapStrategy(AKeyValueStrategy):
         self._data[str_key] = value
         record_access(self._access_tracker, 'put_count')
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """
         Find value by key.
         Time Complexity: O(1)
@@ -370,7 +371,7 @@ class HashMapStrategy(AKeyValueStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -445,27 +446,27 @@ class HashMapStrategy(AKeyValueStrategy):
         return "dict"
     @property
 
-    def uri(self) -> Optional[str]:
+    def uri(self) -> str | None:
         """Get the URI of this node."""
         return None
     @property
 
-    def reference_type(self) -> Optional[str]:
+    def reference_type(self) -> str | None:
         """Get the reference type of this node."""
         return None
     @property
 
-    def object_type(self) -> Optional[str]:
+    def object_type(self) -> str | None:
         """Get the object type of this node."""
         return None
     @property
 
-    def mime_type(self) -> Optional[str]:
+    def mime_type(self) -> str | None:
         """Get the MIME type of this node."""
         return None
     @property
 
-    def metadata(self) -> Optional[dict[str, Any]]:
+    def metadata(self) -> dict[str, Any] | None:
         """Get the metadata of this node."""
         return None
     # ============================================================================

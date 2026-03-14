@@ -5,20 +5,22 @@ B+ Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 B+ Tree Node Strategy Implementation
 This module implements the B_PLUS_TREE strategy for database-friendly
 operations with efficient range queries and sequential access.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class BPlusTreeNode:
@@ -33,8 +35,8 @@ class BPlusTreeNode:
         self.keys: list[str] = []
         self.values: list[Any] = [] if is_leaf else []  # Only leaves store values
         self.children: list[BPlusTreeNode] = [] if not is_leaf else []  # Internal nodes have children
-        self.next_leaf: Optional[BPlusTreeNode] = None  # Leaf linking for sequential access
-        self.parent: Optional[BPlusTreeNode] = None
+        self.next_leaf: BPlusTreeNode | None = None  # Leaf linking for sequential access
+        self.parent: BPlusTreeNode | None = None
         self.max_keys = max_keys
 
     def is_full(self) -> bool:
@@ -129,8 +131,8 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self.order = options.get('order', 4)  # Maximum number of keys per node
         self.case_sensitive = options.get('case_sensitive', True)
         # Core B+ tree
-        self._root: Optional[BPlusTreeNode] = None
-        self._first_leaf: Optional[BPlusTreeNode] = None  # Pointer to first leaf for iteration
+        self._root: BPlusTreeNode | None = None
+        self._first_leaf: BPlusTreeNode | None = None  # Pointer to first leaf for iteration
         self._size = 0
         # Statistics
         self._height = 0
@@ -170,7 +172,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         self._total_nodes += 1
         return node
 
-    def _find_leaf(self, key: str) -> Optional[BPlusTreeNode]:
+    def _find_leaf(self, key: str) -> BPlusTreeNode | None:
         """
         Find leaf node that should contain the key.
         Time Complexity: O(log n)
@@ -299,7 +301,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             new_leaf, separator = self._split_leaf(leaf)
             self._insert_into_parent(leaf, separator, new_leaf)
 
-    def _search_key(self, key: str) -> Optional[Any]:
+    def _search_key(self, key: str) -> Any | None:
         """
         Search for key in B+ tree.
         Time Complexity: O(log n)
@@ -316,7 +318,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     # CORE OPERATIONS
     # ============================================================================
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """
         Find value by key (implements base class abstract method).
         Time Complexity: O(log n)
@@ -442,7 +444,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -496,7 +498,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
     # B+ TREE SPECIFIC OPERATIONS
     # ============================================================================
 
-    def first_key(self) -> Optional[str]:
+    def first_key(self) -> str | None:
         """
         Get first (smallest) key.
         Time Complexity: O(1)
@@ -505,7 +507,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             return self._first_leaf.keys[0]
         return None
 
-    def last_key(self) -> Optional[str]:
+    def last_key(self) -> str | None:
         """
         Get last (largest) key.
         Time Complexity: O(h) where h is height - traverse to last leaf
@@ -541,7 +543,7 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             current = current.next_leaf
         return result
 
-    def get_at_index(self, index: int) -> Optional[Any]:
+    def get_at_index(self, index: int) -> Any | None:
         """
         Get value at specific index.
         Time Complexity: O(n) - must traverse linked leaves
@@ -689,3 +691,54 @@ class BPlusTreeStrategy(ANodeTreeStrategy):
             'first_key': str(stats['first_key']) if stats['first_key'] else 'None',
             'memory_usage': f"{stats['total_nodes'] * self.order * 20} bytes (estimated)"
         }
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods
+    # ============================================================================
+
+    def get_min(self) -> Any:
+        """Get minimum key (first key)."""
+        return self.first_key()
+
+    def get_max(self) -> Any:
+        """Get maximum key (last key)."""
+        return self.last_key()
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse in key order (B+ tree is always sorted)."""
+        return list(self.items())
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("B+ tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("B+ tree cannot behave as Flow Network")

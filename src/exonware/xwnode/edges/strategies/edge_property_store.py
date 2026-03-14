@@ -4,12 +4,13 @@ This module implements the EDGE_PROPERTY_STORE strategy for columnar
 edge attribute storage with efficient analytical queries.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 from collections.abc import Callable
 import statistics
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class PropertyColumn:
@@ -247,7 +248,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from property store."""
         edge_key = (source, target)
         positions = self._edge_index.get(edge_key, [])
@@ -276,7 +277,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         edge_key = (source, target)
         return edge_key in self._edge_index
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get edge data with all properties."""
         edge_key = (source, target)
         positions = self._edge_index.get(edge_key, [])
@@ -410,7 +411,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
         """Get list of all property column names."""
         return list(self._property_columns.keys())
 
-    def get_column_data(self, column_name: str) -> Optional[list[Any]]:
+    def get_column_data(self, column_name: str) -> list[Any] | None:
         """Get all values from a specific column."""
         if column_name in self._property_columns:
             return self._property_columns[column_name].values.copy()
@@ -490,7 +491,7 @@ class EdgePropertyStoreStrategy(AEdgeStrategy):
             groups[value].append(i)
         return dict(groups)
 
-    def get_property_statistics(self, property_name: str) -> Optional[dict[str, Any]]:
+    def get_property_statistics(self, property_name: str) -> dict[str, Any] | None:
         """Get statistics for a specific property column."""
         if property_name in self._property_columns:
             return self._property_columns[property_name].get_statistics()

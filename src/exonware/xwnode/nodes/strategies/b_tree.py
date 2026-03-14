@@ -5,20 +5,22 @@ B-Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 B-Tree Node Strategy Implementation
 This module implements the B_TREE strategy for efficient range queries
 and sorted key operations with guaranteed O(log n) performance.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class BTreeNode:
@@ -42,7 +44,7 @@ class BTreeNode:
         """
         return len(self.keys) == 2 * self.degree - 1
 
-    def search(self, key: str) -> Optional[Any]:
+    def search(self, key: str) -> Any | None:
         """
         Search for a key in this subtree.
         Time Complexity: O(log n)
@@ -176,7 +178,7 @@ class BTreeStrategy(ANodeTreeStrategy):
         """
         super().__init__(NodeMode.B_TREE, traits, **options)
         self.degree = options.get('degree', 3)  # Minimum degree
-        self.root: Optional[BTreeNode] = BTreeNode(self.degree, is_leaf=True)
+        self.root: BTreeNode | None = BTreeNode(self.degree, is_leaf=True)
         self._size = 0
 
     def get_supported_traits(self) -> NodeTrait:
@@ -355,7 +357,7 @@ class BTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -437,7 +439,7 @@ class BTreeStrategy(ANodeTreeStrategy):
                     break
         return result
 
-    def min_key(self) -> Optional[str]:
+    def min_key(self) -> str | None:
         """
         Get the minimum key.
         Time Complexity: O(log n)
@@ -449,7 +451,7 @@ class BTreeStrategy(ANodeTreeStrategy):
             node = node.children[0]
         return node.keys[0] if node.keys else None
 
-    def max_key(self) -> Optional[str]:
+    def max_key(self) -> str | None:
         """
         Get the maximum key.
         Time Complexity: O(log n)
@@ -461,7 +463,7 @@ class BTreeStrategy(ANodeTreeStrategy):
             node = node.children[-1]
         return node.keys[-1] if node.keys else None
 
-    def successor(self, key: str) -> Optional[str]:
+    def successor(self, key: str) -> str | None:
         """
         Find the successor of the given key.
         Time Complexity: O(n) - must scan keys
@@ -474,7 +476,7 @@ class BTreeStrategy(ANodeTreeStrategy):
                 found = True
         return None
 
-    def predecessor(self, key: str) -> Optional[str]:
+    def predecessor(self, key: str) -> str | None:
         """
         Find the predecessor of the given key.
         Time Complexity: O(n) - must scan keys
@@ -528,3 +530,56 @@ class BTreeStrategy(ANodeTreeStrategy):
             'memory_usage': f"{self._size * (24 + 16)} bytes (estimated)",
             'is_sorted': True
         }
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods
+    # ============================================================================
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys_iter = self.keys()
+        return next(keys_iter, None)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys_list = list(self.keys())
+        return keys_list[-1] if keys_list else None
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse in key order."""
+        return list(self.items())
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("B-tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("B-tree cannot behave as Flow Network")

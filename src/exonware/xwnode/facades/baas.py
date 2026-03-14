@@ -4,11 +4,11 @@ BaaS facade for xwnode BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Sequence
 # Event routing
 from ..common.graph.event_routing import EventChannelGraph, ChannelRouter
@@ -40,14 +40,14 @@ class XWNodeBaaSFacade:
     def __init__(self):
         """Initialize BaaS facade."""
         # Lazy initialization - only create when needed
-        self._event_graph: Optional[EventChannelGraph] = None
-        self._channel_router: Optional[ChannelRouter] = None
-        self._analytics_structures: Optional[AnalyticsDataStructures] = None
-        self._analytics_integration: Optional[AnalyticsIntegration] = None
-        self._spatial_manager: Optional[SpatialIndexManager] = None
-        self._geofence_index: Optional[GeofenceIndex] = None
-        self._cache_manager: Optional[CacheStrategyManager] = None
-        self._cache_metrics: Optional[CacheMetrics] = None
+        self._event_graph: EventChannelGraph | None = None
+        self._channel_router: ChannelRouter | None = None
+        self._analytics_structures: AnalyticsDataStructures | None = None
+        self._analytics_integration: AnalyticsIntegration | None = None
+        self._spatial_manager: SpatialIndexManager | None = None
+        self._geofence_index: GeofenceIndex | None = None
+        self._cache_manager: CacheStrategyManager | None = None
+        self._cache_metrics: CacheMetrics | None = None
     # ============================================================================
     # EVENT ROUTING
     # ============================================================================
@@ -66,7 +66,7 @@ class XWNodeBaaSFacade:
 
     def get_channel_router(
         self,
-        event_graph: Optional[IEventChannelGraph] = None
+        event_graph: IEventChannelGraph | None = None
     ) -> IChannelRouter:
         """
         Get channel router instance.
@@ -80,7 +80,7 @@ class XWNodeBaaSFacade:
             self._channel_router = ChannelRouter(graph)
         return self._channel_router
 
-    def add_event_channel(self, channel: str, parent: Optional[str] = None) -> None:
+    def add_event_channel(self, channel: str, parent: str | None = None) -> None:
         """Add event channel to graph."""
         graph = self.get_event_graph()
         graph.add_channel(channel, parent)
@@ -89,7 +89,7 @@ class XWNodeBaaSFacade:
         self,
         source: str,
         event: Any,
-        target_channels: Optional[Sequence[str]] = None
+        target_channels: Sequence[str] | None = None
     ) -> dict[str, Any]:
         """Route event to target channels."""
         router = self.get_channel_router()
@@ -136,7 +136,7 @@ class XWNodeBaaSFacade:
 
     def get_geofence_index(
         self,
-        spatial_manager: Optional[ISpatialIndexManager] = None
+        spatial_manager: ISpatialIndexManager | None = None
     ) -> IGeofenceIndex:
         """Get geofence index instance."""
         if self._geofence_index is None:
@@ -189,7 +189,7 @@ class XWNodeBaaSFacade:
 
     def get_cache_metrics(
         self,
-        cache_manager: Optional[ICacheStrategyManager] = None
+        cache_manager: ICacheStrategyManager | None = None
     ) -> ICacheMetrics:
         """Get cache metrics instance."""
         if self._cache_metrics is None:
@@ -204,7 +204,7 @@ class XWNodeBaaSFacade:
         self,
         strategy: str = "lru",
         max_size: int = 1000,
-        cache_id: Optional[str] = None,
+        cache_id: str | None = None,
         **options
     ) -> ICacheAdapter:
         """Get cache instance with specified strategy."""
@@ -213,7 +213,7 @@ class XWNodeBaaSFacade:
 
     def get_cache_metrics_data(
         self,
-        cache_id: Optional[str] = None
+        cache_id: str | None = None
     ) -> dict[str, Any]:
         """Get cache metrics data."""
         metrics = self.get_cache_metrics()

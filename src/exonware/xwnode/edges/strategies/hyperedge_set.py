@@ -4,12 +4,13 @@ This module implements the HYPEREDGE_SET strategy for hypergraphs where
 edges can connect multiple vertices simultaneously.
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict
 import uuid
 import time
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class HyperEdge:
@@ -147,7 +148,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         """Add a binary hyperedge (compatibility method)."""
         return self.add_hyperedge([source, target], **properties)
 
-    def add_hyperedge(self, vertices: list[str], edge_id: Optional[str] = None, **properties) -> str:
+    def add_hyperedge(self, vertices: list[str], edge_id: str | None = None, **properties) -> str:
         """Add a hyperedge connecting multiple vertices."""
         # Validate input
         vertex_set = set(vertices)
@@ -167,7 +168,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
         self._update_indices(hyperedge, "add")
         return edge_id
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove a binary edge (compatibility method)."""
         if edge_id:
             return self.remove_hyperedge(edge_id)
@@ -203,7 +204,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
                 return True
         return False
 
-    def get_edge_data(self, source: str, target: str) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str) -> dict[str, Any] | None:
         """Get data for binary edge (compatibility method)."""
         # Find first hyperedge containing both vertices
         if source not in self._vertex_to_edges:
@@ -214,7 +215,7 @@ class HyperEdgeSetStrategy(AEdgeStrategy):
                 return hyperedge.to_dict()
         return None
 
-    def get_hyperedge_data(self, edge_id: str) -> Optional[dict[str, Any]]:
+    def get_hyperedge_data(self, edge_id: str) -> dict[str, Any] | None:
         """Get data for a specific hyperedge."""
         hyperedge = self._hyperedges.get(edge_id)
         return hyperedge.to_dict() if hyperedge else None

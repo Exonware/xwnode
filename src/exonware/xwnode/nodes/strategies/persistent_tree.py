@@ -10,23 +10,25 @@ trees with structural sharing and lock-free concurrency.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import time
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class PersistentTreeNode:
     """Immutable node in the persistent tree."""
 
-    def __init__(self, key: str, value: Any = None, left: Optional[PersistentTreeNode] = None, 
-                 right: Optional[PersistentTreeNode] = None, height: int = 1):
+    def __init__(self, key: str, value: Any = None, left: PersistentTreeNode | None = None, 
+                 right: PersistentTreeNode | None = None, height: int = 1):
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
@@ -73,7 +75,7 @@ sharing unchanged nodes.
         self.case_sensitive = options.get('case_sensitive', True)
         self.balanced = options.get('balanced', True)  # Use AVL balancing
         # Core persistent tree
-        self._root: Optional[PersistentTreeNode] = None
+        self._root: PersistentTreeNode | None = None
         self._size = 0
         self._version = 0
         # Version management
@@ -93,8 +95,8 @@ sharing unchanged nodes.
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
 
-    def _create_node(self, key: str, value: Any, left: Optional[PersistentTreeNode] = None,
-                    right: Optional[PersistentTreeNode] = None) -> PersistentTreeNode:
+    def _create_node(self, key: str, value: Any, left: PersistentTreeNode | None = None,
+                    right: PersistentTreeNode | None = None) -> PersistentTreeNode:
         """Create new node with structural sharing."""
         self._total_allocations += 1
         height = 1 + max(
@@ -103,11 +105,11 @@ sharing unchanged nodes.
         )
         return PersistentTreeNode(key, value, left, right, height)
 
-    def _get_height(self, node: Optional[PersistentTreeNode]) -> int:
+    def _get_height(self, node: PersistentTreeNode | None) -> int:
         """Get height of node."""
         return node.height if node else 0
 
-    def _get_balance(self, node: Optional[PersistentTreeNode]) -> int:
+    def _get_balance(self, node: PersistentTreeNode | None) -> int:
         """Get balance factor of node."""
         if not node:
             return 0
@@ -160,7 +162,7 @@ sharing unchanged nodes.
                 return self._rotate_left(node)
         return node
 
-    def _insert_node(self, node: Optional[PersistentTreeNode], key: str, value: Any) -> tuple[PersistentTreeNode, bool]:
+    def _insert_node(self, node: PersistentTreeNode | None, key: str, value: Any) -> tuple[PersistentTreeNode, bool]:
         """Insert node with structural sharing."""
         if not node:
             new_node = self._create_node(key, value)
@@ -195,7 +197,7 @@ sharing unchanged nodes.
                 new_node = self._create_node(node.key, value, node.left, node.right)
                 return new_node, False
 
-    def _find_node(self, node: Optional[PersistentTreeNode], key: str) -> Optional[PersistentTreeNode]:
+    def _find_node(self, node: PersistentTreeNode | None, key: str) -> PersistentTreeNode | None:
         """Find node by key."""
         if not node:
             return None
@@ -208,7 +210,7 @@ sharing unchanged nodes.
         else:
             return node
 
-    def _delete_node(self, node: Optional[PersistentTreeNode], key: str) -> tuple[Optional[PersistentTreeNode], bool]:
+    def _delete_node(self, node: PersistentTreeNode | None, key: str) -> tuple[PersistentTreeNode | None, bool]:
         """Delete node with structural sharing."""
         if not node:
             return None, False
@@ -251,7 +253,13 @@ sharing unchanged nodes.
             node = node.left
         return node
 
-    def _inorder_traversal(self, node: Optional[PersistentTreeNode]) -> Iterator[tuple[str, Any]]:
+    def _find_max(self, node: PersistentTreeNode) -> PersistentTreeNode:
+        """Find maximum node in subtree."""
+        while node.right:
+            node = node.right
+        return node
+
+    def _inorder_traversal(self, node: PersistentTreeNode | None) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
@@ -324,7 +332,7 @@ sharing unchanged nodes.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -493,6 +501,72 @@ sharing unchanged nodes.
         removed = len(self._version_history) - keep_count
         self._version_history = self._version_history[-keep_count:]
         return removed
+
+    # ============================================================================
+    # TREE ABSTRACT METHODS
+    # ============================================================================
+
+    def get_min(self) -> tuple[str, Any] | None:
+        """Get the minimum key-value pair. Time Complexity: O(log n)."""
+        if not self._root:
+            return None
+        min_node = self._find_min(self._root)
+        return (min_node.key, min_node.value)
+
+    def get_max(self) -> tuple[str, Any] | None:
+        """Get the maximum key-value pair. Time Complexity: O(log n)."""
+        if not self._root:
+            return None
+        max_node = self._find_max(self._root)
+        return (max_node.key, max_node.value)
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse tree in specified order."""
+        return list(self._inorder_traversal(self._root))
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as SkipList")
+
+    # ============================================================================
+    # GRAPH ABSTRACT METHODS (not supported by persistent tree)
+    # ============================================================================
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("Persistent tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("Persistent tree cannot behave as Flow Network")
+
+    # ============================================================================
+    # STATISTICS
+    # ============================================================================
 
     def get_stats(self) -> dict[str, Any]:
         """Get performance statistics with version management."""

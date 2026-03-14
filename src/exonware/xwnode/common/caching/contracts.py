@@ -4,11 +4,11 @@ Cache adapter interface and contracts.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: November 4, 2025
 """
 
-from typing import Any, Optional, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from dataclasses import dataclass
 @dataclass
 
@@ -51,7 +51,7 @@ class ICacheAdapter(Protocol):
     wrapping xwsystem.caching implementations.
     """
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """
         Get value from cache.
         Args:
@@ -205,7 +205,7 @@ class ICacheMetrics(Protocol):
     Provides cache performance metrics (hit/miss ratios, eviction rates).
     """
 
-    def get_metrics(self, cache_id: Optional[str] = None) -> dict[str, Any]:
+    def get_metrics(self, cache_id: str | None = None) -> dict[str, Any]:
         """
         Get cache metrics.
         Args:
@@ -215,7 +215,7 @@ class ICacheMetrics(Protocol):
         """
         ...
 
-    def reset_metrics(self, cache_id: Optional[str] = None) -> None:
+    def reset_metrics(self, cache_id: str | None = None) -> None:
         """
         Reset cache metrics.
         Args:

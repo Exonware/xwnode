@@ -6,13 +6,14 @@ Provides base implementations for Copy-on-Write components.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import Iterator
 from abc import abstractmethod
-from typing import Any, Optional, Iterator
+from typing import Any
 from .contracts import ICOWNode, ICOWStrategy
 
 
@@ -170,7 +171,7 @@ class ACOWStrategy(ICOWStrategy):
     Provides common functionality for different COW implementations.
     """
 
-    def __init__(self, paths: Optional[dict[str, Any]] = None, version: int = 0):
+    def __init__(self, paths: dict[str, Any] | None = None, version: int = 0):
         """
         Initialize with paths and version.
         Args:

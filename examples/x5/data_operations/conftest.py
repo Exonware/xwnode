@@ -18,8 +18,9 @@ import os
 import pytest
 import tempfile
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 # Configure UTF-8 for Windows console (GUIDE_TEST.md requirement)
+from collections.abc import Generator
 if sys.platform == "win32":
     try:
         import io

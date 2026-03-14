@@ -15,7 +15,7 @@ from pathlib import Path
 import time
 import statistics
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 # Handle Windows encoding
 if sys.platform == 'win32':
     import io

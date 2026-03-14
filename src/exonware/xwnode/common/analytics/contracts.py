@@ -4,12 +4,13 @@ Analytics integration contracts for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional, Protocol, runtime_checkable, Callable
+from typing import Any, Protocol, runtime_checkable
 from collections.abc import Sequence
+from collections.abc import Callable
 @runtime_checkable
 
 class IAnalyticsStructures(Protocol):

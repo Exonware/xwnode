@@ -5,7 +5,7 @@ Set Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
@@ -15,10 +15,12 @@ Tree Set Node Strategy Implementation
 This module implements the SET_TREE strategy for ordered set operations
 using a balanced binary search tree with efficient range queries.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class TreeNode:
@@ -28,8 +30,8 @@ class TreeNode:
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
-        self.left: Optional[TreeNode] = None
-        self.right: Optional[TreeNode] = None
+        self.left: TreeNode | None = None
+        self.right: TreeNode | None = None
         self.height = 1
         self.size = 1  # Size of subtree
 
@@ -54,7 +56,7 @@ ions, and range queries.
         self.allow_duplicates = options.get('allow_duplicates', False)
         self.case_sensitive = options.get('case_sensitive', True)
         # Core AVL tree
-        self._root: Optional[TreeNode] = None
+        self._root: TreeNode | None = None
         self._size = 0
         # Key-value mapping for compatibility
         self._values: dict[str, Any] = {}
@@ -70,11 +72,11 @@ ions, and range queries.
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
 
-    def _get_height(self, node: Optional[TreeNode]) -> int:
+    def _get_height(self, node: TreeNode | None) -> int:
         """Get height of node."""
         return node.height if node else 0
 
-    def _get_size(self, node: Optional[TreeNode]) -> int:
+    def _get_size(self, node: TreeNode | None) -> int:
         """Get size of subtree."""
         return node.size if node else 0
 
@@ -83,7 +85,7 @@ ions, and range queries.
         node.height = max(self._get_height(node.left), self._get_height(node.right)) + 1
         node.size = self._get_size(node.left) + self._get_size(node.right) + 1
 
-    def _get_balance(self, node: Optional[TreeNode]) -> int:
+    def _get_balance(self, node: TreeNode | None) -> int:
         """Get balance factor of node."""
         return self._get_height(node.left) - self._get_height(node.right) if node else 0
 
@@ -111,7 +113,7 @@ ions, and range queries.
         self._update_node(y)
         return y
 
-    def _insert_node(self, node: Optional[TreeNode], key: str, value: Any) -> TreeNode:
+    def _insert_node(self, node: TreeNode | None, key: str, value: Any) -> TreeNode:
         """Insert node with AVL balancing."""
         # Standard BST insertion
         if not node:
@@ -159,7 +161,7 @@ ions, and range queries.
             node = node.left
         return node
 
-    def _delete_node(self, node: Optional[TreeNode], key: str) -> Optional[TreeNode]:
+    def _delete_node(self, node: TreeNode | None, key: str) -> TreeNode | None:
         """Delete node with AVL balancing."""
         if not node:
             return node
@@ -207,7 +209,7 @@ ions, and range queries.
                 return self._rotate_left(node)
         return node
 
-    def _search_node(self, node: Optional[TreeNode], key: str) -> Optional[TreeNode]:
+    def _search_node(self, node: TreeNode | None, key: str) -> TreeNode | None:
         """Search for node with given key."""
         if not node or node.key == key:
             return node
@@ -216,7 +218,7 @@ ions, and range queries.
         else:
             return self._search_node(node.right, key)
 
-    def _inorder_traversal(self, node: Optional[TreeNode], result: list[tuple[str, Any]]) -> None:
+    def _inorder_traversal(self, node: TreeNode | None, result: list[tuple[str, Any]]) -> None:
         """Inorder traversal to get sorted keys."""
         if node:
             self._inorder_traversal(node.left, result)
@@ -312,7 +314,7 @@ ions, and range queries.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -388,7 +390,7 @@ ions, and range queries.
                     result.append(key)
         return result
 
-    def lower_bound(self, key: str) -> Optional[str]:
+    def lower_bound(self, key: str) -> str | None:
         """Find first key >= given key."""
         norm_key = self._normalize_key(key)
         for k in self.keys():
@@ -396,7 +398,7 @@ ions, and range queries.
                 return k
         return None
 
-    def upper_bound(self, key: str) -> Optional[str]:
+    def upper_bound(self, key: str) -> str | None:
         """Find first key > given key."""
         norm_key = self._normalize_key(key)
         for k in self.keys():
@@ -404,7 +406,7 @@ ions, and range queries.
                 return k
         return None
 
-    def floor(self, key: str) -> Optional[str]:
+    def floor(self, key: str) -> str | None:
         """Find largest key <= given key."""
         norm_key = self._normalize_key(key)
         result = None
@@ -415,11 +417,11 @@ ions, and range queries.
                 break
         return result
 
-    def ceiling(self, key: str) -> Optional[str]:
+    def ceiling(self, key: str) -> str | None:
         """Find smallest key >= given key."""
         return self.lower_bound(key)
 
-    def first(self) -> Optional[str]:
+    def first(self) -> str | None:
         """Get first (smallest) key."""
         if self._root:
             node = self._root
@@ -428,7 +430,7 @@ ions, and range queries.
             return node.key
         return None
 
-    def last(self) -> Optional[str]:
+    def last(self) -> str | None:
         """Get last (largest) key."""
         if self._root:
             node = self._root
@@ -439,7 +441,7 @@ ions, and range queries.
 
     def is_balanced(self) -> bool:
         """Check if tree is balanced."""
-        def _check_balance(node: Optional[TreeNode]) -> bool:
+        def _check_balance(node: TreeNode | None) -> bool:
             if not node:
                 return True
             balance = self._get_balance(node)
@@ -495,3 +497,69 @@ ions, and range queries.
             'last_key': stats.get('last_key', 'None'),
             'memory_usage': f"{self._size * 80} bytes (estimated)"
         }
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return min(keys)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return max(keys)
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

@@ -4,11 +4,11 @@ Cache strategy manager implementation for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 01-Jan-2026
 """
 
-from typing import Any, Optional
+from typing import Any
 from .contracts import ICacheStrategyManager, ICacheAdapter, ICacheMetrics, CacheStats
 from .adapters import LRUCacheAdapter, LFUCacheAdapter, TTLCacheAdapter
 from .controller import CacheController, get_cache_controller
@@ -38,8 +38,8 @@ class CacheStrategyManager:
         self,
         strategy: str = "lfu",  # Default to LFU (fastest cache type)
         max_size: int = 1000,
-        cache_id: Optional[str] = None,
-        component: Optional[str] = None,
+        cache_id: str | None = None,
+        component: str | None = None,
         **options
     ) -> ICacheAdapter:
         """
@@ -103,7 +103,7 @@ class CacheStrategyManager:
         self,
         cache_id: str,
         new_strategy: str,
-        max_size: Optional[int] = None,
+        max_size: int | None = None,
         **options
     ) -> ICacheAdapter:
         """
@@ -151,7 +151,7 @@ class CacheMetrics:
         """
         self._manager = strategy_manager
 
-    def get_metrics(self, cache_id: Optional[str] = None) -> dict[str, Any]:
+    def get_metrics(self, cache_id: str | None = None) -> dict[str, Any]:
         """Get cache metrics."""
         if cache_id:
             cache = self._manager._caches.get(cache_id)
@@ -185,7 +185,7 @@ class CacheMetrics:
                 all_metrics[cid] = {}
         return all_metrics
 
-    def reset_metrics(self, cache_id: Optional[str] = None) -> None:
+    def reset_metrics(self, cache_id: str | None = None) -> None:
         """Reset cache metrics."""
         if cache_id:
             cache = self._manager._caches.get(cache_id)

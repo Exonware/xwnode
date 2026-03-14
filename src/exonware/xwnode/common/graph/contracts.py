@@ -4,12 +4,12 @@ Graph manager contracts and enums.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 11-Oct-2025
 """
 
 from enum import Enum
-from typing import Optional, Any, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 class GraphOptimization(Enum):
@@ -45,7 +45,7 @@ class IGraphManager(Protocol):
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """Remove relationship(s) between entities."""
         ...
@@ -53,8 +53,8 @@ class IGraphManager(Protocol):
     def get_outgoing(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None,
-        limit: Optional[int] = None
+        relationship_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """Get outgoing relationships for entity."""
         ...
@@ -62,8 +62,8 @@ class IGraphManager(Protocol):
     def get_incoming(
         self,
         entity_id: str,
-        relationship_type: Optional[str] = None,
-        limit: Optional[int] = None
+        relationship_type: str | None = None,
+        limit: int | None = None
     ) -> list[dict[str, Any]]:
         """Get incoming relationships for entity."""
         ...
@@ -72,7 +72,7 @@ class IGraphManager(Protocol):
         self,
         source: str,
         target: str,
-        relationship_type: Optional[str] = None
+        relationship_type: str | None = None
     ) -> bool:
         """Check if relationship exists."""
         ...

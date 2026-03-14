@@ -11,7 +11,8 @@ The function signatures match exactly those from json_utils_indexed.py (V2).
 """
 
 from __future__ import annotations
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from collections.abc import Callable
+from typing import Any, TYPE_CHECKING
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 # Avoid circular imports - define types locally
@@ -33,7 +34,7 @@ else:
     class JsonIndex:
         meta: JsonIndexMeta
         line_offsets: list[int]
-        id_index: Optional[dict[str, int]] = None
+        id_index: dict[str, int] | None = None
 __all__ = [
     "JsonIndexMeta",
     "JsonIndex",
@@ -54,9 +55,9 @@ class DataUtilsIndexedInterface(ABC):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
-        progress_callback: Optional[Callable[[int, int], None]] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
+        progress_callback: Callable[[int, int], None] | None = None,
     ) -> JsonIndex:
         """
         One-time full scan to build an index:
@@ -74,7 +75,7 @@ class DataUtilsIndexedInterface(ABC):
         file_path: str,
         *,
         strict: bool = True,
-    ) -> Optional[JsonIndex]:
+    ) -> JsonIndex | None:
         """
         Load and validate index if present.
         If strict=True and file changed -> returns None.
@@ -87,8 +88,8 @@ class DataUtilsIndexedInterface(ABC):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
     ) -> JsonIndex:
         """
         Load existing index if valid; otherwise rebuild.
@@ -102,9 +103,9 @@ class DataUtilsIndexedInterface(ABC):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
-        progress_callback: Optional[Callable[[int, int], None]] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
+        progress_callback: Callable[[int, int], None] | None = None,
     ) -> JsonIndex:
         """
         Async version of build_index - runs in thread pool to avoid blocking.
@@ -119,8 +120,8 @@ class DataUtilsIndexedInterface(ABC):
         file_path: str,
         *,
         encoding: str = "utf-8",
-        id_field: Optional[str] = None,
-        max_id_index: Optional[int] = None,
+        id_field: str | None = None,
+        max_id_index: int | None = None,
     ) -> JsonIndex:
         """
         Async version of ensure_index - runs in thread pool to avoid blocking.
@@ -135,7 +136,7 @@ class DataUtilsIndexedInterface(ABC):
         line_number: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """
         Random-access a specific record by line_number (0-based)
@@ -150,7 +151,7 @@ class DataUtilsIndexedInterface(ABC):
         line_number: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """
         Async version of indexed_get_by_line - allows concurrent reads.
@@ -167,7 +168,7 @@ class DataUtilsIndexedInterface(ABC):
         *,
         encoding: str = "utf-8",
         id_field: str = "id",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """
         Random-access a record by logical id using id_index if available.
@@ -183,7 +184,7 @@ class DataUtilsIndexedInterface(ABC):
         *,
         encoding: str = "utf-8",
         id_field: str = "id",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> Any:
         """
         Async version of indexed_get_by_id - allows concurrent reads.
@@ -201,7 +202,7 @@ class DataUtilsIndexedInterface(ABC):
         page_size: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> list[Any]:
         """
         Paging helper using index:
@@ -219,7 +220,7 @@ class DataUtilsIndexedInterface(ABC):
         page_size: int,
         *,
         encoding: str = "utf-8",
-        index: Optional[JsonIndex] = None,
+        index: JsonIndex | None = None,
     ) -> list[Any]:
         """
         Async version of get_page - allows concurrent reads.

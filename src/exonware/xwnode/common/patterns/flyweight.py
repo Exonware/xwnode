@@ -8,17 +8,18 @@ configuration, which is especially important for high-throughput applications.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import threading
 import hashlib
-from typing import Any, Hashable, Optional, TypeVar
+from typing import Any, TypeVar
 from weakref import WeakValueDictionary
 from exonware.xwsystem import get_logger
 from exonware.xwsystem.io.serialization.formats.text.json import JsonSerializer
 from exonware.xwsystem.caching import create_cache
+from collections.abc import Hashable
 logger = get_logger(__name__)
 # ============================================================================
 # GLOBAL CACHE FOR STRATEGY INSTANCES (xwsystem integration - shared across ALL instances)
@@ -404,7 +405,7 @@ class StrategyFlyweight:
                 'edge_cache_keys': list(self._edge_instances.keys())
             }
 # Global flyweight instance
-_flyweight_instance: Optional[StrategyFlyweight] = None
+_flyweight_instance: StrategyFlyweight | None = None
 _flyweight_lock = threading.Lock()
 
 

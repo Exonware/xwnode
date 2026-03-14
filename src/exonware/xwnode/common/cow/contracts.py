@@ -6,12 +6,13 @@ Defines the contracts for immutable data structures with structural sharing.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Optional, Iterator, Protocol, runtime_checkable
+from collections.abc import Iterator
+from typing import Any, Protocol, runtime_checkable
 @runtime_checkable
 
 class ICOWNode(Protocol):

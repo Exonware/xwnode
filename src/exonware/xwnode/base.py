@@ -11,15 +11,16 @@ Strategy base classes are in their respective strategy folders:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import Iterator
 import threading
 import copy
 from abc import ABC
-from typing import Any, Iterator, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from collections.abc import Callable
 # Core XWNode imports - strategy-agnostic
 from .errors import (
@@ -168,7 +169,7 @@ class GlobalPathCache:
         self._stats = {'hits': 0, 'misses': 0}
         self._lock = threading.RLock()  # Still need lock for stats updates
 
-    def get(self, node_id: int, path: str) -> Optional[Any]:
+    def get(self, node_id: int, path: str) -> Any | None:
         """Get cached result for node and path (O(1) with xwsystem cache)."""
         # Create hashable key (xwsystem cache requires string keys)
         key = f"{node_id}:{path}"
@@ -258,7 +259,7 @@ class ANode[T](INode[T]):
         strategy = SimpleNodeStrategy.create_from_data(data)
         return cls(strategy)
 
-    def get(self, path: str, default: Any = None) -> Optional[ANode[T]]:
+    def get(self, path: str, default: Any = None) -> ANode[T] | None:
         """Get a node by path with support for nested navigation."""
         try:
             # Parse the path into parts (e.g., 'users.0.name' -> ['users', '0', 'name'])
@@ -321,7 +322,7 @@ class ANode[T](INode[T]):
         """Check if path exists."""
         return self._strategy.exists(path)
 
-    def find(self, path: str, in_place: bool = False) -> Optional[ANode[T]]:
+    def find(self, path: str, in_place: bool = False) -> ANode[T] | None:
         """Find a node by path."""
         return self.get(path)
 
@@ -448,12 +449,12 @@ class AEdge[P](IEdge[P]):
         self._strategy = strategy
 
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[dict[str, P]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, P] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """Add an edge between source and target with typed properties."""
         return self._strategy.add_edge(source, target, edge_type, weight, properties, is_bidirectional, edge_id)  # type: ignore[arg-type]
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove an edge between source and target."""
         return self._strategy.remove_edge(source, target, edge_id)
 
@@ -461,32 +462,32 @@ class AEdge[P](IEdge[P]):
         """Check if edge exists between source and target."""
         return self._strategy.has_edge(source, target)
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         return self._strategy.get_neighbors(node, edge_type, direction)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         return self._strategy.get_edges(edge_type, direction)
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, P]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, P] | None:
         """Get edge data/properties, typed as dict[str, P]."""
         return self._strategy.get_edge_data(source, target, edge_id)  # type: ignore[return-value]
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path between nodes."""
         return self._strategy.shortest_path(source, target, edge_type)
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         return self._strategy.find_cycles(start_node, edge_type, max_depth)
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs", max_depth: int = 100, 
-                      edge_type: Optional[str] = None) -> Iterator[str]:
+                      edge_type: str | None = None) -> Iterator[str]:
         """Traverse the graph with cycle detection."""
         return self._strategy.traverse_graph(start_node, strategy, max_depth, edge_type)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if nodes are connected."""
         return self._strategy.is_connected(source, target, edge_type)
 

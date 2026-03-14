@@ -7,13 +7,14 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 22-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import Iterator
 import logging
-from typing import Any, Optional, Iterator
+from typing import Any
 from .base import ANode
 from .config import get_config, set_config
 from .errors import XWNodeError, XWNodeTypeError, XWNodeValueError
@@ -140,12 +141,10 @@ class XWNode[T](ANode[T]):
         """
         if not path:
             return self.to_native()
-        # FAST PATH STRATEGIES: Direct O(1) key-value access (NO path navigation needed!)
-        # Fast-path strategies (AKeyValueStrategy, ACachedStrategy) bypass expensive path
-        # navigation and to_native() calls for simple key-value operations.
-        if self._is_fast_path_strategy():
+        # FAST PATH STRATEGIES: Direct O(1) key-value access for simple (single-segment) paths only.
+        # For paths containing ".", use full path navigation so "users.0.name" works.
+        if self._is_fast_path_strategy() and '.' not in path:
             # Directly call strategy's get() method (O(1) operation)
-            # Strategy.get() returns None if not found, so use default as fallback
             result = self._strategy.get(path)
             return result if result is not None else default
         # NAVIGATION CACHE: Check cache first (30-50x faster on cache hits!)
@@ -506,7 +505,7 @@ class XWNode[T](ANode[T]):
     # COPY-ON-WRITE (COW) OPERATIONS
     # ============================================================================
 
-    def set(self, path: str, value: Any, in_place: Optional[bool] = None) -> XWNode:
+    def set(self, path: str, value: Any, in_place: bool | None = None) -> XWNode:
         """
         Set value at path with COW support.
         Invalidates navigation cache to maintain correctness.
@@ -753,9 +752,21 @@ class XWNode[T](ANode[T]):
             raise KeyError(key)
         else:
             # Regular strategy - use get_value() to extract value from ANode
-            # Keep int keys as int, string keys as string
-            # Use sentinel to distinguish None value from missing key
+            # For int keys (list indexing), try strategy.get(key) then get_value("0") then to_native()[key]
             _sentinel = object()
+            if isinstance(key, int):
+                if hasattr(self._strategy, 'get'):
+                    result = self._strategy.get(key)
+                    if result is not None:
+                        return result
+                result = self.get_value(str(key), default=_sentinel)
+                if result is not _sentinel:
+                    return result
+                # Fallback: index into native list/tuple (handles any strategy that stores list-like data)
+                native = self.to_native()
+                if isinstance(native, (list, tuple)) and 0 <= key < len(native):
+                    return native[key]
+                raise KeyError(key)
             result = self.get_value(str(key), default=_sentinel)
             if result is _sentinel:
                 raise KeyError(key)
@@ -937,7 +948,7 @@ def dual_adaptive(data: Any = None) -> XWNode:
 # ============================================================================
 
 
-def get_cache_stats(component: Optional[str] = None) -> dict[str, Any]:
+def get_cache_stats(component: str | None = None) -> dict[str, Any]:
     """
     Get cache statistics for all components or a specific component.
     Args:
@@ -959,7 +970,7 @@ def get_cache_stats(component: Optional[str] = None) -> dict[str, Any]:
                 for name, stats in controller.get_all_stats().items()}
 
 
-def clear_cache(component: Optional[str] = None) -> None:
+def clear_cache(component: str | None = None) -> None:
     """
     Clear cache for all components or a specific component.
     Args:
@@ -979,9 +990,9 @@ def clear_cache(component: Optional[str] = None) -> None:
 
 def configure_cache(
     component: str,
-    enabled: Optional[bool] = None,
-    strategy: Optional[str] = None,
-    size: Optional[int] = None,
+    enabled: bool | None = None,
+    strategy: str | None = None,
+    size: int | None = None,
     **kwargs
 ) -> None:
     """
@@ -1064,7 +1075,7 @@ def get_cache_proof() -> dict[str, Any]:
     return collector.get_proof_summary()
 
 
-def print_cache_report(component: Optional[str] = None) -> None:
+def print_cache_report(component: str | None = None) -> None:
     """
     Print formatted cache performance report to stdout.
     Args:
@@ -1079,8 +1090,8 @@ def print_cache_report(component: Optional[str] = None) -> None:
 
 
 def get_cache_comparison(
-    component: Optional[str] = None,
-    operation: Optional[str] = None
+    component: str | None = None,
+    operation: str | None = None
 ) -> list[dict[str, Any]]:
     """
     Get detailed performance comparison between baseline and cached operations.
@@ -1108,8 +1119,8 @@ class XWEdge:
     """
 
     def __init__(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None):
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None):
         """
         Initialize an edge between source and target nodes.
         Args:

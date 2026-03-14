@@ -6,17 +6,18 @@ and distance queries using hub-based indexing.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
-from typing import Any, Iterator, Optional
+from typing import Any
 from collections import defaultdict, deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
 from ...errors import XWNodeError, XWNodeValueError
 
 
+from collections.abc import Iterator
 class Hop2LabelsStrategy(AEdgeStrategy):
     """
     2-Hop Labeling strategy for fast reachability/distance queries.
@@ -202,8 +203,8 @@ class Hop2LabelsStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge (requires label reconstruction).
         Args:
@@ -228,7 +229,7 @@ class Hop2LabelsStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge (requires label reconstruction)."""
         if source not in self._adjacency or target not in self._adjacency[source]:
             return False
@@ -241,11 +242,11 @@ class Hop2LabelsStrategy(AEdgeStrategy):
         """Check if edge exists."""
         return source in self._adjacency and target in self._adjacency[source]
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices connected (using labels)."""
         return self.is_reachable(source, target)
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """Get neighbors."""
         return list(self._adjacency.get(node, set()))
@@ -267,7 +268,7 @@ class Hop2LabelsStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         for source, targets in self._adjacency.items():
@@ -279,7 +280,7 @@ class Hop2LabelsStrategy(AEdgeStrategy):
                 })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge data."""
         if self.has_edge(source, target):
             return {'source': source, 'target': target}
@@ -288,7 +289,7 @@ class Hop2LabelsStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path (requires reconstruction from labels)."""
         # Simplified: use BFS
         if source not in self._vertices or target not in self._vertices:
@@ -311,12 +312,12 @@ class Hop2LabelsStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs",
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return

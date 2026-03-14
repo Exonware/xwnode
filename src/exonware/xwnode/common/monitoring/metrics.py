@@ -7,13 +7,13 @@ memory usage, and optimization recommendations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import time
 import threading
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field
 from collections import defaultdict, deque
 from enum import Enum
@@ -168,7 +168,7 @@ class StrategyMetricsCollector:
             metrics.last_updated = time.time()
             logger.debug(f"📊 Recorded {metric_type.value} metric for {strategy_name}: {value}")
 
-    def get_strategy_metrics(self, strategy_id: str) -> Optional[StrategyMetrics]:
+    def get_strategy_metrics(self, strategy_id: str) -> StrategyMetrics | None:
         """
         Get metrics for a specific strategy.
         Args:
@@ -400,7 +400,7 @@ class StrategyMetricsCollector:
             }
             logger.info("🧹 Cleared all strategy metrics")
 # Global metrics collector instance
-_metrics_collector: Optional[StrategyMetricsCollector] = None
+_metrics_collector: StrategyMetricsCollector | None = None
 _metrics_lock = threading.Lock()
 
 

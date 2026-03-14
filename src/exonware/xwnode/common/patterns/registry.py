@@ -6,8 +6,9 @@ discovery, and instantiation in the strategy system.
 """
 
 import threading
-from typing import Optional, Any, Callable
+from typing import Any
 from exonware.xwsystem import get_logger
+from collections.abc import Callable
 logger = get_logger(__name__)
 from ...defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait, NODE_STRATEGY_METADATA, EDGE_STRATEGY_METADATA
 # Note: QueryMode and QueryTrait are in xwquery.defs module
@@ -263,7 +264,7 @@ class StrategyRegistry:
         return getattr(self, '_data_interchange_optimized_factory', None)
 
     def register_node_strategy(self, mode: NodeMode, strategy_class: type, 
-                             factory: Optional[Callable] = None) -> None:
+                             factory: Callable | None = None) -> None:
         """
         Register a node strategy implementation.
         Args:
@@ -278,7 +279,7 @@ class StrategyRegistry:
             logger.debug(f"📝 Registered node strategy: {mode.name} -> {strategy_class.__name__}")
 
     def register_edge_strategy(self, mode: EdgeMode, strategy_class: type,
-                             factory: Optional[Callable] = None) -> None:
+                             factory: Callable | None = None) -> None:
         """
         Register an edge strategy implementation.
         Args:
@@ -293,7 +294,7 @@ class StrategyRegistry:
             logger.debug(f"📝 Registered edge strategy: {mode.name} -> {strategy_class.__name__}")
 
     def register_query_strategy(self, query_type: str, strategy_class: type,
-                              factory: Optional[Callable] = None) -> None:
+                              factory: Callable | None = None) -> None:
         """
         Register a query strategy implementation.
         Args:
@@ -431,11 +432,11 @@ class StrategyRegistry:
         with self._lock:
             return list(self._query_strategies.keys())
 
-    def get_node_metadata(self, mode: NodeMode) -> Optional[Any]:
+    def get_node_metadata(self, mode: NodeMode) -> Any | None:
         """Get metadata for a node mode."""
         return NODE_STRATEGY_METADATA.get(mode)
 
-    def get_edge_metadata(self, mode: EdgeMode) -> Optional[Any]:
+    def get_edge_metadata(self, mode: EdgeMode) -> Any | None:
         """Get metadata for an edge mode."""
         return EDGE_STRATEGY_METADATA.get(mode)
 
@@ -548,19 +549,19 @@ def get_registry() -> StrategyRegistry:
 
 
 def register_node_strategy(mode: NodeMode, strategy_class: type, 
-                         factory: Optional[Callable] = None) -> None:
+                         factory: Callable | None = None) -> None:
     """Register a node strategy with the global registry."""
     get_registry().register_node_strategy(mode, strategy_class, factory)
 
 
 def register_edge_strategy(mode: EdgeMode, strategy_class: type,
-                         factory: Optional[Callable] = None) -> None:
+                         factory: Callable | None = None) -> None:
     """Register an edge strategy with the global registry."""
     get_registry().register_edge_strategy(mode, strategy_class, factory)
 
 
 def register_query_strategy(query_type: str, strategy_class: type,
-                          factory: Optional[Callable] = None) -> None:
+                          factory: Callable | None = None) -> None:
     """Register a query strategy with the global registry."""
     get_registry().register_query_strategy(query_type, strategy_class, factory)
 

@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
+from exonware.xwnode.facades.graph import XWNodeGraph
 from exonware.xwnode.defs import NodeMode, EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_bv_graph():
-    """Create empty BVGraph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BV_GRAPH)
+    """Create empty BVGraph (use XWNodeGraph for edge operations)."""
+    return XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BV_GRAPH)
 @pytest.fixture
 
 def simple_bv_graph():
     """Create BVGraph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BV_GRAPH)
+    graph = XWNodeGraph(node_mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.BV_GRAPH)
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph
@@ -51,6 +51,6 @@ class TestBVGraphStrategy:
         assert simple_bv_graph.has_edge('B', 'C') is True
 
     def test_delete_edge_operation(self, simple_bv_graph):
-        """Test delete_edge operation removes edges correctly."""
-        assert simple_bv_graph.delete_edge('A', 'B') is True
+        """Test remove_edge operation removes edges correctly (XWNodeGraph uses remove_edge)."""
+        assert simple_bv_graph.remove_edge('A', 'B') is True
         assert simple_bv_graph.has_edge('A', 'B') is False

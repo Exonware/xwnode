@@ -6,16 +6,17 @@ overlap queries using augmented balanced trees.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
-from ...errors import XWNodeError, XWNodeValueError
+from ...errors import XWNodeError, XWNodeValueError, XWNodeUnsupportedCapabilityError
 
 
 class Interval:
@@ -90,9 +91,9 @@ class IntervalNode:
         """Initialize interval node."""
         self.interval = interval
         self.max_endpoint = interval.high  # Augmented data
-        self.left: Optional[IntervalNode] = None
-        self.right: Optional[IntervalNode] = None
-        self.parent: Optional[IntervalNode] = None
+        self.left: IntervalNode | None = None
+        self.right: IntervalNode | None = None
+        self.parent: IntervalNode | None = None
         self.color = 'R'  # Red-Black tree color
 
     def update_max(self) -> None:
@@ -179,7 +180,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
             **options: Additional options
         """
         super().__init__(mode, traits, **options)
-        self._root: Optional[IntervalNode] = None
+        self._root: IntervalNode | None = None
         self._size = 0
         self._intervals: dict[Any, Interval] = {}  # Key -> Interval mapping
 
@@ -336,7 +337,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         node = self._find_exact(self._root, search_interval)
         return node.interval.value if node else default
 
-    def _find_exact(self, node: Optional[IntervalNode], interval: Interval) -> Optional[IntervalNode]:
+    def _find_exact(self, node: IntervalNode | None, interval: Interval) -> IntervalNode | None:
         """Find node with exact interval match."""
         if node is None:
             return None
@@ -419,7 +420,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         self._search_overlaps(self._root, query_interval, result)
         return result
 
-    def _search_overlaps(self, node: Optional[IntervalNode], 
+    def _search_overlaps(self, node: IntervalNode | None, 
                         query: Interval, result: list[Interval]) -> None:
         """
         Recursively search for overlapping intervals.
@@ -471,7 +472,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         self._search_contained(self._root, query_interval, result)
         return result
 
-    def _search_contained(self, node: Optional[IntervalNode],
+    def _search_contained(self, node: IntervalNode | None,
                          query: Interval, result: list[Interval]) -> None:
         """Search for intervals contained in query."""
         if node is None:
@@ -492,7 +493,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         """Get iterator over all intervals."""
         yield from self._inorder_traversal(self._root)
 
-    def _inorder_traversal(self, node: Optional[IntervalNode]) -> Iterator[Interval]:
+    def _inorder_traversal(self, node: IntervalNode | None) -> Iterator[Interval]:
         """Inorder traversal of intervals."""
         if node is None:
             return
@@ -536,7 +537,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -600,7 +601,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
         """Get tree height."""
         return self._get_height(self._root)
 
-    def _get_height(self, node: Optional[IntervalNode]) -> int:
+    def _get_height(self, node: IntervalNode | None) -> int:
         """Recursively calculate height."""
         if node is None:
             return 0
@@ -648,7 +649,7 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
     # COMPATIBILITY METHODS
     # ============================================================================
 
-    def find(self, key: Any) -> Optional[Any]:
+    def find(self, key: Any) -> Any | None:
         """Find value by interval."""
         return self.get(key)
 
@@ -697,3 +698,69 @@ class IntervalTreeStrategy(ANodeTreeStrategy):
                 "Data must be dict with interval keys or list of interval tuples"
             )
         return instance
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        """Not supported - this is a tree/map strategy, not a graph."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support graph edges")
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse - returns all key-value pairs."""
+        return list(self.items())
+
+    def get_min(self) -> Any:
+        """Get minimum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return min(keys)
+
+    def get_max(self) -> Any:
+        """Get maximum key."""
+        keys = list(self.keys())
+        if not keys:
+            return None
+        return max(keys)
+
+    def as_union_find(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support union-find view")
+
+    def as_neural_graph(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support neural graph view")
+
+    def as_flow_network(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support flow network view")
+
+    def as_trie(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support trie view")
+
+    def as_heap(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support heap view")
+
+    def as_skip_list(self):
+        """Not supported."""
+        raise XWNodeUnsupportedCapabilityError(f"{self.__class__.__name__} does not support skip list view")

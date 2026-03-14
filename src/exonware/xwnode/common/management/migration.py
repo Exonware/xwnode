@@ -5,7 +5,7 @@ strategies while preserving data integrity.
 """
 
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any
 from enum import Enum
 import threading
 import time
@@ -351,7 +351,7 @@ class StrategyMigrator:
             'most_common_target': self._most_common_field('target_mode')
         }
 
-    def _most_common_field(self, field: str) -> Optional[str]:
+    def _most_common_field(self, field: str) -> str | None:
         """Find the most common value for a field in migration history."""
         if not self._migration_history:
             return None

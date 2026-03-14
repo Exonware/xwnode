@@ -9,7 +9,7 @@ Strategy interfaces are in their respective strategy folders:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 Version History:
 - v0.0.1.29: GUIDELINES Architecture (separated interface/implementation)
@@ -18,8 +18,9 @@ Version History:
 """
 
 from __future__ import annotations
+from collections.abc import Iterator
 from typing import Protocol, runtime_checkable
-from typing import Any, Iterator, Optional, TypeVar
+from typing import Any, TypeVar
 from collections.abc import Callable
 # Import enums from defs.py
 from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
@@ -49,7 +50,7 @@ class INode[T](Protocol):
         user_list: INode[list[dict[str, Any]]] = XWNode.from_native([{"name": "Alice"}])
     """
 
-    def get(self, path: str, default: Any = None) -> Optional[INode[T]]:
+    def get(self, path: str, default: Any = None) -> INode[T] | None:
         """Get a node by path."""
         ...
 
@@ -65,7 +66,7 @@ class INode[T](Protocol):
         """Check if path exists."""
         ...
 
-    def find(self, path: str, in_place: bool = False) -> Optional[INode[T]]:
+    def find(self, path: str, in_place: bool = False) -> INode[T] | None:
         """Find a node by path."""
         ...
 
@@ -169,12 +170,12 @@ class IEdge[P](Protocol):
     """
 
     def add_edge(self, source: str, target: str, edge_type: str = "default", 
-                 weight: float = 1.0, properties: Optional[dict[str, P]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, P] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """Add an edge between source and target with typed properties."""
         ...
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove an edge between source and target."""
         ...
 
@@ -182,32 +183,32 @@ class IEdge[P](Protocol):
         """Check if edge exists between source and target."""
         ...
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None, direction: str = "outgoing") -> list[str]:
+    def get_neighbors(self, node: str, edge_type: str | None = None, direction: str = "outgoing") -> list[str]:
         """Get neighbors of a node with optional filtering."""
         ...
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges with metadata."""
         ...
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, P]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, P] | None:
         """Get edge data/properties, typed as dict[str, P]."""
         ...
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path between nodes."""
         ...
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles in the graph."""
         ...
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs", max_depth: int = 100, 
-                      edge_type: Optional[str] = None) -> Iterator[str]:
+                      edge_type: str | None = None) -> Iterator[str]:
         """Traverse the graph with cycle detection."""
         ...
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if nodes are connected."""
         ...
 

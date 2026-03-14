@@ -10,11 +10,11 @@ probabilistic membership testing with no false negatives.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import hashlib
 import math
 from .base import ANodeStrategy
@@ -22,6 +22,7 @@ from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
 
 
+from collections.abc import AsyncIterator, Iterator
 class BloomFilterStrategy(ANodeStrategy):
     """
     Bloom Filter node strategy for probabilistic membership testing.
@@ -238,7 +239,7 @@ class BloomFilterStrategy(ANodeStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

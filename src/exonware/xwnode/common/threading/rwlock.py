@@ -18,12 +18,11 @@ Priority alignment:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 07-Sep-2025
 """
 
 import asyncio
-from typing import Optional
 from contextlib import asynccontextmanager
 from exonware.xwsystem import get_logger
 logger = get_logger(__name__)

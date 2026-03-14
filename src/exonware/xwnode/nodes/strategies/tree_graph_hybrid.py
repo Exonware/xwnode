@@ -10,12 +10,13 @@ from __future__ import annotations
 import threading
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Optional, Iterator, Callable, AsyncIterator
+from typing import Any
 from ...defs import NodeMode, NodeTrait
 from exonware.xwsystem.caching import create_cache
 from .contracts import INodeStrategy
 from ...errors import XWNodePathError
 from exonware.xwsystem import get_logger
+from collections.abc import AsyncIterator, Callable, Iterator
 logger = get_logger(__name__)
 # Import contracts
 from .contracts import NodeType, INodeStrategy
@@ -33,14 +34,14 @@ class TreeGraphNode(ABC):
     """Abstract base for all internal nodes in the TreeGraphHybrid strategy."""
     __slots__ = ('_parent', '_cached_native', '_hash')
 
-    def __init__(self, parent: Optional[TreeGraphNode] = None):
+    def __init__(self, parent: TreeGraphNode | None = None):
         """Time Complexity: O(1)"""
-        self._parent: Optional[TreeGraphNode] = parent
-        self._cached_native: Optional[Any] = None
-        self._hash: Optional[int] = None
+        self._parent: TreeGraphNode | None = parent
+        self._cached_native: Any | None = None
+        self._hash: int | None = None
     @property
 
-    def parent(self) -> Optional[TreeGraphNode]:
+    def parent(self) -> TreeGraphNode | None:
         """
         Get the parent node.
         Time Complexity: O(1)
@@ -48,7 +49,7 @@ class TreeGraphNode(ABC):
         return self._parent
     @parent.setter
 
-    def parent(self, value: Optional[TreeGraphNode]):
+    def parent(self, value: TreeGraphNode | None):
         """Set the parent node."""
         self._parent = value
 
@@ -76,7 +77,7 @@ class TreeGraphNode(ABC):
             current = current._parent
         return current
 
-    def _get_key_in_parent(self) -> Optional[str | int]:
+    def _get_key_in_parent(self) -> str | int | None:
         """Get the key or index of this node in its parent."""
         if self._parent is None:
             return None
@@ -110,7 +111,7 @@ class TreeGraphNode(ABC):
         self._cached_native = None
         self._hash = None
 
-    def reset(self, parent: Optional[TreeGraphNode] = None) -> None:
+    def reset(self, parent: TreeGraphNode | None = None) -> None:
         """Reset the node to initial state."""
         self._parent = parent
         self._cached_native = None
@@ -121,7 +122,7 @@ class TreeGraphValueNode(TreeGraphNode):
     """Internal node for a primitive value in TreeGraphHybrid strategy."""
     __slots__ = ('_value',)
 
-    def __init__(self, value: Any, parent: Optional[TreeGraphNode] = None):
+    def __init__(self, value: Any, parent: TreeGraphNode | None = None):
         super().__init__(parent)
         self._value = value
     @property
@@ -139,7 +140,7 @@ class TreeGraphListNode(TreeGraphNode):
     """Internal node for a list with lazy-loading in TreeGraphHybrid strategy."""
     __slots__ = ('_children', '_source_data', '_is_lazy')
 
-    def __init__(self, source_data: list[Any], is_lazy: bool, parent: Optional[TreeGraphNode] = None):
+    def __init__(self, source_data: list[Any], is_lazy: bool, parent: TreeGraphNode | None = None):
         super().__init__(parent)
         self._source_data = source_data
         self._is_lazy = is_lazy
@@ -208,7 +209,7 @@ class TreeGraphDictNode(TreeGraphNode):
     """Internal node for a dictionary with lazy-loading in TreeGraphHybrid strategy."""
     __slots__ = ('_children', '_source_data', '_is_lazy', '_keys')
 
-    def __init__(self, source_data: dict[str, Any], is_lazy: bool, parent: Optional[TreeGraphNode] = None):
+    def __init__(self, source_data: dict[str, Any], is_lazy: bool, parent: TreeGraphNode | None = None):
         super().__init__(parent)
         self._source_data = source_data
         self._is_lazy = is_lazy
@@ -288,7 +289,7 @@ class TreeGraphReferenceNode(TreeGraphNode):
     """Internal node for a reference in TreeGraphHybrid strategy."""
     __slots__ = ('_uri', '_reference_type', '_metadata')
 
-    def __init__(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: Optional[TreeGraphNode] = None):
+    def __init__(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: TreeGraphNode | None = None):
         super().__init__(parent)
         self._uri = uri
         self._reference_type = reference_type
@@ -325,7 +326,7 @@ class TreeGraphReferenceNode(TreeGraphNode):
         self._reference_type = ""
         self._metadata = {}
 
-    def reset(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: Optional[TreeGraphNode] = None) -> None:
+    def reset(self, uri: str, reference_type: str, metadata: dict[str, Any], parent: TreeGraphNode | None = None) -> None:
         """Reset the node to initial state."""
         super().reset(parent)
         self._uri = uri
@@ -337,7 +338,7 @@ class TreeGraphObjectNode(TreeGraphNode):
     """Internal node for an object reference in TreeGraphHybrid strategy."""
     __slots__ = ('_uri', '_object_type', '_mime_type', '_size', '_metadata')
 
-    def __init__(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: dict[str, Any], parent: Optional[TreeGraphNode] = None):
+    def __init__(self, uri: str, object_type: str, mime_type: str | None, size: int | None, metadata: dict[str, Any], parent: TreeGraphNode | None = None):
         super().__init__(parent)
         self._uri = uri
         self._object_type = object_type
@@ -356,12 +357,12 @@ class TreeGraphObjectNode(TreeGraphNode):
         return self._object_type
     @property
 
-    def mime_type(self) -> Optional[str]:
+    def mime_type(self) -> str | None:
         """Get the MIME type of the object."""
         return self._mime_type
     @property
 
-    def size(self) -> Optional[int]:
+    def size(self) -> int | None:
         """Get the size of the object."""
         return self._size
     @property
@@ -393,7 +394,7 @@ class TreeGraphObjectNode(TreeGraphNode):
         self._size = None
         self._metadata = {}
 
-    def reset(self, uri: str, object_type: str, mime_type: Optional[str], size: Optional[int], metadata: dict[str, Any], parent: Optional[TreeGraphNode] = None) -> None:
+    def reset(self, uri: str, object_type: str, mime_type: str | None, size: int | None, metadata: dict[str, Any], parent: TreeGraphNode | None = None) -> None:
         """Reset the node to initial state."""
         super().reset(parent)
         self._uri = uri
@@ -409,7 +410,7 @@ class TreeGraphNodeFactory:
     """Factory for creating TreeGraphHybrid internal nodes with performance optimizations."""
     @staticmethod
 
-    def from_native(data: Any, parent: Optional[TreeGraphNode] = None, depth: int = 0, visited: Optional[set] = None) -> TreeGraphNode:
+    def from_native(data: Any, parent: TreeGraphNode | None = None, depth: int = 0, visited: set | None = None) -> TreeGraphNode:
         """Create a node from native Python data."""
         # Check depth limit
         if depth > 1000:  # Simple depth limit
@@ -456,7 +457,7 @@ class TreeGraphNodeFactory:
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -550,7 +551,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
     def __init__(self, mode=None, traits=None, **options):
         """Initialize the TreeGraphHybrid strategy."""
         # Accept standard parameters but don't use them (for compatibility)
-        self._root: Optional[TreeGraphNode] = None
+        self._root: TreeGraphNode | None = None
         self._node_count = 0
         self._options = options
         self._edge_count = 0
@@ -1105,7 +1106,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         """Check if the structure is empty."""
         return self.size() == 0
 
-    def find(self, path: str) -> Optional[Any]:
+    def find(self, path: str) -> Any | None:
         """Find a value by path (facade compatibility)."""
         result = self.get(path, default=None)
         if result is not None and hasattr(result, 'to_native'):
@@ -1120,7 +1121,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         """
         self.put(key, value)
 
-    def get(self, path: str, default: Any = None) -> Optional[TreeGraphHybridStrategy]:
+    def get(self, path: str, default: Any = None) -> TreeGraphHybridStrategy | None:
         """Get a child node by path."""
         if self._root is None:
             return None
@@ -1138,7 +1139,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         except Exception:
             return None
 
-    def _get_node_by_path(self, path: str) -> Optional[TreeGraphNode]:
+    def _get_node_by_path(self, path: str) -> TreeGraphNode | None:
         """Get a node by path."""
         if self._root is None:
             return None
@@ -1160,7 +1161,7 @@ class TreeGraphHybridStrategy(INodeStrategy):
         except (KeyError, IndexError, TypeError):
             return None
 
-    def _get_node_by_key(self, key: str) -> Optional[TreeGraphNode]:
+    def _get_node_by_key(self, key: str) -> TreeGraphNode | None:
         """Get a node by direct key."""
         if self._root is None:
             return None
@@ -1399,35 +1400,35 @@ class TreeGraphHybridStrategy(INodeStrategy):
     # Optional properties with default implementations
     @property
 
-    def uri(self) -> Optional[str]:
+    def uri(self) -> str | None:
         """Get URI (for reference/object nodes)."""
         if self._root is None:
             return None
         return getattr(self._root, 'uri', None)
     @property
 
-    def reference_type(self) -> Optional[str]:
+    def reference_type(self) -> str | None:
         """Get reference type (for reference nodes)."""
         if self._root is None:
             return None
         return getattr(self._root, 'reference_type', None)
     @property
 
-    def object_type(self) -> Optional[str]:
+    def object_type(self) -> str | None:
         """Get object type (for object nodes)."""
         if self._root is None:
             return None
         return getattr(self._root, 'object_type', None)
     @property
 
-    def mime_type(self) -> Optional[str]:
+    def mime_type(self) -> str | None:
         """Get MIME type (for object nodes)."""
         if self._root is None:
             return None
         return getattr(self._root, 'mime_type', None)
     @property
 
-    def metadata(self) -> Optional[dict[str, Any]]:
+    def metadata(self) -> dict[str, Any] | None:
         """Get metadata (for reference/object nodes)."""
         if self._root is None:
             return None

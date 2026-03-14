@@ -6,11 +6,11 @@ Supports both equi-width and equi-depth histogram types.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 27-Oct-2025
 """
 
-from typing import Any, Optional
+from typing import Any
 from threading import RLock
 import bisect
 from .base import ANodeStrategy
@@ -60,8 +60,8 @@ class HistogramStrategy(ANodeStrategy):
         traits=None,
         num_buckets: int = 100,
         histogram_type: str = 'equi-width',
-        min_value: Optional[float] = None,
-        max_value: Optional[float] = None,
+        min_value: float | None = None,
+        max_value: float | None = None,
         **kwargs
     ):
         """
@@ -95,45 +95,28 @@ class HistogramStrategy(ANodeStrategy):
         self._total_count = 0
         # Thread safety
         self._lock = RLock()
-        # For building histogram
-        self._values: list[float] = [] if histogram_type == 'equi-depth' else None
+        # For building histogram (buffer for both types; build() does bucketing)
+        self._values: list[float] = []
 
     def add_value(self, value: float) -> None:
         """
         Add value to histogram
-        For equi-depth, values are buffered until build() is called
-        For equi-width, values are immediately bucketed
+        For both equi-depth and equi-width, values are buffered until build() is called
         Args:
             value: Numeric value to add
         """
         with self._lock:
-            if self._histogram_type == 'equi-depth':
-                # Buffer for later bucketing
-                self._values.append(value)
-            else:
-                # Equi-width: update bounds and bucket immediately
-                if self._min_value is None or value < self._min_value:
-                    self._min_value = value
-                if self._max_value is None or value > self._max_value:
-                    self._max_value = value
-                # Rebuild buckets if needed
-                if not self._buckets:
-                    self._build_equi_width_buckets()
-                # Add to appropriate bucket
-                for bucket in self._buckets:
-                    if bucket.contains(value):
-                        bucket.count += 1
-                        break
-                self._total_count += 1
+            self._values.append(value)
 
     def build(self) -> None:
         """
         Build histogram from collected values
-        Must be called after adding all values for equi-depth histograms
+        Must be called after adding all values
         """
         with self._lock:
             if self._histogram_type == 'equi-width':
                 self._build_equi_width_buckets()
+                self._assign_equi_width_counts()
             else:  # equi-depth
                 self._build_equi_depth_buckets()
 
@@ -165,7 +148,7 @@ class HistogramStrategy(ANodeStrategy):
                         matching_count += bucket.count
             return matching_count / self._total_count
 
-    def get_percentile(self, p: float) -> Optional[float]:
+    def get_percentile(self, p: float) -> float | None:
         """
         Get p-th percentile
         Args:
@@ -201,9 +184,12 @@ class HistogramStrategy(ANodeStrategy):
             return self._total_count
 
     def _build_equi_width_buckets(self) -> None:
-        """Build equi-width histogram (equal bucket sizes)"""
-        if self._min_value is None or self._max_value is None:
+        """Build equi-width bucket boundaries from buffered values."""
+        if not self._values:
             return
+        self._min_value = min(self._values)
+        self._max_value = max(self._values)
+        self._total_count = len(self._values)
         self._buckets = []
         range_width = self._max_value - self._min_value
         if range_width == 0:
@@ -215,6 +201,14 @@ class HistogramStrategy(ANodeStrategy):
             min_val = self._min_value + i * bucket_width
             max_val = self._min_value + (i + 1) * bucket_width
             self._buckets.append(_Bucket(min_val, max_val, 0))
+
+    def _assign_equi_width_counts(self) -> None:
+        """Assign buffered values to equi-width buckets (call after _build_equi_width_buckets)."""
+        for value in self._values:
+            for bucket in self._buckets:
+                if bucket.contains(value):
+                    bucket.count += 1
+                    break
 
     def _build_equi_depth_buckets(self) -> None:
         """Build equi-depth histogram (equal frequencies per bucket)"""

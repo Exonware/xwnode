@@ -8,12 +8,12 @@ Based on Phil Bagwell's Ideal Hash Trees (2001) and Clojure's PersistentHashMap.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any
 from .base import ACOWStrategy
 # HAMT Configuration
 BRANCH_FACTOR = 32  # 32-way branching (5 bits per level)
@@ -33,7 +33,7 @@ class HAMTNode:
     """
     __slots__ = ('bitmap', 'children')
 
-    def __init__(self, bitmap: int = 0, children: Optional[list[Any]] = None):
+    def __init__(self, bitmap: int = 0, children: list[Any] | None = None):
         """
         Initialize HAMT node.
         Args:
@@ -137,7 +137,7 @@ class HAMTEngine(ACOWStrategy):
     - Undo/redo functionality
     """
 
-    def __init__(self, root: Optional[HAMTNode] = None, version: int = 0):
+    def __init__(self, root: HAMTNode | None = None, version: int = 0):
         """
         Initialize HAMT engine.
         Args:
@@ -147,7 +147,7 @@ class HAMTEngine(ACOWStrategy):
         self._root = root if root is not None else HAMTNode()
         self._version = version
         # Cache for performance
-        self._path_cache: Optional[dict[str, Any]] = None
+        self._path_cache: dict[str, Any] | None = None
 
     def get_value(self, path: str, default: Any = None) -> Any:
         """

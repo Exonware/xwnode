@@ -6,12 +6,13 @@ with structural sharing and efficient immutable operations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 from .base import ANodeStrategy, AKeyValueStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -55,7 +56,7 @@ class HAMTNode:
         """
         return (self.bitmap & (1 << bit_pos)) != 0
 
-    def get_child(self, bit_pos: int) -> Optional[Any]:
+    def get_child(self, bit_pos: int) -> Any | None:
         """
         Get child at bit position.
         Time Complexity: O(1)
@@ -157,7 +158,7 @@ class HAMTStrategy(AKeyValueStrategy):
         shift = level * self.BITS_PER_LEVEL
         return (hash_val >> shift) & self.LEVEL_MASK
 
-    def _search(self, node: HAMTNode, key: Any, hash_val: int, level: int) -> Optional[Any]:
+    def _search(self, node: HAMTNode, key: Any, hash_val: int, level: int) -> Any | None:
         """Recursively search for key in HAMT."""
         chunk = self._get_chunk(hash_val, level)
         if not node.has_child(chunk):
@@ -252,7 +253,7 @@ class HAMTStrategy(AKeyValueStrategy):
                 self._size += 1
         return self
 
-    def _remove(self, node: HAMTNode, key: Any, hash_val: int, level: int) -> Optional[HAMTNode]:
+    def _remove(self, node: HAMTNode, key: Any, hash_val: int, level: int) -> HAMTNode | None:
         """Recursively remove key (immutable)."""
         chunk = self._get_chunk(hash_val, level)
         if not node.has_child(chunk):
@@ -363,7 +364,7 @@ class HAMTStrategy(AKeyValueStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

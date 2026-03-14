@@ -12,7 +12,6 @@ Generation Date: 26-Jan-2025
 import sys
 from pathlib import Path
 from datetime import datetime
-from typing import List, Tuple
 # File header template
 HEADER_TEMPLATE = '''#!/usr/bin/env python3
 """
@@ -85,7 +84,7 @@ def has_header(file_path: Path) -> bool:
         return False
 
 
-def add_header_to_file(file_path: Path) -> Tuple[bool, str]:
+def add_header_to_file(file_path: Path) -> tuple[bool, str]:
     """Add header to file if missing."""
     if has_header(file_path):
         return False, "Already has header"

@@ -16,8 +16,9 @@ import json
 import time
 import re
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 # Import test helpers
+from collections.abc import Callable
 sys.path.insert(0, str(Path(__file__).parent))
 from test_helpers import (
     create_test_file,

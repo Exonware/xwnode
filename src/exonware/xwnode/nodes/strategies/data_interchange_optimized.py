@@ -15,13 +15,14 @@ Ultra-lightweight strategy specifically optimized for data interchange patterns:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 import weakref
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeStrategy, AKeyValueStrategy
 from ...defs import NodeMode, NodeTrait
 from ...errors import XWNodeUnsupportedCapabilityError
@@ -70,11 +71,11 @@ class DataInterchangeOptimizedStrategy(AKeyValueStrategy):
         self._data: dict[str, Any] = {}
         self._size = 0
         # COW optimization flags
-        self._hash_cache: Optional[int] = None
+        self._hash_cache: int | None = None
         self._frozen = False  # True after first copy
         self._cow_enabled = options.get('enable_cow', True)
         # Object pooling support
-        self._pool_ref: Optional[weakref.ref] = None
+        self._pool_ref: weakref.ref | None = None
         # Performance tracking (minimal overhead)
         self._creation_time = options.get('creation_time', 0)
         self._performance_tracker = create_performance_tracker()
@@ -191,7 +192,7 @@ class DataInterchangeOptimizedStrategy(AKeyValueStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -416,7 +417,7 @@ class DataInterchangeOptimizedStrategy(AKeyValueStrategy):
             ['fast_lookup', 'copy_on_write']
         ).suggest("Use preset='SEARCH_ENGINE' for prefix operations")
 
-    def get_priority(self) -> Optional[tuple[Any, Any]]:
+    def get_priority(self) -> tuple[Any, Any] | None:
         """Priority operations not supported in DATA_INTERCHANGE_OPTIMIZED."""
         raise XWNodeUnsupportedCapabilityError(
             'priority_operations',

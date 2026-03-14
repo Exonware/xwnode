@@ -6,12 +6,13 @@ matrix representation using quadtree-based compression.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 12-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional
+from collections.abc import Iterator
+from typing import Any
 from collections import deque
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
@@ -34,7 +35,7 @@ class K2Node:
             is_leaf: Whether this is a leaf node
         """
         self.is_leaf = is_leaf
-        self.children: list[Optional[K2Node]] = [None] * 4  # NW, NE, SW, SE
+        self.children: list[K2Node | None] = [None] * 4  # NW, NE, SW, SE
         self.bitmap = 0  # 4-bit bitmap for children presence
         self.leaf_bitmap = 0  # For leaf nodes, stores actual edges
 
@@ -199,7 +200,7 @@ class K2TreeStrategy(AEdgeStrategy):
                 node.children[quadrant] = None
                 node.bitmap &= ~(1 << quadrant)
 
-    def _has_edge(self, node: Optional[K2Node], row: int, col: int, size: int) -> bool:
+    def _has_edge(self, node: K2Node | None, row: int, col: int, size: int) -> bool:
         """
         Check if edge exists in k²-tree.
         Args:
@@ -231,7 +232,7 @@ class K2TreeStrategy(AEdgeStrategy):
         # Recurse
         return self._has_edge(node.children[quadrant], row, col, half)
 
-    def _collect_edges_from_row(self, node: Optional[K2Node], 
+    def _collect_edges_from_row(self, node: K2Node | None, 
                                row: int, row_offset: int, col_offset: int,
                                size: int, result: list[int]) -> None:
         """
@@ -280,8 +281,8 @@ class K2TreeStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, edge_type: str = "default",
-                 weight: float = 1.0, properties: Optional[dict[str, Any]] = None,
-                 is_bidirectional: bool = False, edge_id: Optional[str] = None) -> str:
+                 weight: float = 1.0, properties: dict[str, Any] | None = None,
+                 is_bidirectional: bool = False, edge_id: str | None = None) -> str:
         """
         Add edge to k²-tree.
         Args:
@@ -309,7 +310,7 @@ class K2TreeStrategy(AEdgeStrategy):
         self._edge_count += 1
         return edge_id or f"edge_{source}_{target}"
 
-    def remove_edge(self, source: str, target: str, edge_id: Optional[str] = None) -> bool:
+    def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Remove edge from k²-tree."""
         if source not in self._vertex_to_id or target not in self._vertex_to_id:
             return False
@@ -334,7 +335,7 @@ class K2TreeStrategy(AEdgeStrategy):
         target_id = self._vertex_to_id[target]
         return self._has_edge(self._root, source_id, target_id, self.matrix_size)
 
-    def get_neighbors(self, node: str, edge_type: Optional[str] = None,
+    def get_neighbors(self, node: str, edge_type: str | None = None,
                      direction: str = "outgoing") -> list[str]:
         """
         Get neighbors of vertex.
@@ -373,7 +374,7 @@ class K2TreeStrategy(AEdgeStrategy):
         """Get iterator over all vertices."""
         return iter(self._vertices)
 
-    def get_edges(self, edge_type: Optional[str] = None, direction: str = "both") -> list[dict[str, Any]]:
+    def get_edges(self, edge_type: str | None = None, direction: str = "both") -> list[dict[str, Any]]:
         """Get all edges."""
         edges = []
         for source in self._vertices:
@@ -393,7 +394,7 @@ class K2TreeStrategy(AEdgeStrategy):
                     })
         return edges
 
-    def get_edge_data(self, source: str, target: str, edge_id: Optional[str] = None) -> Optional[dict[str, Any]]:
+    def get_edge_data(self, source: str, target: str, edge_id: str | None = None) -> dict[str, Any] | None:
         """Get edge properties."""
         if not self.has_edge(source, target):
             return None
@@ -402,7 +403,7 @@ class K2TreeStrategy(AEdgeStrategy):
     # GRAPH ALGORITHMS (Simplified)
     # ============================================================================
 
-    def shortest_path(self, source: str, target: str, edge_type: Optional[str] = None) -> list[str]:
+    def shortest_path(self, source: str, target: str, edge_type: str | None = None) -> list[str]:
         """Find shortest path using BFS."""
         if source not in self._vertices or target not in self._vertices:
             return []
@@ -426,12 +427,12 @@ class K2TreeStrategy(AEdgeStrategy):
                     queue.append(neighbor)
         return []
 
-    def find_cycles(self, start_node: str, edge_type: Optional[str] = None, max_depth: int = 10) -> list[list[str]]:
+    def find_cycles(self, start_node: str, edge_type: str | None = None, max_depth: int = 10) -> list[list[str]]:
         """Find cycles (simplified)."""
         return []  # Simplified implementation
 
     def traverse_graph(self, start_node: str, strategy: str = "bfs", 
-                      max_depth: int = 100, edge_type: Optional[str] = None) -> Iterator[str]:
+                      max_depth: int = 100, edge_type: str | None = None) -> Iterator[str]:
         """Traverse graph."""
         if start_node not in self._vertices:
             return
@@ -447,7 +448,7 @@ class K2TreeStrategy(AEdgeStrategy):
                         visited.add(neighbor)
                         queue.append(neighbor)
 
-    def is_connected(self, source: str, target: str, edge_type: Optional[str] = None) -> bool:
+    def is_connected(self, source: str, target: str, edge_type: str | None = None) -> bool:
         """Check if vertices are connected."""
         return len(self.shortest_path(source, target)) > 0
     # ============================================================================
@@ -475,7 +476,7 @@ class K2TreeStrategy(AEdgeStrategy):
 
     def get_statistics(self) -> dict[str, Any]:
         """Get k²-tree statistics."""
-        def count_nodes(node: Optional[K2Node]) -> tuple[int, int]:
+        def count_nodes(node: K2Node | None) -> tuple[int, int]:
             """Count internal and leaf nodes."""
             if node is None:
                 return (0, 0)

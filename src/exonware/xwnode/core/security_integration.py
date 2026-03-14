@@ -10,11 +10,11 @@ Provides easy-to-use security helpers for strategies.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 26-Jan-2025
 """
 
-from typing import Any, Optional
+from typing import Any
 from exonware.xwsystem.security.validator import SecurityValidator as XWSystemSecurityValidator
 from exonware.xwsystem.security.path_validator import PathValidator as XWSystemPathValidator, PathSecurityError
 from .security_logger import get_security_logger, SecurityEventType
@@ -111,7 +111,7 @@ def log_resource_limit(
 def log_suspicious_activity(
     activity: str,
     strategy_name: str,
-    context: Optional[dict] = None
+    context: dict | None = None
 ) -> None:
     """
     Log suspicious activity.

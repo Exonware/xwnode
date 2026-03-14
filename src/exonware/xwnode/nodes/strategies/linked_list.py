@@ -5,17 +5,18 @@ Linked List Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 16-Jan-2026
 """
 
 from __future__ import annotations
+from collections.abc import AsyncIterator, Iterator
 """
 Linked List Node Strategy Implementation
 This module implements the LINKED_LIST strategy for efficient
 insertions and deletions with sequential access patterns.
 """
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 from .base import ANodeLinearStrategy
 from ...defs import NodeMode, NodeTrait
 from .contracts import NodeType
@@ -28,8 +29,8 @@ class ListNode:
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
-        self.prev: Optional[ListNode] = None
-        self.next: Optional[ListNode] = None
+        self.prev: ListNode | None = None
+        self.next: ListNode | None = None
 
 
 class LinkedListStrategy(ANodeLinearStrategy):
@@ -63,7 +64,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         Get the traits supported by the linked list strategy.
         Time Complexity: O(1)
         """
-        return NodeTrait.LINEAR | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE
+        return NodeTrait.ORDERED | NodeTrait.DOUBLE_ENDED | NodeTrait.FAST_INSERT | NodeTrait.FAST_DELETE
 
     def _insert_after(self, prev_node: ListNode, key: str, value: Any) -> ListNode:
         """
@@ -90,7 +91,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         if next_node:
             next_node.prev = prev_node
 
-    def _get_node_at_index(self, index: int) -> Optional[ListNode]:
+    def _get_node_at_index(self, index: int) -> ListNode | None:
         """
         Get node at specific index.
         Time Complexity: O(n)
@@ -221,7 +222,7 @@ class LinkedListStrategy(ANodeLinearStrategy):
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 

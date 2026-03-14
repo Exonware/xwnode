@@ -13,10 +13,10 @@ Generation Date: 2025-01-XX
 
 import time
 import statistics
-from typing import Any, Dict, List, Optional
 from pathlib import Path
 import json
 import logging
+from typing import Any
 # xwsystem is a required dependency - no try/catch needed
 from exonware.xwsystem import get_logger
 # xwnode dependencies - all required, no try/catch
@@ -27,7 +27,7 @@ from exonware.xwnode.defs import NodeMode, EdgeMode
 logger = get_logger(__name__)
 
 
-def get_strategy_params(mode: NodeMode) -> Dict[str, Any]:
+def get_strategy_params(mode: NodeMode) -> dict[str, Any]:
     """
     Get strategy-specific parameters for initialization.
     Args:
@@ -72,9 +72,9 @@ class StrategyBenchmark:
         self.mode = mode
         self.name = name
         self.setup_func = setup_func
-        self.results: Dict[str, Any] = {}
+        self.results: dict[str, Any] = {}
 
-    def run_benchmark(self, iterations: int = 1000, warmup: int = 100) -> Dict[str, Any]:
+    def run_benchmark(self, iterations: int = 1000, warmup: int = 100) -> dict[str, Any]:
         """
         Run comprehensive benchmark suite.
         Args:
@@ -151,7 +151,7 @@ class StrategyBenchmark:
             }
             return self.results
 
-    def _warmup(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> None:
+    def _warmup(self, node: XWNode, iterations: int, test_data: dict | None = None) -> None:
         """Warmup phase to stabilize performance."""
         # Check if strategy requires numeric indices (e.g., ARRAY_LIST)
         strategy_mode = node._strategy.mode if hasattr(node, '_strategy') and hasattr(node._strategy, 'mode') else None
@@ -173,7 +173,7 @@ class StrategyBenchmark:
                 else:
                     node.put(f'key_{i}', f'value_{i}')
 
-    def _benchmark_put(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> Dict[str, float]:
+    def _benchmark_put(self, node: XWNode, iterations: int, test_data: dict | None = None) -> dict[str, float]:
         """Benchmark put operations."""
         times = []
         # Check if strategy requires numeric indices
@@ -201,7 +201,7 @@ class StrategyBenchmark:
             'ops_per_sec': 1000.0 / statistics.mean(times) if times and statistics.mean(times) > 0 else 0.0
         }
 
-    def _benchmark_get(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> Dict[str, float]:
+    def _benchmark_get(self, node: XWNode, iterations: int, test_data: dict | None = None) -> dict[str, float]:
         """Benchmark get operations."""
         # Check if strategy requires numeric indices
         strategy_mode = node._strategy.mode if hasattr(node, '_strategy') and hasattr(node._strategy, 'mode') else None
@@ -242,7 +242,7 @@ class StrategyBenchmark:
             'ops_per_sec': 1000.0 / statistics.mean(times) if times and statistics.mean(times) > 0 else 0.0
         }
 
-    def _benchmark_delete(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> Dict[str, float]:
+    def _benchmark_delete(self, node: XWNode, iterations: int, test_data: dict | None = None) -> dict[str, float]:
         """Benchmark delete operations."""
         times = []
         # Check if strategy requires numeric indices
@@ -268,7 +268,7 @@ class StrategyBenchmark:
             'ops_per_sec': 1000.0 / statistics.mean(times) if times and statistics.mean(times) > 0 else 0.0
         }
 
-    def _benchmark_iteration(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> Dict[str, float]:
+    def _benchmark_iteration(self, node: XWNode, iterations: int, test_data: dict | None = None) -> dict[str, float]:
         """Benchmark iteration (keys/values/items)."""
         # Check if strategy requires numeric indices
         strategy_mode = node._strategy.mode if hasattr(node, '_strategy') and hasattr(node._strategy, 'mode') else None
@@ -304,7 +304,7 @@ class StrategyBenchmark:
             'stdev_ms': statistics.stdev(times) if len(times) > 1 else 0.0,
         }
 
-    def _benchmark_size(self, node: XWNode, iterations: int) -> Dict[str, float]:
+    def _benchmark_size(self, node: XWNode, iterations: int) -> dict[str, float]:
         """Benchmark size/len operations."""
         # Check if strategy requires numeric indices
         strategy_mode = node._strategy.mode if hasattr(node, '_strategy') and hasattr(node._strategy, 'mode') else None
@@ -330,7 +330,7 @@ class StrategyBenchmark:
             'ops_per_sec': 1000.0 / statistics.mean(times) if times and statistics.mean(times) > 0 else 0.0
         }
 
-    def _benchmark_clear(self, node: XWNode, iterations: int, test_data: Optional[Dict] = None) -> Dict[str, float]:
+    def _benchmark_clear(self, node: XWNode, iterations: int, test_data: dict | None = None) -> dict[str, float]:
         """Benchmark clear operations."""
         times = []
         # Check if strategy requires numeric indices
@@ -425,9 +425,9 @@ class EdgeStrategyBenchmark:
         """Initialize edge benchmark."""
         self.edge_mode = edge_mode
         self.name = name
-        self.results: Dict[str, Any] = {}
+        self.results: dict[str, Any] = {}
 
-    def run_benchmark(self, iterations: int = 100, warmup: int = 10) -> Dict[str, Any]:
+    def run_benchmark(self, iterations: int = 100, warmup: int = 10) -> dict[str, Any]:
         """Run benchmark for edge strategy."""
         logger.info(f"\n{'='*80}")
         logger.info(f"Benchmarking Edge: {self.name} ({self.edge_mode.name})")
@@ -525,17 +525,17 @@ class EdgeStrategyBenchmark:
                 logger.warning(f"  Get Neighbors: Failed to print results")
 
 
-def get_all_node_modes() -> List[NodeMode]:
+def get_all_node_modes() -> list[NodeMode]:
     """Get all NodeMode values (excluding AUTO)."""
     return [mode for mode in NodeMode if mode != NodeMode.AUTO]
 
 
-def get_all_edge_modes() -> List[EdgeMode]:
+def get_all_edge_modes() -> list[EdgeMode]:
     """Get all EdgeMode values (excluding AUTO)."""
     return [mode for mode in EdgeMode if mode != EdgeMode.AUTO]
 
 
-def run_all_node_benchmarks(iterations: int = 1000, warmup: int = 100, output_file: Optional[Path] = None) -> Dict[str, Any]:
+def run_all_node_benchmarks(iterations: int = 1000, warmup: int = 100, output_file: Path | None = None) -> dict[str, Any]:
     """
     Run benchmarks for all node strategies.
     Args:
@@ -588,7 +588,7 @@ def run_all_node_benchmarks(iterations: int = 1000, warmup: int = 100, output_fi
     return all_results
 
 
-def run_all_edge_benchmarks(iterations: int = 100, warmup: int = 10, output_file: Optional[Path] = None) -> Dict[str, Any]:
+def run_all_edge_benchmarks(iterations: int = 100, warmup: int = 10, output_file: Path | None = None) -> dict[str, Any]:
     """
     Run benchmarks for all edge strategies.
     Args:
@@ -641,7 +641,7 @@ def run_all_edge_benchmarks(iterations: int = 100, warmup: int = 10, output_file
     return all_results
 
 
-def run_all_benchmarks(iterations: int = 1000, warmup: int = 100, output_dir: Optional[Path] = None) -> Dict[str, Any]:
+def run_all_benchmarks(iterations: int = 1000, warmup: int = 100, output_dir: Path | None = None) -> dict[str, Any]:
     """
     Run benchmarks for all node and edge strategies.
     Args:

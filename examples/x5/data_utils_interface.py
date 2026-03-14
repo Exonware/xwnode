@@ -11,7 +11,8 @@ The function signatures match exactly those from json_utils.py (V1).
 """
 
 from __future__ import annotations
-from typing import Any, Callable, Optional, TYPE_CHECKING
+from collections.abc import Callable
+from typing import Any, TYPE_CHECKING
 from abc import ABC, abstractmethod
 # Avoid circular imports - define types locally
 if TYPE_CHECKING:
@@ -57,7 +58,7 @@ class DataUtilsInterface(ABC):
         self,
         file_path: str,
         match: MatchFn,
-        path: Optional[JsonPath] = None,
+        path: JsonPath | None = None,
         encoding: str = "utf-8",
     ) -> JsonValue:
         """
@@ -71,7 +72,7 @@ class DataUtilsInterface(ABC):
         self,
         file_path: str,
         match: MatchFn,
-        path: Optional[JsonPath] = None,
+        path: JsonPath | None = None,
         encoding: str = "utf-8",
     ) -> JsonValue:
         """

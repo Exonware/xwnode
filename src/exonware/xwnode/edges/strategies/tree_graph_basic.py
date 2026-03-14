@@ -5,9 +5,10 @@ This module implements the TREE_GRAPH_BASIC strategy for basic edge storage
 in tree+graph hybrid structures, providing minimal graph capabilities.
 """
 
-from typing import Any, Optional, Iterator
+from typing import Any
 from ._base_edge import AEdgeStrategy
 from ...defs import EdgeMode, EdgeTrait
+from collections.abc import Iterator
 
 
 class TreeGraphBasicStrategy(AEdgeStrategy):
@@ -43,7 +44,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         self._max_degree = max(self._max_degree, degree)
 
     def _add_edge_internal(self, source: str, target: str, weight: float = 1.0, 
-                          metadata: Optional[dict[str, Any]] = None) -> bool:
+                          metadata: dict[str, Any] | None = None) -> bool:
         """Internal method to add edge."""
         if source not in self._edges:
             self._edges[source] = set()
@@ -81,7 +82,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
     # ============================================================================
 
     def add_edge(self, source: str, target: str, weight: float = 1.0, 
-                 metadata: Optional[dict[str, Any]] = None, **properties) -> str:
+                 metadata: dict[str, Any] | None = None, **properties) -> str:
         """
         Add an edge between source and target nodes.
         Root cause fixed: Method returned bool instead of edge_id string, violating
@@ -263,7 +264,7 @@ class TreeGraphBasicStrategy(AEdgeStrategy):
         all_nodes = self.get_nodes()
         return [node for node in all_nodes if self.is_leaf(node)]
 
-    def get_path(self, source: str, target: str) -> Optional[list[str]]:
+    def get_path(self, source: str, target: str) -> list[str] | None:
         """Get a simple path from source to target using BFS."""
         if source == target:
             return [source]

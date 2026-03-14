@@ -10,17 +10,19 @@ atomic snapshots and versioning capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Optional, AsyncIterator
+from collections.abc import AsyncIterator, Iterator
+from typing import Any
 import weakref
 import gc
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
 class COWTreeNode:
@@ -29,8 +31,8 @@ class COWTreeNode:
     Implements reference counting, cycle detection, and memory tracking.
     """
 
-    def __init__(self, key: str, value: Any = None, left: Optional[COWTreeNode] = None,
-                 right: Optional[COWTreeNode] = None, ref_count: int = 1):
+    def __init__(self, key: str, value: Any = None, left: COWTreeNode | None = None,
+                 right: COWTreeNode | None = None, ref_count: int = 1):
         """Time Complexity: O(1)"""
         self.key = key
         self.value = value
@@ -84,7 +86,7 @@ class COWTreeNode:
         """Add weak reference for cycle detection."""
         self._weak_refs.append(ref)
 
-    def has_cycles(self, visited: Optional[set[int]] = None) -> bool:
+    def has_cycles(self, visited: set[int] | None = None) -> bool:
         """
         Check for reference cycles (advanced feature).
         Uses graph traversal to detect cycles in the tree structure.
@@ -107,11 +109,9 @@ class COWTreeStrategy(ANodeTreeStrategy):
     """
     Copy-on-write tree node strategy with atomic snapshots.
     Provides instant snapshots, atomic updates, and versioning through
-    copy-on-write semantics 
-    # Strategy type classification
-    STRATEGY_TYPE = NodeType.TREE
-with reference counting.
+    copy-on-write semantics with reference counting.
     """
+    STRATEGY_TYPE = NodeType.TREE
 
     def __init__(self, traits: NodeTrait = NodeTrait.NONE, **options):
         """Initialize the COW tree strategy with advanced features."""
@@ -120,7 +120,7 @@ with reference counting.
         self.balanced = options.get('balanced', True)  # Use AVL balancing
         self.auto_snapshot = options.get('auto_snapshot', False)
         # Core COW tree
-        self._root: Optional[COWTreeNode] = None
+        self._root: COWTreeNode | None = None
         self._size = 0
         self._version = 0
         self._snapshots: list[COWTreeStrategy] = []
@@ -144,8 +144,8 @@ with reference counting.
         """Normalize key based on case sensitivity."""
         return key if self.case_sensitive else key.lower()
 
-    def _create_node(self, key: str, value: Any, left: Optional[COWTreeNode] = None,
-                    right: Optional[COWTreeNode] = None) -> COWTreeNode:
+    def _create_node(self, key: str, value: Any, left: COWTreeNode | None = None,
+                    right: COWTreeNode | None = None) -> COWTreeNode:
         """Create new node with generational tracking."""
         node = COWTreeNode(key, value, left, right)
         node._generation = self._current_generation
@@ -175,7 +175,7 @@ with reference counting.
             raise RuntimeError("Cycle detected in COW tree structure")
         return new_node
 
-    def _get_height(self, node: Optional[COWTreeNode]) -> int:
+    def _get_height(self, node: COWTreeNode | None) -> int:
         """Get height of node."""
         if not node:
             return 0
@@ -183,7 +183,7 @@ with reference counting.
         right_height = self._get_height(node.right)
         return 1 + max(left_height, right_height)
 
-    def _get_balance(self, node: Optional[COWTreeNode]) -> int:
+    def _get_balance(self, node: COWTreeNode | None) -> int:
         """Get balance factor of node."""
         if not node:
             return 0
@@ -242,7 +242,7 @@ with reference counting.
                 return self._rotate_left(node)
         return node
 
-    def _insert_node(self, node: Optional[COWTreeNode], key: str, value: Any) -> tuple[Optional[COWTreeNode], bool]:
+    def _insert_node(self, node: COWTreeNode | None, key: str, value: Any) -> tuple[COWTreeNode | None, bool]:
         """Insert node with COW semantics."""
         if not node:
             new_node = self._create_node(key, value)
@@ -280,7 +280,7 @@ with reference counting.
                 new_node = self._create_node(node.key, value, node.left, node.right)
                 return new_node, False
 
-    def _find_node(self, node: Optional[COWTreeNode], key: str) -> Optional[COWTreeNode]:
+    def _find_node(self, node: COWTreeNode | None, key: str) -> COWTreeNode | None:
         """Find node by key."""
         if not node:
             return None
@@ -293,7 +293,7 @@ with reference counting.
         else:
             return node
 
-    def _delete_node(self, node: Optional[COWTreeNode], key: str) -> tuple[Optional[COWTreeNode], bool]:
+    def _delete_node(self, node: COWTreeNode | None, key: str) -> tuple[COWTreeNode | None, bool]:
         """Delete node with COW semantics."""
         if not node:
             return None, False
@@ -339,14 +339,34 @@ with reference counting.
             node = node.left
         return node
 
-    def _inorder_traversal(self, node: Optional[COWTreeNode]) -> Iterator[tuple[str, Any]]:
+    def _find_max(self, node: COWTreeNode) -> COWTreeNode:
+        """Find maximum node in subtree."""
+        while node.right:
+            node = node.right
+        return node
+
+    def _inorder_traversal(self, node: COWTreeNode | None) -> Iterator[tuple[str, Any]]:
         """In-order traversal of tree."""
         if node:
             yield from self._inorder_traversal(node.left)
             yield (node.key, node.value)
             yield from self._inorder_traversal(node.right)
 
-    def _freeze_tree(self, node: Optional[COWTreeNode]) -> None:
+    def _preorder_traversal(self, node: COWTreeNode | None) -> Iterator[tuple[str, Any]]:
+        """Pre-order traversal of tree."""
+        if node:
+            yield (node.key, node.value)
+            yield from self._preorder_traversal(node.left)
+            yield from self._preorder_traversal(node.right)
+
+    def _postorder_traversal(self, node: COWTreeNode | None) -> Iterator[tuple[str, Any]]:
+        """Post-order traversal of tree."""
+        if node:
+            yield from self._postorder_traversal(node.left)
+            yield from self._postorder_traversal(node.right)
+            yield (node.key, node.value)
+
+    def _freeze_tree(self, node: COWTreeNode | None) -> None:
         """Freeze entire tree to prevent modifications."""
         if node:
             node.freeze()
@@ -419,7 +439,7 @@ with reference counting.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -579,3 +599,67 @@ with reference counting.
             'memory_pressure': memory_pressure,
             'traits': [trait.name for trait in NodeTrait if self.has_trait(trait)]
         }
+
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods
+    # ============================================================================
+
+    def get_min(self) -> tuple[str, Any] | None:
+        """Get the minimum key-value pair. Time Complexity: O(log n)."""
+        if not self._root:
+            return None
+        min_node = self._find_min(self._root)
+        return (min_node.key, min_node.value)
+
+    def get_max(self) -> tuple[str, Any] | None:
+        """Get the maximum key-value pair. Time Complexity: O(log n)."""
+        if not self._root:
+            return None
+        max_node = self._find_max(self._root)
+        return (max_node.key, max_node.value)
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse tree in specified order (inorder, preorder, postorder)."""
+        if order == 'inorder':
+            return [kv for kv in self._inorder_traversal(self._root)]
+        if order == 'preorder':
+            return list(self._preorder_traversal(self._root))
+        if order == 'postorder':
+            return list(self._postorder_traversal(self._root))
+        return [kv for kv in self._inorder_traversal(self._root)]
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("COW tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("COW tree cannot behave as Flow Network")

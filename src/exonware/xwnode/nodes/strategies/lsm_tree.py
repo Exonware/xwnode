@@ -10,11 +10,11 @@ with eventual consistency and compaction.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.4
+Version: 0.9.0.5
 Generation Date: 24-Oct-2025
 """
 
-from typing import Any, Iterator, Optional, AsyncIterator
+from typing import Any
 import time
 import threading
 import hashlib
@@ -24,8 +24,10 @@ from pathlib import Path
 from .base import ANodeTreeStrategy
 from .contracts import NodeType
 from ...defs import NodeMode, NodeTrait
+from ...errors import XWNodeUnsupportedCapabilityError
 
 
+from collections.abc import AsyncIterator, Iterator
 class BloomFilter:
     """
     Bloom filter for LSM Tree SSTables to reduce disk reads.
@@ -87,7 +89,7 @@ class WriteAheadLog:
     Logs all operations before they're written to memtable for durability.
     """
 
-    def __init__(self, path: Optional[Path] = None):
+    def __init__(self, path: Path | None = None):
         """Initialize WAL with optional file path."""
         self.path = path
         self.enabled = path is not None
@@ -135,7 +137,7 @@ class MemTable:
             self.size += 1
         return self.size >= self.max_size
 
-    def get(self, key: str) -> Optional[tuple[Any, float]]:
+    def get(self, key: str) -> tuple[Any, float] | None:
         """Get value and timestamp."""
         return self.data.get(key)
 
@@ -180,7 +182,7 @@ class SSTable:
         for key in data.keys():
             self.bloom_filter.add(key)
 
-    def get(self, key: str) -> Optional[tuple[Any, float]]:
+    def get(self, key: str) -> tuple[Any, float] | None:
         """Get value and timestamp."""
         return self.data.get(key)
 
@@ -233,7 +235,7 @@ ted disk-based SSTables.
         self._compaction_lock = threading.RLock()
         self._background_compaction = options.get('background_compaction', True)  # Default ON
         self._last_compaction = time.time()
-        self._compaction_thread: Optional[threading.Thread] = None
+        self._compaction_thread: threading.Thread | None = None
         self._compaction_stop_event = threading.Event()
         # Start background compaction if enabled
         if self._background_compaction:
@@ -365,7 +367,7 @@ ted disk-based SSTables.
         """Lightweight async wrapper for insert (no lock overhead)."""
         return self.insert(key, value)
 
-    async def find_async(self, key: Any) -> Optional[Any]:
+    async def find_async(self, key: Any) -> Any | None:
         """Lightweight async wrapper for find (no lock overhead)."""
         return self.find(key)
 
@@ -541,8 +543,63 @@ ted disk-based SSTables.
         """Cleanup: stop background thread."""
         try:
             self._stop_compaction_thread()
-        except:
+        except Exception:
             pass  # Ignore errors during cleanup
+
+    # ============================================================================
+    # ANodeTreeStrategy / ANodeGraphStrategy abstract methods
+    # ============================================================================
+
+    def get_min(self) -> tuple[str, Any] | None:
+        """Get the minimum key-value pair (first in key order)."""
+        items_list = list(self.items())
+        return items_list[0] if items_list else None
+
+    def get_max(self) -> tuple[str, Any] | None:
+        """Get the maximum key-value pair (last in key order)."""
+        items_list = list(self.items())
+        return items_list[-1] if items_list else None
+
+    def traverse(self, order: str = 'inorder') -> list[Any]:
+        """Traverse key-value pairs in key order."""
+        return list(self.items())
+
+    def as_trie(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as Trie")
+
+    def as_heap(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as Heap")
+
+    def as_skip_list(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as SkipList")
+
+    def add_edge(self, from_node: Any, to_node: Any, weight: float = 1.0) -> None:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph edges")
+
+    def remove_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph edges")
+
+    def has_edge(self, from_node: Any, to_node: Any) -> bool:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph edges")
+
+    def find_path(self, start: Any, end: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph paths")
+
+    def get_neighbors(self, node: Any) -> list[Any]:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph neighbors")
+
+    def get_edge_weight(self, from_node: Any, to_node: Any) -> float:
+        raise XWNodeUnsupportedCapabilityError("LSM tree does not support graph edges")
+
+    def as_union_find(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as Union-Find")
+
+    def as_neural_graph(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as Neural Graph")
+
+    def as_flow_network(self):
+        raise XWNodeUnsupportedCapabilityError("LSM tree cannot behave as Flow Network")
+
     # ============================================================================
     # PERFORMANCE CHARACTERISTICS
     # ============================================================================

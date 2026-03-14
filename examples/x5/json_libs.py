@@ -11,8 +11,9 @@ import os
 import tempfile
 import asyncio
 import weakref
-from typing import Any, Callable, Iterable, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from asyncio import Lock
+from collections.abc import Callable, Iterable
 # High-performance JSON libraries
 try:
     import orjson
@@ -98,7 +99,7 @@ def _iter_json_lines(fp: Iterable[str]) -> Iterable[tuple[int, str, JsonValue]]:
             raise JsonStreamError(f"Invalid JSON at line {line_no}: {e}") from e
 
 
-def _get_by_path(obj: JsonValue, path: Optional[JsonPath]) -> JsonValue:
+def _get_by_path(obj: JsonValue, path: JsonPath | None) -> JsonValue:
     if path is None:
         return obj
     cur: JsonValue = obj
@@ -116,7 +117,7 @@ def _get_by_path(obj: JsonValue, path: Optional[JsonPath]) -> JsonValue:
 def stream_read(
     file_path: str,
     match: MatchFn,
-    path: Optional[JsonPath] = None,
+    path: JsonPath | None = None,
     encoding: str = "utf-8",
 ) -> JsonValue:
     """
@@ -139,7 +140,7 @@ def stream_read(
 async def async_stream_read(
     file_path: str,
     match: MatchFn,
-    path: Optional[JsonPath] = None,
+    path: JsonPath | None = None,
     encoding: str = "utf-8",
 ) -> JsonValue:
     """
@@ -307,7 +308,7 @@ class JsonLibs(DataUtilsInterface):
         self,
         file_path: str,
         match: MatchFn,
-        path: Optional[JsonPath] = None,
+        path: JsonPath | None = None,
         encoding: str = "utf-8",
     ) -> JsonValue:
         """Implementation of DataUtilsInterface.stream_read."""
@@ -317,7 +318,7 @@ class JsonLibs(DataUtilsInterface):
         self,
         file_path: str,
         match: MatchFn,
-        path: Optional[JsonPath] = None,
+        path: JsonPath | None = None,
         encoding: str = "utf-8",
     ) -> JsonValue:
         """Implementation of DataUtilsInterface.async_stream_read."""
