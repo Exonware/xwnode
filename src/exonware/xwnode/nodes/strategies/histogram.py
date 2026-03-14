@@ -6,7 +6,7 @@ Supports both equi-width and equi-depth histogram types.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.8
+Version: 0.9.0.9
 Generation Date: 27-Oct-2025
 """
 
