@@ -65,5 +65,5 @@ class TestCRDTMapStrategy:
 
     def test_is_empty_operation(self, empty_crdt, simple_crdt):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_crdt.is_empty() is True
-        assert simple_crdt.is_empty() is False
+        assert empty_crdt.is_empty is True
+        assert simple_crdt.is_empty is False

@@ -67,5 +67,5 @@ class TestAdjacencyListNodeStrategy:
 
     def test_is_empty_operation(self, empty_strategy, simple_strategy):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_strategy.is_empty() is True
-        assert simple_strategy.is_empty() is False
+        assert empty_strategy.is_empty is True
+        assert simple_strategy.is_empty is False

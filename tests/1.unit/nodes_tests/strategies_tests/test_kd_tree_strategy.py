@@ -66,5 +66,5 @@ class TestKDTreeStrategy:
 
     def test_is_empty_operation(self, empty_kd_tree, simple_kd_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_kd_tree.is_empty() is True
-        assert simple_kd_tree.is_empty() is False
+        assert empty_kd_tree.is_empty is True
+        assert simple_kd_tree.is_empty is False

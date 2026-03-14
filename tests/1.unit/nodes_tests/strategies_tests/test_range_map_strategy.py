@@ -66,5 +66,5 @@ class TestRangeMapStrategy:
 
     def test_is_empty_operation(self, empty_range_map, simple_range_map):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_range_map.is_empty() is True
-        assert simple_range_map.is_empty() is False
+        assert empty_range_map.is_empty is True
+        assert simple_range_map.is_empty is False

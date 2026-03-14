@@ -46,7 +46,7 @@ class TestHeapStrategyInterface:
 
     def test_is_empty(self, empty_heap):
         """Test is_empty on empty heap."""
-        assert empty_heap.is_empty() is True
+        assert empty_heap.is_empty is True
 @pytest.mark.xwnode_unit
 @pytest.mark.xwnode_performance
 

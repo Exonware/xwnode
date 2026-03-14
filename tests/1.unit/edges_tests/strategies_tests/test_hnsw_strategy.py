@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.hnsw import HNSWStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_hnsw():
     """Create empty HNSW graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.HNSW)
+    return HNSWStrategy()
 @pytest.fixture
 
 def simple_hnsw():
     """Create HNSW graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.HNSW)
+    graph = HNSWStrategy()
     graph.add_edge('A', 'B', weight=1.0)
     graph.add_edge('B', 'C', weight=2.0)
     return graph

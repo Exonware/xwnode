@@ -61,7 +61,7 @@ class TestHyperedgeSetStrategyInterface:
 
     def test_get_neighbors_operation(self, simple_strategy):
         """Test get_neighbors returns correct neighbors."""
-        neighbors = list(simple_strategy.get_neighbors('A'))
+        neighbors = list(simple_strategy.neighbors('A'))
         assert 'B' in neighbors
 # ============================================================================
 # HYPEREDGE FEATURES TESTS
@@ -93,7 +93,7 @@ class TestHyperedgeSetStrategyCore:
 
     def test_vertex_count(self, simple_strategy):
         """Test vertex count tracking."""
-        vertices = simple_strategy.get_vertices()
+        vertices = simple_strategy.vertices()
         assert 'A' in vertices
         assert 'B' in vertices
 # ============================================================================
@@ -108,5 +108,5 @@ class TestHyperedgeSetStrategyEdgeCases:
     def test_empty_graph_operations(self, empty_strategy):
         """Test operations on empty graph."""
         assert empty_strategy.has_edge('A', 'B') is False
-        assert list(empty_strategy.get_neighbors('A')) == []
+        assert list(empty_strategy.neighbors('A')) == []
         assert empty_strategy.edge_count() == 0

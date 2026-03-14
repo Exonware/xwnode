@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.hop2_labels import Hop2LabelsStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_hop2():
     """Create empty 2-hop labeling graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.HOP2_LABELS)
+    return Hop2LabelsStrategy()
 @pytest.fixture
 
 def simple_hop2():
     """Create 2-hop labeling graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.HOP2_LABELS)
+    graph = Hop2LabelsStrategy()
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph

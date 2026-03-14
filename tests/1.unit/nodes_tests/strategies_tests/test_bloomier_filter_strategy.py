@@ -59,5 +59,5 @@ class TestBloomierFilterStrategy:
 
     def test_is_empty_operation(self, empty_bloomier, simple_bloomier):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_bloomier.is_empty() is True
-        assert simple_bloomier.is_empty() is False
+        assert empty_bloomier.is_empty is True
+        assert simple_bloomier.is_empty is False

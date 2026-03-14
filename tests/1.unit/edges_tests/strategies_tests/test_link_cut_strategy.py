@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.link_cut import LinkCutStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_link_cut():
     """Create empty link-cut tree."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.LINK_CUT)
+    return LinkCutStrategy()
 @pytest.fixture
 
 def simple_link_cut():
     """Create link-cut tree with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.LINK_CUT)
+    graph = LinkCutStrategy()
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph

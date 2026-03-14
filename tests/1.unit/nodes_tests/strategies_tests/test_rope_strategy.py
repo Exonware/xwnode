@@ -61,5 +61,5 @@ class TestRopeStrategy:
 
     def test_is_empty_operation(self, empty_rope, simple_rope):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_rope.is_empty() is True
-        assert simple_rope.is_empty() is False
+        assert empty_rope.is_empty is True
+        assert simple_rope.is_empty is False

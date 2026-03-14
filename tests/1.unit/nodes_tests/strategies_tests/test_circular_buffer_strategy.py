@@ -63,5 +63,5 @@ class TestCircularBufferStrategy:
 
     def test_is_empty_operation(self, empty_circular_buffer, simple_circular_buffer):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_circular_buffer.is_empty() is True
-        assert simple_circular_buffer.is_empty() is False
+        assert empty_circular_buffer.is_empty is True
+        assert simple_circular_buffer.is_empty is False

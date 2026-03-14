@@ -35,8 +35,8 @@ def empty_strategy():
 def simple_strategy():
     """Create R-tree with simple spatial data."""
     strategy = RTreeStrategy()
-    strategy.add_edge('A', 'B', bbox=(0, 0, 1, 1))
-    strategy.add_edge('B', 'C', bbox=(2, 2, 3, 3))
+    strategy.add_edge('A', 'B', source_coords=(0, 0), target_coords=(1, 1))
+    strategy.add_edge('B', 'C', source_coords=(2, 2), target_coords=(3, 3))
     return strategy
 # ============================================================================
 # INTERFACE COMPLIANCE TESTS
@@ -49,7 +49,7 @@ class TestRTreeStrategyInterface:
 
     def test_add_edge_operation(self, empty_strategy):
         """Test add_edge operation works correctly."""
-        edge_id = empty_strategy.add_edge('A', 'B', bbox=(0, 0, 1, 1))
+        edge_id = empty_strategy.add_edge('A', 'B', source_coords=(0, 0), target_coords=(1, 1))
         assert edge_id is not None
         assert empty_strategy.has_edge('A', 'B') is True
 
@@ -67,10 +67,9 @@ class TestRTreeStrategySpatial:
     """Test spatial query features."""
 
     def test_range_query(self, simple_strategy):
-        """Test spatial range queries if available."""
-        if hasattr(simple_strategy, 'query_range'):
-            results = simple_strategy.query_range((0.5, 0.5, 1.5, 1.5))
-            assert len(results) >= 0
+        """Test spatial range queries."""
+        results = list(simple_strategy.range_query(0, 0, 1.5, 1.5))
+        assert len(results) >= 0
 # ============================================================================
 # CORE FUNCTIONALITY TESTS
 # ============================================================================
@@ -86,7 +85,7 @@ class TestRTreeStrategyCore:
 
     def test_vertex_count(self, simple_strategy):
         """Test vertex count tracking."""
-        vertices = simple_strategy.get_vertices()
+        vertices = list(simple_strategy.vertices())
         assert 'A' in vertices
         assert 'B' in vertices
         assert 'C' in vertices
@@ -102,5 +101,5 @@ class TestRTreeStrategyEdgeCases:
     def test_empty_graph_operations(self, empty_strategy):
         """Test operations on empty graph."""
         assert empty_strategy.has_edge('A', 'B') is False
-        assert list(empty_strategy.get_neighbors('A')) == []
+        assert list(empty_strategy.neighbors('A')) == []
         assert empty_strategy.edge_count() == 0

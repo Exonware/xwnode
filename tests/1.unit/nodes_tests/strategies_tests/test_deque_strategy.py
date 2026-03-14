@@ -80,8 +80,8 @@ class TestDequeStrategyInterface:
 
     def test_is_empty_operation(self, empty_deque, simple_deque):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_deque.is_empty() is True
-        assert simple_deque.is_empty() is False
+        assert empty_deque.is_empty is True
+        assert simple_deque.is_empty is False
 
     def test_to_native_conversion(self, simple_deque):
         """Test conversion to native Python list."""
@@ -124,7 +124,7 @@ class TestDequeStrategyCore:
     def test_clear_operation(self, simple_deque):
         """Test clear removes all items."""
         simple_deque.clear()
-        assert simple_deque.is_empty() is True
+        assert simple_deque.is_empty is True
         assert simple_deque.size() == 0
 
     def test_rotation(self, simple_deque):
@@ -158,4 +158,4 @@ class TestDequeStrategyEdgeCases:
         assert empty_deque.peek_left() == 'single'
         assert empty_deque.peek_right() == 'single'
         assert empty_deque.pop() == 'single'
-        assert empty_deque.is_empty() is True
+        assert empty_deque.is_empty is True

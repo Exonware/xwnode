@@ -67,5 +67,5 @@ class TestDAWGStrategy:
 
     def test_is_empty_operation(self, empty_dawg, simple_dawg):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_dawg.is_empty() is True
-        assert simple_dawg.is_empty() is False
+        assert empty_dawg.is_empty is True
+        assert simple_dawg.is_empty is False

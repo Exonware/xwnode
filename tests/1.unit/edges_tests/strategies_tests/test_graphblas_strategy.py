@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.graphblas import GraphBLASStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_graphblas():
     """Create empty GraphBLAS graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.GRAPHBLAS)
+    return GraphBLASStrategy()
 @pytest.fixture
 
 def simple_graphblas():
     """Create GraphBLAS graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.GRAPHBLAS)
+    graph = GraphBLASStrategy()
     graph.add_edge('A', 'B', weight=1.5)
     graph.add_edge('B', 'C', weight=2.0)
     return graph

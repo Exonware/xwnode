@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.octree import OctreeStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_octree():
     """Create empty octree."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.OCTREE)
+    return OctreeStrategy()
 @pytest.fixture
 
 def simple_octree():
     """Create octree with 3D points."""
-    tree = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.OCTREE)
+    tree = OctreeStrategy()
     tree.add_edge('A', 'B', x=1.0, y=2.0, z=3.0)
     tree.add_edge('B', 'C', x=2.0, y=3.0, z=4.0)
     return tree

@@ -52,19 +52,19 @@ class TestSetTreeStrategyInterface:
     def test_add_operation(self, empty_set):
         """Test add operation works correctly."""
         empty_set.add('test_value')
-        assert empty_set.contains('test_value') is True
+        assert empty_set.has('test_value') is True
         assert empty_set.size() == 1
 
     def test_contains_operation(self, simple_set):
         """Test contains operation returns correct values."""
-        assert simple_set.contains('value1') is True
-        assert simple_set.contains('value2') is True
-        assert simple_set.contains('nonexistent') is False
+        assert simple_set.has('value1') is True
+        assert simple_set.has('value2') is True
+        assert simple_set.has('nonexistent') is False
 
     def test_remove_operation(self, simple_set):
         """Test remove operation removes items correctly."""
         assert simple_set.remove('value1') is True
-        assert simple_set.contains('value1') is False
+        assert simple_set.has('value1') is False
         assert simple_set.remove('nonexistent') is False
 
     def test_size_operation(self, simple_set):
@@ -75,8 +75,8 @@ class TestSetTreeStrategyInterface:
 
     def test_is_empty_operation(self, empty_set, simple_set):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_set.is_empty() is True
-        assert simple_set.is_empty() is False
+        assert empty_set.is_empty is True
+        assert simple_set.is_empty is False
 # ============================================================================
 # SET OPERATIONS TESTS
 # ============================================================================
@@ -92,10 +92,10 @@ class TestSetTreeStrategySetOperations:
         other.add('value3')
         other.add('value4')
         union = simple_set.union(other)
-        assert union.contains('value1') is True
-        assert union.contains('value2') is True
-        assert union.contains('value3') is True
-        assert union.contains('value4') is True
+        assert union.has('value1') is True
+        assert union.has('value2') is True
+        assert union.has('value3') is True
+        assert union.has('value4') is True
         assert union.size() == 4
 
     def test_intersection_operation(self, simple_set):
@@ -105,9 +105,9 @@ class TestSetTreeStrategySetOperations:
         other.add('value3')
         other.add('value4')
         intersection = simple_set.intersection(other)
-        assert intersection.contains('value2') is True
-        assert intersection.contains('value3') is True
-        assert intersection.contains('value1') is False
+        assert intersection.has('value2') is True
+        assert intersection.has('value3') is True
+        assert intersection.has('value1') is False
         assert intersection.size() == 2
 
     def test_sorted_order(self, simple_set):
@@ -129,12 +129,12 @@ class TestSetTreeStrategyCore:
         empty_set.add('value')  # Duplicate
         # Set should only contain one instance
         assert empty_set.size() == 1
-        assert empty_set.contains('value') is True
+        assert empty_set.has('value') is True
 
     def test_clear_operation(self, simple_set):
         """Test clear removes all items."""
         simple_set.clear()
-        assert simple_set.is_empty() is True
+        assert simple_set.is_empty is True
         assert simple_set.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING
@@ -147,6 +147,6 @@ class TestSetTreeStrategyEdgeCases:
 
     def test_empty_set_operations(self, empty_set):
         """Test operations on empty set."""
-        assert empty_set.contains('any') is False
+        assert empty_set.has('any') is False
         assert empty_set.remove('any') is False
         assert list(empty_set) == []

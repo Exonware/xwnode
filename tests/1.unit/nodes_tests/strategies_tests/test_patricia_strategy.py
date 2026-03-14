@@ -76,8 +76,8 @@ class TestPatriciaStrategyInterface:
 
     def test_is_empty_operation(self, empty_trie, simple_trie):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_trie.is_empty() is True
-        assert simple_trie.is_empty() is False
+        assert empty_trie.is_empty is True
+        assert simple_trie.is_empty is False
 # ============================================================================
 # CORE FUNCTIONALITY TESTS
 # ============================================================================
@@ -96,7 +96,7 @@ class TestPatriciaStrategyCore:
     def test_clear_operation(self, simple_trie):
         """Test clear removes all items."""
         simple_trie.clear()
-        assert simple_trie.is_empty() is True
+        assert simple_trie.is_empty is True
         assert simple_trie.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

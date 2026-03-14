@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.roaring_adj import RoaringAdjStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_roaring_adj():
     """Create empty roaring adjacency graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.ROARING_ADJ)
+    return RoaringAdjStrategy()
 @pytest.fixture
 
 def simple_roaring_adj():
     """Create roaring adjacency graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.ROARING_ADJ)
+    graph = RoaringAdjStrategy()
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph

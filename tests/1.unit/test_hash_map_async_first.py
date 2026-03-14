@@ -78,7 +78,7 @@ try:
     deleted = strategy2.delete("sync_key")
     assert deleted, f"Expected True, got {deleted}"
     # Sync is_empty (wraps async)
-    empty = strategy2.is_empty()
+    empty = strategy2.is_empty
     assert empty, f"Expected empty, got {empty}"
     print("  ✓ All sync operations working correctly!")
     print("  ✓ Backward compatibility maintained!")

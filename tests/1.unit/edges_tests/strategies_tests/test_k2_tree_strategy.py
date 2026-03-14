@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.k2_tree import K2TreeStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_k2_tree():
     """Create empty K2-tree."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.K2_TREE)
+    return K2TreeStrategy()
 @pytest.fixture
 
 def simple_k2_tree():
     """Create K2-tree with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.K2_TREE)
+    graph = K2TreeStrategy()
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph

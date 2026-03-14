@@ -61,5 +61,5 @@ class TestTDigestStrategy:
 
     def test_is_empty_operation(self, empty_t_digest, simple_t_digest):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_t_digest.is_empty() is True
-        assert simple_t_digest.is_empty() is False
+        assert empty_t_digest.is_empty is True
+        assert simple_t_digest.is_empty is False

@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.euler_tour import EulerTourStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_euler_tour():
     """Create empty Euler tour tree."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.EULER_TOUR)
+    return EulerTourStrategy()
 @pytest.fixture
 
 def simple_euler_tour():
     """Create Euler tour tree with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.EULER_TOUR)
+    graph = EulerTourStrategy()
     graph.add_edge('A', 'B')
     graph.add_edge('B', 'C')
     return graph

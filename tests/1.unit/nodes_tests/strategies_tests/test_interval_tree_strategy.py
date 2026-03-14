@@ -66,5 +66,5 @@ class TestIntervalTreeStrategy:
 
     def test_is_empty_operation(self, empty_interval_tree, simple_interval_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_interval_tree.is_empty() is True
-        assert simple_interval_tree.is_empty() is False
+        assert empty_interval_tree.is_empty is True
+        assert simple_interval_tree.is_empty is False

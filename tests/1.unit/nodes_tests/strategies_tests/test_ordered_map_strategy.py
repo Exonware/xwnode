@@ -86,8 +86,8 @@ class TestOrderedMapStrategyInterface:
 
     def test_is_empty_operation(self, empty_strategy, simple_strategy):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_strategy.is_empty() is True
-        assert simple_strategy.is_empty() is False
+        assert empty_strategy.is_empty is True
+        assert simple_strategy.is_empty is False
 
     def test_to_native_conversion(self, simple_strategy):
         """Test conversion to native Python dict."""
@@ -124,7 +124,7 @@ class TestOrderedMapStrategySortedOrder:
     def test_range_query(self, sorted_strategy):
         """Test range query operations."""
         # Get keys in range ['banana', 'zebra']
-        keys = sorted_strategy.range_keys('banana', 'zebra')
+        keys = sorted_strategy.range_query('banana', 'zebra')
         assert 'banana' in keys
         assert 'zebra' in keys
         assert 'apple' not in keys
@@ -161,7 +161,7 @@ class TestOrderedMapStrategyCore:
     def test_clear_operation(self, simple_strategy):
         """Test clear removes all items."""
         simple_strategy.clear()
-        assert simple_strategy.is_empty() is True
+        assert simple_strategy.is_empty is True
         assert simple_strategy.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -258,5 +258,5 @@ class TestOrderedMapStrategyPerformance:
         for i in range(100):
             strategy.put(f'key_{i:03d}', f'value_{i}')
         # Range query should be efficient
-        keys = strategy.range_keys('key_010', 'key_090')
+        keys = strategy.range_query('key_010', 'key_090')
         assert len(keys) == 81  # 10 to 90 inclusive

@@ -86,8 +86,8 @@ class TestBTreeStrategyInterface:
 
     def test_is_empty_operation(self, empty_tree, simple_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_tree.is_empty() is True
-        assert simple_tree.is_empty() is False
+        assert empty_tree.is_empty is True
+        assert simple_tree.is_empty is False
 
     def test_to_native_conversion(self, simple_tree):
         """Test conversion to native Python dict."""
@@ -146,7 +146,7 @@ class TestBTreeStrategyCore:
     def test_range_query(self, large_tree):
         """Test range query operations."""
         # Get keys in range
-        keys = large_tree.range_keys('key_02', 'key_08')
+        keys = large_tree.range_query('key_02', 'key_08')
         # Should include keys 02-08
         assert 'key_02' in keys
         assert 'key_05' in keys
@@ -157,7 +157,7 @@ class TestBTreeStrategyCore:
     def test_clear_operation(self, simple_tree):
         """Test clear removes all items."""
         simple_tree.clear()
-        assert simple_tree.is_empty() is True
+        assert simple_tree.is_empty is True
         assert simple_tree.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -218,7 +218,7 @@ class TestBTreeStrategyEdgeCases:
         assert empty_tree.size() == 1
         assert empty_tree.get('single') == 'value'
         empty_tree.delete('single')
-        assert empty_tree.is_empty() is True
+        assert empty_tree.is_empty is True
 
     def test_different_degrees(self):
         """Test B-tree with different degree values."""

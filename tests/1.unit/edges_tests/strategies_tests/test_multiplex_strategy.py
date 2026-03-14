@@ -17,19 +17,19 @@ Generation Date: 26-Jan-2025
 """
 
 import pytest
-from exonware.xwnode import XWNode
-from exonware.xwnode.defs import NodeMode, EdgeMode
+from exonware.xwnode.edges.strategies.multiplex import MultiplexStrategy
+from exonware.xwnode.defs import EdgeMode
 from exonware.xwnode.errors import XWNodeError
 @pytest.fixture
 
 def empty_multiplex():
     """Create empty multiplex graph."""
-    return XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.MULTIPLEX)
+    return MultiplexStrategy()
 @pytest.fixture
 
 def simple_multiplex():
     """Create multiplex graph with edges."""
-    graph = XWNode(mode=NodeMode.ADJACENCY_LIST, edge_mode=EdgeMode.MULTIPLEX)
+    graph = MultiplexStrategy()
     graph.add_edge('A', 'B', layer='layer1')
     graph.add_edge('B', 'C', layer='layer2')
     return graph

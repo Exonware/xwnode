@@ -65,5 +65,5 @@ class TestHistogramStrategy:
 
     def test_is_empty_operation(self, empty_histogram, simple_histogram):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_histogram.is_empty() is True
-        assert simple_histogram.is_empty() is False
+        assert empty_histogram.is_empty is True
+        assert simple_histogram.is_empty is False

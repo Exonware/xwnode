@@ -75,8 +75,8 @@ class TestTreapStrategyInterface:
 
     def test_is_empty_operation(self, empty_treap, simple_treap):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_treap.is_empty() is True
-        assert simple_treap.is_empty() is False
+        assert empty_treap.is_empty is True
+        assert simple_treap.is_empty is False
 # ============================================================================
 # CORE FUNCTIONALITY TESTS
 # ============================================================================
@@ -95,7 +95,7 @@ class TestTreapStrategyCore:
     def test_clear_operation(self, simple_treap):
         """Test clear removes all items."""
         simple_treap.clear()
-        assert simple_treap.is_empty() is True
+        assert simple_treap.is_empty is True
         assert simple_treap.size() == 0
 # ============================================================================
 # EDGE CASES & ERROR HANDLING

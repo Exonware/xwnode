@@ -86,8 +86,8 @@ class TestBPlusTreeStrategyInterface:
 
     def test_is_empty_operation(self, empty_tree, simple_tree):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_tree.is_empty() is True
-        assert simple_tree.is_empty() is False
+        assert empty_tree.is_empty is True
+        assert simple_tree.is_empty is False
 
     def test_to_native_conversion(self, simple_tree):
         """Test conversion to native Python dict."""
@@ -116,7 +116,7 @@ class TestBPlusTreeStrategySpecific:
     def test_range_query_efficiency(self, large_tree):
         """Test range queries are efficient (B+ Tree strength)."""
         # Get keys in range
-        keys = large_tree.range_keys('key_02', 'key_08')
+        keys = large_tree.range_query('key_02', 'key_08')
         # Should include keys 02-08
         assert 'key_02' in keys
         assert 'key_05' in keys
@@ -154,7 +154,7 @@ class TestBPlusTreeStrategyCore:
     def test_clear_operation(self, simple_tree):
         """Test clear removes all items."""
         simple_tree.clear()
-        assert simple_tree.is_empty() is True
+        assert simple_tree.is_empty is True
         assert simple_tree.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -215,7 +215,7 @@ class TestBPlusTreeStrategyEdgeCases:
         assert empty_tree.size() == 1
         assert empty_tree.get('single') == 'value'
         empty_tree.delete('single')
-        assert empty_tree.is_empty() is True
+        assert empty_tree.is_empty is True
 
     def test_different_max_keys(self):
         """Test B+ tree with different max_keys values."""
@@ -257,5 +257,5 @@ class TestBPlusTreeStrategyPerformance:
         for i in range(100):
             tree.put(f'key_{i:03d}', f'value_{i}')
         # Range query should be efficient
-        keys = tree.range_keys('key_010', 'key_090')
+        keys = tree.range_query('key_010', 'key_090')
         assert len(keys) == 81  # 10 to 90 inclusive

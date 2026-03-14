@@ -86,8 +86,8 @@ class TestRadixTrieStrategyInterface:
 
     def test_is_empty_operation(self, empty_trie, simple_trie):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_trie.is_empty() is True
-        assert simple_trie.is_empty() is False
+        assert empty_trie.is_empty is True
+        assert simple_trie.is_empty is False
 # ============================================================================
 # PREFIX COMPRESSION TESTS
 # ============================================================================
@@ -130,7 +130,7 @@ class TestRadixTrieStrategyCore:
     def test_clear_operation(self, simple_trie):
         """Test clear removes all items."""
         simple_trie.clear()
-        assert simple_trie.is_empty() is True
+        assert simple_trie.is_empty is True
         assert simple_trie.size() == 0
 # ============================================================================
 # ITERATOR TESTS
@@ -177,7 +177,7 @@ class TestRadixTrieStrategyEdgeCases:
         assert empty_trie.size() == 1
         assert empty_trie.get('single') == 'value'
         empty_trie.delete('single')
-        assert empty_trie.is_empty() is True
+        assert empty_trie.is_empty is True
 
     def test_empty_string_key(self, empty_trie):
         """Test handling of empty string key."""

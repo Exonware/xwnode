@@ -70,7 +70,7 @@ class TestPriorityQueueStrategyInterface:
         assert min_heap.pop() == 'value1'
         assert min_heap.pop() == 'value2'
         assert min_heap.pop() == 'value3'
-        assert min_heap.is_empty() is True
+        assert min_heap.is_empty is True
 
     def test_pop_operation_max_heap(self, max_heap):
         """Test pop operation follows priority order (max-heap)."""
@@ -78,7 +78,7 @@ class TestPriorityQueueStrategyInterface:
         assert max_heap.pop() == 'value3'
         assert max_heap.pop() == 'value2'
         assert max_heap.pop() == 'value1'
-        assert max_heap.is_empty() is True
+        assert max_heap.is_empty is True
 
     def test_peek_operation(self, min_heap):
         """Test peek returns highest priority without removing."""
@@ -94,8 +94,8 @@ class TestPriorityQueueStrategyInterface:
 
     def test_is_empty_operation(self, empty_pq, min_heap):
         """Test is_empty correctly identifies empty structures."""
-        assert empty_pq.is_empty() is True
-        assert min_heap.is_empty() is False
+        assert empty_pq.is_empty is True
+        assert min_heap.is_empty is False
 # ============================================================================
 # PRIORITY ORDERING TESTS
 # ============================================================================
@@ -148,7 +148,7 @@ class TestPriorityQueueStrategyCore:
     def test_clear_operation(self, min_heap):
         """Test clear removes all items."""
         min_heap.clear()
-        assert min_heap.is_empty() is True
+        assert min_heap.is_empty is True
         assert min_heap.size() == 0
 
     def test_initial_items(self):
@@ -179,7 +179,7 @@ class TestPriorityQueueStrategyEdgeCases:
         assert empty_pq.size() == 1
         assert empty_pq.peek() == 'single'
         assert empty_pq.pop() == 'single'
-        assert empty_pq.is_empty() is True
+        assert empty_pq.is_empty is True
 
     def test_negative_priorities(self, empty_pq):
         """Test handling of negative priorities."""
@@ -208,4 +208,4 @@ class TestPriorityQueueStrategyPerformance:
         # Pop all items - should be in priority order
         for i in range(100):
             assert pq.pop() == f'item_{i}'
-        assert pq.is_empty() is True
+        assert pq.is_empty is True
