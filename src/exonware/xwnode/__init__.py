@@ -7,7 +7,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.10
+Version: 0.9.0.11
 Generation Date: 07-Sep-2025
 Main Classes:
     XWNode: The primary interface for working with hierarchical data

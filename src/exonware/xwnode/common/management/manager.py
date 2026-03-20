@@ -9,7 +9,7 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.10
+Version: 0.9.0.11
 Generation Date: 07-Sep-2025
 """
 
