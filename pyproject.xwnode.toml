@@ -1,4 +1,4 @@
-# Source size (src/*): ~2.50 MB
+# Source size (src/*): ~2.49 MB
 [build-system]
 requires = [
     "hatchling",

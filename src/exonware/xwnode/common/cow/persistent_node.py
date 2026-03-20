@@ -7,7 +7,7 @@ Copy-on-Write semantics using HAMT for optimal performance.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.11
+Version: 0.9.0.12
 Generation Date: 26-Oct-2025
 """
 

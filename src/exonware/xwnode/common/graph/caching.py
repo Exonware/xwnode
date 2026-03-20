@@ -5,7 +5,7 @@ Now powered by xwsystem.caching via CacheController.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.11
+Version: 0.9.0.12
 Generation Date: November 4, 2025
 """
 

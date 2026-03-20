@@ -17,7 +17,7 @@
 # =============================================================================
 # CORE DEPENDENCIES (REQUIRED)
 # =============================================================================
-# Source size (src/*): ~2.50 MB
+# Source size (src/*): ~2.49 MB
 pip                     # Package installer (CI and lazy install)
 
 # eXonware ecosystem dependencies (xwnode requires xwsystem)
