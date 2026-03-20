@@ -265,12 +265,15 @@ class TestHashMapEdgeCases:
         assert strategy.is_empty
 
     def test_large_dataset_10k(self, large_dataset):
-        """Test with 10,000 items."""
+        """Test with large dataset (scaled via XWNODE_TEST_SCALE)."""
         strategy = HashMapStrategy()
         for k, v in large_dataset.items():
             strategy.put(k, v)
-        assert len(strategy) == 10000
-        assert strategy.get("key_5000") == "value_5000"
+        n = len(large_dataset)
+        assert len(strategy) == n
+        mid_key = f"key_{n // 2}"
+        if mid_key in large_dataset:
+            assert strategy.get(mid_key) == large_dataset[mid_key]
 
     def test_unicode_keys(self, multilingual_data):
         """Test Unicode and emoji keys."""

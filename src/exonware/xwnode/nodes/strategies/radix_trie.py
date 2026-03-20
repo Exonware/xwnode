@@ -5,7 +5,7 @@ Radix Trie Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 16-Jan-2026
 """
 
@@ -103,8 +103,17 @@ prefix-based operations.
         self._total_nodes += 1
         return new_node
 
-    def _insert_recursive(self, node: RadixTrieNode, key: str, value: Any, depth: int = 0) -> RadixTrieNode:
+    def _insert_recursive(
+        self,
+        node: RadixTrieNode,
+        key: str,
+        value: Any,
+        depth: int = 0,
+        full_key: str | None = None
+    ) -> RadixTrieNode:
         """Recursively insert key-value pair."""
+        if full_key is None:
+            full_key = key
         self._max_depth = max(self._max_depth, depth)
         if not key:
             # Reached end of key
@@ -112,7 +121,7 @@ prefix-based operations.
                 self._size += 1
             node.is_terminal = True
             node.value = value
-            node.key = key
+            node.key = full_key
             return node
         # Find matching child
         first_char = key[0]
@@ -121,7 +130,7 @@ prefix-based operations.
             new_node = RadixTrieNode(key)
             new_node.is_terminal = True
             new_node.value = value
-            new_node.key = key
+            new_node.key = full_key
             node.children[first_char] = new_node
             self._total_nodes += 1
             self._size += 1
@@ -133,7 +142,7 @@ prefix-based operations.
         if common_prefix_len == len(edge_label):
             # Key matches or extends beyond edge label
             remaining_key = key[common_prefix_len:]
-            self._insert_recursive(child, remaining_key, value, depth + 1)
+            self._insert_recursive(child, remaining_key, value, depth + 1, full_key)
         elif common_prefix_len == len(key):
             # Key is prefix of edge label - need to split
             split_node = self._split_node(child, common_prefix_len)
@@ -141,14 +150,14 @@ prefix-based operations.
                 self._size += 1
             split_node.is_terminal = True
             split_node.value = value
-            split_node.key = key
+            split_node.key = full_key
             node.children[first_char] = split_node
         else:
             # Partial match - need to split and create branch
             split_node = self._split_node(child, common_prefix_len)
             # Insert remaining key
             remaining_key = key[common_prefix_len:]
-            self._insert_recursive(split_node, remaining_key, value, depth + 1)
+            self._insert_recursive(split_node, remaining_key, value, depth + 1, full_key)
             node.children[first_char] = split_node
         return node
 

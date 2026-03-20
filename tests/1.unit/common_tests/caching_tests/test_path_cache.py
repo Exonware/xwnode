@@ -10,7 +10,7 @@ Generation Date: 07-Sep-2025
 """
 
 import pytest
-from exonware.xwnode.common.caching.path_cache import PathNavigationCache
+from exonware.xwnode.common.caching.path_nav import PathNavigationCache
 @pytest.mark.xwnode_unit
 @pytest.mark.xwnode_performance
 

@@ -5,7 +5,7 @@ B-Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 16-Jan-2026
 """
 
@@ -410,15 +410,15 @@ class BTreeStrategy(ANodeTreeStrategy):
     # B-TREE SPECIFIC OPERATIONS
     # ============================================================================
 
-    def range_query(self, start_key: str, end_key: str) -> list[tuple[str, Any]]:
+    def range_query(self, start_key: str, end_key: str) -> list[str]:
         """
-        Get all key-value pairs in the specified range [start_key, end_key].
+        Get all keys in the specified range [start_key, end_key].
         Time Complexity: O(log n + k) where k is result size
         """
-        result = []
+        result: list[str] = []
         for key, value in self.items():
             if start_key <= key <= end_key:
-                result.append((key, value))
+                result.append(key)
             elif key > end_key:
                 break
         return result

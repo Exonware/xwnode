@@ -11,7 +11,7 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 22-Oct-2025
 """
 
@@ -735,6 +735,17 @@ class ANodeTreeStrategy(ANodeGraphStrategy):
     def get_max(self) -> Any:
         """Get maximum key."""
         pass
+
+    def range_query(self, start_key: Any, end_key: Any) -> list[Any]:
+        """
+        Return keys in the inclusive range [start_key, end_key].
+        Default implementation works for any tree strategy that exposes ordered keys().
+        """
+        start = str(start_key)
+        end = str(end_key)
+        if start > end:
+            start, end = end, start
+        return [key for key in self.keys() if start <= str(key) <= end]
     # Tree behavioral views (optional)
     @abstractmethod
 

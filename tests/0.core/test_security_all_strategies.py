@@ -144,9 +144,9 @@ class TestResourceLimitEnforcement:
 
     def test_max_nodes_limit(self):
         """Test that maximum node count limit is enforced."""
-        # Attempt to create extremely large structure
+        from tests.scale_config import scaled
         try:
-            large_data = {f'key{i}': f'value{i}' for i in range(2_000_000)}
+            large_data = {f'key{i}': f'value{i}' for i in range(scaled(2_000_000))}
             node = XWNode.from_native(large_data)
             # Should handle or limit gracefully
             assert node is not None or True
@@ -185,8 +185,8 @@ class TestMemorySafety:
     def test_memory_leak_prevention(self):
         """Test that operations don't cause memory leaks."""
         import gc
-        # Create and destroy many nodes
-        for i in range(1000):
+        from tests.scale_config import MEDIUM_SIZE
+        for i in range(MEDIUM_SIZE):
             node = XWNode.from_native({'data': f'value{i}'})
             del node
         # Force garbage collection

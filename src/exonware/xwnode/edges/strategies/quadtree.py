@@ -184,7 +184,8 @@ class QuadTreeStrategy(AEdgeStrategy):
         self._spatial_edges: set[tuple[str, str]] = set()  # Edges based on spatial proximity
         # Performance tracking
         self._edge_count = 0
-        self._spatial_threshold = options.get('spatial_threshold', 50.0)  # Auto-connect distance
+        # Keep default deterministic: do not auto-connect unless explicitly enabled.
+        self._spatial_threshold = options.get('spatial_threshold', 0.0)  # Auto-connect distance
 
     def get_supported_traits(self) -> EdgeTrait:
         """Get the traits supported by the quadtree strategy."""
@@ -369,8 +370,21 @@ class QuadTreeStrategy(AEdgeStrategy):
         """Update vertex position."""
         self.add_spatial_vertex(vertex, x, y)
 
-    def query_range(self, x: float, y: float, width: float, height: float) -> list[str]:
+    def query_range(
+        self,
+        x: float | tuple[float, float, float, float],
+        y: float | None = None,
+        width: float | None = None,
+        height: float | None = None
+    ) -> list[str]:
         """Query vertices within rectangular range."""
+        if y is None and width is None and height is None:
+            if isinstance(x, (tuple, list)) and len(x) == 4:
+                x, y, width, height = x  # type: ignore[misc]
+            else:
+                raise TypeError("query_range expects (x, y, width, height) or a 4-tuple")
+        if y is None or width is None or height is None:
+            raise TypeError("query_range requires x, y, width, and height")
         points = self._root.query_range(x, y, width, height)
         return [vertex_id for _, _, vertex_id in points]
 

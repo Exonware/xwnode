@@ -6,7 +6,7 @@ Implements Ted Dunning's T-Digest algorithm for accurate percentiles.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 27-Oct-2025
 """
 
@@ -218,30 +218,26 @@ class TDigestStrategy(ANodeStrategy):
         """
         if len(self._centroids) <= self._compression:
             return
-        # Sort by mean
+        # Sort by mean so each merged block remains locally coherent.
         self._centroids.sort(key=lambda c: c.mean)
-        # Merge centroids using T-Digest algorithm
-        compressed = []
-        current = None
-        for centroid in self._centroids:
-            if current is None:
-                current = _Centroid(centroid.mean, centroid.weight)
-            else:
-                # Check if we should merge
-                q = len(compressed) / self._compression
-                k = self._compression * self._scale_function(q)
-                if current.weight + centroid.weight <= k:
-                    # Merge
-                    total_weight = current.weight + centroid.weight
-                    current.mean = (current.mean * current.weight + centroid.mean * centroid.weight) / total_weight
-                    current.weight = total_weight
-                else:
-                    # Start new centroid
-                    compressed.append(current)
-                    current = _Centroid(centroid.mean, centroid.weight)
-        if current is not None:
-            compressed.append(current)
-        self._centroids = compressed
+
+        # Use deterministic block compression:
+        # keep at most `compression` centroids by merging contiguous ranges.
+        # This avoids pathological over-merging and preserves quantile shape.
+        target = max(1, self._compression)
+        n = len(self._centroids)
+        block_size = max(1, math.ceil(n / target))
+
+        compressed: list[_Centroid] = []
+        for i in range(0, n, block_size):
+            block = self._centroids[i:i + block_size]
+            total_weight = sum(c.weight for c in block)
+            if total_weight <= 0:
+                continue
+            weighted_mean = sum(c.mean * c.weight for c in block) / total_weight
+            compressed.append(_Centroid(weighted_mean, total_weight))
+
+        self._centroids = compressed[:target]
 
     def _scale_function(self, q: float) -> float:
         """
@@ -324,6 +320,6 @@ class TDigestStrategy(ANodeStrategy):
         with self._lock:
             return {
                 'compression': self._compression,
-                'count': self._count,
+                'count': self._total_weight,
                 'centroids': [(c.mean, c.weight) for c in self._centroids]
             }

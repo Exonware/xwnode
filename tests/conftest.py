@@ -10,6 +10,7 @@ Version: 0.0.1
 Generation Date: 12-Oct-2025
 """
 
+import os
 import pytest
 from pathlib import Path
 import sys
@@ -20,6 +21,9 @@ from typing import Any
 # Ensure src is in path for imports
 from collections.abc import Callable
 src_path = Path(__file__).parent.parent / "src"
+
+# Test scale: import from shared config (tests/scale_config.py)
+from tests.scale_config import scaled as _scaled, STRESS_SIZE, LARGE_SIZE, MEDIUM_SIZE
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 # ============================================================================
@@ -112,8 +116,9 @@ def simple_list_data():
 @pytest.fixture
 
 def large_dataset():
-    """Large dataset for performance testing (10,000 items)."""
-    return {f'key_{i}': f'value_{i}' for i in range(10000)}
+    """Large dataset for performance testing (scaled: default 100 items)."""
+    n = _scaled(10000)
+    return {f'key_{i}': f'value_{i}' for i in range(n)}
 @pytest.fixture
 
 def edge_cases():
@@ -460,11 +465,16 @@ def measure_memory():
         Returns:
             Tuple of (result, peak_memory_bytes)
         """
-        tracemalloc.start()
-        result = operation()
-        current, peak = tracemalloc.get_traced_memory()
+        # If tracing was already on, start() is a no-op and peak accumulates
+        # across the whole session — stop first so each test gets a fresh peak.
         tracemalloc.stop()
-        return result, peak
+        tracemalloc.start()
+        try:
+            result = operation()
+            _current, peak = tracemalloc.get_traced_memory()
+            return result, peak
+        finally:
+            tracemalloc.stop()
     return _measure
 @pytest.fixture
 
@@ -556,10 +566,11 @@ def strategy_factory():
 
 def stress_dataset():
     """
-    100,000 item dataset for stress testing.
-    Following GUIDELINES_TEST.md for stress test validation.
+    Stress test dataset (scaled: default 1000 items).
+    Set XWNODE_TEST_SCALE=1 for full 100k stress.
     """
-    return {f"key_{i}": f"value_{i}" for i in range(100000)}
+    n = _scaled(100000)
+    return {f"key_{i}": f"value_{i}" for i in range(n)}
 # ============================================================================
 # EDGE STRATEGY FIXTURES
 # ============================================================================

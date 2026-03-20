@@ -20,6 +20,9 @@ from exonware.xwnode.common.caching import (
     TTLCacheAdapter,
     TwoTierCacheAdapter,
     NoCacheAdapter,
+    XWSystemCacheAdapter,
+    create_adapter_for_strategy,
+    list_xwsystem_cache_types,
     get_telemetry_collector,
     reset_telemetry
 )
@@ -91,6 +94,16 @@ class TestCacheAdapters:
         assert stats.misses == 1
         assert stats.hit_rate == 0.5
         assert stats.size == 2
+
+    def test_xwsystem_strategy_passthrough_optimized_lfu(self):
+        """Any CacheFactory type (e.g. optimized_lfu) builds XWSystemCacheAdapter."""
+        cache = create_adapter_for_strategy(
+            "optimized_lfu", 20, namespace="test_opt"
+        )
+        assert isinstance(cache, XWSystemCacheAdapter)
+        cache.put("k", 1)
+        assert cache.get("k") == 1
+        assert "optimized_lfu" in list_xwsystem_cache_types()
 
     def test_pattern_invalidation(self):
         """Test pattern-based cache invalidation."""

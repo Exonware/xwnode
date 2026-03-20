@@ -6,7 +6,7 @@
 # Generation Date: February 2, 2025
 #
 # This file contains all dependencies needed for xwnode
-# Compatible with Python 3.8+ for maximum compatibility
+# Requires Python 3.12+
 #
 # Usage:
 #   pip install -r requirements.txt
@@ -17,7 +17,7 @@
 # =============================================================================
 # CORE DEPENDENCIES (REQUIRED)
 # =============================================================================
-# Source size (src/*): ~2.51 MB
+# Source size (src/*): ~2.50 MB
 pip                     # Package installer (CI and lazy install)
 
 # eXonware ecosystem dependencies (xwnode requires xwsystem)
@@ -70,9 +70,8 @@ mypy>=0.950                          # Static type checking
 # =============================================================================
 #
 # Python Version Compatibility:
-# - Minimum: Python 3.8 (for maximum compatibility)
-# - Recommended: Python 3.8+ for best compatibility
-# - Tested: Python 3.8, 3.9, 3.10, 3.11, 3.12
+# - Minimum: Python 3.12
+# - Tested: Python 3.12+
 #
 # Platform Compatibility:
 # - Windows: Full support
@@ -98,3 +97,14 @@ mypy>=0.950                          # Static type checking
 #
 # Expected output:
 #   🎉 SUCCESS! exonware.xwnode is ready to use!
+cython
+uarray
+pandas
+pyarrow
+cloudpickle
+numexpr
+bottleneck
+lark
+regex
+atomicwrites
+interegular

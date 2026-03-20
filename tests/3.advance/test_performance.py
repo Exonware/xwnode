@@ -21,19 +21,18 @@ class TestPerformanceExcellence:
 
     def test_response_time_benchmarks(self):
         """Validate response time benchmarks."""
-        # Test node creation performance
+        from tests.scale_config import MEDIUM_SIZE
         start = time.time()
-        for i in range(1000):
+        for i in range(MEDIUM_SIZE):
             node = XWNode({"key": i, "value": f"data_{i}"})
         elapsed = time.time() - start
-        # 1000 node creations should complete in < 5 seconds (relaxed for CI/slower machines)
-        assert elapsed < 5.0, f"Node creation too slow: {elapsed:.3f}s for 1000 nodes"
+        assert elapsed < 5.0, f"Node creation too slow: {elapsed:.3f}s for {MEDIUM_SIZE} nodes"
 
     def test_memory_usage(self):
         """Validate memory usage and leak prevention."""
         import gc
-        # Create large dataset
-        large_data = {f"key_{i}": f"value_{i}" * 10 for i in range(10000)}
+        from tests.scale_config import LARGE_SIZE
+        large_data = {f"key_{i}": f"value_{i}" * 10 for i in range(LARGE_SIZE)}
         # Measure memory before
         gc.collect()
         before_size = sys.getsizeof(large_data)
@@ -48,8 +47,9 @@ class TestPerformanceExcellence:
 
     def test_scalability(self):
         """Validate scalability under load."""
-        # Test with increasing dataset sizes
-        for size in [100, 1000, 10000]:
+        from tests.scale_config import scaled
+        for size in [scaled(100), scaled(1000), scaled(10000)]:
+            size = max(10, size)
             data = {f"key_{i}": f"value_{i}" for i in range(size)}
             start = time.time()
             node = XWNode(data)
@@ -88,8 +88,8 @@ class TestPerformanceExcellence:
     def test_resource_management(self):
         """Validate efficient resource management."""
         import gc
-        # Create and destroy many nodes
-        for i in range(100):
+        from tests.scale_config import scaled
+        for i in range(scaled(100)):
             node = XWNode({"id": i, "data": f"value_{i}"})
             del node
         # Force garbage collection

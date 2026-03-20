@@ -9,11 +9,12 @@ This module provides the enhanced StrategyManager class that integrates:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 07-Sep-2025
 """
 
 from __future__ import annotations
+import copy
 import time
 import threading
 from typing import Any
@@ -639,17 +640,38 @@ class StrategyManager:
         self._options['has_numeric_indices'] = isinstance(data, (list, tuple))
         self._materialize_node_strategy()
         if self._node_strategy is not None:
-            # Clear shared flyweight strategy so len/size reflect only this node's data
-            if hasattr(self._node_strategy, 'clear'):
-                self._node_strategy.clear()
+            # Never mutate the shared flyweight instance in-place.
+            # Clone a per-node strategy instance, then populate it with this node's data.
+            try:
+                node_strategy = copy.deepcopy(self._node_strategy)
+            except Exception:
+                # Some strategies contain non-copyable primitives (e.g., RLock).
+                # Build a fresh same-mode instance as a safe per-node strategy.
+                current_mode = self._get_current_node_mode() or self._node_mode_requested
+                if current_mode == NodeMode.AUTO:
+                    current_mode = self._select_node_mode_enhanced()
+                strategy_class = self._registry.get_node_strategy_class(current_mode)
+                try:
+                    node_strategy = strategy_class(
+                        mode=current_mode,
+                        traits=self._node_traits,
+                        **self._options
+                    )
+                except Exception:
+                    try:
+                        node_strategy = strategy_class(**self._options)
+                    except Exception:
+                        node_strategy = strategy_class()
+            if hasattr(node_strategy, 'clear'):
+                node_strategy.clear()
             # Populate existing strategy with data instead of creating new instance
             if isinstance(data, dict):
                 for key, value in data.items():
-                    self._node_strategy.insert(key, value)
+                    node_strategy.insert(key, value)
             elif isinstance(data, (list, tuple)):
                 for i, value in enumerate(data):
-                    self._node_strategy.insert(i, value)
-            return self._node_strategy
+                    node_strategy.insert(i, value)
+            return node_strategy
         else:
             # This should never happen if _materialize_node_strategy() worked correctly
             raise XWNodeError(

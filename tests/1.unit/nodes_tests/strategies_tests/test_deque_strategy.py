@@ -148,9 +148,12 @@ class TestDequeStrategyEdgeCases:
         """Test operations on empty deque."""
         with pytest.raises(IndexError):
             empty_deque.pop()
-        assert empty_deque.popleft() is None
-        assert empty_deque.peek_left() is None
-        assert empty_deque.peek_right() is None
+        with pytest.raises(IndexError):
+            empty_deque.popleft()
+        with pytest.raises(IndexError):
+            empty_deque.peek_left()
+        with pytest.raises(IndexError):
+            empty_deque.peek_right()
 
     def test_single_item_deque(self, empty_deque):
         """Test deque with single item."""

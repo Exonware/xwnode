@@ -5,7 +5,7 @@ Set Tree Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 16-Jan-2026
 """
 
@@ -388,6 +388,42 @@ ions, and range queries.
             else:
                 if start_norm < key < end_norm:
                     result.append(key)
+        return result
+
+    def union(self, other: SetTreeStrategy) -> SetTreeStrategy:
+        """Return a new set containing keys from both sets."""
+        result = SetTreeStrategy(
+            case_sensitive=self.case_sensitive,
+            allow_duplicates=False,
+        )
+        for key in self.keys():
+            result.add(key)
+        for key in other.keys():
+            result.add(key)
+        return result
+
+    def intersection(self, other: SetTreeStrategy) -> SetTreeStrategy:
+        """Return a new set containing keys present in both sets."""
+        result = SetTreeStrategy(
+            case_sensitive=self.case_sensitive,
+            allow_duplicates=False,
+        )
+        other_keys = set(other.keys())
+        for key in self.keys():
+            if key in other_keys:
+                result.add(key)
+        return result
+
+    def difference(self, other: SetTreeStrategy) -> SetTreeStrategy:
+        """Return a new set containing keys in this set but not in other."""
+        result = SetTreeStrategy(
+            case_sensitive=self.case_sensitive,
+            allow_duplicates=False,
+        )
+        other_keys = set(other.keys())
+        for key in self.keys():
+            if key not in other_keys:
+                result.add(key)
         return result
 
     def lower_bound(self, key: str) -> str | None:

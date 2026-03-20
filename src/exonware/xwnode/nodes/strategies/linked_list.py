@@ -5,7 +5,7 @@ Linked List Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 16-Jan-2026
 """
 
@@ -201,6 +201,19 @@ class LinkedListStrategy(ANodeLinearStrategy):
             yield (current.key, current.value)
             current = current.next
 
+    def get_at(self, index: int) -> Any:
+        """Get value at zero-based index, or None when out of bounds."""
+        if index < 0 or index >= self._size:
+            return None
+        current_index = 0
+        current = self._head.next
+        while current != self._tail:
+            if current_index == index:
+                return current.value
+            current_index += 1
+            current = current.next
+        return None
+
     def __len__(self) -> int:
         """
         Get number of items.
@@ -208,12 +221,12 @@ class LinkedListStrategy(ANodeLinearStrategy):
         """
         return self._size
 
-    def to_native(self) -> list[Any]:
+    def to_native(self) -> dict[str, Any]:
         """
-        Convert to native Python list.
+        Convert to native Python dict preserving linked-list order.
         Time Complexity: O(n)
         """
-        return list(self.values())
+        return dict(self.items())
     # ============================================================================
     # ASYNC API - Lightweight wrappers (NO lock overhead, v0.0.1.28b)
     # ============================================================================

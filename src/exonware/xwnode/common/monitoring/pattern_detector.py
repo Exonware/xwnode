@@ -8,7 +8,7 @@ selection with sophisticated heuristics.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 07-Sep-2025
 """
 
@@ -327,22 +327,16 @@ class DataPatternDetector:
             return False
         # Find common prefixes
         common_prefixes = set()
-        for i, key1 in enumerate(keys):
-            for key2 in keys[i+1:]:
-                prefix = self._common_prefix(key1, key2)
-                if len(prefix) > 2:  # Meaningful prefix
-                    common_prefixes.add(prefix)
+        sample = keys[:50]
+        for i, key1 in enumerate(sample):
+            for key2 in sample[i+1:]:
+                end = min(len(key1), len(key2))
+                j = 0
+                while j < end and key1[j] == key2[j]:
+                    j += 1
+                if j > 2:
+                    common_prefixes.add(key1[:j])
         return len(common_prefixes) > 0
-
-    def _common_prefix(self, str1: str, str2: str) -> str:
-        """Find common prefix between two strings."""
-        prefix = ""
-        for i in range(min(len(str1), len(str2))):
-            if str1[i] == str2[i]:
-                prefix += str1[i]
-            else:
-                break
-        return prefix
 
     def _is_hierarchical(self, data: Any, max_check: int = 5) -> bool:
         """Check if data has hierarchical structure."""

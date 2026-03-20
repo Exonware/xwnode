@@ -305,8 +305,8 @@ class TestNodeStrategySecurity:
 
     def test_resource_limits(self, mode):
         """Test that resource limits are enforced."""
-        # Create large data structure
-        large_data = {f'key{i}': f'value{i}' for i in range(1000)}
+        from tests.scale_config import MEDIUM_SIZE
+        large_data = {f'key{i}': f'value{i}' for i in range(MEDIUM_SIZE)}
         node = XWNode.from_native(large_data)
         # Should handle large data without crashes
         assert node is not None
@@ -322,8 +322,9 @@ class TestNodeStrategyPerformance:
     def test_hash_map_o1_complexity(self):
         """Test that HASH_MAP provides O(1) operations."""
         import time
-        # Test with increasing data sizes
-        for size in [100, 1000, 10000]:
+        from tests.scale_config import scaled
+        for size in [scaled(100), scaled(1000), scaled(10000)]:
+            size = max(10, size)
             data = {f'key{i}': f'value{i}' for i in range(size)}
             node = XWNode.from_native(data)
             # Measure lookup time
@@ -336,7 +337,8 @@ class TestNodeStrategyPerformance:
 
     def test_array_list_sequential_access(self):
         """Test ARRAY_LIST sequential access performance."""
-        data = list(range(1000))
+        from tests.scale_config import MEDIUM_SIZE
+        data = list(range(MEDIUM_SIZE))
         node = XWNode.from_native(data)
         # Test sequential iteration
         count = 0

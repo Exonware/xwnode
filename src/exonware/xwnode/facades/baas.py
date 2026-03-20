@@ -4,7 +4,7 @@ BaaS facade for xwnode BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 01-Jan-2026
 """
 
@@ -22,7 +22,7 @@ from ..common.spatial.index_manager import SpatialIndexManager
 from ..common.spatial.geofence import GeofenceIndex
 from ..common.spatial.contracts import ISpatialIndexManager, IGeofenceIndex
 # Caching
-from ..common.caching.strategy_manager import CacheStrategyManager, CacheMetrics
+from ..common.caching.strategy import CacheStrategyManager, CacheMetrics
 from ..common.caching.contracts import ICacheStrategyManager, ICacheMetrics, ICacheAdapter
 
 

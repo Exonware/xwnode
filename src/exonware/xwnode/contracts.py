@@ -9,7 +9,7 @@ Strategy interfaces are in their respective strategy folders:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 24-Oct-2025
 Version History:
 - v0.0.1.29: GUIDELINES Architecture (separated interface/implementation)
@@ -22,6 +22,7 @@ from collections.abc import Iterator
 from typing import Protocol, runtime_checkable
 from typing import Any, TypeVar
 from collections.abc import Callable
+from enum import Enum, IntFlag, auto
 # Import enums from defs.py
 from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 # Type variables for generic types
@@ -29,6 +30,81 @@ from .defs import NodeMode, EdgeMode, NodeTrait, EdgeTrait
 # P: Edge property type - the type of values in edge property dictionaries (e.g., str, dict[str, Any], Any)
 T = TypeVar('T')  # Value type for nodes
 P = TypeVar('P')  # Property type for edges
+
+# ==============================================================================
+# QUERY COMPATIBILITY TYPES (legacy xwquery imports)
+# ==============================================================================
+class QueryMode(str, Enum):
+    """Compatibility enum for query strategy mode selection."""
+    AUTO = "AUTO"
+    SQL = "SQL"
+    XPATH = "XPATH"
+    XQUERY = "XQUERY"
+    XML_QUERY = "XML_QUERY"
+    SPARQL = "SPARQL"
+    PROMQL = "PROMQL"
+    PIG = "PIG"
+    PARTIQL = "PARTIQL"
+    N1QL = "N1QL"
+    MQL = "MQL"
+    LOGQL = "LOGQL"
+    LINQ = "LINQ"
+    KQL = "KQL"
+    JSON_QUERY = "JSON_QUERY"
+    JSONIQ = "JSONIQ"
+    JQ = "JQ"
+    JMESPATH = "JMESPATH"
+    HQL = "HQL"
+    HIVEQL = "HIVEQL"
+    GREMLIN = "GREMLIN"
+    GRAPHQL = "GRAPHQL"
+    GQL = "GQL"
+    FLUX = "FLUX"
+    EQL = "EQL"
+    ELASTIC_DSL = "ELASTIC_DSL"
+    DATALOG = "DATALOG"
+    CYPHER = "CYPHER"
+    CQL = "CQL"
+
+
+class QueryTrait(IntFlag):
+    """Compatibility bitflags for query capabilities."""
+    NONE = 0
+    STRUCTURED = auto()
+    ANALYTICAL = auto()
+    BATCH = auto()
+    DOCUMENT = auto()
+    GRAPH = auto()
+    TEMPORAL = auto()
+    STREAMING = auto()
+    SEARCH = auto()
+    TIME_SERIES = auto()
+    UNSTRUCTURED = auto()
+    TRANSACTIONAL = auto()
+
+
+@runtime_checkable
+class iQuery(Protocol):
+    """Legacy query protocol compatibility alias."""
+    def execute(self, query: str, **kwargs: Any) -> Any:
+        ...
+
+
+@runtime_checkable
+class iQueryResult(Protocol):
+    """Legacy query result protocol compatibility alias."""
+    def to_native(self) -> Any:
+        ...
+
+
+@runtime_checkable
+class IQueryStrategy(Protocol):
+    """Legacy query strategy protocol compatibility alias."""
+    def execute(self, query: str, **kwargs: Any) -> Any:
+        ...
+
+    def validate_query(self, query: str) -> bool:
+        ...
 # ==============================================================================
 # NODE FACADE INTERFACE
 # ==============================================================================

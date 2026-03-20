@@ -212,7 +212,10 @@ class NeuralGraphStrategy(AEdgeStrategy):
 
     def __init__(self, traits: EdgeTrait = EdgeTrait.NONE, **options):
         """Initialize the Neural Graph strategy."""
-        super().__init__(EdgeMode.NEURAL_GRAPH, traits, **options)
+        effective_traits = traits
+        if effective_traits == EdgeTrait.NONE:
+            effective_traits = EdgeTrait.DIRECTED | EdgeTrait.WEIGHTED | EdgeTrait.SPARSE
+        super().__init__(EdgeMode.NEURAL_GRAPH, effective_traits, **options)
         self.default_learning_rate = options.get('learning_rate', 0.01)
         self.enable_autodiff = options.get('enable_autodiff', True)
         self.batch_size = options.get('batch_size', 32)
@@ -321,6 +324,22 @@ class NeuralGraphStrategy(AEdgeStrategy):
             if edge.target == target:
                 return edge.to_dict()
         return None
+
+    def get_edge_weight(self, source: str, target: str) -> float:
+        """Get edge weight for a neural connection."""
+        for edge_id in self._outgoing.get(source, []):
+            edge = self._edges[edge_id]
+            if edge.target == target:
+                return edge.weight
+        return 1.0
+
+    def set_edge_weight(self, source: str, target: str, weight: float) -> None:
+        """Set edge weight for a neural connection."""
+        for edge_id in self._outgoing.get(source, []):
+            edge = self._edges[edge_id]
+            if edge.target == target:
+                edge.weight = float(weight)
+                return
 
     def neighbors(self, vertex: str, direction: str = 'out') -> Iterator[str]:
         """Get neighbors of vertex."""

@@ -10,7 +10,7 @@ using Python's built-in dictionary.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 24-Oct-2025
 """
 
@@ -114,7 +114,8 @@ class HashMapStrategy(AKeyValueStrategy):
         Time Complexity: O(1) for simple keys, O(depth) for nested paths
         """
         self._get_count += 1
-        # Handle simple key lookup
+        if not isinstance(path, str):
+            return self._data.get(str(path), default)
         if '.' not in path:
             return self._data.get(path, default)
         # Handle path navigation
@@ -179,11 +180,36 @@ class HashMapStrategy(AKeyValueStrategy):
         current = self._data
         # Navigate to the parent of the target
         for part in parts[:-1]:
+            if isinstance(current, list):
+                try:
+                    index = int(part)
+                except (TypeError, ValueError):
+                    raise TypeError(f"List path segment must be integer index, got '{part}'")
+                if index < 0:
+                    raise IndexError("Negative list indices are not supported in path put")
+                while len(current) <= index:
+                    current.append({})
+                if not isinstance(current[index], (dict, list)):
+                    current[index] = {}
+                current = current[index]
+                continue
             if part not in current:
                 current[part] = {}
             current = current[part]
         # Set the value
-        current[parts[-1]] = value
+        last_part = parts[-1]
+        if isinstance(current, list):
+            try:
+                index = int(last_part)
+            except (TypeError, ValueError):
+                raise TypeError(f"List path segment must be integer index, got '{last_part}'")
+            if index < 0:
+                raise IndexError("Negative list indices are not supported in path put")
+            while len(current) <= index:
+                current.append(None)
+            current[index] = value
+        else:
+            current[last_part] = value
         return self
     # ============================================================================
     # Alternative API (insert/find/size/is_empty/get_mode)

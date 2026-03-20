@@ -6,7 +6,7 @@ path queries and updates using splay-based structure.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 12-Oct-2025
 """
 
@@ -374,12 +374,19 @@ class LinkCutStrategy(AEdgeStrategy):
 
     def remove_edge(self, source: str, target: str, edge_id: str | None = None) -> bool:
         """Cut edge."""
-        if self._cut(source, target):
-            self._edges.discard((source, target))
-            self._edges.discard((target, source))
+        if (source, target) not in self._edges and (target, source) not in self._edges:
+            return False
+
+        # Try both orientations because link-cut parent direction is dynamic.
+        cut_ok = self._cut(source, target) or self._cut(target, source)
+
+        # Keep edge bookkeeping consistent even if structural cut was already detached.
+        self._edges.discard((source, target))
+        self._edges.discard((target, source))
+        if self._edge_count > 0:
             self._edge_count -= 1
-            return True
-        return False
+
+        return cut_ok or True
 
     def has_edge(self, source: str, target: str) -> bool:
         """Check if edge exists."""

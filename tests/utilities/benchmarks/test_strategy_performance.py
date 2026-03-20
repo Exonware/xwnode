@@ -176,7 +176,7 @@ class TestPerformanceMetadataValidation:
         metadata = NODE_STRATEGY_METADATA.get(NodeMode.B_TREE)
         if metadata:
             # Claim: "10-100x faster disk I/O"
-            assert "faster disk I/O" in metadata.performance_gain.lower()
+            assert "faster disk i/o" in metadata.performance_gain.lower()
 # ============================================================================
 # COMPARATIVE BENCHMARKS
 # ============================================================================

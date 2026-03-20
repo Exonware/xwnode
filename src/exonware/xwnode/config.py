@@ -19,31 +19,35 @@ _config_lock = threading.Lock()
 _config: XWNodeConfig | None = None
 
 
-def _get_env_var(key: str, default: str, target_type: type):
+def _get_env_var(key: str, default: str, target_type: type | str):
     """
     Safely retrieve and cast an environment variable.
     Args:
         key: The environment variable name.
         default: The default value (as a string).
         target_type: The type to cast the value to (int, float, bool).
+                     May be a string due to ``from __future__ import annotations``.
     Returns:
         The casted value.
     Raises:
         xNodeValueError: If the environment variable has an invalid value.
     """
     value = os.getenv(key, default)
+    type_name = target_type if isinstance(target_type, str) else getattr(target_type, '__name__', '')
     try:
-        if target_type is bool:
-            return value.lower() in ('true', '1', 'yes', 'y', 't')
-        if target_type is int:
+        if target_type is bool or type_name == 'bool':
+            if isinstance(value, bool):
+                return value
+            return str(value).lower() in ('true', '1', 'yes', 'y', 't')
+        if target_type is int or type_name == 'int':
             return int(value)
-        if target_type is float:
+        if target_type is float or type_name == 'float':
             return float(value)
         return value
     except (ValueError, TypeError) as e:
         raise XWNodeValueError(
             f"Invalid value for environment variable {key}: '{value}'. "
-            f"Could not convert to {target_type.__name__}."
+            f"Could not convert to {type_name}."
         ) from e
 @dataclass
 
@@ -78,18 +82,18 @@ class XWNodeConfig:
     # --- Cache System Configuration (NEW in v0.0.1.29) ---
     # Global cache control
     enable_global_caching: bool = True
-    global_cache_strategy: str = "lru"  # lru, lfu, ttl, two_tier
+    global_cache_strategy: str = "xwsystem"  # xwsystem default or any xwsystem CacheFactory type
     global_cache_size: int = 1000
     # Component-level cache control
     enable_graph_caching: bool = True
     graph_cache_size: int = 1000
-    graph_cache_strategy: str = "lru"
+    graph_cache_strategy: str = "xwsystem"
     enable_traversal_caching: bool = True
     traversal_cache_size: int = 500
-    traversal_cache_strategy: str = "lru"
+    traversal_cache_strategy: str = "xwsystem"
     enable_query_caching: bool = True
     query_cache_size: int = 2000
-    query_cache_strategy: str = "lru"
+    query_cache_strategy: str = "xwsystem"
     # Two-tier cache settings (memory + disk)
     enable_disk_cache: bool = False
     disk_cache_size: int = 10000
@@ -149,16 +153,23 @@ class XWNodeConfig:
             raise XWNodeValueError("cache_ttl_seconds must be positive")
         if not (0.0 <= self.cache_hit_threshold <= 1.0):
             raise XWNodeValueError("cache_hit_threshold must be between 0.0 and 1.0")
-        # Validate cache strategy values
-        valid_strategies = {"lru", "lfu", "ttl", "two_tier", "none"}
-        if self.global_cache_strategy not in valid_strategies:
-            raise XWNodeValueError(f"global_cache_strategy must be one of {valid_strategies}")
-        if self.graph_cache_strategy not in valid_strategies:
-            raise XWNodeValueError(f"graph_cache_strategy must be one of {valid_strategies}")
-        if self.traversal_cache_strategy not in valid_strategies:
-            raise XWNodeValueError(f"traversal_cache_strategy must be one of {valid_strategies}")
-        if self.query_cache_strategy not in valid_strategies:
-            raise XWNodeValueError(f"query_cache_strategy must be one of {valid_strategies}")
+        # Cache strategies: any xwsystem CacheFactory type + xwnode aliases (see list_xwsystem_cache_types)
+        from .common.caching.policy import cache_strategy_is_allowed
+
+        for field in (
+            "global_cache_strategy",
+            "graph_cache_strategy",
+            "traversal_cache_strategy",
+            "query_cache_strategy",
+        ):
+            val = getattr(self, field)
+            if not cache_strategy_is_allowed(val):
+                raise XWNodeValueError(
+                    f"{field}={val!r} is not a valid cache strategy. "
+                    "Use an xwsystem cache type (e.g. pylru, optimized_lfu, memory_bounded_lru, "
+                    "secure_lru) or an xwnode alias (xwsystem, two_tier, none, fifo). "
+                    "See exonware.xwnode.common.caching.list_xwsystem_cache_types()."
+                )
 
 
 def get_config() -> XWNodeConfig:

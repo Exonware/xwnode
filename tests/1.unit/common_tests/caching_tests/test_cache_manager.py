@@ -9,7 +9,7 @@ Generation Date: 01-Jan-2026
 """
 
 import pytest
-from exonware.xwnode.common.caching.strategy_manager import CacheStrategyManager, CacheMetrics
+from exonware.xwnode.common.caching.strategy import CacheStrategyManager, CacheMetrics
 from exonware.xwnode.common.caching.contracts import ICacheStrategyManager, ICacheMetrics, ICacheAdapter
 @pytest.mark.xwnode_unit
 

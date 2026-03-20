@@ -201,12 +201,13 @@ class TestRedBlackTreeSpecificFeatures:
         assert stats['total_rotations'] > 0
 
     def test_large_dataset(self):
-        """Test with large dataset."""
+        """Test with large dataset (scaled via XWNODE_TEST_SCALE)."""
+        from tests.scale_config import MEDIUM_SIZE
+        n = MEDIUM_SIZE
         strategy = RedBlackTreeStrategy()
-        # Insert 1000 elements
-        for i in range(1000):
+        for i in range(n):
             strategy.put(f"key{i:04d}", i)
-        assert len(strategy) == 1000
+        assert len(strategy) == n
         assert strategy.is_valid_rb_tree()
         # Height should be logarithmic
         height = strategy.get_height()
@@ -229,14 +230,15 @@ class TestRedBlackTreePerformance:
     def test_time_complexity_validation(self):
         """Validate that operations complete in reasonable time."""
         import time
-        # Test that search is fast even with large dataset
+        from tests.scale_config import LARGE_SIZE, scaled
+        n = LARGE_SIZE
         strategy = RedBlackTreeStrategy()
-        for i in range(10000):
+        for i in range(n):
             strategy.put(f"key_{i:06d}", i)
-        # Search should be fast (O(log n))
+        mid = n // 2
         start = time.perf_counter()
-        for _ in range(100):
-            strategy.get(f"key_{5000:06d}")
+        for _ in range(scaled(100)):
+            strategy.get(f"key_{mid:06d}")
         elapsed = time.perf_counter() - start
         # 100 searches should complete in < 0.01 seconds
         assert elapsed < 0.01, f"Search too slow: {elapsed}s for 100 searches"

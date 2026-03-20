@@ -136,20 +136,19 @@ class TestRTreePerformance:
     def test_spatial_query_speed(self):
         """Validate fast spatial query performance with localized edges."""
         import random
+        from tests.scale_config import MEDIUM_SIZE, scaled
+        n_edges, n_queries = scaled(1000), scaled(100)
         strategy = RTreeStrategy()
         random.seed(42)
-        # Generate spatially localized edges (short edges near their source)
-        # Random endpoints across [0,100] create huge MBRs that degrade any spatial index
-        for i in range(1000):
+        for i in range(n_edges):
             cx, cy = random.uniform(0, 100), random.uniform(0, 100)
             dx, dy = random.uniform(-2, 2), random.uniform(-2, 2)
-            strategy.add_edge(f"v{i}", f"v{(i+1)%1000}",
+            strategy.add_edge(f"v{i}", f"v{(i+1)%max(1,n_edges)}",
                             source_coords=(cx, cy),
                             target_coords=(cx + dx, cy + dy))
         import time
         start = time.perf_counter()
-        # Perform spatial queries
-        for i in range(100):
+        for i in range(n_queries):
             list(strategy.range_query(float(i), float(i), float(i + 10), float(i + 10)))
         elapsed = time.perf_counter() - start
         # Should be fast (< 500ms for 100 queries on localized data)
@@ -157,10 +156,11 @@ class TestRTreePerformance:
 
     def test_memory_efficiency(self, measure_memory):
         """Validate memory usage for spatial index."""
+        from tests.scale_config import MEDIUM_SIZE
         def operation():
             strategy = RTreeStrategy()
-            for i in range(1000):
-                strategy.add_edge(f"v{i}", f"v{(i+1)%1000}",
+            for i in range(MEDIUM_SIZE):
+                strategy.add_edge(f"v{i}", f"v{(i+1)%max(1,MEDIUM_SIZE)}",
                                 source_coords=(float(i), float(i)),
                                 target_coords=(float(i+1), float(i+1)))
             return strategy
@@ -170,17 +170,17 @@ class TestRTreePerformance:
 
     def test_large_scale_spatial_indexing(self):
         """Test R-Tree on large spatial datasets."""
+        from tests.scale_config import scaled
+        n = scaled(5000)
         strategy = RTreeStrategy()
         import time
         start = time.perf_counter()
-        # Add many spatial edges
-        for i in range(5000):
-            strategy.add_edge(f"v{i}", f"v{(i+1)%5000}",
+        for i in range(n):
+            strategy.add_edge(f"v{i}", f"v{(i+1)%max(1,n)}",
                             source_coords=(float(i % 100), float(i // 100)),
                             target_coords=(float((i+1) % 100), float((i+1) // 100)))
         elapsed = time.perf_counter() - start
-        assert len(strategy) == 5000
-        # Should complete in reasonable time (< 2 seconds)
+        assert len(strategy) == n
         assert elapsed < 2.0
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])

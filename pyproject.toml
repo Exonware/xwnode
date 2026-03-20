@@ -1,128 +1,89 @@
-# project-src-size=2537098 ; 2.42 MB
-# Source size (src/*): ~2.51 MB
+
+# Source size (src/*): ~2.50 MB
 [build-system]
-requires = [ "hatchling",]
-build-backend = "hatchling.build"
+  requires = ["hatchling"]
+  build-backend = "hatchling.build"
 
 [project]
-name = "exonware-xwnode"
-dynamic = ["version"]
-description = "Node-based data processing and graph computation library"
-readme = "README.md"
-requires-python = ">=3.12"
-keywords = [ "node", "graph", "computation", "data-processing", "workflow", "exonware",]
-classifiers = [ 
-    "Development Status :: 3 - Alpha", 
-    "Intended Audience :: Developers", 
-    "License :: OSI Approved :: MIT License", 
-    "Operating System :: OS Independent", 
-    "Programming Language :: Python :: 3", 
-    "Programming Language :: Python :: 3.12", 
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
-dependencies = [
-  "exonware-xwsystem",  # file-size=2758230 ; 2.63 MB
-  "numpy>=1.24.0",  # file-size=52803492 ; 50.36 MB
-  "pip",  # file-size=11430259 ; 10.90 MB
-  "scikit-learn>=1.2.0",  # file-size=43016103 ; 41.02 MB
-  "scipy>=1.10.0",  # file-size=140860699 ; 134.34 MB
-  # total = src + deps ; 241.67 MB
-]
+  name = "exonware-xwnode"
+  dynamic = ["version"]
+  description = "Node-based data processing and graph computation library"
+  readme = "README.md"
+  requires-python = ">=3.12"
+  keywords = ["node", "graph", "computation", "data-processing", "workflow", "exonware"]
+  classifiers = []
+  dependencies = []
+  exonware-xwsystem = "2758230 ; 2.63 MB"
+  "numpy>" = "1.24.0\",  # file-size=52803492 ; 50.36 MB"
+  pip = "11430259 ; 10.90 MB"
+  "scikit-learn>" = "1.2.0\",  # file-size=43016103 ; 41.02 MB"
+  "scipy>" = "1.10.0\",  # file-size=140860699 ; 134.34 MB"
+  authors = []
+  "{{name" = "eXonware Backend Team"
 
-[[project.authors]]
-name = "eXonware Backend Team"
-email = "connect@exonware.com"
+  [project.license]
+    text = "MIT"
 
-[project.license]
-text = "MIT"
+  [project.optional-dependencies]
+    dev = ["black>=23.0.0", "isort>=5.12.0", "mypy>=1.0.0", "pytest>=7.0.0", "pytest-asyncio>=0.21.0", "pytest-cov>=4.0.0"]
+    lazy = ["exonware-xwsystem[lazy]"]
+    full = ["cython", "uarray", "pandas", "pyarrow", "cloudpickle", "numexpr", "bottleneck", "openpyxl>=3.0.0", "lark", "regex", "atomicwrites", "interegular"]
 
-[project.optional-dependencies]
-dev = [
-  "black>=23.0.0",  # file-size=3914855 ; 3.73 MB
-  "exonware-xwlazy",  # file-size=349706 ; 0.33 MB
-  "exonware-xwsystem[dev]",  # file-size=40632320 ; 38.75 MB
-  "isort>=5.12.0",  # file-size=568232 ; 0.54 MB
-  "mypy>=1.0.0",  # file-size=29775254 ; 28.40 MB
-  "pytest>=7.0.0",  # file-size=3152415 ; 3.01 MB
-  "pytest-asyncio>=0.21.0",  # file-size=46752 ; 0.04 MB
-  "pytest-cov>=4.0.0",  # file-size=71639 ; 0.07 MB
-  # total = src + deps ; 77.29 MB
-]
-lazy = [
-  "exonware-xwlazy",  # file-size=349706 ; 0.33 MB
-  "exonware-xwsystem[lazy]",  # file-size=3103784 ; 2.96 MB
-  # total = src + deps ; 5.71 MB
-]
-full = [
-  "exonware-xwsystem[full]",  # file-size=83665879 ; 79.79 MB
-  "openpyxl>=3.0.0",  # file-size=1955411 ; 1.86 MB
-  # total = src + deps ; 84.07 MB
-]
+  [project.urls]
+    Homepage = "https://exonware.com"
+    Repository = "https://github.com/exonware/xwnode"
+    Documentation = "https://github.com/exonware/xwnode#readme"
+    Subtree = "https://github.com/exonware/xwnode.git"
 
-[project.urls]
-Homepage = "https://exonware.com"
-Repository = "https://github.com/exonware/xwnode"
-Documentation = "https://github.com/exonware/xwnode#readme"
-Subtree = "https://github.com/exonware/xwnode.git"
+[tool]
 
-# Dependency sizes: run 'commands measure_dependency_sizes xwnode' to refresh # project-src-size and # file-size in this file.
+  [tool.black]
+    line-length = 88
+    target-version = ["py312"]
 
-[tool.black]
-line-length = 88
-target-version = [ "py38",]
+  [tool.isort]
+    profile = "black"
+    line_length = 88
 
-[tool.isort]
-profile = "black"
-line_length = 88
+  [tool.mypy]
+    python_version = "3.12"
+    strict = true
+    warn_return_any = true
+    warn_unused_configs = true
+    disallow_untyped_defs = true
+    disallow_any_generics = true
+    disallow_untyped_calls = true
+    disallow_incomplete_defs = true
+    check_untyped_defs = true
+    disallow_untyped_decorators = true
+    no_implicit_optional = true
+    warn_redundant_casts = true
+    warn_unused_ignores = true
+    warn_no_return = true
+    warn_unreachable = true
 
-[tool.mypy]
-python_version = "0.9.0.9"
-strict = true
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_any_generics = true
-disallow_untyped_calls = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
+  [tool.pytest]
 
-[tool.pytest.ini_options]
-testpaths = [ "tests",]
-python_files = [ "test_*.py",]
-python_classes = [ "Test*",]
-python_functions = [ "test_*",]
-addopts = "-v --tb=short"
-markers = [ 
-    "core: Core functionality tests",
-    "errors: Error handling tests", 
-    "navigation: Navigation and path tests",
-    "performance: Performance and optimization tests",
-    "xwnode_core: Core functionality tests", 
-    "xwnode_unit: Unit tests for individual components", 
-    "xwnode_integration: Integration tests between components", 
-]
+    [tool.pytest.ini_options]
+      testpaths = ["tests"]
+      python_files = ["test_*.py"]
+      python_classes = ["Test*"]
+      python_functions = ["test_*"]
+      addopts = "-v --tb=short"
+      markers = []
 
-[tool.hatch.version]
-path = "src/exonware/xwnode/version.py"
+  [tool.hatch]
 
-[tool.hatch.build.targets.wheel]
-packages = [ "src/exonware",]
-py-modules = [ "src/xwnode",]
+    [tool.hatch.version]
+      path = "src/exonware/xwnode/version.py"
 
-[tool.hatch.build.targets.sdist]
-include = [ 
-    "/src", 
-    "/tests", 
-    "/docs", 
-    "/examples", 
-    "/README.md", 
-    "/LICENSE", 
-    "/requirements.txt", 
-    "/pyproject.toml",
-]
+    [tool.hatch.build]
+
+      [tool.hatch.build.targets]
+
+        [tool.hatch.build.targets.wheel]
+          packages = ["src/exonware"]
+          py-modules = ["src/xwnode"]
+
+        [tool.hatch.build.targets.sdist]
+          include = []

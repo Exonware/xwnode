@@ -6,10 +6,25 @@ Test async read operations - demonstrate concurrent reads from the same file.
 import asyncio
 import time
 import sys
+import json
 from pathlib import Path
+import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'examples' / 'x5'))
 from json_utils import async_stream_read, match_by_id
 from json_utils_indexed import async_indexed_get_by_id, async_ensure_index
+
+
+@pytest.fixture
+def file_path(tmp_path) -> str:
+    """Create a small jsonl dataset for async tests."""
+    test_file = tmp_path / "database_1gb.jsonl"
+    with test_file.open("w", encoding="utf-8") as f:
+        for i in range(50):
+            row = {"id": f"id_{i:04d}", "name": f"user_{i}", "value": i}
+            f.write(json.dumps(row) + "\n")
+    return str(test_file)
+
+
 async def test_concurrent_reads(file_path: str, num_concurrent: int = 10):
     """Test concurrent async reads from the same file"""
     print("="*70)

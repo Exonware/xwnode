@@ -156,7 +156,8 @@ class TestStackStrategyEdgeCases:
         """Test operations on empty stack."""
         with pytest.raises(IndexError):
             empty_stack.pop()
-        assert empty_stack.peek() is None
+        with pytest.raises(IndexError):
+            empty_stack.peek()
         assert empty_stack.size() == 0
 
     def test_single_item_stack(self, empty_stack):
@@ -171,6 +172,7 @@ class TestStackStrategyEdgeCases:
         """Test handling of None values."""
         empty_stack.push(None)
         assert empty_stack.peek() is None
+        assert empty_stack.pop() is None
         with pytest.raises(IndexError):
             empty_stack.pop()
 
@@ -193,12 +195,12 @@ class TestStackStrategyPerformance:
 
     def test_large_stack_operations(self):
         """Test operations with large stack."""
+        from tests.scale_config import MEDIUM_SIZE
+        n = MEDIUM_SIZE
         stack = StackStrategy()
-        # Push 1000 items
-        for i in range(1000):
+        for i in range(n):
             stack.push(f'item_{i}')
-        assert stack.size() == 1000
-        # Pop all items
-        for i in range(999, -1, -1):
+        assert stack.size() == n
+        for i in range(n - 1, -1, -1):
             assert stack.pop() == f'item_{i}'
         assert stack.is_empty() is True

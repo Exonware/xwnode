@@ -5,13 +5,13 @@ Now powered by xwsystem.caching via CacheController.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: November 4, 2025
 """
 
 import threading
 from typing import Any
-from ..caching import get_cache_controller, ICacheAdapter
+from ..caching import get_cache_controller, ICacheAdapter, NoCacheAdapter
 
 
 class CacheManager[K, V]:
@@ -49,7 +49,6 @@ class CacheManager[K, V]:
             )
         except Exception as e:
             # Graceful degradation: use no-cache on failure
-            from ..caching.adapters import NoCacheAdapter
             self._cache = NoCacheAdapter()
             import logging
             logging.warning(f"Failed to initialize cache, using NoCacheAdapter: {e}")

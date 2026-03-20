@@ -1,51 +1,67 @@
 """
 #exonware/xwnode/src/exonware/xwnode/common/caching/__init__.py
-Cache system for xwnode components.
-Company: eXonware.com
-Author: eXonware Backend Team
-Email: connect@exonware.com
-Version: 0.9.0.9
-Generation Date: November 4, 2025
+xwnode caching: minimal policy + path navigation on top of ``exonware.xwsystem.caching``.
+
+Import from ``exonware.xwnode.common.caching``.
 """
 
-from .controller import CacheController, get_cache_controller, reset_cache_controller
-from .contracts import ICacheAdapter, CacheStats, ICacheFactory
-from .adapters import (
-    LRUCacheAdapter,
+from .contracts import (
+    CacheStats,
+    ICacheAdapter,
+    ICacheFactory,
+    ICacheMetrics,
+    ICacheStrategyManager,
+)
+from .path_nav import PathNavigationCache
+from .policy import (
+    CacheController,
     LFUCacheAdapter,
+    LRUCacheAdapter,
+    NoCacheAdapter,
     TTLCacheAdapter,
     TwoTierCacheAdapter,
-    NoCacheAdapter
+    XWSystemCacheAdapter,
+    XWSystemDefaultCacheAdapter,
+    cache_strategy_is_allowed,
+    create_adapter_for_strategy,
+    get_cache_controller,
+    list_xwsystem_cache_types,
+    reset_cache_controller,
 )
+from .strategy import CacheMetrics, CacheStrategyManager
 from .telemetry import (
-    CacheTelemetryCollector,
-    CachePerformanceMetric,
     CacheComparisonReport,
+    CachePerformanceMetric,
+    CacheTelemetryCollector,
     get_telemetry_collector,
-    reset_telemetry
+    reset_telemetry,
 )
-from .path_cache import PathNavigationCache
+
 __all__ = [
-    # Controller
-    'CacheController',
-    'get_cache_controller',
-    'reset_cache_controller',
-    # Contracts
-    'ICacheAdapter',
-    'ICacheFactory',
-    'CacheStats',
-    # Adapters
-    'LRUCacheAdapter',
-    'LFUCacheAdapter',
-    'TTLCacheAdapter',
-    'TwoTierCacheAdapter',
-    'NoCacheAdapter',
-    # Telemetry
-    'CacheTelemetryCollector',
-    'CachePerformanceMetric',
-    'CacheComparisonReport',
-    'get_telemetry_collector',
-    'reset_telemetry',
-    # Path Cache
-    'PathNavigationCache',
+    "CacheController",
+    "get_cache_controller",
+    "reset_cache_controller",
+    "ICacheAdapter",
+    "ICacheFactory",
+    "ICacheMetrics",
+    "ICacheStrategyManager",
+    "CacheStats",
+    "LRUCacheAdapter",
+    "LFUCacheAdapter",
+    "TTLCacheAdapter",
+    "TwoTierCacheAdapter",
+    "NoCacheAdapter",
+    "XWSystemDefaultCacheAdapter",
+    "XWSystemCacheAdapter",
+    "cache_strategy_is_allowed",
+    "create_adapter_for_strategy",
+    "list_xwsystem_cache_types",
+    "CacheTelemetryCollector",
+    "CachePerformanceMetric",
+    "CacheComparisonReport",
+    "get_telemetry_collector",
+    "reset_telemetry",
+    "PathNavigationCache",
+    "CacheStrategyManager",
+    "CacheMetrics",
 ]

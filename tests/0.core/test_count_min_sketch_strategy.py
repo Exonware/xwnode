@@ -108,20 +108,20 @@ class TestCountMinSketchPerformance:
     def test_time_complexity(self):
         """Validate O(1) increment and query operations."""
         import time
+        from tests.scale_config import LARGE_SIZE
         strategy = CountMinSketchStrategy()
-        # Many increments should be fast
         start = time.perf_counter()
-        for i in range(10000):
+        for i in range(LARGE_SIZE):
             strategy.increment(f"item_{i % 100}")
         elapsed = time.perf_counter() - start
-        # Should be very fast (O(1) per operation); relaxed for CI/slower machines
-        assert elapsed < 0.5, f"Increments too slow: {elapsed}s for 10000 ops"
+        assert elapsed < 0.5, f"Increments too slow: {elapsed}s for {LARGE_SIZE} ops"
 
     def test_memory_efficiency(self, measure_memory):
         """Validate memory efficiency."""
+        from tests.scale_config import MEDIUM_SIZE
         def operation():
             strategy = CountMinSketchStrategy()
-            for i in range(1000):
+            for i in range(MEDIUM_SIZE):
                 strategy.increment(f"item_{i}")
             return strategy
         result, memory = measure_memory(operation)

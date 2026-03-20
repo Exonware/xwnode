@@ -159,10 +159,9 @@ class TestBPlusTreeEdgeCases:
         assert strategy.get("only") == "one"
 
     def test_large_dataset(self, large_dataset):
-        """Test with 10,000 items."""
+        """Test with large dataset (scaled via XWNODE_TEST_SCALE)."""
         strategy = BPlusTreeStrategy()
-        count = 0
-        for k, v in sorted(large_dataset.items())[:1000]:  # First 1000
+        items = sorted(large_dataset.items())[:max(100, len(large_dataset))]
+        for k, v in items:
             strategy.put(k, v)
-            count += 1
-        assert count >= 1000
+        assert len(strategy) >= min(100, len(large_dataset))

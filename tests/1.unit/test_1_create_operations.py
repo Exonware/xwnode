@@ -1153,13 +1153,14 @@ def test_1_4_6_bulk_insert_large_dataset():
     Full Test Name: test_1_4_6_bulk_insert_large_dataset
     Test: Bulk insert with large number of records
     """
+    from tests.scale_config import MEDIUM_SIZE
     test_data = [{"id": "0", "name": "Initial"}]
     file_path = create_test_file(test_data)
     try:
-        # Create 1000 records
+        n = max(1, MEDIUM_SIZE)
         large_records = [
             {"id": str(i), "name": f"User{i}", "value": i * 10}
-            for i in range(1, 1001)
+            for i in range(1, n + 1)
         ]
         # V1: Bulk insert large dataset
         v1_start = time.perf_counter()
@@ -1168,9 +1169,10 @@ def test_1_4_6_bulk_insert_large_dataset():
         # Verify V1 - check first, middle, and last
         v1_verify_start = time.perf_counter()
         v1_count = count_records_v1(file_path)
+        mid = n // 2
         v1_first = stream_read(file_path, json_match_by_id("id", "1"))
-        v1_middle = stream_read(file_path, json_match_by_id("id", "500"))
-        v1_last = stream_read(file_path, json_match_by_id("id", "1000"))
+        v1_middle = stream_read(file_path, json_match_by_id("id", str(mid)))
+        v1_last = stream_read(file_path, json_match_by_id("id", str(n)))
         v1_verify_time = time.perf_counter() - v1_verify_start
         v1_total_time = v1_time + v1_verify_time
         # V2: Bulk insert large dataset (rebuilds index)
@@ -1184,18 +1186,18 @@ def test_1_4_6_bulk_insert_large_dataset():
         from json_utils_indexed import indexed_get_by_id
         v2_count = count_records_v2(file_path_v2, index)
         v2_first = indexed_get_by_id(file_path_v2, "1", id_field="id", index=index)
-        v2_middle = indexed_get_by_id(file_path_v2, "500", id_field="id", index=index)
-        v2_last = indexed_get_by_id(file_path_v2, "1000", id_field="id", index=index)
+        v2_middle = indexed_get_by_id(file_path_v2, str(mid), id_field="id", index=index)
+        v2_last = indexed_get_by_id(file_path_v2, str(n), id_field="id", index=index)
         v2_verify_time = time.perf_counter() - v2_verify_start
         v2_total_time = v2_time + v2_verify_time
-        # 1000 new records added
+        # n new records added
         initial_count_v1 = v1_count - len(large_records)
         initial_count_v2 = v2_count - len(large_records)
         assert v1_count == initial_count_v1 + len(large_records)
         assert v2_count == initial_count_v2 + len(large_records)
         assert v1_first == v2_first == large_records[0]
-        assert v1_middle == v2_middle == large_records[499]
-        assert v1_last == v2_last == large_records[999]
+        assert v1_middle == v2_middle == large_records[mid - 1]
+        assert v1_last == v2_last == large_records[n - 1]
         cleanup_test_file(file_path_v2)
         return True, v1_total_time, v2_total_time
     finally:

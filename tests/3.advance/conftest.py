@@ -23,8 +23,8 @@ def advance_test_data():
             ]
         },
         'performance': {
-            'large_dataset_size': 100000,
-            'benchmark_iterations': 1000
+            'large_dataset_size': 1000,  # scaled via XWNODE_TEST_SCALE
+            'benchmark_iterations': 100
         },
         'usability': {
             'common_use_cases': [

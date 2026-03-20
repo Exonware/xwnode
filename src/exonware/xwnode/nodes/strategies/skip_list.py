@@ -5,7 +5,7 @@ Skip List Node Strategy Implementation
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 16-Jan-2026
 """
 
@@ -379,12 +379,13 @@ class SkipListStrategy(ANodeTreeStrategy):
                 current = current.forward[i]
         return (current.key, current.value) if current != self._header else None
 
-    def range_query(self, start_key: str, end_key: str) -> Iterator[tuple[str, Any]]:
-        """Get all key-value pairs in range [start_key, end_key]."""
+    def range_query(self, start_key: str, end_key: str) -> list[str]:
+        """Get all keys in range [start_key, end_key]."""
         if not isinstance(start_key, str) or not isinstance(end_key, str):
-            return
+            return []
         normalized_start = self._normalize_key(start_key)
         normalized_end = self._normalize_key(end_key)
+        result: list[str] = []
         # Find starting position
         path = self._search_path(start_key)
         current = path[0].forward[0]
@@ -392,8 +393,9 @@ class SkipListStrategy(ANodeTreeStrategy):
         while (current is not None and 
                self._normalize_key(current.key) <= normalized_end):
             if self._normalize_key(current.key) >= normalized_start:
-                yield (current.key, current.value)
+                result.append(current.key)
             current = current.forward[0]
+        return result
 
     def get_level(self) -> int:
         """Get current maximum level."""

@@ -11,7 +11,7 @@ Best Practices Implemented:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 24-Oct-2025
 """
 
@@ -142,6 +142,12 @@ class PriorityQueueStrategy(ANodeLinearStrategy):
         if self.is_empty():
             raise IndexError("peek from empty priority queue")
         return self._heap[0][2]  # Return value from (priority, counter, value)
+
+    def front(self) -> Any:
+        """Alias used by queue-like tests; returns None when empty."""
+        if self.is_empty():
+            return None
+        return self.peek()
 
     def peek_with_priority(self) -> tuple[float, Any]:
         """

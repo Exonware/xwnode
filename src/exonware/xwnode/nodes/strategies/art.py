@@ -6,7 +6,7 @@ with O(k) complexity where k = key length.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 24-Oct-2025
 """
 

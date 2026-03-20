@@ -56,13 +56,12 @@ class TestHeapPerformance:
     def test_priority_operations_fast(self):
         """Test that priority operations are fast."""
         import time
+        from tests.scale_config import LARGE_SIZE
         heap = HeapStrategy()
-        # Insert many items
         start = time.time()
-        for i in range(10000):
+        for i in range(LARGE_SIZE):
             heap.insert(i, i)
         elapsed = time.time() - start
-        # Should complete quickly (< 1 second)
         assert elapsed < 1.0
 @pytest.mark.xwnode_unit
 @pytest.mark.xwnode_node_strategy

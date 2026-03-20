@@ -11,7 +11,7 @@ Strategy base classes are in their respective strategy folders:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 24-Oct-2025
 """
 
@@ -508,3 +508,6 @@ class AEdge[P](IEdge[P]):
         return AEdge(copy.deepcopy(self._strategy))  # type: ignore[return-value]
 # Query classes removed - belong in xwquery project
 # If needed, import from xwquery instead of xwnode
+
+# Backward compatibility alias for older xwquery code.
+XWNodeBase = ANode

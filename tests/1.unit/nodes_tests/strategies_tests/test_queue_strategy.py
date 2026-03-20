@@ -162,7 +162,8 @@ class TestQueueStrategyEdgeCases:
         """Test operations on empty queue."""
         with pytest.raises(IndexError):
             empty_queue.dequeue()
-        assert empty_queue.front() is None
+        with pytest.raises(IndexError):
+            empty_queue.front()
         assert empty_queue.size() == 0
 
     def test_single_item_queue(self, empty_queue):
@@ -177,6 +178,7 @@ class TestQueueStrategyEdgeCases:
         """Test handling of None values."""
         empty_queue.enqueue(None)
         assert empty_queue.front() is None
+        assert empty_queue.dequeue() is None
         with pytest.raises(IndexError):
             empty_queue.dequeue()
 # ============================================================================
@@ -191,12 +193,12 @@ class TestQueueStrategyPerformance:
 
     def test_large_queue_operations(self):
         """Test operations with large queue."""
+        from tests.scale_config import MEDIUM_SIZE
+        n = MEDIUM_SIZE
         queue = QueueStrategy()
-        # Enqueue 1000 items
-        for i in range(1000):
+        for i in range(n):
             queue.enqueue(f'item_{i}')
-        assert queue.size() == 1000
-        # Dequeue all items
-        for i in range(1000):
+        assert queue.size() == n
+        for i in range(n):
             assert queue.dequeue() == f'item_{i}'
         assert queue.is_empty() is True

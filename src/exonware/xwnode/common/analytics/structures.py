@@ -4,7 +4,7 @@ Analytics data structures facade for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 01-Jan-2026
 """
 

@@ -20,6 +20,7 @@ Generation Date: 11-Oct-2025
 import pytest
 from typing import Any
 from exonware.xwnode.nodes.strategies.hash_map import HashMapStrategy
+from tests.scale_config import STRESS_SIZE, LARGE_SIZE, MEDIUM_SIZE
 from exonware.xwnode.defs import NodeMode, NodeTrait
 from exonware.xwnode.errors import XWNodeError, XWNodeTypeError, XWNodeValueError
 # ============================================================================
@@ -165,52 +166,43 @@ class TestHashMapStrategyPerformance:
     def test_o1_insert_performance(self):
         """Test that insert is O(1) - constant time."""
         import time
+        n1, n2 = MEDIUM_SIZE, LARGE_SIZE
         strategy = HashMapStrategy()
-        # Insert 1000 items
         start = time.time()
-        for i in range(1000):
+        for i in range(n1):
             strategy.insert(f'key_{i}', f'value_{i}')
         elapsed_1k = time.time() - start
-        # Insert 10000 items  
         strategy2 = HashMapStrategy()
         start = time.time()
-        for i in range(10000):
+        for i in range(n2):
             strategy2.insert(f'key_{i}', f'value_{i}')
         elapsed_10k = time.time() - start
-        # O(1) means time should scale linearly with n
-        # 10x more items should take roughly 10x time (not 100x)
-        # Handle case where operations are too fast to measure
         if elapsed_1k > 0:
             assert elapsed_10k < elapsed_1k * 15  # Allow some overhead
         else:
-            # If too fast to measure, just verify it completed successfully
-            assert strategy2.size() == 10000
+            assert strategy2.size() == n2
 
     def test_o1_find_performance(self):
         """Test that find is O(1) - constant time."""
         import time
-        # Create large dataset
+        n = LARGE_SIZE
         strategy = HashMapStrategy()
-        for i in range(10000):
+        for i in range(n):
             strategy.insert(f'key_{i}', f'value_{i}')
-        # Find first item
         start = time.time()
-        for _ in range(1000):
+        for _ in range(min(1000, n)):
             strategy.find('key_0')
         elapsed_first = time.time() - start
-        # Find last item (should be same time as first - O(1))
         start = time.time()
-        for _ in range(1000):
-            strategy.find('key_9999')
+        last_key = f'key_{n - 1}'
+        for _ in range(min(1000, n)):
+            strategy.find(last_key)
         elapsed_last = time.time() - start
-        # Both should take similar time (O(1) doesn't depend on position)
-        # Handle case where operations are too fast to measure
         if elapsed_first > 0:
             assert abs(elapsed_first - elapsed_last) < elapsed_first * 2
         else:
-            # If too fast to measure, verify correctness instead
             assert strategy.find('key_0') == 'value_0'
-            assert strategy.find('key_9999') == 'value_9999'
+            assert strategy.find(last_key) == f'value_{n - 1}'
 # ============================================================================
 # SECURITY TESTS
 # ============================================================================
@@ -239,10 +231,10 @@ class TestHashMapStrategySecurity:
     def test_resource_limit_protection(self):
         """Test protection against resource exhaustion."""
         strategy = HashMapStrategy()
-        # Try to insert many items (should not crash)
-        for i in range(100000):
+        # Try to insert many items (should not crash) - scaled for speed
+        for i in range(STRESS_SIZE):
             strategy.insert(f'key_{i}', f'value_{i}')
-        assert strategy.size() == 100000
+        assert strategy.size() == STRESS_SIZE
 
     def test_type_safety(self, empty_strategy):
         """Test type safety for different value types."""
@@ -302,11 +294,12 @@ class TestHashMapStrategyEdgeCases:
     def test_large_dataset_handling(self):
         """Test handling of large datasets."""
         strategy = HashMapStrategy()
-        # Insert 10,000 items
-        for i in range(10000):
+        n = LARGE_SIZE
+        for i in range(n):
             strategy.insert(f'key_{i}', f'value_{i}')
-        assert strategy.size() == 10000
-        assert strategy.find('key_5000') == 'value_5000'
+        assert strategy.size() == n
+        mid = n // 2
+        assert strategy.find(f'key_{mid}') == f'value_{mid}'
 
     def test_unicode_keys_and_values(self, empty_strategy):
         """Test Unicode support in keys and values."""

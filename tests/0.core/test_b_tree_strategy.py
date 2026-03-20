@@ -220,14 +220,15 @@ class TestBTreeEdgeCases:
         assert strategy.get("only") == "one"
 
     def test_large_dataset(self, large_dataset):
-        """Test with 10,000 items."""
+        """Test with large dataset (scaled via XWNODE_TEST_SCALE)."""
         strategy = BTreeStrategy()
-        # B-Tree handles sorted data efficiently
         for k, v in sorted(large_dataset.items()):
             strategy.put(k, v)
-        assert len(strategy) >= 1000  # At least 1000 items
-        # Sample check
-        assert strategy.get("key_5000") == "value_5000"
+        n = len(large_dataset)
+        assert len(strategy) >= min(100, n)
+        mid_key = f"key_{n // 2}"
+        if mid_key in large_dataset:
+            assert strategy.get(mid_key) == large_dataset[mid_key]
 
     def test_duplicate_key_update(self):
         """Test that inserting duplicate key updates value."""

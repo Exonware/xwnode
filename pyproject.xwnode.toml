@@ -1,4 +1,4 @@
-# Source size (src/*): ~2.51 MB
+# Source size (src/*): ~2.50 MB
 [build-system]
 requires = [
     "hatchling",
@@ -21,21 +21,17 @@ keywords = [
     "workflow",
     "exonware",
 ]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
+classifiers = []
 dependencies = [
     "exonware-xwnode",
 ]
-authors = [
-    { name = "eXonware Backend Team", email = "connect@exonware.com" },
-]
+exonware-xwsystem = "2758230 ; 2.63 MB"
+"numpy>" = "1.24.0\",  # file-size=52803492 ; 50.36 MB"
+pip = "11430259 ; 10.90 MB"
+"scikit-learn>" = "1.2.0\",  # file-size=43016103 ; 41.02 MB"
+"scipy>" = "1.10.0\",  # file-size=140860699 ; 134.34 MB"
+authors = []
+"{{name" = "eXonware Backend Team"
 
 [project.license]
 text = "MIT"
@@ -60,7 +56,7 @@ Subtree = "https://github.com/exonware/xwnode.git"
 [tool.black]
 line-length = 88
 target-version = [
-    "py38",
+    "py312",
 ]
 
 [tool.isort]
@@ -68,7 +64,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.9.0.8"
+python_version = "3.12"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
@@ -98,15 +94,7 @@ python_functions = [
     "test_*",
 ]
 addopts = "-v --tb=short"
-markers = [
-    "core: Core functionality tests",
-    "errors: Error handling tests",
-    "navigation: Navigation and path tests",
-    "performance: Performance and optimization tests",
-    "xwnode_core: Core functionality tests",
-    "xwnode_unit: Unit tests for individual components",
-    "xwnode_integration: Integration tests between components",
-]
+markers = []
 
 [tool.hatch.version]
 path = "src/exonware/xwnode/version.py"
@@ -118,13 +106,4 @@ only-include = [
 ]
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/src",
-    "/tests",
-    "/docs",
-    "/examples",
-    "/README.md",
-    "/LICENSE",
-    "/requirements.txt",
-    "/pyproject.toml",
-]
+include = []

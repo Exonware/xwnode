@@ -7,7 +7,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.9
+Version: 0.9.0.10
 Generation Date: 22-Oct-2025
 """
 
@@ -20,7 +20,7 @@ from .config import get_config, set_config
 from .errors import XWNodeError, XWNodeTypeError, XWNodeValueError
 from .common.management.manager import StrategyManager
 from .common.patterns.registry import get_registry
-from .common.caching.path_cache import PathNavigationCache
+from .common.caching.path_nav import PathNavigationCache
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +50,9 @@ class XWNode[T](ANode[T]):
         # Initialize path navigation cache (30-50x faster on cache hits)
         cache_size = options.get('path_cache_size', 512)
         self._nav_cache = PathNavigationCache(max_size=cache_size)
+        # Cache direct-navigation eligibility to avoid expensive checks per lookup.
+        self._direct_nav_enabled: bool | None = None
+        self._direct_nav_native_snapshot: Any | None = None
         # Convert mode to NodeMode enum if needed
         from .defs import NodeMode
         if isinstance(mode, NodeMode):
@@ -108,16 +111,12 @@ class XWNode[T](ANode[T]):
             self._strategy.insert(key, value)
             # Invalidate cache for this key and any paths starting with it
             self._nav_cache.invalidate(str(key))
+            self._direct_nav_native_snapshot = None
         except Exception as e:
             raise XWNodeError(f"Failed to put key '{key}': {e}")
-    # Removed: Using ANode.get() for proper path navigation support
-    # def get(self, key: Any, default: Any = None) -> Any:
-    #     """Retrieve a value by key."""
-    #     try:
-    #         result = self._strategy.find(key)
-    #         return result if result is not None else default
-    #     except Exception as e:
-    #         raise XWNodeError(f"Failed to get key '{key}': {e}")
+
+    # get() is inherited from ANode and returns ANode wrappers.
+    # Use get_value() for direct native value access.
 
     def get_value(self, path: str, default: Any = None) -> Any:
         """
@@ -155,7 +154,10 @@ class XWNode[T](ANode[T]):
         # DIRECT NAVIGATION: Bypass XWNode for large data with simple paths
         if self._should_use_direct_navigation(path):
             logger.debug(f"Using direct navigation for path: {path}")
-            native_data = self.to_native()
+            native_data = self._direct_nav_native_snapshot
+            if native_data is None:
+                native_data = self.to_native()
+                self._direct_nav_native_snapshot = native_data
             value = self._navigate_simple_path_from_native(native_data, path, default)
             # Cache the result
             self._nav_cache.put(path, value)
@@ -175,9 +177,15 @@ class XWNode[T](ANode[T]):
             # Cache the result
             self._nav_cache.put(path, value)
             return value
-        # Regular strategy - get() returns ANode, extract value
+        # Regular strategy - get() returns ANode, extract value.
+        # Some strategies only support key lookups; for dotted paths, fall back
+        # to native navigation so caching and nested lookups remain correct.
         result = self.get(path)
-        value = result.to_native() if result is not None else default
+        if result is not None:
+            value = result.to_native()
+        else:
+            native_data = self.to_native()
+            value = self._navigate_path_from_native(native_data, path, default)
         # Cache the result
         self._nav_cache.put(path, value)
         return value
@@ -228,11 +236,13 @@ class XWNode[T](ANode[T]):
                 new_node = self._strategy.delete(str_key)
                 self._strategy = new_node._strategy
                 self._nav_cache.invalidate(str_key)
+                self._direct_nav_native_snapshot = None
                 return True
             result = self._strategy.delete(str_key)
             if result:
                 # Invalidate cache for this key and any paths starting with it
                 self._nav_cache.invalidate(str_key)
+                self._direct_nav_native_snapshot = None
             return result
         except Exception as e:
             raise XWNodeError(f"Failed to remove key '{key}': {e}")
@@ -247,6 +257,8 @@ class XWNode[T](ANode[T]):
             self._setup_strategy()
             # Clear navigation cache
             self._nav_cache.clear()
+            self._direct_nav_native_snapshot = None
+            self._direct_nav_enabled = None
         except Exception as e:
             raise XWNodeError(f"Failed to clear: {e}")
     # ==========================================================================
@@ -316,22 +328,26 @@ class XWNode[T](ANode[T]):
         # Check if path is simple dot-separated (no complex queries)
         if '[' in path or ']' in path or '"' in path or "'" in path:
             return False
-        # Check data size threshold (use direct navigation for large data)
-        # Threshold: > 1000 items or > 100KB estimated size
+        # Evaluate data-size threshold once per node (expensive for large data).
+        if self._direct_nav_enabled is not None:
+            return self._direct_nav_enabled
+
         try:
             native_data = self.to_native()
+            enabled = False
             if isinstance(native_data, dict):
-                # Large dict: use direct navigation
-                if len(native_data) > 1000:
-                    return True
+                # Large top-level map OR large immediate child collection.
+                enabled = len(native_data) > 1000 or any(
+                    (isinstance(v, (dict, list, tuple)) and len(v) > 1000)
+                    for v in native_data.values()
+                )
             elif isinstance(native_data, (list, tuple)):
-                # Large list: use direct navigation
-                if len(native_data) > 1000:
-                    return True
+                enabled = len(native_data) > 1000
+            self._direct_nav_enabled = enabled
+            return enabled
         except Exception:
-            # If we can't determine size, fall back to XWNode navigation
+            self._direct_nav_enabled = False
             return False
-        return False
     @staticmethod
 
     def _navigate_simple_path_from_native(data: Any, path: str, default: Any = None) -> Any:
@@ -521,10 +537,25 @@ class XWNode[T](ANode[T]):
         if should_mutate_in_place:
             # Invalidate cache BEFORE setting (to ensure cache doesn't have stale data)
             self._nav_cache.invalidate(path)
+            self._direct_nav_native_snapshot = None
             # Mutable mode - use parent's in-place set
             result = super().set(path, value, in_place=True)
             return result
         else:
+            # Explicit copy-on-write request on mutable nodes: clone first, then mutate clone.
+            # This preserves immutability contract for callers using in_place=False.
+            if not self._immutable:
+                cloned = XWNode.from_native(
+                    self.to_native(),
+                    mode=self._mode,
+                    immutable=False,
+                    **self._options,
+                )
+                cloned._nav_cache.invalidate(path)
+                cloned._direct_nav_native_snapshot = None
+                super(XWNode, cloned).set(path, value, in_place=True)
+                return cloned
+
             # Immutable mode - COW via PersistentNode
             if hasattr(self._strategy, 'set'):
                 # Strategy supports COW (PersistentNode)
@@ -539,18 +570,20 @@ class XWNode[T](ANode[T]):
                 # Initialize navigation cache for new node
                 cache_size = self._options.get('path_cache_size', 512)
                 new_node._nav_cache = PathNavigationCache(max_size=cache_size)
+                new_node._direct_nav_enabled = None
+                new_node._direct_nav_native_snapshot = None
                 # Invalidate cache for this path
                 new_node._nav_cache.invalidate(path)
                 # Initialize base class
                 ANode.__init__(new_node, new_strategy)
                 return new_node
-            else:
-                # Fallback to parent's COW
-                result = super().set(path, value, in_place=False)
-                # Invalidate cache for this path
-                if hasattr(result, '_nav_cache'):
-                    result._nav_cache.invalidate(path)
-                return result
+
+            # Fallback to parent's COW
+            result = super().set(path, value, in_place=False)
+            # Invalidate cache for this path
+            if hasattr(result, '_nav_cache'):
+                result._nav_cache.invalidate(path)
+            return result
 
     def freeze(self) -> XWNode:
         """
@@ -767,7 +800,18 @@ class XWNode[T](ANode[T]):
                 if isinstance(native, (list, tuple)) and 0 <= key < len(native):
                     return native[key]
                 raise KeyError(key)
+            if hasattr(self._strategy, 'find'):
+                found = self._strategy.find(key)
+                if found is not None:
+                    return found
             result = self.get_value(str(key), default=_sentinel)
+            if result is _sentinel and isinstance(key, str) and key.isdigit():
+                int_key = int(key)
+                native = self.to_native()
+                if isinstance(native, dict) and int_key in native:
+                    return native[int_key]
+                if isinstance(native, (list, tuple)) and 0 <= int_key < len(native):
+                    return native[int_key]
             if result is _sentinel:
                 raise KeyError(key)
             return result
@@ -855,8 +899,38 @@ class XWNode[T](ANode[T]):
                     return False
             return False
         else:
-            # Regular strategy - use has() method, keeping int as int
-            return self.has(str(key))
+            # Integer membership follows list-index semantics (not value-membership).
+            if isinstance(key, int):
+                native_data = self.to_native()
+                if isinstance(native_data, (list, tuple)):
+                    return 0 <= key < len(native_data)
+                # Non-list node: allow integer-looking map keys.
+                return self._strategy_has_str(str(key))
+            # String key/path handling
+            if isinstance(key, str):
+                if self._strategy_has_str(key):
+                    return True
+                if key.isdigit():
+                    idx = int(key)
+                    native_data = self.to_native()
+                    if isinstance(native_data, (list, tuple)):
+                        return 0 <= idx < len(native_data)
+                    return self._strategy_has_str(key)
+                if '.' in key:
+                    _s = object()
+                    return self.get_value(key, default=_s) is not _s
+            # Fallback for uncommon key types.
+            try:
+                return self._strategy.has(key)
+            except Exception:
+                return False
+
+    def _strategy_has_str(self, key: str) -> bool:
+        """Check if string key exists in strategy (suppresses errors)."""
+        try:
+            return self._strategy.has(key)
+        except Exception:
+            return False
 
     def __str__(self) -> str:
         """String representation."""
@@ -1000,7 +1074,10 @@ def configure_cache(
     Args:
         component: Component name ('graph', 'traversal', 'query')
         enabled: Enable/disable caching for this component
-        strategy: Cache strategy ('lru', 'lfu', 'ttl', 'two_tier')
+        strategy: Any xwsystem cache type (e.g. 'pylru', 'optimized_lfu',
+            'memory_bounded_lru', 'secure_lru', 'ttl') or xwnode alias ('xwsystem',
+            'two_tier', 'none', 'fifo'). See ``list_xwsystem_cache_types()`` in
+            ``exonware.xwnode.common.caching``.
         size: Maximum cache size
         **kwargs: Additional strategy-specific options
     Example:

@@ -945,6 +945,7 @@ def test_3_4_1_increment_numeric_field():
     """Test: Add/subtract value to numeric field"""
     test_data = [{"id": "1", "count": 5}]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def increment(obj):
             obj["count"] = obj.get("count", 0) + 1
@@ -953,19 +954,21 @@ def test_3_4_1_increment_numeric_field():
         updated = stream_update(file_path, match_by_id("id", "1"), increment)
         v1_time = time.perf_counter() - v1_start
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, match_by_id("id", "1"), increment)
+        updated2 = stream_update(file_path_v2, match_by_id("id", "1"), increment)
         v2_time = time.perf_counter() - v2_start
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["count"] == 6
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 
 
 def test_3_4_2_append_to_array():
     """Test: Add element to array field"""
     test_data = [{"id": "1", "tags": ["a", "b"]}]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def append_tag(obj):
             obj["tags"].append("c")
@@ -974,19 +977,21 @@ def test_3_4_2_append_to_array():
         updated = stream_update(file_path, match_by_id("id", "1"), append_tag)
         v1_time = time.perf_counter() - v1_start
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, match_by_id("id", "1"), append_tag)
+        updated2 = stream_update(file_path_v2, match_by_id("id", "1"), append_tag)
         v2_time = time.perf_counter() - v2_start
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["tags"] == ["a", "b", "c"]
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 
 
 def test_3_4_3_prepend_to_array():
     """Test: Add element to beginning of array"""
     test_data = [{"id": "1", "tags": ["b", "c"]}]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def prepend_tag(obj):
             obj["tags"].insert(0, "a")
@@ -995,13 +1000,14 @@ def test_3_4_3_prepend_to_array():
         updated = stream_update(file_path, match_by_id("id", "1"), prepend_tag)
         v1_time = time.perf_counter() - v1_start
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, match_by_id("id", "1"), prepend_tag)
+        updated2 = stream_update(file_path_v2, match_by_id("id", "1"), prepend_tag)
         v2_time = time.perf_counter() - v2_start
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["tags"] == ["a", "b", "c"]
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 
 
 def test_3_4_4_remove_from_array():
@@ -1036,6 +1042,7 @@ def test_3_4_6_concatenate_strings():
     """Test: Append to string field"""
     test_data = [{"id": "1", "name": "Alice"}]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def append_suffix(obj):
             obj["name"] = obj["name"] + " Smith"
@@ -1044,13 +1051,14 @@ def test_3_4_6_concatenate_strings():
         updated = stream_update(file_path, match_by_id("id", "1"), append_suffix)
         v1_time = time.perf_counter() - v1_start
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, match_by_id("id", "1"), append_suffix)
+        updated2 = stream_update(file_path_v2, match_by_id("id", "1"), append_suffix)
         v2_time = time.perf_counter() - v2_start
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["name"] == "Alice Smith"
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 
 
 def test_3_5_1_update_with_transformation():
@@ -1113,6 +1121,7 @@ def test_3_5_5_update_with_versioning():
     """Test: Increment version number"""
     test_data = [{"id": "1", "version": 1}]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def increment_version(obj):
             obj["version"] = obj.get("version", 0) + 1
@@ -1121,13 +1130,14 @@ def test_3_5_5_update_with_versioning():
         updated = stream_update(file_path, match_by_id("id", "1"), increment_version)
         v1_time = time.perf_counter() - v1_start
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, match_by_id("id", "1"), increment_version)
+        updated2 = stream_update(file_path_v2, match_by_id("id", "1"), increment_version)
         v2_time = time.perf_counter() - v2_start
         result = stream_read(file_path, match_by_id("id", "1"))
         assert result["version"] == 2
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 # ============================================================================
 # 4. DELETE OPERATIONS
 # ============================================================================
@@ -1725,6 +1735,7 @@ def test_7_2_2_bulk_update():
         {"id": "3", "status": "pending"}
     ]
     file_path = create_test_file(test_data)
+    file_path_v2 = create_test_file(test_data)
     try:
         def update_status(obj):
             obj["status"] = "completed"
@@ -1737,12 +1748,13 @@ def test_7_2_2_bulk_update():
         v1_time = time.perf_counter() - v1_start
         # V2: Use stream_update
         v2_start = time.perf_counter()
-        updated2 = stream_update(file_path, is_pending, update_status)
+        updated2 = stream_update(file_path_v2, is_pending, update_status)
         v2_time = time.perf_counter() - v2_start
         assert updated == updated2 == 3
         return True, v1_time, v2_time
     finally:
         cleanup_test_file(file_path)
+        cleanup_test_file(file_path_v2)
 
 
 def test_7_2_3_bulk_upsert():
