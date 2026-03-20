@@ -4,7 +4,7 @@ xwnode cache contracts (thin surface over exonware.xwsystem.caching engines).
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.12
+Version: 0.9.0.13
 """
 
 from typing import Any, Protocol, runtime_checkable

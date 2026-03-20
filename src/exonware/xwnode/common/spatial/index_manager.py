@@ -4,7 +4,7 @@ Spatial index manager implementation for BaaS capabilities.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.12
+Version: 0.9.0.13
 Generation Date: 01-Jan-2026
 """
 

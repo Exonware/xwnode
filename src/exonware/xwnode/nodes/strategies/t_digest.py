@@ -6,7 +6,7 @@ Implements Ted Dunning's T-Digest algorithm for accurate percentiles.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.12
+Version: 0.9.0.13
 Generation Date: 27-Oct-2025
 """
 
