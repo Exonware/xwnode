@@ -15,7 +15,7 @@
 | 1 | Add **Examples** section to INDEX | `docs/INDEX.md` | xwnode report (Improvements, Next steps); ecosystem (Next steps 1) | Done |
 | 2 | Add **2–3 example links** to GUIDE_01_USAGE | `docs/GUIDE_01_USAGE.md` | xwnode report (Improvements, Next steps 1) | Done |
 | 3 | In **REF_54_BENCH**, link to `benchmarks/` and `benchmarks/README.md` | `docs/REF_54_BENCH.md` | xwnode report (Improvements, Next steps 2); ecosystem (Next steps 4) | Done |
-| 4 | Create **docs/logs/benchmarks/** and **INDEX.md** (placeholder) | `docs/logs/benchmarks_logs/INDEX.md` (used instead: `docs/logs/benchmarks` is an existing file) | xwnode report (Optimizations, Next steps 3); ecosystem (Next steps 4) | Done |
+| 4 | Create **docs/logs/benchmarks/** and **INDEX.md** (placeholder) | `docs/logs/benchmarks/INDEX.md` + former `docs/logs/benchmarks` file → `benchmarks/.../BENCH_20251204_014728_V1_VS_V2_PERFORMANCE.md` | xwnode report (Optimizations, Next steps 3); ecosystem (Next steps 4) | Done |
 | 5 | **Root .md:** Move INSTALL_DEPS.md and MIGRATE_FEATURE_VERIFICATION.md to docs/ (or document exception in INDEX/REF_35) | `docs/INSTALL_DEPS.md`, `docs/MIGRATE_FEATURE_VERIFICATION.md` | xwnode report (Critical minor, Improvements, Next steps 4); ecosystem (Compliance) | Done |
 | 6 | In **REF_15_API**, add note: full reference in _archive/API_REFERENCE.md; keep in sync on API changes | `docs/REF_15_API.md` | xwnode report (Improvements, REF_15 ↔ Code); ecosystem (Docs ↔ Code) | Done |
 | 7 | **(Optional)** Add one **example-as-test** or smoke test in tests/2.integration (e.g. run one db_example or enhanced_xnode_demo path) | `tests/2.integration/` | xwnode report (Missing features, Next steps 5); ecosystem (Examples ↔ Tests) | Optional |

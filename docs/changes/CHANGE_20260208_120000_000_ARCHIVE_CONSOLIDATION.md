@@ -16,7 +16,7 @@ All non-standard documentation was moved from docs/ root into docs/_archive/ (pe
 
 All files in docs/_archive/ were reviewed; value was extracted into REFs and logs; then archived files were removed. Only _archive/README.md remains.
 
-- **Value extracted to:** REF_22 (production readiness 65/100, install, migration), REF_51 (test coverage/history), REF_54 (benchmark methodology, LRU phases), REF_13 (design patterns, migration, strategy docs), REF_15 (full API summary from legacy API_REFERENCE), REF_35 (critical issues note); GUIDE_01_USAGE (install); logs/reviews/REVIEW_20260207_ARCHIVE_CONSOLIDATION.md (file-by-file mapping and key findings); logs/benchmarks_logs/BENCH_20260207_ARCHIVE_BASELINE_AND_LRU.md; logs/project (PROJECT_20251011 updated, _archive links removed).
+- **Value extracted to:** REF_22 (production readiness 65/100, install, migration), REF_51 (test coverage/history), REF_54 (benchmark methodology, LRU phases), REF_13 (design patterns, migration, strategy docs), REF_15 (full API summary from legacy API_REFERENCE), REF_35 (critical issues note); GUIDE_01_USAGE (install); logs/reviews/REVIEW_20260207_ARCHIVE_CONSOLIDATION.md (file-by-file mapping and key findings); benchmarks/20260321-benchmark xwnode consolidated/benchmarks/BENCH_20260207_ARCHIVE_BASELINE_AND_LRU.md; logs/project (PROJECT_20251011 updated, _archive links removed).
 - **No content kept only in _archive:** All added value is now in REFs or logs. See [REVIEW_20260207_ARCHIVE_CONSOLIDATION.md](../logs/reviews/REVIEW_20260207_ARCHIVE_CONSOLIDATION.md).
 
 ---

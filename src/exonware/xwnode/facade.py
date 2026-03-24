@@ -7,7 +7,7 @@ a clean, intuitive interface.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.13
+Version: 0.9.0.14
 Generation Date: 22-Oct-2025
 """
 
@@ -768,20 +768,11 @@ class XWNode[T](ANode[T]):
             result = self._strategy.get(str_key)
             if result is not None:
                 return result
-            # Fallback: navigate native data for flattened structures
-            native_data = self.to_native()
-            if isinstance(native_data, dict):
-                # Try direct dict access first
-                if str_key in native_data:
-                    return native_data[str_key]
-            elif isinstance(native_data, (list, tuple)):
-                # For lists, convert string key to int
-                try:
-                    index = int(str_key)
-                    if 0 <= index < len(native_data):
-                        return native_data[index]
-                except ValueError:
-                    pass
+            # Cached fallback path: uses navigation cache/direct snapshot logic from get_value().
+            _sentinel = object()
+            cached_value = self.get_value(str_key, default=_sentinel)
+            if cached_value is not _sentinel:
+                return cached_value
             raise KeyError(key)
         else:
             # Regular strategy - use get_value() to extract value from ANode
@@ -800,10 +791,11 @@ class XWNode[T](ANode[T]):
                 if isinstance(native, (list, tuple)) and 0 <= key < len(native):
                     return native[key]
                 raise KeyError(key)
-            if hasattr(self._strategy, 'find'):
-                found = self._strategy.find(key)
-                if found is not None:
-                    return found
+            if isinstance(key, str) and '.' not in key and hasattr(self._strategy, 'get'):
+                # Fast-path for plain keys: avoid expensive generic "find" scans.
+                direct = self._strategy.get(key)
+                if direct is not None:
+                    return direct
             result = self.get_value(str(key), default=_sentinel)
             if result is _sentinel and isinstance(key, str) and key.isdigit():
                 int_key = int(key)
@@ -812,6 +804,11 @@ class XWNode[T](ANode[T]):
                     return native[int_key]
                 if isinstance(native, (list, tuple)) and 0 <= int_key < len(native):
                     return native[int_key]
+            if result is _sentinel and hasattr(self._strategy, 'find'):
+                # Compatibility fallback for strategies that expose custom find semantics.
+                found = self._strategy.find(key)
+                if found is not None:
+                    return found
             if result is _sentinel:
                 raise KeyError(key)
             return result

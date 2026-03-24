@@ -20,6 +20,8 @@ from typing import Any
 from collections.abc import Callable
 _xwnode_root = Path(__file__).resolve().parent.parent.parent
 _examples_x5 = _xwnode_root / "examples" / "x5"
+if not _examples_x5.is_dir():
+    _examples_x5 = _xwnode_root / ".examples" / "x5"
 if _examples_x5.is_dir():
     sys.path.insert(0, str(_examples_x5))
 from json_utils import (

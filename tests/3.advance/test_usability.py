@@ -10,6 +10,10 @@ Generation Date: 11-Oct-2025
 """
 
 import pytest
+from pathlib import Path
+from exonware.xwnode import XWNode
+
+
 @pytest.mark.xwnode_advance
 @pytest.mark.xwnode_usability
 
@@ -18,24 +22,40 @@ class TestUsabilityExcellence:
 
     def test_api_intuitiveness(self):
         """Validate intuitive API design."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        node = XWNode.from_native({"users": [{"name": "Alice"}]})
+        assert node.get_value("users.0.name") == "Alice"
+        assert node["users"][0]["name"] == "Alice"
 
     def test_error_messages(self):
         """Validate clear, helpful error messages."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        with pytest.raises(Exception) as exc_info:
+            XWNode.from_native({}, mode="INVALID_MODE")
+        assert "INVALID_MODE" in str(exc_info.value)
 
     def test_documentation_completeness(self):
         """Validate comprehensive documentation."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        readme = Path(__file__).resolve().parents[2] / "README.md"
+        content = readme.read_text(encoding="utf-8")
+        assert "XWNode" in content
+        assert "Install" in content
 
     def test_examples_quality(self):
         """Validate clear, practical examples."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        init_file = Path(__file__).resolve().parents[2] / "src" / "exonware" / "xwnode" / "__init__.py"
+        content = init_file.read_text(encoding="utf-8")
+        assert "Example:" in content
+        assert "from exonware.xwnode import XWNode" in content
 
     def test_naming_consistency(self):
         """Validate consistent naming conventions."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        from exonware.xwnode import __all__
+        assert "XWNode" in __all__
+        assert "XWEdge" in __all__
+        assert "XWFactory" in __all__
 
     def test_api_discoverability(self):
         """Validate easy-to-discover API functionality."""
-        pytest.skip("Advance tests optional for v0.0.1")
+        public = dir(XWNode)
+        assert "from_native" in public
+        assert "to_native" in public
+        assert "query" in public

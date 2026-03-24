@@ -6,7 +6,7 @@ Uses xwsystem's optimized cache (PylruCache when pylru installed, else Functools
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.13
+Version: 0.9.0.14
 Generation Date: 27-Oct-2025
 """
 

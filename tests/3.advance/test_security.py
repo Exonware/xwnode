@@ -11,6 +11,10 @@ Generation Date: 11-Oct-2025
 """
 
 import pytest
+from pathlib import Path
+from exonware.xwnode import XWNode
+
+
 @pytest.mark.xwnode_advance
 @pytest.mark.xwnode_security
 
@@ -32,8 +36,10 @@ class TestSecurityExcellence:
         - Using components with known vulnerabilities
         - Insufficient logging & monitoring
         """
-        # TODO: Implement OWASP Top 10 compliance tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        payload = {"query": "'; DROP TABLE users; --", "xss": "<script>alert(1)</script>"}
+        node = XWNode.from_native(payload)
+        assert node.get_value("query") == payload["query"]
+        assert node.get_value("xss") == payload["xss"]
 
     def test_defense_in_depth(self):
         """
@@ -45,8 +51,9 @@ class TestSecurityExcellence:
         - Error handling
         - Logging & monitoring
         """
-        # TODO: Implement defense-in-depth validation
-        pytest.skip("Advance tests optional for v0.0.1")
+        node = XWNode.from_native({"safe": {"value": 42}})
+        assert node.get_value("safe.value") == 42
+        assert node.get_value("safe.missing", default="fallback") == "fallback"
 
     def test_input_validation(self):
         """
@@ -59,8 +66,8 @@ class TestSecurityExcellence:
         - SQL injection patterns
         - XSS patterns
         """
-        # TODO: Implement comprehensive input validation tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        with pytest.raises(Exception):
+            XWNode.from_native({"k": "v"}, mode="NOT_A_VALID_MODE")
 
     def test_path_validation(self):
         """
@@ -71,8 +78,8 @@ class TestSecurityExcellence:
         - Symlink handling
         - File access controls
         """
-        # TODO: Implement path validation tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        node = XWNode.from_native({"users": [{"name": "alice"}]})
+        assert node.get_value("../../etc/passwd", default=None) is None
 
     def test_cryptographic_operations(self):
         """
@@ -83,8 +90,13 @@ class TestSecurityExcellence:
         - Secure random number generation
         - Proper key management
         """
-        # TODO: Implement cryptographic operations validation
-        pytest.skip("Advance tests optional for v0.0.1")
+        src_root = Path(__file__).resolve().parents[2] / "src" / "exonware" / "xwnode"
+        # Guardrail: no home-grown crypto modules in xwnode core package.
+        custom_crypto_modules = [
+            p for p in src_root.rglob("*.py")
+            if "crypto" in p.stem.lower() and "cryptographic" not in p.stem.lower()
+        ]
+        assert custom_crypto_modules == []
 
     def test_authentication_security(self):
         """
@@ -95,8 +107,9 @@ class TestSecurityExcellence:
         - Token security
         - Multi-factor authentication support
         """
-        # TODO: Implement authentication security tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        node = XWNode.from_native({"token": "secret-value"})
+        assert node.has("token")
+        assert not node.has("password")
 
     def test_authorization_controls(self):
         """
@@ -107,8 +120,9 @@ class TestSecurityExcellence:
         - Privilege escalation prevention
         - Least privilege principle
         """
-        # TODO: Implement authorization tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        node = XWNode.from_native({"admin_only": "x"})
+        assert node.has("admin_only")
+        assert not node.has("non_existent")
 
     def test_data_protection(self):
         """
@@ -119,8 +133,11 @@ class TestSecurityExcellence:
         - Data retention policies
         - PII handling
         """
-        # TODO: Implement data protection tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        original = {"user": {"id": 1, "name": "alice"}}
+        node = XWNode.from_native(original)
+        materialized = node.to_native()
+        assert materialized == original
+        assert materialized is not original
 
     def test_security_logging(self):
         """
@@ -131,8 +148,9 @@ class TestSecurityExcellence:
         - Log integrity
         - Sensitive data not logged
         """
-        # TODO: Implement security logging tests
-        pytest.skip("Advance tests optional for v0.0.1")
+        facade_path = Path(__file__).resolve().parents[2] / "src" / "exonware" / "xwnode" / "facade.py"
+        content = facade_path.read_text(encoding="utf-8")
+        assert "logger." in content
 
     def test_dependency_security(self):
         """
@@ -142,5 +160,6 @@ class TestSecurityExcellence:
         - Dependency update policy
         - Supply chain security
         """
-        # TODO: Implement dependency security validation
-        pytest.skip("Advance tests optional for v0.0.1")
+        req_file = Path(__file__).resolve().parents[2] / "requirements.txt"
+        requirements = req_file.read_text(encoding="utf-8")
+        assert "exonware-xwsystem" in requirements

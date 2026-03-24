@@ -11,6 +11,7 @@ Generation Date: 12-Oct-2025
 """
 
 import os
+import inspect
 import pytest
 from pathlib import Path
 import sys
@@ -26,6 +27,31 @@ src_path = Path(__file__).parent.parent / "src"
 from tests.scale_config import scaled as _scaled, STRESS_SIZE, LARGE_SIZE, MEDIUM_SIZE
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_pyfunc_call(pyfuncitem: pytest.Function) -> bool | None:
+    """
+    Execute sync tests while normalizing legacy non-None returns.
+
+    A large subset of legacy xwnode tests returns benchmark tuples such as
+    ``(passed, v1_time, v2_time)``. Pytest now warns on non-None test returns.
+    We keep those tests executable by discarding return values after execution.
+    """
+    testfunction = pyfuncitem.obj
+    if inspect.iscoroutinefunction(testfunction):
+        # Let async plugins (pytest-asyncio/anyio) handle async tests.
+        return None
+
+    funcargs = {
+        arg_name: pyfuncitem.funcargs[arg_name]
+        for arg_name in pyfuncitem._fixtureinfo.argnames
+    }
+    result = testfunction(**funcargs)
+    if result is not None:
+        # Preserve legacy return payloads as metadata for diagnostics.
+        pyfuncitem.user_properties.append(("legacy_test_return", repr(result)))
+    return True
 # ============================================================================
 # STANDARD FIXTURES (Per GUIDELINES_TEST.md)
 # ============================================================================

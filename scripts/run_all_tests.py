@@ -74,7 +74,7 @@ def run_performance_tests():
     cmd = [
         sys.executable, "-m", "pytest",
         "tests/3.advance/test_performance.py",
-        "tests/utilities/benchmarks/test_strategy_performance.py",
+        "benchmarks/20260321-benchmark xwnode consolidated/scripts/test_strategy_performance.py",
         "-v",
         "--tb=short",
         "-m", "xwnode_performance"
