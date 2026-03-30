@@ -64,6 +64,11 @@ Status and roadmap: [REF_22_PROJECT](docs/REF_22_PROJECT.md). Full strategy list
 
 Choose any node strategy and pair it with any edge strategy under the same `XWNode` API surface.
 
+> Scientific compatibility note:
+> Not every node-edge combination is semantically valid for every workload.
+> Use strategy pairs that match the data model and query physics.
+> Example: matrix/sparse-matrix representations and tree-centric representations solve different structural problems, so they should not be treated as equivalent.
+
 ### Node strategy implementations (63)
 
 | Implementation | File |
@@ -187,8 +192,6 @@ MIT - see [LICENSE](LICENSE).
 
 - **Homepage:** https://exonware.com  
 - **Repository:** https://github.com/exonware/xwnode  
-
-Contributing: CONTRIBUTING.md · Security: SECURITY.md (when present).
-Version: 0.9.0.17 | Updated: 30-Mar-2026
+Version: 0.9.0.18 | Updated: 30-Mar-2026
 
 *Built with ❤️ by eXonware.com - Revolutionizing Python Development Since 2025*
