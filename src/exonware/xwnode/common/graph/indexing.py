@@ -4,7 +4,7 @@ Multi-index manager for O(1) relationship lookups.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.18
+Version: 0.9.0.19
 Generation Date: 11-Oct-2025
 """
 
