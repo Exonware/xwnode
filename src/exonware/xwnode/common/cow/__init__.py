@@ -7,7 +7,7 @@ using HAMT (Hash Array Mapped Trie) for O(log₃₂ n) ≈ O(1) operations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.19
+Version: 0.9.0.20
 Generation Date: 26-Oct-2025
 """
 

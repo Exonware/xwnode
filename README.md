@@ -200,6 +200,6 @@ MIT - see [LICENSE](LICENSE).
 - Source validation: 522 async def definitions and 0 await usages under src/.
 - Use async APIs for I/O-heavy or concurrent workloads to improve throughput and responsiveness.
 <!-- async-support:end -->
-Version: 0.9.0.19 | Updated: 31-Mar-2026
+Version: 0.9.0.20 | Updated: 31-Mar-2026
 
 *Built with ❤️ by eXonware.com - Revolutionizing Python Development Since 2025*

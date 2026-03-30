@@ -4,7 +4,7 @@ Patterns module for xwnode.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.19
+Version: 0.9.0.20
 """
 # Import and export main components
 
