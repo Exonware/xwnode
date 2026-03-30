@@ -6,7 +6,7 @@ compression for power-law graphs.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.16
+Version: 0.9.0.17
 Generation Date: 11-Oct-2025
 """
 

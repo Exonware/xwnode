@@ -6,7 +6,7 @@ data type with Last-Write-Wins semantics for distributed systems.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.16
+Version: 0.9.0.17
 Generation Date: 24-Oct-2025
 """
 

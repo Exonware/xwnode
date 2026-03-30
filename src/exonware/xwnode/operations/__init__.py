@@ -4,7 +4,7 @@
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.16
+Version: 0.9.0.17
 Generation Date: October 27, 2025
 Node operations module integrating xwsystem.operations.
 This module provides node-specific operations built on top of xwsystem's

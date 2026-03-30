@@ -7,7 +7,7 @@ This package contains all node strategy implementations organized by type:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.16
+Version: 0.9.0.17
 Generation Date: January 2, 2025
 """
 
