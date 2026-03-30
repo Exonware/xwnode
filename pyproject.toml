@@ -1,89 +1,108 @@
 
 # Source size (src/*): ~2.49 MB
+# Dependency sizes: run 'commands measure_dependency_sizes xwnode' to refresh
 [build-system]
-  requires = ["hatchling"]
-  build-backend = "hatchling.build"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-  name = "exonware-xwnode"
-  dynamic = ["version"]
-  description = "Node-based data processing and graph computation library"
-  readme = "README.md"
-  requires-python = ">=3.12"
-  keywords = ["node", "graph", "computation", "data-processing", "workflow", "exonware"]
-  classifiers = []
-  dependencies = []
-  exonware-xwsystem = "2758230 ; 2.63 MB"
-  "numpy>" = "1.24.0\",  # file-size=52803492 ; 50.36 MB"
-  pip = "11430259 ; 10.90 MB"
-  "scikit-learn>" = "1.2.0\",  # file-size=43016103 ; 41.02 MB"
-  "scipy>" = "1.10.0\",  # file-size=140860699 ; 134.34 MB"
-  authors = []
-  "{{name" = "eXonware Backend Team"
+name = "exonware-xwnode"
+dynamic = ["version"]
+description = "Node-based data processing and graph computation library"
+readme = "README.md"
+requires-python = ">=3.12"
+keywords = ["node", "graph", "computation", "data-processing", "workflow", "exonware"]
+classifiers = []
+dependencies = [
+  "exonware-xwsystem",  # file-size=2758230 ; 2.63 MB
+  "numpy>=1.24.0",  # file-size=52803492 ; 50.36 MB
+  "pip",  # file-size=11430259 ; 10.90 MB
+  "scikit-learn>=1.2.0",  # file-size=43016103 ; 41.02 MB
+  "scipy>=1.10.0",  # file-size=140860699 ; 134.34 MB
+]
+# total = src + deps ; ~223 MB (approximate; refresh via measure_dependency_sizes)
+authors = [{name = "eXonware Backend Team", email = "connect@exonware.com"}]
 
-  [project.license]
-    text = "MIT"
+[project.license]
+text = "MIT"
 
-  [project.optional-dependencies]
-    dev = ["black>=23.0.0", "isort>=5.12.0", "mypy>=1.0.0", "pytest>=7.0.0", "pytest-asyncio>=0.21.0", "pytest-cov>=4.0.0"]
-    lazy = ["exonware-xwsystem[lazy]"]
-    full = ["cython", "uarray", "pandas", "pyarrow", "cloudpickle", "numexpr", "bottleneck", "openpyxl>=3.0.0", "lark", "regex", "atomicwrites", "interegular", "json_utils"]
+[project.optional-dependencies]
+lazy = [
+  "exonware-xwlazy",
+  "exonware-xwsystem[lazy]",
+]
+dev = [
+  "exonware-xwlazy",
+  "exonware-xwsystem[dev]",
+  "black>=23.0.0",
+  "isort>=5.12.0",
+  "mypy>=1.0.0",
+  "pytest-asyncio>=0.21.0",
+  "pytest-cov>=4.0.0",
+  "pytest>=7.0.0",
+]
+full = [
+  "exonware-xwsystem[full]",
+  "atomicwrites",
+  "bottleneck",
+  "cloudpickle",
+  "cython",
+  "interegular",
+  "json_utils",
+  "lark",
+  "numexpr",
+  "openpyxl>=3.0.0",
+  "pandas",
+  "pyarrow",
+  "regex",
+  "uarray",
+]
 
-  [project.urls]
-    Homepage = "https://exonware.com"
-    Repository = "https://github.com/exonware/xwnode"
-    Documentation = "https://github.com/exonware/xwnode#readme"
-    Subtree = "https://github.com/exonware/xwnode.git"
+[project.urls]
+Homepage = "https://exonware.com"
+Repository = "https://github.com/exonware/xwnode"
+Documentation = "https://github.com/exonware/xwnode#readme"
+Subtree = "https://github.com/exonware/xwnode.git"
 
-[tool]
+[tool.black]
+line-length = 88
+target-version = ["py312"]
 
-  [tool.black]
-    line-length = 88
-    target-version = ["py312"]
+[tool.isort]
+profile = "black"
+line_length = 88
 
-  [tool.isort]
-    profile = "black"
-    line_length = 88
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
 
-  [tool.mypy]
-    python_version = "3.12"
-    strict = true
-    warn_return_any = true
-    warn_unused_configs = true
-    disallow_untyped_defs = true
-    disallow_any_generics = true
-    disallow_untyped_calls = true
-    disallow_incomplete_defs = true
-    check_untyped_defs = true
-    disallow_untyped_decorators = true
-    no_implicit_optional = true
-    warn_redundant_casts = true
-    warn_unused_ignores = true
-    warn_no_return = true
-    warn_unreachable = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = []
 
-  [tool.pytest]
+[tool.hatch.version]
+path = "src/exonware/xwnode/version.py"
 
-    [tool.pytest.ini_options]
-      testpaths = ["tests"]
-      python_files = ["test_*.py"]
-      python_classes = ["Test*"]
-      python_functions = ["test_*"]
-      addopts = "-v --tb=short"
-      markers = []
+[tool.hatch.build.targets.wheel]
+packages = ["src/exonware"]
+py-modules = ["src/xwnode"]
 
-  [tool.hatch]
-
-    [tool.hatch.version]
-      path = "src/exonware/xwnode/version.py"
-
-    [tool.hatch.build]
-
-      [tool.hatch.build.targets]
-
-        [tool.hatch.build.targets.wheel]
-          packages = ["src/exonware"]
-          py-modules = ["src/xwnode"]
-
-        [tool.hatch.build.targets.sdist]
-          include = []
+[tool.hatch.build.targets.sdist]
+include = []

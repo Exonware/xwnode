@@ -1,6 +1,6 @@
 # Advance Tests (Layer 3)
 
-**Purpose:** Production Excellence Validation - Tests against eXonware's 5 core priorities.
+**Purpose:** Deeper quality gates aligned with security, usability, maintainability, performance, and extensibility priorities.
 
 **Status:** OPTIONAL until v1.0.0, MANDATORY for production releases
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-Advance tests validate production readiness by testing against eXonware's core development philosophy:
+Advance tests map to five priority areas:
 
 1. **Security** (Priority #1) - Defense-in-depth, OWASP Top 10
 2. **Usability** (Priority #2) - API intuitiveness, documentation
@@ -53,9 +53,8 @@ pytest tests/3.advance/ -m xwnode_security
 - Optional to implement
 
 **v1.0.0+ (Future):**
-- All tests must pass for release
-- MANDATORY for production readiness
-- Validates enterprise deployment criteria
+- Intended to be required for release tagging
+- Treat as production-readiness checks once implemented
 
 ## Test Categories
 
@@ -123,8 +122,4 @@ Advance tests use:
 - ✅ Performance excellence validated
 - ✅ Extensibility excellence validated
 - ✅ Production readiness confirmed
-
----
-
-*Advance tests ensure xwnode meets enterprise-grade quality standards for production deployment.*
 

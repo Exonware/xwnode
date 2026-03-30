@@ -11,7 +11,7 @@ This module defines the complete abstract base class hierarchy for all node stra
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.15
+Version: 0.9.0.16
 Generation Date: 22-Oct-2025
 """
 

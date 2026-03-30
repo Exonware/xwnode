@@ -1,6 +1,6 @@
 # Core Tests (Layer 0)
 
-**Purpose:** 20% tests for 80% value - Fast, high-value checks covering critical functionality.
+**Purpose:** Fast checks on critical paths (core smoke layer).
 
 **Target Runtime:** < 30 seconds total
 

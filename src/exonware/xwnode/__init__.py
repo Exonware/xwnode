@@ -7,7 +7,7 @@ data handling libraries like xdata.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.15
+Version: 0.9.0.16
 Generation Date: 07-Sep-2025
 Main Classes:
     XWNode: The primary interface for working with hierarchical data
@@ -39,16 +39,18 @@ Example:
     25
 """
 # =============================================================================
-# XWLAZY INTEGRATION - Auto-install missing dependencies silently (EARLY)
+# XWLAZY — GUIDE_00_MASTER: config_package_lazy_install_enabled (EARLY)
 # =============================================================================
-# Activate xwlazy BEFORE other imports to enable auto-installation of missing dependencies
-# This enables silent auto-installation of missing libraries when they are imported
-
 try:
-    from exonware.xwlazy import auto_enable_lazy
-    auto_enable_lazy(__package__ or "exonware.xwnode", mode="smart")
+    from exonware.xwlazy import config_package_lazy_install_enabled
+
+    config_package_lazy_install_enabled(
+        __package__ or "exonware.xwnode",
+        enabled=True,
+        mode="smart",
+    )
 except ImportError:
-    # xwlazy not installed - lazy mode simply stays disabled (normal behavior)
+    # xwlazy not installed — omit [lazy] extra or install exonware-xwlazy for lazy mode.
     pass
 # =============================================================================
 # IMPORTS - Standard Python Imports (No Defensive Code!)
@@ -124,6 +126,10 @@ __all__ = [
     'XWNodeSecurityError',
     'XWNodeLimitError',
     'XWNodePathSecurityError',
+    # Version and metrics (public surface)
+    '__version__',
+    'get_metrics',
+    'reset_metrics',
 ]
 # =============================================================================
 # CONVENIENCE FUNCTIONS

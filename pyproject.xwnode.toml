@@ -25,23 +25,19 @@ classifiers = []
 dependencies = [
     "exonware-xwnode",
 ]
-exonware-xwsystem = "2758230 ; 2.63 MB"
-"numpy>" = "1.24.0\",  # file-size=52803492 ; 50.36 MB"
-pip = "11430259 ; 10.90 MB"
-"scikit-learn>" = "1.2.0\",  # file-size=43016103 ; 41.02 MB"
-"scipy>" = "1.10.0\",  # file-size=140860699 ; 134.34 MB"
-authors = []
-"{{name" = "eXonware Backend Team"
+authors = [
+    { name = "eXonware Backend Team", email = "connect@exonware.com" },
+]
 
 [project.license]
 text = "MIT"
 
 [project.optional-dependencies]
-dev = [
-    "exonware-xwnode[dev]",
-]
 lazy = [
     "exonware-xwnode[lazy]",
+]
+dev = [
+    "exonware-xwnode[dev]",
 ]
 full = [
     "exonware-xwnode[full]",
