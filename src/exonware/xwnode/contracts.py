@@ -9,7 +9,7 @@ Strategy interfaces are in their respective strategy folders:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.20
+Version: 0.9.0.21
 Generation Date: 24-Oct-2025
 Version History:
 - v0.0.1.29: GUIDELINES Architecture (separated interface/implementation)

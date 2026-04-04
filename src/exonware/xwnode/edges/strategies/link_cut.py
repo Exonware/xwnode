@@ -6,7 +6,7 @@ path queries and updates using splay-based structure.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.20
+Version: 0.9.0.21
 Generation Date: 12-Oct-2025
 """
 

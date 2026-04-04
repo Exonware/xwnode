@@ -5,7 +5,7 @@ data structure patterns: graphs, trees, and linear structures.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.20
+Version: 0.9.0.21
 Generation Date: 22-Oct-2025
 """
 

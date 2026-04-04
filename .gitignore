@@ -303,3 +303,10 @@ examples/x5/data/*.jsonl
 examples/x5/data/*.jsonl.idx.json
 examples/x5/data/*.jsonl.ids.json
 .examples/
+
+# Local private folders
+.secrets
+.references
+.venv
+.archive
+

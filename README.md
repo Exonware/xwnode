@@ -177,6 +177,25 @@ Choose any node strategy and pair it with any edge strategy under the same `XWNo
 
 ---
 
+## Ecosystem functional contributions
+
+`xwnode` owns structural representation; sibling libs add query, data transport, validation, and persistence capabilities around that structure.
+You can use `xwnode` standalone as a graph/tree/strategy data engine.
+The full XW ecosystem is optional and is mainly for enterprise and mission-critical scenarios where structure, query, validation, and storage need unified self-managed infrastructure.
+
+| Supporting XW lib | What it provides to xwnode | Functional requirement it satisfies |
+|------|----------------|----------------|
+| **XWQuery** | Multi-language query execution over node/edge structures. | Rich graph/tree querying without binding to a single query syntax. |
+| **XWData** | Data load/save/transform bridges to and from node structures. | Interchange between external formats and in-memory graph models. |
+| **XWSystem** | Core runtime foundations (serialization, caching, utilities, base contracts). | Performance and consistency for node strategies and runtime behavior. |
+| **XWSchema** | Optional schema constraints for node payload integrity. | Validation guarantees for graph payloads and structured updates. |
+| **XWStorage** | Durable backend persistence for node-driven datasets. | Persistent graph/state storage beyond process memory. |
+| **XWEntity** | Domain entity alignment for graph-backed business models. | Domain-aware graph operations rather than raw structural manipulation only. |
+
+Competitive edge: `xwnode` is not only a graph container; it is a strategy-rich structure engine that plugs directly into query, validation, and storage layers.
+
+---
+
 ## Docs and tests
 
 - **Start:** [docs/INDEX.md](docs/INDEX.md).
@@ -200,6 +219,6 @@ MIT - see [LICENSE](LICENSE).
 - Source validation: 522 async def definitions and 0 await usages under src/.
 - Use async APIs for I/O-heavy or concurrent workloads to improve throughput and responsiveness.
 <!-- async-support:end -->
-Version: 0.9.0.20 | Updated: 31-Mar-2026
+Version: 0.9.0.21 | Updated: 04-Apr-2026
 
 *Built with ❤️ by eXonware.com - Revolutionizing Python Development Since 2025*

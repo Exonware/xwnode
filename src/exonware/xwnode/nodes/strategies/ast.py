@@ -10,7 +10,7 @@ This strategy provides optimized operations for Abstract Syntax Trees (ASTs):
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.20
+Version: 0.9.0.21
 Date: October 29, 2025
 """
 
