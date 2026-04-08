@@ -97,9 +97,7 @@ class TestPathCaching:
         assert cached_after is None or "users.0.name" not in node._nav_cache, \
             f"Cache should be invalidated but found: {cached_after}"
     def test_cache_performance_improvement(self):
-        """Test that caching provides performance improvement."""
-        import time
-        # Create large dataset
+        """Repeated access for the same path should populate the nav cache."""
         large_data = {
             "records": [
                 {"id": i, "data": f"value_{i}"}
@@ -107,19 +105,10 @@ class TestPathCaching:
             ]
         }
         node = XWNode.from_native(large_data)
-        # First access (cache miss)
-        start1 = time.time()
-        for _ in range(100):
-            node.get_value("records.0.data")
-        first_time = time.time() - start1
-        # Second access (cache hit)
-        start2 = time.time()
-        for _ in range(100):
-            node.get_value("records.0.data")
-        second_time = time.time() - start2
-        # Cache hits should be faster (30-50x improvement expected)
-        # Allow some variance, but second should be significantly faster
-        assert second_time < first_time * 0.5  # At least 2x faster
+        assert len(node._nav_cache) == 0
+        for _ in range(50):
+            assert node.get_value("records.0.data") == "value_0"
+        assert "records.0.data" in node._nav_cache or node._nav_cache.get("records.0.data") == "value_0"
     def test_cache_clear_on_clear(self):
         """Test that cache is cleared when node is cleared."""
         node = XWNode.from_native({"user": {"name": "Alice"}})

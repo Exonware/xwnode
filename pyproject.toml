@@ -24,24 +24,18 @@ dependencies = [
 authors = [{name = "eXonware Backend Team", email = "connect@exonware.com"}]
 
 [project.license]
-text = "MIT"
+text = "Apache-2.0"
 
 [project.optional-dependencies]
+# First-party XW libs composed by this package (excludes exonware-xwsystem; see lazy/full).
+xw = []
 lazy = [
+  "exonware-xwnode[xw]",
   "exonware-xwlazy",
   "exonware-xwsystem[lazy]",
 ]
-dev = [
-  "exonware-xwlazy",
-  "exonware-xwsystem[dev]",
-  "black>=23.0.0",
-  "isort>=5.12.0",
-  "mypy>=1.0.0",
-  "pytest-asyncio>=0.21.0",
-  "pytest-cov>=4.0.0",
-  "pytest>=7.0.0",
-]
 full = [
+  "exonware-xwnode[xw]",
   "exonware-xwsystem[full]",
   "atomicwrites",
   "bottleneck",
@@ -56,6 +50,15 @@ full = [
   "pyarrow",
   "regex",
   "uarray",
+]
+dev = [
+  "exonware-xwnode[full]",
+  "black>=23.0.0",
+  "isort>=5.12.0",
+  "mypy>=1.0.0",
+  "pytest-asyncio>=0.21.0",
+  "pytest-cov>=4.0.0",
+  "pytest>=7.0.0",
 ]
 
 [project.urls]

@@ -4,7 +4,7 @@
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.21
+Version: 0.9.0.22
 Generation Date: October 27, 2025
 Node-aware patch operations using xwsystem.operations.
 """

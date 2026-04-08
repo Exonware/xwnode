@@ -19,7 +19,21 @@ Usage:
 """
 
 import sys
+import os
 from pathlib import Path
+
+def _package_root() -> Path:
+    """Folder with pyproject.toml + src/ (any tests/**/runner.py depth)."""
+    p = Path(__file__).resolve().parent
+    while p != p.parent:
+        if (p / "pyproject.toml").is_file() and (p / "src").is_dir():
+            return p
+        p = p.parent
+    raise RuntimeError("Could not locate package root from " + str(Path(__file__)))
+
+
+_PKG_ROOT = _package_root()
+
 from exonware.xwsystem.utils.test_runner import TestRunner
 if __name__ == "__main__":
     # Parse arguments for specific priority
@@ -47,6 +61,7 @@ if __name__ == "__main__":
         layer_name="3.advance",
         description=description,
         test_dir=Path(__file__).parent,
+        pytest_cwd=_PKG_ROOT,
         markers=[marker]
     )
     sys.exit(runner.run())

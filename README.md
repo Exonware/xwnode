@@ -8,11 +8,11 @@ Longer write-up: [README_LONG.md](README_LONG.md).
 
 [![Status](https://img.shields.io/badge/status-beta-blue.svg)](https://exonware.com)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 ---
 
-## Install
+## 📦 Install
 
 | Install | What you get | When to use |
 |---------|--------------|-------------|
@@ -24,7 +24,7 @@ Requires xwsystem. Extras only add dependencies; the import path stays the same.
 
 ---
 
-## Quick start
+## 🚀 Quick start
 
 ```python
 from exonware.xwnode import XWNode
@@ -44,7 +44,7 @@ Pick a mode explicitly (`NodeMode.HASH_MAP`, `NodeMode.LSM_TREE`, `EdgeMode.COMP
 
 ---
 
-## What you get
+## ✨ What you get
 
 | Area | Contents |
 |------|----------|
@@ -57,7 +57,7 @@ Status and roadmap: [REF_22_PROJECT](docs/REF_22_PROJECT.md). Full strategy list
 
 ---
 
-## Strategy Matrix - Possibilities
+## 📊 Strategy Matrix - Possibilities
 
 # **94 IMPLEMENTATIONS**
 ## **63 NODE STRATEGIES x 31 EDGE STRATEGIES = 1,953 MIX-AND-MATCH COMBINATIONS**
@@ -177,7 +177,7 @@ Choose any node strategy and pair it with any edge strategy under the same `XWNo
 
 ---
 
-## Ecosystem functional contributions
+## 🌐 Ecosystem functional contributions
 
 `xwnode` owns structural representation; sibling libs add query, data transport, validation, and persistence capabilities around that structure.
 You can use `xwnode` standalone as a graph/tree/strategy data engine.
@@ -196,7 +196,7 @@ Competitive edge: `xwnode` is not only a graph container; it is a strategy-rich 
 
 ---
 
-## Docs and tests
+## 📖 Docs and tests
 
 - **Start:** [docs/INDEX.md](docs/INDEX.md).
 - **Usage:** [docs/GUIDE_01_USAGE.md](docs/GUIDE_01_USAGE.md).
@@ -205,20 +205,20 @@ Competitive edge: `xwnode` is not only a graph container; it is a strategy-rich 
 
 ---
 
-## License and links
+## 📜 License and links
 
-MIT - see [LICENSE](LICENSE).
+Apache-2.0 - see [LICENSE](LICENSE).
 
 - **Homepage:** https://exonware.com  
 - **Repository:** https://github.com/exonware/xwnode  
 
-## Async Support
+## ⏱️ Async Support
 
 <!-- async-support:start -->
 - xwnode includes asynchronous execution paths in production code.
 - Source validation: 522 async def definitions and 0 await usages under src/.
 - Use async APIs for I/O-heavy or concurrent workloads to improve throughput and responsiveness.
 <!-- async-support:end -->
-Version: 0.9.0.21 | Updated: 04-Apr-2026
+Version: 0.9.0.22 | Updated: 08-Apr-2026
 
 *Built with ❤️ by eXonware.com - Revolutionizing Python Development Since 2025*
