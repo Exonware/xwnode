@@ -219,6 +219,6 @@ Apache-2.0 - see [LICENSE](LICENSE).
 - Source validation: 522 async def definitions and 0 await usages under src/.
 - Use async APIs for I/O-heavy or concurrent workloads to improve throughput and responsiveness.
 <!-- async-support:end -->
-Version: 0.9.0.22 | Updated: 08-Apr-2026
+Version: 0.9.0.23 | Updated: 10-Apr-2026
 
 *Built with ❤️ by eXonware.com - Revolutionizing Python Development Since 2025*

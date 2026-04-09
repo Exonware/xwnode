@@ -6,7 +6,7 @@ with O(log n) link and cut operations.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.22
+Version: 0.9.0.23
 Generation Date: 12-Oct-2025
 """
 

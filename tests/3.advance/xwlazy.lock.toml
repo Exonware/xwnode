@@ -1,0 +1,10 @@
+version = "1.0"
+generated = "2026-01-11T02:43:27.967702"
+packages = [
+    "numpy",
+    "scipy",
+]
+
+[statistics]
+total_installs = 4
+total_failures = 0
