@@ -6,7 +6,7 @@ based on the inheritance audit.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.23
+Version: 0.9.0.24
 Generation Date: 08-Oct-2025
 """
 import re

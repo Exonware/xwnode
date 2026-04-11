@@ -4,7 +4,7 @@
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.23
+Version: 0.9.0.24
 Generation Date: October 27, 2025
 Node-aware merge operations using xwsystem.operations.
 Provides XWNode-specific merge functionality with strategy preservation.
