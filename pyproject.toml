@@ -14,7 +14,7 @@ requires-python = ">=3.12"
 keywords = ["node", "graph", "computation", "data-processing", "workflow", "exonware"]
 classifiers = []
 dependencies = [
-  "exonware-xwsystem==0.9.0.38",  # file-size=2758230 ; 2.63 MB
+  "exonware-xwsystem==0.9.0.39",  # file-size=2758230 ; 2.63 MB
   "numpy>=1.24.0",  # file-size=52803492 ; 50.36 MB
   "pip",  # file-size=11430259 ; 10.90 MB
   "scikit-learn>=1.2.0",  # file-size=43016103 ; 41.02 MB
@@ -30,13 +30,13 @@ text = "Apache-2.0"
 # First-party XW libs composed by this package (excludes exonware-xwsystem==0.9.0.37; see lazy/full).
 xw = []
 lazy = [
-  "exonware-xwnode[xw]==0.9.0.23",
-  "exonware-xwlazy==1.0.1.80",
-  "exonware-xwsystem[lazy]==0.9.0.38",
+  "exonware-xwnode[xw]==0.9.0.24",
+  "exonware-xwlazy==1.0.1.81",
+  "exonware-xwsystem[lazy]==0.9.0.39",
 ]
 full = [
-  "exonware-xwnode[xw]==0.9.0.23",
-  "exonware-xwsystem[full]==0.9.0.38",
+  "exonware-xwnode[xw]==0.9.0.24",
+  "exonware-xwsystem[full]==0.9.0.39",
   "atomicwrites",
   "bottleneck",
   "cloudpickle",
@@ -52,7 +52,7 @@ full = [
   "uarray",
 ]
 dev = [
-  "exonware-xwnode[full]==0.9.0.23",
+  "exonware-xwnode[full]==0.9.0.24",
   "black>=23.0.0",
   "isort>=5.12.0",
   "mypy>=1.0.0",

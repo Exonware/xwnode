@@ -7,7 +7,7 @@ This package contains all edge strategy implementations organized by type:
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.24
+Version: 0.9.0.25
 Generation Date: January 2, 2025
 """
 

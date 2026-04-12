@@ -6,7 +6,7 @@ Defines the contracts for immutable data structures with structural sharing.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.24
+Version: 0.9.0.25
 Generation Date: 26-Oct-2025
 """
 

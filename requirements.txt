@@ -21,7 +21,7 @@
 pip                     # Package installer (CI and lazy install)
 
 # eXonware ecosystem dependencies (xwnode requires xwsystem)
-exonware-xwsystem==0.9.0.38                   # Core utilities, serialization, security, caching
+exonware-xwsystem==0.9.0.39                   # Core utilities, serialization, security, caching
 
 # =============================================================================
 # PERFORMANCE DEPENDENCIES (INSTALLED UPFRONT TO AVOID xwlazy DELAYS)

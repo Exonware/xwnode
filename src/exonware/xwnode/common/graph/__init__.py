@@ -5,7 +5,7 @@ Provides O(1) relationship queries with multi-tenant security isolation.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.24
+Version: 0.9.0.25
 Generation Date: 11-Oct-2025
 """
 
