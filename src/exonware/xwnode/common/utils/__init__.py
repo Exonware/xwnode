@@ -4,7 +4,7 @@ Utils module for xwnode.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.25
+Version: 0.9.0.26
 """
 # Import and export main components
 

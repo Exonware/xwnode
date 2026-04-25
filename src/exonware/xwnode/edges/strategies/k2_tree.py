@@ -6,7 +6,7 @@ matrix representation using quadtree-based compression.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.25
+Version: 0.9.0.26
 Generation Date: 12-Oct-2025
 """
 

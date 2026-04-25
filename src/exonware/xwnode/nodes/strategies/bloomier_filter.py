@@ -6,7 +6,7 @@ approximate key→value mapping with controlled false positive rates.
 Company: eXonware.com
 Author: eXonware Backend Team
 Email: connect@exonware.com
-Version: 0.9.0.25
+Version: 0.9.0.26
 Generation Date: 24-Oct-2025
 """
 
