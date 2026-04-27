@@ -10,7 +10,7 @@ name = "xwnode"
 dynamic = [
     "version",
 ]
-description = "Convenience wrapper for exonware-xwnode - provides 'import xwnode' alias"
+description = "Convenience wrapper for exonware-xwnode==0.9.0.26 - provides 'import xwnode' alias"
 readme = "README.md"
 requires-python = ">=3.12"
 keywords = [
@@ -23,7 +23,7 @@ keywords = [
 ]
 classifiers = []
 dependencies = [
-    "exonware-xwnode",
+    "exonware-xwnode==0.9.0.26",
 ]
 authors = [
     { name = "eXonware Backend Team", email = "connect@exonware.com" },
@@ -35,16 +35,16 @@ text = "Apache-2.0"
 [project.optional-dependencies]
 # First-party XW libs composed by this package (excludes exonware-xwsystem==0.9.0.37; see lazy/full).
 xw = [
-    "exonware-xwnode[xw]",
+    "exonware-xwnode[xw]==0.9.0.26",
 ]
 lazy = [
-    "exonware-xwnode[lazy]",
+    "exonware-xwnode[lazy]==0.9.0.26",
 ]
 full = [
-    "exonware-xwnode[full]",
+    "exonware-xwnode[full]==0.9.0.26",
 ]
 dev = [
-    "exonware-xwnode[dev]",
+    "exonware-xwnode[dev]==0.9.0.26",
 ]
 
 [project.urls]

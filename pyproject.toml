@@ -30,12 +30,12 @@ text = "Apache-2.0"
 # First-party XW libs composed by this package (excludes exonware-xwsystem==0.9.0.37; see lazy/full).
 xw = []
 lazy = [
-  "exonware-xwnode[xw]==0.9.0.25",
+  "exonware-xwnode[xw]==0.9.0.26",
   "exonware-xwlazy==1.0.1.82",
   "exonware-xwsystem[lazy]==0.9.0.43",
 ]
 full = [
-  "exonware-xwnode[xw]==0.9.0.25",
+  "exonware-xwnode[xw]==0.9.0.26",
   "exonware-xwsystem[full]==0.9.0.43",
   "atomicwrites",
   "bottleneck",
@@ -52,7 +52,7 @@ full = [
   "uarray",
 ]
 dev = [
-  "exonware-xwnode[full]==0.9.0.25",
+  "exonware-xwnode[full]==0.9.0.26",
   "black>=23.0.0",
   "isort>=5.12.0",
   "mypy>=1.0.0",
